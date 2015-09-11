@@ -1,0 +1,14 @@
+#task-panel {
+    border-style: solid;
+    border-width: 3px;
+    border-color: red;
+    padding: 20px;
+}
+
+td {
+    padding: 5px;
+}
+
+.completed {
+    color: orange;
+}

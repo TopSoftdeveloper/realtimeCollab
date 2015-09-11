@@ -1,0 +1,134 @@
+var React = require('react');
+var $ = require('jquery');
+
+var MilestoneRow = React.createClass({
+    render: function() {
+        return (<tr><th colSpan="3">{this.props.milestone}</th></tr>);
+    }
+});
+
+var CompletedRow = React.createClass({
+    render: function() {
+        return (<tr><td className="completed" colSpan="3">{this.props.count} completed</td></tr>);
+    }
+});
+
+var TaskRow = React.createClass({
+    render: function () {
+        var dateStr = "";
+        if (this.props.task.dueDate !== null) {
+            var date = new Date(parseInt(this.props.task.dueDate) * 1000);
+            dateStr = this.props.task.isTimeSpecified ?
+            date.toDateString() + " @ "  + date.toLocaleTimeString() :
+                date.toDateString();
+        }
+
+        return (
+            <tr>
+                <td width="5"><input type="checkbox" /></td>
+                <td>{this.props.task.name}</td>
+                <td>{dateStr}</td>
+            </tr>
+        );
+    }
+});
+
+var getKey = (function() {
+    var id = 0;
+    return function() { return id++; };
+})();
+
+var TaskTable = React.createClass({
+    render: function() {
+        var rows = [];
+        var lastMilestone = null;
+        var completedTasks = 0;
+
+        this.props.taskList.forEach(function(task) {
+
+            if (task.milestone !== lastMilestone) {
+                if (completedTasks > 0) {
+                    rows.push(<CompletedRow count={completedTasks} key={getKey()} />);
+                    completedTasks = 0;
+                }
+                rows.push(<MilestoneRow milestone={task.milestone} key={getKey()}/>);
+            }
+
+            if (task.completedDate === null) {
+                rows.push(<TaskRow task={task} key={getKey()} />);
+            } else {
+                completedTasks++;
+            }
+
+            lastMilestone = task.milestone;
+        });
+
+        if (completedTasks !== 0) {
+            rows.push(<CompletedRow count={completedTasks} key={getKey()} />);
+        }
+
+        return (
+            <table>
+                <tbody>{rows}</tbody>
+            </table>
+        );
+    }
+});
+
+
+// Assumes sorted by milestones
+var TASKS = [
+    {
+        milestone: "Design Architecture",
+        name: "Think about Api. Draw UML Diagrams",
+        dueDate: "1441964516",
+        isTimeSpecified: true,
+        completedDate: null
+    },
+    {
+        milestone: "Design Architecture",
+        name: "Submit report",
+        dueDate: "1446163200",
+        isTimeSpecified: false,
+        completedDate: null
+    },
+    {
+        milestone: "Design Architecture",
+        name: "Draw architecture diagram",
+        dueDate: "1442163200",
+        isTimeSpecified: true,
+        completedDate: "1442163200"
+    },
+    {
+        milestone: "Week 7 Evaluation",
+        name: "Software Aspect",
+        dueDate: "1442163200",
+        isTimeSpecified: false,
+        completedDate: null
+    },
+    {
+        milestone: "Week 7 Evaluation",
+        name: "Demo path planning",
+        dueDate: null,
+        isTimeSpecified: false,
+        completedDate: null
+    },
+    {
+        milestone: "Week 7 Evaluation",
+        name: "Firmware Aspect",
+        dueDate: "1442163200",
+        isTimeSpecified: true,
+        completedDate: "1442163200"
+    },
+    {
+        milestone: "Week 7 Evaluation",
+        name: "Hardware Aspect",
+        dueDate: "1442163200",
+        isTimeSpecified: false,
+        completedDate: "1442163200"
+    }
+];
+
+$(window).bind("load", function() {
+    React.render(<TaskTable taskList={TASKS}/>, document.getElementById('task-panel'));
+});
