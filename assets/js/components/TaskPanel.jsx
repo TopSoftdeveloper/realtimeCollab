@@ -39,12 +39,68 @@ var getKey = (function() {
 })();
 
 var TaskTable = React.createClass({
+    getInitialState: function() {
+        return {
+            // Assumes sorted by milestones
+            taskList: [
+                {
+                    milestone: "Design Architecture",
+                    name: "Think about Api. Draw UML Diagrams",
+                    dueDate: "1441964516",
+                    isTimeSpecified: true,
+                    completedDate: null
+                },
+                {
+                    milestone: "Design Architecture",
+                    name: "Submit report",
+                    dueDate: "1446163200",
+                    isTimeSpecified: false,
+                    completedDate: null
+                },
+                {
+                    milestone: "Design Architecture",
+                    name: "Draw architecture diagram",
+                    dueDate: "1442163200",
+                    isTimeSpecified: true,
+                    completedDate: "1442163200"
+                },
+                {
+                    milestone: "Week 7 Evaluation",
+                    name: "Software Aspect",
+                    dueDate: "1442163200",
+                    isTimeSpecified: false,
+                    completedDate: null
+                },
+                {
+                    milestone: "Week 7 Evaluation",
+                    name: "Demo path planning",
+                    dueDate: null,
+                    isTimeSpecified: false,
+                    completedDate: null
+                },
+                {
+                    milestone: "Week 7 Evaluation",
+                    name: "Firmware Aspect",
+                    dueDate: "1442163200",
+                    isTimeSpecified: true,
+                    completedDate: "1442163200"
+                },
+                {
+                    milestone: "Week 7 Evaluation",
+                    name: "Hardware Aspect",
+                    dueDate: "1442163200",
+                    isTimeSpecified: false,
+                    completedDate: "1442163200"
+                }
+            ]
+        };
+    },
     render: function() {
         var rows = [];
         var lastMilestone = null;
         var completedTasks = 0;
 
-        this.props.taskList.forEach(function(task) {
+        this.state.taskList.forEach(function(task) {
 
             if (task.milestone !== lastMilestone) {
                 if (completedTasks > 0) {
@@ -76,59 +132,6 @@ var TaskTable = React.createClass({
 });
 
 
-// Assumes sorted by milestones
-var TASKS = [
-    {
-        milestone: "Design Architecture",
-        name: "Think about Api. Draw UML Diagrams",
-        dueDate: "1441964516",
-        isTimeSpecified: true,
-        completedDate: null
-    },
-    {
-        milestone: "Design Architecture",
-        name: "Submit report",
-        dueDate: "1446163200",
-        isTimeSpecified: false,
-        completedDate: null
-    },
-    {
-        milestone: "Design Architecture",
-        name: "Draw architecture diagram",
-        dueDate: "1442163200",
-        isTimeSpecified: true,
-        completedDate: "1442163200"
-    },
-    {
-        milestone: "Week 7 Evaluation",
-        name: "Software Aspect",
-        dueDate: "1442163200",
-        isTimeSpecified: false,
-        completedDate: null
-    },
-    {
-        milestone: "Week 7 Evaluation",
-        name: "Demo path planning",
-        dueDate: null,
-        isTimeSpecified: false,
-        completedDate: null
-    },
-    {
-        milestone: "Week 7 Evaluation",
-        name: "Firmware Aspect",
-        dueDate: "1442163200",
-        isTimeSpecified: true,
-        completedDate: "1442163200"
-    },
-    {
-        milestone: "Week 7 Evaluation",
-        name: "Hardware Aspect",
-        dueDate: "1442163200",
-        isTimeSpecified: false,
-        completedDate: "1442163200"
-    }
-];
-
 $(window).bind("load", function() {
-    React.render(<TaskTable taskList={TASKS}/>, document.getElementById('task-panel'));
+    React.render(<TaskTable />, document.getElementById('task-panel'));
 });
