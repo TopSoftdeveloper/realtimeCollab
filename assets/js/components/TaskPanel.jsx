@@ -25,7 +25,12 @@ var TaskRow = React.createClass({
 
         return (
             <tr>
-                <td width="5"><input type="checkbox" /></td>
+                <td width="5">
+                    <input 
+                        type="checkbox" 
+                        onChange={this.props.onClickDone}
+                    />
+                </td>
                 <td>{this.props.task.name}</td>
                 <td>{dateStr}</td>
             </tr>
@@ -112,6 +117,15 @@ var TaskTable = React.createClass({
 
         e.preventDefault();
     },
+    markDone: function(index) {
+        var taskList = this.state.taskList;
+        var task = taskList[index];
+        taskList.splice(index, 1);
+        task.completedDate = (new Date().getTime()/1000).toString();
+        this.setState({
+          taskList: taskList
+        });
+    },
     handleChange: function(e) {
         this.setState({
             inputTaskname: e.target.value
@@ -122,8 +136,9 @@ var TaskTable = React.createClass({
         var lastMilestone = null;
         var completedTasks = 0;
 
-        this.state.taskList.forEach(function(task) {
+        this.state.taskList.forEach(function(task, index) {
 
+            // End of a milestone
             if (task.milestone !== lastMilestone) {
                 if (completedTasks > 0) {
                     rows.push(<CompletedRow count={completedTasks} key={getKey()} />);
@@ -132,14 +147,20 @@ var TaskTable = React.createClass({
                 rows.push(<MilestoneRow milestone={task.milestone} key={getKey()}/>);
             }
 
+            // Only show non-completed tasks
+            // For completed tasks, keep track of the number
             if (task.completedDate === null) {
-                rows.push(<TaskRow task={task} key={getKey()} />);
+                rows.push(<TaskRow 
+                    task={task} 
+                    key={getKey()}
+                    onClickDone={this.markDone.bind(this, index)} 
+                    />);
             } else {
                 completedTasks++;
             }
 
             lastMilestone = task.milestone;
-        });
+        }.bind(this));
 
         if (completedTasks !== 0) {
             rows.push(<CompletedRow count={completedTasks} key={getKey()} />);
