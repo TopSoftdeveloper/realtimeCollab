@@ -95,6 +95,28 @@ var TaskTable = React.createClass({
             ]
         };
     },
+    addTask: function(e) {
+        var taskList = this.state.taskList;
+        taskList.push({
+            milestone: "Week 7 Evaluation",
+            name: this.state.inputTaskname,
+            dueDate: null,
+            isTimeSpecified: false,
+            completedDate: null
+        });
+
+        this.setState({
+            taskList: taskList,
+            inputTaskname: ''
+        });
+
+        e.preventDefault();
+    },
+    handleChange: function(e) {
+        this.setState({
+            inputTaskname: e.target.value
+        });
+    },
     render: function() {
         var rows = [];
         var lastMilestone = null;
@@ -124,9 +146,20 @@ var TaskTable = React.createClass({
         }
 
         return (
-            <table>
-                <tbody>{rows}</tbody>
-            </table>
+            <div>            
+                <table>
+                    <tbody>{rows}</tbody>
+                </table>
+                <form className='addTask-form' onSubmit={this.addTask}>
+                    <div className='input-group'>
+                        <input type="text" placeholder="Submit report..." 
+                            value={this.state.inputTaskname} onChange={this.handleChange} />
+                        <span className='input-group-btn addTask-btn'>
+                            <button className='btn btn-default'>Add Task</button>
+                        </span>      
+                    </div>              
+                </form> 
+            </div>
         );
     }
 });
