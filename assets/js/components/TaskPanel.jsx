@@ -103,7 +103,7 @@ var TaskTable = React.createClass({
     addTask: function(e) {
         var taskList = this.state.taskList;
         taskList.push({
-            milestone: "Week 7 Evaluation",
+            milestone: this.state.inputMilestone,
             name: this.state.inputTaskname,
             dueDate: null,
             isTimeSpecified: false,
@@ -112,7 +112,8 @@ var TaskTable = React.createClass({
 
         this.setState({
             taskList: taskList,
-            inputTaskname: ''
+            inputTaskname: '',
+            inputMilestone: ''
         });
 
         e.preventDefault();
@@ -125,15 +126,31 @@ var TaskTable = React.createClass({
           taskList: taskList
         });
     },
-    handleChange: function(e) {
+    handleTaskNameChange: function(e) {
         this.setState({
             inputTaskname: e.target.value
         });
+    },
+    handleMilestoneChange: function(e) {
+        this.setState({
+            inputMilestone: e.target.value
+        });
+    },    
+    sortTasks: function(a, b) {
+        if (a.milestone < b.milestone) {
+            return -1;
+        }
+        if (a.milestone > b.milestone) {
+            return 1;
+        } 
+        return 0;
     },
     render: function() {
         var rows = [];
         var lastMilestone = null;
         var completedTasks = 0;
+
+        this.state.taskList = this.state.taskList.sort(this.sortTasks);
 
         this.state.taskList.forEach(function(task, index) {
 
@@ -173,12 +190,16 @@ var TaskTable = React.createClass({
                 <form className='addTask-form' onSubmit={this.addTask}>
                     <div className='input-group'>
                         <input type="text" placeholder="Submit report..." 
-                            value={this.state.inputTaskname} onChange={this.handleChange} />
+                            value={this.state.inputTaskname} onChange={this.handleTaskNameChange} />
+
+                        <input type="text" placeholder="Milestone name" 
+                            value={this.state.inputMilestone} onChange={this.handleMilestoneChange} />
+
                         <span className='input-group-btn addTask-btn'>
                             <button className='btn btn-default'>Add Task</button>
                         </span>      
                     </div>              
-                </form> 
+                </form>                 
             </div>
         );
     }
