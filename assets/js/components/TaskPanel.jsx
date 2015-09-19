@@ -120,7 +120,6 @@ var TaskTable = React.createClass({
     markDone: function(index) {
         var taskList = this.state.taskList;
         var task = taskList[index];
-        taskList.splice(index, 1);
         task.completedDate = (new Date().getTime()/1000).toString();
         this.setState({
           taskList: taskList
