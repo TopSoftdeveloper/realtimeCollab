@@ -7,9 +7,55 @@ var MilestoneRow = React.createClass({
     }
 });
 
-var CompletedRow = React.createClass({
+var CompletedTask = React.createClass({
     render: function() {
-        return (<tr><td className="completed" colSpan="3">{this.props.count} completed</td></tr>);
+        return (<tr><td>{this.props.taskName}</td></tr>);
+    }
+});
+
+var CompletedRow = React.createClass({
+    getInitialState: function () {
+        return {
+            toShow: false
+        };
+    },
+    handleChange: function() {
+        this.setState({
+            toShow: !this.state.toShow
+        });        
+    },
+    render: function() {
+        if (this.props.completedTasks.length == 0) {
+            return false;
+        }
+
+        if (this.state.toShow) {
+            var rows = this.props.completedTasks.map(function(task) {
+                return (
+                        <CompletedTask
+                        key={getKey()} 
+                        taskName={task.taskName}                     
+                        />
+                    );
+            });
+
+            return (
+                <tr>
+                    <td className="completed" colSpan="3" onClick={this.handleChange}>
+                        showing list
+                        <table>
+                        <tbody>{rows}</tbody>
+                        </table>
+                    </td>
+                </tr>);
+        } 
+
+        return (
+            <tr>
+                <td className="completed" colSpan="3" onClick={this.handleChange}>
+                    {this.props.completedTasks.length} completed
+                </td>
+            </tr>);
     }
 });
 
@@ -170,21 +216,27 @@ var TaskTable = React.createClass({
         } 
         return 0;
     },
+    getCompletedTasks: function(milestone) {
+       return this.state.taskList.filter(function(elem) {
+            return elem.completedDate != null && elem.milestone === milestone;
+        }); 
+    },
     render: function() {
         var rows = [];
         var lastMilestone = null;
-        var completedTasks = 0;
 
         this.state.taskList = this.state.taskList.sort(this.sortTasks);
 
         this.state.taskList.forEach(function(task, index) {
-
             // End of a milestone
             if (task.milestone !== lastMilestone) {
-                if (completedTasks > 0) {
-                    rows.push(<CompletedRow count={completedTasks} key={getKey()} />);
-                    completedTasks = 0;
+                if (index != 0) {               
+                    rows.push(<CompletedRow 
+                        key={getKey()} 
+                        completedTasks={this.getCompletedTasks(lastMilestone)} 
+                        />);
                 }
+                
                 rows.push(<MilestoneRow milestone={task.milestone} key={getKey()}/>);
             }
 
@@ -197,16 +249,16 @@ var TaskTable = React.createClass({
                     onClickDone={this.markDone.bind(this, index)} 
                     onClickDelete={this.deleteTask.bind(this, task)}
                     />);
-            } else {
-                completedTasks++;
-            }
+            } 
 
             lastMilestone = task.milestone;
         }.bind(this));
 
-        if (completedTasks !== 0) {
-            rows.push(<CompletedRow count={completedTasks} key={getKey()} />);
-        }
+        rows.push(<CompletedRow 
+            key={getKey()} 
+            completedTasks={this.getCompletedTasks(lastMilestone)} 
+            />);
+        
 
         return (
             <div>            
