@@ -31,7 +31,7 @@ var TaskRow = React.createClass({
                         onChange={this.props.onClickDone}
                     />
                 </td>
-                <td>{this.props.task.name}</td>
+                <td>{this.props.task.taskName}</td>
                 <td>{dateStr}</td>
                 <td>
                     <button 
@@ -56,49 +56,49 @@ var TaskTable = React.createClass({
             taskList: [
                 {
                     milestone: "Design Architecture",
-                    name: "Think about Api. Draw UML Diagrams",
+                    taskName: "Think about Api. Draw UML Diagrams",
                     dueDate: "1441964516",
                     isTimeSpecified: true,
                     completedDate: null
                 },
                 {
                     milestone: "Design Architecture",
-                    name: "Submit report",
+                    taskName: "Submit report",
                     dueDate: "1446163200",
                     isTimeSpecified: false,
                     completedDate: null
                 },
                 {
                     milestone: "Design Architecture",
-                    name: "Draw architecture diagram",
+                    taskName: "Draw architecture diagram",
                     dueDate: "1442163200",
                     isTimeSpecified: true,
                     completedDate: "1442163200"
                 },
                 {
                     milestone: "Week 7 Evaluation",
-                    name: "Software Aspect",
+                    taskName: "Software Aspect",
                     dueDate: "1442163200",
                     isTimeSpecified: false,
                     completedDate: null
                 },
                 {
                     milestone: "Week 7 Evaluation",
-                    name: "Demo path planning",
+                    taskName: "Demo path planning",
                     dueDate: null,
                     isTimeSpecified: false,
                     completedDate: null
                 },
                 {
                     milestone: "Week 7 Evaluation",
-                    name: "Firmware Aspect",
+                    taskName: "Firmware Aspect",
                     dueDate: "1442163200",
                     isTimeSpecified: true,
                     completedDate: "1442163200"
                 },
                 {
                     milestone: "Week 7 Evaluation",
-                    name: "Hardware Aspect",
+                    taskName: "Hardware Aspect",
                     dueDate: "1442163200",
                     isTimeSpecified: false,
                     completedDate: "1442163200"
@@ -108,7 +108,7 @@ var TaskTable = React.createClass({
     },
     isSameTask: function(a, b) {
         return (a.milestone === b.milestone && 
-            a.name === b.name &&
+            a.taskName === b.taskName &&
             a.dueDate === b.dueDate &&
             a.isTimeSpecified === b.isTimeSpecified &&
             a.completedDate === b.completedDate);
@@ -117,7 +117,7 @@ var TaskTable = React.createClass({
         var taskList = this.state.taskList;
         taskList.push({
             milestone: this.state.inputMilestone,
-            name: this.state.inputTaskname,
+            taskName: this.state.inputTaskname,
             dueDate: null,
             isTimeSpecified: false,
             completedDate: null
