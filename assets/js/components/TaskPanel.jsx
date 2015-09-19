@@ -33,6 +33,12 @@ var TaskRow = React.createClass({
                 </td>
                 <td>{this.props.task.name}</td>
                 <td>{dateStr}</td>
+                <td>
+                    <button 
+                        type="button" 
+                        className="destroy" 
+                        onClick={this.props.onClickDelete}
+                    >x</button></td>
             </tr>
         );
     }
@@ -100,6 +106,13 @@ var TaskTable = React.createClass({
             ]
         };
     },
+    isSameTask: function(a, b) {
+        return (a.milestone === b.milestone && 
+            a.name === b.name &&
+            a.dueDate === b.dueDate &&
+            a.isTimeSpecified === b.isTimeSpecified &&
+            a.completedDate === b.completedDate);
+    },
     addTask: function(e) {
         var taskList = this.state.taskList;
         taskList.push({
@@ -117,6 +130,18 @@ var TaskTable = React.createClass({
         });
 
         e.preventDefault();
+    },
+    deleteTask: function(task) {
+        for (var i = 0; i < this.state.taskList.length; ++i) {
+            var elem = this.state.taskList[i];
+            if (this.isSameTask(task, elem)) {
+                this.state.taskList.splice(i, 1);
+                this.setState({
+                    taskList: this.state.taskList
+                });
+                break;
+            }            
+        }
     },
     markDone: function(index) {
         var taskList = this.state.taskList;
@@ -170,6 +195,7 @@ var TaskTable = React.createClass({
                     task={task} 
                     key={getKey()}
                     onClickDone={this.markDone.bind(this, index)} 
+                    onClickDelete={this.deleteTask.bind(this, task)}
                     />);
             } else {
                 completedTasks++;
@@ -194,7 +220,7 @@ var TaskTable = React.createClass({
 
                         <input type="text" placeholder="Milestone name" 
                             value={this.state.inputMilestone} onChange={this.handleMilestoneChange} />
-
+                        
                         <span className='input-group-btn addTask-btn'>
                             <button className='btn btn-default'>Add Task</button>
                         </span>      
