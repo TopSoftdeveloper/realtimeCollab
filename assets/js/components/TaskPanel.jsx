@@ -1,4 +1,6 @@
 var React = require('react');
+var TaskStore = require('../stores/TaskStore');
+var TaskActions = require('../actions/TaskActions');
 var $ = require('jquery');
 
 var MilestoneRow = React.createClass({
@@ -97,71 +99,19 @@ var getKey = (function() {
 
 var TaskTable = React.createClass({
     getInitialState: function() {
-        return {
-            // Assumes sorted by milestones
-            taskList: [
-                {
-                    milestone: "Design Architecture",
-                    taskName: "Think about Api. Draw UML Diagrams",
-                    dueDate: "1441964516",
-                    isTimeSpecified: true,
-                    completedDate: null
-                },
-                {
-                    milestone: "Design Architecture",
-                    taskName: "Submit report",
-                    dueDate: "1446163200",
-                    isTimeSpecified: false,
-                    completedDate: null
-                },
-                {
-                    milestone: "Design Architecture",
-                    taskName: "Draw architecture diagram",
-                    dueDate: "1442163200",
-                    isTimeSpecified: true,
-                    completedDate: "1442163200"
-                },
-                {
-                    milestone: "Week 7 Evaluation",
-                    taskName: "Software Aspect",
-                    dueDate: "1442163200",
-                    isTimeSpecified: false,
-                    completedDate: null
-                },
-                {
-                    milestone: "Week 7 Evaluation",
-                    taskName: "Demo path planning",
-                    dueDate: null,
-                    isTimeSpecified: false,
-                    completedDate: null
-                },
-                {
-                    milestone: "Week 7 Evaluation",
-                    taskName: "Firmware Aspect",
-                    dueDate: "1442163200",
-                    isTimeSpecified: true,
-                    completedDate: "1442163200"
-                },
-                {
-                    milestone: "Week 7 Evaluation",
-                    taskName: "Hardware Aspect",
-                    dueDate: "1442163200",
-                    isTimeSpecified: false,
-                    completedDate: "1442163200"
-                }
-            ]
-        };
+        return TaskStore.getList();
     },
-    isSameTask: function(a, b) {
-        return (a.milestone === b.milestone && 
-            a.taskName === b.taskName &&
-            a.dueDate === b.dueDate &&
-            a.isTimeSpecified === b.isTimeSpecified &&
-            a.completedDate === b.completedDate);
+    componentDidMount: function() {
+        TaskStore.addChangeListener(this._onChange);
+    },
+    componentWillUnmount: function() {
+        TaskStore.removeChangeListener(this._onChange);
+    },
+    _onChange: function() {
+        this.setState(TaskStore.getList());
     },
     addTask: function(e) {
-        var taskList = this.state.taskList;
-        taskList.push({
+        TaskActions.addTask({
             milestone: this.state.inputMilestone,
             taskName: this.state.inputTaskname,
             dueDate: null,
@@ -170,7 +120,6 @@ var TaskTable = React.createClass({
         });
 
         this.setState({
-            taskList: taskList,
             inputTaskname: '',
             inputMilestone: ''
         });
@@ -178,24 +127,10 @@ var TaskTable = React.createClass({
         e.preventDefault();
     },
     deleteTask: function(task) {
-        for (var i = 0; i < this.state.taskList.length; ++i) {
-            var elem = this.state.taskList[i];
-            if (this.isSameTask(task, elem)) {
-                this.state.taskList.splice(i, 1);
-                this.setState({
-                    taskList: this.state.taskList
-                });
-                break;
-            }            
-        }
+        TaskActions.deleteTask(task);
     },
-    markDone: function(index) {
-        var taskList = this.state.taskList;
-        var task = taskList[index];
-        task.completedDate = (new Date().getTime()/1000).toString();
-        this.setState({
-          taskList: taskList
-        });
+    markDone: function(task) {
+        TaskActions.markDone(task);
     },
     handleTaskNameChange: function(e) {
         this.setState({
@@ -246,7 +181,7 @@ var TaskTable = React.createClass({
                 rows.push(<TaskRow 
                     task={task} 
                     key={getKey()}
-                    onClickDone={this.markDone.bind(this, index)} 
+                    onClickDone={this.markDone.bind(this, task)}
                     onClickDelete={this.deleteTask.bind(this, task)}
                     />);
             } 
