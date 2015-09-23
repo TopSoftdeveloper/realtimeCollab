@@ -14,12 +14,19 @@ var sequelize = new Sequelize(
     db_options
 );
 
-var models = [
-    constants.TASK_MODEL_NAME
+var modelFiles = [
+    'Milestone',
+    'Task'
 ];
 
-models.forEach(function(model) {
+modelFiles.forEach(function(model) {
     module.exports[model] = sequelize.import(__dirname + '/' + model);
+});
+
+sequelize.sync().then(function() {
+    console.log('tables created');
+},function(error) {
+    console.log(error);
 });
 
 module.exports.sequelize = sequelize;

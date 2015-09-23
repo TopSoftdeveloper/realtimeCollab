@@ -9,6 +9,13 @@ module.exports = function(sequelize, DataTypes) {
         content: DataTypes.TEXT,
         deadline: DataTypes.DATE,
         is_time_specified: DataTypes.BOOLEAN,
-        milestone_id: DataTypes.STRING
+        milestone_id: {
+            type: DataTypes.STRING,
+            references: {
+                model: constants.MILESTONE_MODEL_NAME,
+                key: "id"
+            }
+        },
+        project_id: DataTypes.STRING
     });
 };

@@ -7,6 +7,15 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true
         },
         content: DataTypes.TEXT,
-        deadline: DataTypes.DATE
+        deadline: DataTypes.DATE,
+        project_id: DataTypes.STRING
+    }, {
+        classMethods: {
+            isExist: function(id) {
+                return this.findById(id).then(function(instance) {
+                    return instance !== null;
+                })
+            }
+        }
     });
 };

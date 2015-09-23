@@ -60,13 +60,32 @@ function createTask(request, reply) {
         content: request.payload.content,
         deadline: request.payload.deadline,
         is_time_specified: request.payload.is_time_specified,
-        milestone_id: request.payload.milestone_id
+        milestone_id: request.payload.milestone_id,
+        project_id: request.payload.project_id
     };
     storage.createTask(task).then(function(id) {
         task.id = id;
         reply(task);
     }, function(error) {
-        reply(error);
+        reply({
+            error: error
+        });
+    });
+}
+
+function createMilestone(request, reply) {
+    var milestone = {
+        content: request.payload.content,
+        deadline: request.payload.deadline,
+        project_id: request.payload.project_id
+    };
+    storage.createMilestone(milestone).then(function(id) {
+        milestone.id = id;
+        reply(milestone);
+    }, function(error) {
+        reply({
+            error: error
+        });
     });
 }
 
@@ -83,7 +102,26 @@ server.route({
                 content: Joi.string().required(),
                 deadline: Joi.string().isoDate().default(null),
                 is_time_specified: Joi.boolean().default(false),
-                milestone_id: Joi.string().default(null)
+                milestone_id: Joi.string().default(null),
+                project_id: Joi.string().required()
+            }
+        }
+    }
+});
+
+server.route({
+    method: 'POST',
+    path: '/create_milestone',
+    config: {
+        handler: createMilestone,
+        payload: {
+            parse: true
+        },
+        validate: {
+            payload: {
+                content: Joi.string().required(),
+                deadline: Joi.string().isoDate().default(null),
+                project_id: Joi.string().required()
             }
         }
     }
