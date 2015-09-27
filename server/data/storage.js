@@ -36,7 +36,6 @@ module.exports = {
         if (task.milestone_id === null) {
             return _create(task);
         }
-
         return Milestone.isExist(task.milestone_id).then(function(exists) {
             if (!exists) {
                 return Promise.reject(format(constants.MILESTONE_NOT_EXIST, task.milestone_id));
