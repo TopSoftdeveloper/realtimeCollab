@@ -167,7 +167,7 @@ server.route({
 });
 
 server.route({
-    method: 'POST',
+    method: 'DELETE',
     path: '/delete_task',
     config: {
         handler: deleteTask,
@@ -183,7 +183,7 @@ server.route({
 });
 
 server.route({
-    method: 'POST',
+    method: 'DELETE',
     path: '/delete_milestone',
     config: {
         handler: deleteMilestone,
