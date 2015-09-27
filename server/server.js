@@ -109,6 +109,25 @@ function deleteTask(request, reply) {
     });
 }
 
+function deleteMilestone(request, reply) {
+    var milestone_id = request.payload.milestone_id;
+
+    storage.doesMilestoneExist(milestone_id).then(function(exists) {
+        if (!exists) {
+            reply({
+                status: constants.STATUS_FAIL,
+                error: format(constants.MILESTONE_NOT_EXIST, milestone_id)
+            });
+        } else {
+            storage.deleteMilestone(milestone_id).then(function() {
+                reply({
+                    status: constants.STATUS_OK
+                });
+            });
+        }
+    });
+}
+
 server.route({
     method: 'POST',
     path: '/create_task',
@@ -158,6 +177,22 @@ server.route({
         validate: {
             payload: {
                 task_id: Joi.string().required()
+            }
+        }
+    }
+});
+
+server.route({
+    method: 'POST',
+    path: '/delete_milestone',
+    config: {
+        handler: deleteMilestone,
+        payload: {
+            parse: true
+        },
+        validate: {
+            payload: {
+                milestone_id: Joi.string().required()
             }
         }
     }

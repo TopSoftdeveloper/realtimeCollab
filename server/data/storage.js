@@ -35,6 +35,9 @@ module.exports = {
     doesTaskExist: function(task_id) {
         return Task.isExist(task_id);
     },
+    doesMilestoneExist: function(milestone_id) {
+        return Milestone.isExist(milestone_id);
+    },
     createTask: function(task) {
         if (task.milestone_id === null) {
             return _create(task);
@@ -75,6 +78,13 @@ module.exports = {
         return Task.destroy({
             where: {
                 id: task_id
+            }
+        });
+    },
+    deleteMilestone: function(milestone_id) {
+        return Milestone.destroy({
+            where: {
+                id: milestone_id
             }
         });
     }
