@@ -2,7 +2,8 @@ var Hapi = require('hapi');
 var Good = require('good');
 var storage = require('./data/storage');
 var Joi = require('joi');
-
+var constants = require('./constants');
+var format = require('string-format');
 
 // Create a server with a host and port
 var server = new Hapi.Server();
@@ -89,6 +90,25 @@ function createMilestone(request, reply) {
     });
 }
 
+function deleteTask(request, reply) {
+    var task_id = request.payload.task_id;
+
+    storage.doesTaskExist(task_id).then(function(exists) {
+        if (!exists) {
+            reply({
+                status: constants.STATUS_FAIL,
+                error: format(constants.TASK_NOT_EXIST, task_id)
+            });
+        } else {
+            storage.deleteTask(task_id).then(function() {
+                reply({
+                    status: constants.STATUS_OK
+                });
+            });
+        }
+    });
+}
+
 server.route({
     method: 'POST',
     path: '/create_task',
@@ -122,6 +142,22 @@ server.route({
                 content: Joi.string().required(),
                 deadline: Joi.string().isoDate().default(null),
                 project_id: Joi.string().required()
+            }
+        }
+    }
+});
+
+server.route({
+    method: 'POST',
+    path: '/delete_task',
+    config: {
+        handler: deleteTask,
+        payload: {
+            parse: true
+        },
+        validate: {
+            payload: {
+                task_id: Joi.string().required()
             }
         }
     }

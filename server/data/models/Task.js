@@ -17,5 +17,13 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         project_id: DataTypes.STRING
+    }, {
+        classMethods: {
+            isExist: function(id) {
+                return this.findById(id).then(function(instance) {
+                    return instance !== null;
+                })
+            }
+        }
     });
 };

@@ -32,6 +32,9 @@ function _create(task) {
 }
 
 module.exports = {
+    doesTaskExist: function(task_id) {
+        return Task.isExist(task_id);
+    },
     createTask: function(task) {
         if (task.milestone_id === null) {
             return _create(task);
@@ -67,5 +70,12 @@ module.exports = {
             });
         }.bind(this));
 
+    },
+    deleteTask: function(task_id) {
+        return Task.destroy({
+            where: {
+                id: task_id
+            }
+        });
     }
 };
