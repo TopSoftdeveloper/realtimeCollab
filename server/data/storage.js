@@ -32,6 +32,12 @@ function _create(task) {
 }
 
 module.exports = {
+    getAllTasks: function() {
+        return Task.findAll({});
+    },
+    getTask: function(task_id) {
+        return Task.getTask(task_id);
+    },
     doesTaskExist: function(task_id) {
         return Task.isExist(task_id);
     },

@@ -128,6 +128,52 @@ function deleteMilestone(request, reply) {
     });
 }
 
+function getTaskById(task_id, reply) {
+    storage.doesTaskExist(task_id).then(function(exists) {
+        if (!exists) {
+            reply({
+                status: constants.STATUS_FAIL,
+                error: format(constants.TASK_NOT_EXIST, task_id)
+            });
+        } else {
+            storage.getTask(task_id).then(function(task) {
+                reply({
+                    status: constants.STATUS_OK,
+                    tasks: [task]
+                });
+            });
+        }
+    });
+}
+
+function getTasks(request, reply) {
+    var task_id = request.query.task_id;
+
+    if (task_id === null) {
+        storage.getAllTasks().then(function(tasks) {
+            reply({
+                status: constants.STATUS_OK,
+                tasks: tasks
+            })
+        });
+    } else {
+        getTaskById(task_id, reply);
+    }
+}
+
+server.route({
+    method: 'GET',
+    path: '/task',
+    config: {
+        handler: getTasks,
+        validate: {
+            query: {
+                task_id: Joi.string().default(null)
+            }
+        }
+    }
+});
+
 server.route({
     method: 'POST',
     path: '/create_task',

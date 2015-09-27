@@ -23,6 +23,9 @@ module.exports = function(sequelize, DataTypes) {
                 return this.findById(id).then(function(instance) {
                     return instance !== null;
                 })
+            },
+            getTask: function(id) {
+                return this.findById(id);
             }
         }
     });
