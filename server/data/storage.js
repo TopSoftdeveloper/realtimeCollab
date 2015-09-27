@@ -32,11 +32,24 @@ function _create(task) {
 }
 
 module.exports = {
+    getMilestonesWithTasks: function() {
+        return Milestone.findAll({
+            include: [
+                {
+                    model: Task,
+                    attributes: ['id', 'content', 'deadline', 'is_time_specified', 'created_at', 'updated_at']
+                }
+            ]
+        })
+    },
     getAllTasks: function() {
         return Task.findAll({});
     },
     getTask: function(task_id) {
         return Task.getTask(task_id);
+    },
+    getMilestone: function(milestone_id) {
+        return Milestone.getMilestone(milestone_id);
     },
     doesTaskExist: function(task_id) {
         return Task.isExist(task_id);

@@ -8,16 +8,9 @@ module.exports = function(sequelize, DataTypes) {
         },
         content: DataTypes.TEXT,
         deadline: DataTypes.DATE,
-        is_time_specified: DataTypes.BOOLEAN,
-        milestone_id: {
-            type: DataTypes.STRING,
-            references: {
-                model: constants.MILESTONE_MODEL_NAME,
-                key: "id"
-            }
-        },
-        project_id: DataTypes.STRING
-    }, {
+        is_time_specified: DataTypes.BOOLEAN
+    },{
+        underscored: true,
         classMethods: {
             isExist: function(id) {
                 return this.findById(id).then(function(instance) {

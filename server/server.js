@@ -61,8 +61,7 @@ function createTask(request, reply) {
         content: request.payload.content,
         deadline: request.payload.deadline,
         is_time_specified: request.payload.is_time_specified,
-        milestone_id: request.payload.milestone_id,
-        project_id: request.payload.project_id
+        milestone_id: request.payload.milestone_id
     };
     storage.createTask(task).then(function(id) {
         task.id = id;
@@ -77,8 +76,7 @@ function createTask(request, reply) {
 function createMilestone(request, reply) {
     var milestone = {
         content: request.payload.content,
-        deadline: request.payload.deadline,
-        project_id: request.payload.project_id
+        deadline: request.payload.deadline
     };
     storage.createMilestone(milestone).then(function(id) {
         milestone.id = id;
@@ -161,6 +159,19 @@ function getTasks(request, reply) {
     }
 }
 
+
+
+function getMilestones(request, reply) {
+    storage.getMilestonesWithTasks().then(function(milestones) {
+
+        reply({
+            status: constants.STATUS_OK,
+            milestones: milestones
+        })
+    });
+
+}
+
 server.route({
     method: 'GET',
     path: '/task',
@@ -171,6 +182,14 @@ server.route({
                 task_id: Joi.string().default(null)
             }
         }
+    }
+});
+
+server.route({
+    method: 'GET',
+    path: '/milestone',
+    config: {
+        handler: getMilestones
     }
 });
 
@@ -187,8 +206,7 @@ server.route({
                 content: Joi.string().required(),
                 deadline: Joi.string().isoDate().default(null),
                 is_time_specified: Joi.boolean().default(false),
-                milestone_id: Joi.string().default(null),
-                project_id: Joi.string().required()
+                milestone_id: Joi.string().default(null)
             }
         }
     }
@@ -205,8 +223,7 @@ server.route({
         validate: {
             payload: {
                 content: Joi.string().required(),
-                deadline: Joi.string().isoDate().default(null),
-                project_id: Joi.string().required()
+                deadline: Joi.string().isoDate().default(null)
             }
         }
     }

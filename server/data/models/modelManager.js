@@ -23,6 +23,11 @@ modelFiles.forEach(function(model) {
     module.exports[model] = sequelize.import(__dirname + '/' + model);
 });
 
+(function(m) {
+    m.Task.belongsTo(m.Milestone);
+    m.Milestone.hasMany(m.Task);
+})(module.exports);
+
 sequelize.sync().then(function() {
     console.log('tables created');
 },function(error) {
