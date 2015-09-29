@@ -2,59 +2,77 @@ var AppDispatcher = require('../AppDispatcher');
 var AppConstants = require('../AppConstants');
 var ObjectAssign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
+var $ = require('jquery');
 
 var CHANGE_EVENT = 'change';
+var API_BASE_URL = 'http://localhost:4000';
+var MILESTONE_ENDPOINT = '/milestone';
 
 var _store = {
-    taskList: [
+    "status": "OK",
+    "milestones": [
         {
-            milestone: "Design Architecture",
-            taskName: "Think about Api. Draw UML Diagrams",
-            dueDate: "1441964516",
-            isTimeSpecified: true,
-            completedDate: null
+            "id": "4JJxig-yx",
+            "content": "Exercise",
+            "deadline": null,
+            "created_at": "2015-09-27T15:31:26.000Z",
+            "updated_at": "2015-09-27T15:31:26.000Z",
+            "tasks": [
+                {
+                    "id": "4yzbsl-Jl",
+                    "content": "running",
+                    "deadline": null,
+                    "is_time_specified": false,
+                    "created_at": "2015-09-27T15:31:45.000Z",
+                    "updated_at": "2015-09-27T15:31:45.000Z",
+                    "completed_on": null
+                },
+                {
+                    "id": "N1dXigbyx",
+                    "content": "swimming",
+                    "deadline": null,
+                    "is_time_specified": false,
+                    "created_at": "2015-09-27T15:32:23.000Z",
+                    "updated_at": "2015-09-27T15:32:23.000Z",
+                    "completed_on": null
+                }
+            ]
         },
         {
-            milestone: "Design Architecture",
-            taskName: "Submit report",
-            dueDate: "1446163200",
-            isTimeSpecified: false,
-            completedDate: null
-        },
-        {
-            milestone: "Design Architecture",
-            taskName: "Draw architecture diagram",
-            dueDate: "1442163200",
-            isTimeSpecified: true,
-            completedDate: "1442163200"
-        },
-        {
-            milestone: "Week 7 Evaluation",
-            taskName: "Software Aspect",
-            dueDate: "1442163200",
-            isTimeSpecified: false,
-            completedDate: null
-        },
-        {
-            milestone: "Week 7 Evaluation",
-            taskName: "Demo path planning",
-            dueDate: null,
-            isTimeSpecified: false,
-            completedDate: null
-        },
-        {
-            milestone: "Week 7 Evaluation",
-            taskName: "Firmware Aspect",
-            dueDate: "1442163200",
-            isTimeSpecified: true,
-            completedDate: "1442163200"
-        },
-        {
-            milestone: "Week 7 Evaluation",
-            taskName: "Hardware Aspect",
-            dueDate: "1442163200",
-            isTimeSpecified: false,
-            completedDate: "1442163200"
+            "id": "E1eEjx-1g",
+            "content": "Week 7 eval",
+            "deadline": null,
+            "created_at": "2015-09-27T15:32:31.000Z",
+            "updated_at": "2015-09-27T15:32:31.000Z",
+            "tasks": [
+                {
+                    "id": "41RVjeZ1e",
+                    "content": "obstacle avoidance",
+                    "deadline": null,
+                    "is_time_specified": false,
+                    "created_at": "2015-09-27T15:32:45.000Z",
+                    "updated_at": "2015-09-27T15:32:45.000Z",
+                    "completed_on": null
+                },
+                {
+                    "id": "jf2f",
+                    "content": "buy veggies",
+                    "deadline": null,
+                    "is_time_specified": false,
+                    "created_at": "2015-09-27T15:32:45.000Z",
+                    "updated_at": "2015-09-27T15:32:45.000Z",
+                    "completed_on": "2015-09-27T15:32:45.000Z"
+                },
+                {
+                    "id": "jasdfds2f",
+                    "content": "eat a cake",
+                    "deadline": null,
+                    "is_time_specified": false,
+                    "created_at": "2015-09-27T15:32:45.000Z",
+                    "updated_at": "2015-09-27T15:32:45.000Z",
+                    "completed_on": "2015-09-27T15:32:45.000Z"
+                }
+            ]
         }
     ]
 };
@@ -74,18 +92,42 @@ var TaskStore = ObjectAssign( {}, EventEmitter.prototype, {
     },
 
     getList: function() {
+        //return $.get(API_BASE_URL + MILESTONE_ENDPOINT);
         return _store;
     }
 
 });
 
-function isSameTask(a, b) {
-    return (a.milestone === b.milestone &&
-    a.taskName === b.taskName &&
-    a.dueDate === b.dueDate &&
-    a.isTimeSpecified === b.isTimeSpecified &&
-    a.completedDate === b.completedDate);
+function modifyArray(modification, task_id) {
+    var changed = false;
+    for (var i = 0; i < _store.milestones.length; ++i) {
+        for (var x = 0; x < _store.milestones[i].tasks.length; ++x) {
+            var curr_task = _store.milestones[i].tasks[x];
+            if (curr_task.id === task_id) {
+                modification(_store.milestones[i], x);
+                changed = true;
+                break;
+            }
+        }
+        if (changed) break;
+    }
 }
+
+function deleteTask(milestone, pos) {
+    milestone.tasks.splice(pos, 1);
+}
+
+function markAsDone(milestone, pos) {
+    milestone.tasks[pos].completed_on = new Date().toISOString();
+}
+
+var getMilestoneId = (function() {
+    var id = 0;
+    return function() {
+        id++;
+        return "milestone_id" + id;
+    };
+})();
 
 // Register each of the actions with the dispatcher
 // by changing the store's data and emitting a change
@@ -97,26 +139,37 @@ AppDispatcher.register(function(payload) {
         case AppConstants.ADD_TASK:
             // Add the data defined in the TaskActions
             // which the View will pass as a payload
-            _store.taskList.push(action.task);
+            var added = false;
+            for (var z = 0; z < _store.milestones.length; ++z) {
+                var curr_milestone = _store.milestones[z];
+                if (curr_milestone.content === action.task.milestone) {
+                    delete action.task["milestone"];
+                    curr_milestone.tasks.push(action.task);
+                    added = true;
+                    break;
+                }
+            }
+
+            if (!added) {
+                var milestone_name = action.task.milestone;
+                delete action.task["milestone"];
+                _store.milestones.push({
+                    id: getMilestoneId(), //temp id
+                    content: milestone_name,
+                    deadline: null,
+                    tasks: [action.task]
+                });
+            }
+
             TaskStore.emit(CHANGE_EVENT);
             break;
 
         case AppConstants.DELETE_TASK:
-            for (var i = 0; i < _store.taskList.length; ++i) {
-                if (isSameTask(_store.taskList[i], action.task)) {
-                    _store.taskList.splice(i, 1);
-                    break;
-                }
-            }
+            modifyArray(deleteTask, action.id);
             TaskStore.emit(CHANGE_EVENT);
             break;
         case AppConstants.MARK_DONE:
-            for (var j = 0; j < _store.taskList.length; ++j) {
-                if (isSameTask(_store.taskList[j], action.task)) {
-                    _store.taskList[j].completedDate = (new Date().getTime()/1000).toString();
-                    break;
-                }
-            }
+            modifyArray(markAsDone, action.id);
             TaskStore.emit(CHANGE_EVENT);
             break;
         default:

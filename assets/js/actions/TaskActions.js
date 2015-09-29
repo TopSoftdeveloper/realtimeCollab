@@ -8,16 +8,16 @@ module.exports = {
             task: task
         });
     },
-    deleteTask: function(task) {
+    deleteTask: function(id) {
         AppDispatcher.handleViewAction({
             actionType: AppConstants.DELETE_TASK,
-            task: task
+            id: id
         });
     },
-    markDone: function (task) {
+    markDone: function (id) {
         AppDispatcher.handleViewAction({
             actionType: AppConstants.MARK_DONE,
-            task: task
+            id: id
         });
     }
 };

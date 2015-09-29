@@ -24,19 +24,23 @@ var CompletedRow = React.createClass({
     handleChange: function() {
         this.setState({
             toShow: !this.state.toShow
-        });        
+        });
     },
     render: function() {
         if (this.props.completedTasks.length == 0) {
-            return false;
+            return (
+                <tr>
+                    <td></td>
+                </tr>
+            );
         }
 
         if (this.state.toShow) {
             var rows = this.props.completedTasks.map(function(task) {
                 return (
                         <CompletedTask
-                        key={getKey()} 
-                        taskName={task.taskName}                     
+                        key={getKey()}
+                        taskName={task.content}
                         />
                     );
             });
@@ -46,11 +50,11 @@ var CompletedRow = React.createClass({
                     <td className="completed" colSpan="3" onClick={this.handleChange}>
                         showing list
                         <table>
-                        <tbody>{rows}</tbody>
+                            <tbody>{rows}</tbody>
                         </table>
                     </td>
                 </tr>);
-        } 
+        }
 
         return (
             <tr>
@@ -64,11 +68,8 @@ var CompletedRow = React.createClass({
 var TaskRow = React.createClass({
     render: function () {
         var dateStr = "";
-        if (this.props.task.dueDate !== null) {
-            var date = new Date(parseInt(this.props.task.dueDate) * 1000);
-            dateStr = this.props.task.isTimeSpecified ?
-            date.toDateString() + " @ "  + date.toLocaleTimeString() :
-                date.toDateString();
+        if (this.props.task.deadline !== null) {
+            dateStr = this.props.task.deadline;
         }
 
         return (
@@ -79,7 +80,7 @@ var TaskRow = React.createClass({
                         onChange={this.props.onClickDone}
                     />
                 </td>
-                <td>{this.props.task.taskName}</td>
+                <td>{this.props.task.content}</td>
                 <td>{dateStr}</td>
                 <td>
                     <button 
@@ -99,6 +100,9 @@ var getKey = (function() {
 
 var TaskTable = React.createClass({
     getInitialState: function() {
+        //TaskStore.getList().done(function(data) {
+        //    return data;
+        //});
         return TaskStore.getList();
     },
     componentDidMount: function() {
@@ -112,11 +116,12 @@ var TaskTable = React.createClass({
     },
     addTask: function(e) {
         TaskActions.addTask({
+            id: getKey(), // temp id for use on client side
             milestone: this.state.inputMilestone,
-            taskName: this.state.inputTaskname,
-            dueDate: null,
-            isTimeSpecified: false,
-            completedDate: null
+            content: this.state.inputTaskname,
+            deadline: null,
+            is_time_specified: false,
+            completed_on: null
         });
 
         this.setState({
@@ -126,11 +131,11 @@ var TaskTable = React.createClass({
 
         e.preventDefault();
     },
-    deleteTask: function(task) {
-        TaskActions.deleteTask(task);
+    deleteTask: function(task_id) {
+        TaskActions.deleteTask(task_id);
     },
-    markDone: function(task) {
-        TaskActions.markDone(task);
+    markDone: function(task_id) {
+        TaskActions.markDone(task_id);
     },
     handleTaskNameChange: function(e) {
         this.setState({
@@ -141,59 +146,43 @@ var TaskTable = React.createClass({
         this.setState({
             inputMilestone: e.target.value
         });
-    },    
-    sortTasks: function(a, b) {
-        if (a.milestone < b.milestone) {
-            return -1;
-        }
-        if (a.milestone > b.milestone) {
-            return 1;
-        } 
-        return 0;
     },
-    getCompletedTasks: function(milestone) {
-       return this.state.taskList.filter(function(elem) {
-            return elem.completedDate != null && elem.milestone === milestone;
-        }); 
+    getCompletedTasks: function(milestone_id) {
+        var curr_milestone = this.state.milestones.filter(function(elem) {
+            return elem.id === milestone_id;
+        })[0];
+        return curr_milestone.tasks.filter(function(task) {
+            return task.completed_on !== null;
+        }.bind(this));
     },
     render: function() {
         var rows = [];
-        var lastMilestone = null;
 
-        this.state.taskList = this.state.taskList.sort(this.sortTasks);
+        this.state.milestones.forEach(function(milestone) {
+            rows.push(<MilestoneRow
+                milestone={milestone.content}
+                key={milestone.id}
+                />);
 
-        this.state.taskList.forEach(function(task, index) {
-            // End of a milestone
-            if (task.milestone !== lastMilestone) {
-                if (index != 0) {               
-                    rows.push(<CompletedRow 
-                        key={getKey()} 
-                        completedTasks={this.getCompletedTasks(lastMilestone)} 
+            milestone.tasks.forEach(function(task) {
+                // Only show non-completed tasks
+                // For completed tasks, keep track of the number
+                if (task.completed_on === null) {
+                    rows.push(<TaskRow
+                        task={task}
+                        key={task.id}
+                        onClickDone={this.markDone.bind(this, task.id)}
+                        onClickDelete={this.deleteTask.bind(this, task.id)}
                         />);
                 }
-                
-                rows.push(<MilestoneRow milestone={task.milestone} key={getKey()}/>);
-            }
+            }.bind(this));
 
-            // Only show non-completed tasks
-            // For completed tasks, keep track of the number
-            if (task.completedDate === null) {
-                rows.push(<TaskRow 
-                    task={task} 
-                    key={getKey()}
-                    onClickDone={this.markDone.bind(this, task)}
-                    onClickDelete={this.deleteTask.bind(this, task)}
-                    />);
-            } 
+            rows.push(<CompletedRow
+                key={getKey()}
+                completedTasks={this.getCompletedTasks(milestone.id)}
+                />);
 
-            lastMilestone = task.milestone;
         }.bind(this));
-
-        rows.push(<CompletedRow 
-            key={getKey()} 
-            completedTasks={this.getCompletedTasks(lastMilestone)} 
-            />);
-        
 
         return (
             <div>            
