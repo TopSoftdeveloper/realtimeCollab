@@ -206,7 +206,8 @@ server.route({
                 content: Joi.string().required(),
                 deadline: Joi.string().isoDate().default(null),
                 is_time_specified: Joi.boolean().default(false),
-                milestone_id: Joi.string().default(null)
+                milestone_id: Joi.string().default(null),
+                completed_on: Joi.string().isoDate().default(null)
             }
         }
     }

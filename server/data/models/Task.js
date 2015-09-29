@@ -8,6 +8,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         content: DataTypes.TEXT,
         deadline: DataTypes.DATE,
+        completed_on: DataTypes.DATE,
         is_time_specified: DataTypes.BOOLEAN
     },{
         underscored: true,
