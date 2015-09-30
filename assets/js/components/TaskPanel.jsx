@@ -100,12 +100,14 @@ var getKey = (function() {
 
 var TaskTable = React.createClass({
     getInitialState: function() {
-        //TaskStore.getList().done(function(data) {
-        //    return data;
-        //});
-        return TaskStore.getList();
+        return {milestones:[]};
     },
     componentDidMount: function() {
+        TaskStore.getList().done(function(data) {
+            if (this.isMounted()) {
+                this.setState(data);
+            }
+        }.bind(this));
         TaskStore.addChangeListener(this._onChange);
     },
     componentWillUnmount: function() {

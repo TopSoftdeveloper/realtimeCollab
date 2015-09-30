@@ -37,7 +37,8 @@ module.exports = {
             include: [
                 {
                     model: Task,
-                    attributes: ['id', 'content', 'deadline', 'is_time_specified', 'created_at', 'updated_at']
+                    attributes: ['id', 'content', 'deadline', 'completed_on',
+                        'is_time_specified', 'created_at', 'updated_at']
                 }
             ]
         })

@@ -92,8 +92,7 @@ var TaskStore = ObjectAssign( {}, EventEmitter.prototype, {
     },
 
     getList: function() {
-        //return $.get(API_BASE_URL + MILESTONE_ENDPOINT);
-        return _store;
+        return $.get(API_BASE_URL + MILESTONE_ENDPOINT);
     }
 
 });
