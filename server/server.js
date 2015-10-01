@@ -146,7 +146,6 @@ function getTaskById(task_id, reply) {
 
 function getTasks(request, reply) {
     var task_id = request.query.task_id;
-
     if (task_id === null) {
         storage.getAllTasks().then(function(tasks) {
             reply({
@@ -163,13 +162,29 @@ function getTasks(request, reply) {
 
 function getMilestones(request, reply) {
     storage.getMilestonesWithTasks().then(function(milestones) {
-
         reply({
             status: constants.STATUS_OK,
             milestones: milestones
         })
     });
+}
 
+function markTaskAsDone(request, reply) {
+    var task_id = request.payload.task_id;
+    storage.doesTaskExist(task_id).then(function(exists) {
+        if (!exists) {
+            reply({
+                status: constants.STATUS_FAIL,
+                error: format(constants.TASK_NOT_EXIST, task_id)
+            });
+        } else {
+            storage.markDone(task_id).then(function() {
+                reply({
+                    status: constants.STATUS_OK
+                });
+            });
+        }
+    });
 }
 
 server.route({
@@ -225,6 +240,22 @@ server.route({
             payload: {
                 content: Joi.string().required(),
                 deadline: Joi.string().isoDate().default(null)
+            }
+        }
+    }
+});
+
+server.route({
+    method: 'POST',
+    path: '/mark_completed',
+    config: {
+        handler: markTaskAsDone,
+        payload: {
+            parse: true
+        },
+        validate: {
+            payload: {
+                task_id: Joi.string().required()
             }
         }
     }

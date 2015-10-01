@@ -32,6 +32,15 @@ function _create(task) {
 }
 
 module.exports = {
+    markDone: function(task_id) {
+        return Task.update(
+            {
+                completed_on: new Date().toISOString()
+            },
+            {
+                where: {id: task_id}
+            })
+    },
     getMilestonesWithTasks: function() {
         return Milestone.findAll({
             include: [
