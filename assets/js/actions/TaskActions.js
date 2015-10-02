@@ -1,6 +1,5 @@
 var AppDispatcher = require('../AppDispatcher');
 var AppConstants = require('../AppConstants');
-var apiUtil = require('../apiUtils/apiUtil');
 
 module.exports = {
     loadTasks: function(milestones) {

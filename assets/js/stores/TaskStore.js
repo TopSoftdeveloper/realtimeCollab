@@ -4,14 +4,6 @@ var ObjectAssign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
 
 var CHANGE_EVENT = 'change';
-var API_BASE_URL = 'http://localhost:4000';
-var MILESTONE_ENDPOINT = '/milestone';
-var CREATE_TASK_ENDPOINT = '/create_task';
-var DELETE_TASK_ENDPOINT =  '/delete_task';
-var CREATE_MILESTONE_ENDPOINT = '/create_milestone';
-
-var _ = require('lodash');
-
 
 var _store = {milestones:[]};
 
