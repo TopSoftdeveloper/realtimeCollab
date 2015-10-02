@@ -34,7 +34,7 @@ var TaskStore = ObjectAssign( {}, EventEmitter.prototype, {
     }
 });
 
-function modifyArray(modification, task_id, optional_param) {
+function findTaskAndModify(modification, task_id, optional_param) {
     var changed = false;
     for (var i = 0; i < _store.milestones.length; ++i) {
         for (var x = 0; x < _store.milestones[i].tasks.length; ++x) {
@@ -119,15 +119,15 @@ AppDispatcher.register(function(payload) {
             TaskStore.emit(CHANGE_EVENT);
             break;
         case AppConstants.DELETE_TASK:
-            modifyArray(deleteTask, action.id);
+            findTaskAndModify(deleteTask, action.id);
             TaskStore.emit(CHANGE_EVENT);
             break;
         case AppConstants.MARK_DONE:
-            modifyArray(markAsDone, action.id);
+            findTaskAndModify(markAsDone, action.id);
             TaskStore.emit(CHANGE_EVENT);
             break;
         case AppConstants.REPLACE_TASK_ID:
-            modifyArray(replaceTaskId, action.original, action.replacement);
+            findTaskAndModify(replaceTaskId, action.original, action.replacement);
             TaskStore.emit(CHANGE_EVENT);
             break;
         default:

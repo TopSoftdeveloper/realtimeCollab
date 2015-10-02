@@ -158,8 +158,6 @@ function getTasks(request, reply) {
     }
 }
 
-
-
 function getMilestones(request, reply) {
     storage.getMilestonesWithTasks().then(function(milestones) {
         reply({
