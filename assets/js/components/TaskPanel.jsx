@@ -1,7 +1,8 @@
 var React = require('react');
 var TaskStore = require('../stores/TaskStore');
-var TaskActions = require('../actions/TaskActions');
+var TaskService = require('../services/TaskService');
 var $ = require('jquery');
+var _ = require('lodash');
 
 var MilestoneRow = React.createClass({
     render: function() {
@@ -39,7 +40,7 @@ var CompletedRow = React.createClass({
             var rows = this.props.completedTasks.map(function(task) {
                 return (
                         <CompletedTask
-                        key={getKey()}
+                        key={_.uniqueId('completed_task')}
                         taskName={task.content}
                         />
                     );
@@ -93,22 +94,13 @@ var TaskRow = React.createClass({
     }
 });
 
-var getKey = (function() {
-    var id = 0;
-    return function() { return id++; };
-})();
-
 var TaskTable = React.createClass({
     getInitialState: function() {
         return {milestones:[]};
     },
     componentDidMount: function() {
-        TaskStore.getList().done(function(data) {
-            if (this.isMounted()) {
-                this.setState(data);
-            }
-        }.bind(this));
         TaskStore.addChangeListener(this._onChange);
+        TaskService.loadTasks();
     },
     componentWillUnmount: function() {
         TaskStore.removeChangeListener(this._onChange);
@@ -117,12 +109,19 @@ var TaskTable = React.createClass({
         this.setState(TaskStore.getList());
     },
     addTask: function(e) {
-        TaskActions.addTask({
-            id: getKey(), // temp id for use on client side
-            milestone: this.state.inputMilestone,
+        var milestone_name = this.state.inputMilestone;
+        var matches = this.state.milestones.filter(function(milestone) {
+            return milestone.content === milestone_name;
+        });
+        var milestone_id = null;
+        if (matches.length !== 0) {
+            milestone_id = matches[0].id;
+        }
+        TaskService.addTask({
+            id: _.uniqueId('task'), //temp id
+            milestone_id: milestone_id,
+            milestone_content: milestone_name,
             content: this.state.inputTaskname,
-            deadline: null,
-            is_time_specified: false,
             completed_on: null
         });
 
@@ -134,10 +133,10 @@ var TaskTable = React.createClass({
         e.preventDefault();
     },
     deleteTask: function(task_id) {
-        TaskActions.deleteTask(task_id);
+        TaskService.deleteTask(task_id);
     },
     markDone: function(task_id) {
-        TaskActions.markDone(task_id);
+        TaskService.markDone(task_id);
     },
     handleTaskNameChange: function(e) {
         this.setState({
@@ -159,11 +158,10 @@ var TaskTable = React.createClass({
     },
     render: function() {
         var rows = [];
-
         this.state.milestones.forEach(function(milestone) {
             rows.push(<MilestoneRow
                 milestone={milestone.content}
-                key={milestone.id}
+                key={_.uniqueId('milestone_row')}
                 />);
 
             milestone.tasks.forEach(function(task) {
@@ -180,7 +178,7 @@ var TaskTable = React.createClass({
             }.bind(this));
 
             rows.push(<CompletedRow
-                key={getKey()}
+                key={_.uniqueId('completed')}
                 completedTasks={this.getCompletedTasks(milestone.id)}
                 />);
 
