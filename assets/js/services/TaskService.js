@@ -60,7 +60,7 @@ module.exports = {
     deleteTask: function(id) {
         TaskActions.markAsDirty(id);
 
-        apiUtil.deleteTask(id).done(function(res) {
+        apiUtil.deleteTask(id).done(function() {
             TaskActions.deleteTask(id);
         }).fail(function(e) {
             console.log(e);
@@ -69,5 +69,10 @@ module.exports = {
     },
     markDone: function (id) {
         TaskActions.markDone(id);
+
+        apiUtil.markDone(id).fail(function(e) {
+            console.log(e);
+            TaskActions.unmarkDone(id);
+        });
     }
 };

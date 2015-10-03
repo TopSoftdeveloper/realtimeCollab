@@ -44,5 +44,11 @@ module.exports = {
             actionType: AppConstants.MARK_DONE,
             id: id
         });
+    },
+    unmarkDone: function (id) {
+        AppDispatcher.handleViewAction({
+            actionType: AppConstants.UNMARK_DONE,
+            id: id
+        });
     }
 };
