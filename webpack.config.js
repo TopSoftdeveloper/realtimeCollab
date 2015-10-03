@@ -1,9 +1,12 @@
 // Webpack config file
 module.exports = {
-    entry: './assets/js/components/TaskPanel.jsx',
+    entry: {
+        home: './assets/home/js/home.js',
+        app: './assets/app/js/components/TaskPanel.jsx'
+    },
     output: {
-        path: __dirname + '/assets/js',
-        filename: 'bundle.js'
+        path: __dirname + '/assets',
+        filename: '[name]-bundle.js'
     },
     module: {
         loaders: [
