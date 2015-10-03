@@ -167,7 +167,7 @@ var TaskTable = React.createClass({
             milestone.tasks.forEach(function(task) {
                 // Only show non-completed tasks
                 // For completed tasks, keep track of the number
-                if (task.completed_on === null) {
+                if (task.completed_on === null && task.dirty !== true) {
                     rows.push(<TaskRow
                         task={task}
                         key={task.id}

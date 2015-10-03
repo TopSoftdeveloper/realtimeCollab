@@ -27,6 +27,18 @@ module.exports = {
             id: id
         });
     },
+    markAsDirty: function(id) {
+        AppDispatcher.handleViewAction({
+            actionType: AppConstants.MARK_AS_DIRTY,
+            id: id
+        });
+    },
+    unmarkDirty: function(id) {
+        AppDispatcher.handleViewAction({
+            actionType: AppConstants.UNMARK_DIRTY,
+            id: id
+        });
+    },
     markDone: function (id) {
         AppDispatcher.handleViewAction({
             actionType: AppConstants.MARK_DONE,

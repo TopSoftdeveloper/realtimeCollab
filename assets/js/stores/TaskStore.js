@@ -75,6 +75,14 @@ function markAsDone(milestone, pos) {
     milestone.tasks[pos].completed_on = new Date().toISOString();
 }
 
+function markAsDirty(milestone, pos) {
+    milestone.tasks[pos].dirty = true;
+}
+
+function unmarkDirty(milestone, pos) {
+    milestone.tasks[pos].dirty = false;
+}
+
 function replaceTaskId(milestone, pos, replacement) {
     milestone.tasks[pos].id = replacement;
 }
@@ -83,7 +91,7 @@ function replaceTaskId(milestone, pos, replacement) {
 // by changing the store's data and emitting a change
 AppDispatcher.register(function(payload) {
     var action = payload.action;
-
+    
     switch(action.actionType) {
         case AppConstants.LOAD_TASKS:
             _store = action.milestones;
@@ -100,6 +108,14 @@ AppDispatcher.register(function(payload) {
             break;
         case AppConstants.DELETE_MILESTONE:
             findMilestoneAndModify(deleteMilestone, action.id);
+            TaskStore.emit(CHANGE_EVENT);
+            break;
+        case AppConstants.MARK_AS_DIRTY:
+            findTaskAndModify(markAsDirty, action.id);
+            TaskStore.emit(CHANGE_EVENT);
+            break;
+        case AppConstants.UNMARK_DIRTY:
+            findTaskAndModify(unmarkDirty, action.id);
             TaskStore.emit(CHANGE_EVENT);
             break;
         case AppConstants.REPLACE_MILESTONE_ID:

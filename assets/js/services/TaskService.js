@@ -58,7 +58,14 @@ module.exports = {
         }
     },
     deleteTask: function(id) {
-        TaskActions.deleteTask(id);
+        TaskActions.markAsDirty(id);
+
+        apiUtil.deleteTask(id).done(function(res) {
+            TaskActions.deleteTask(id);
+        }).fail(function(e) {
+            console.log(e);
+            TaskActions.unmarkDirty(id);
+        });
     },
     markDone: function (id) {
         TaskActions.markDone(id);
