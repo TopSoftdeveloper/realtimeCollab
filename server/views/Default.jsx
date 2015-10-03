@@ -2,9 +2,7 @@
 var React = require('react');
 
 var Default = React.createClass({
-
     render: function() {
-
         return(
             <html>
             <head>
@@ -13,11 +11,11 @@ var Default = React.createClass({
                 <title>Tiny</title>
                 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"></link>
                 <link href='https://fonts.googleapis.com/css?family=Quattrocento|Open+Sans' rel='stylesheet' type='text/css'></link>
-                <link rel="stylesheet" type="text/css" href="assets/css/main.css"></link>
-                </head>
+                <link rel="stylesheet" type="text/css" href="assets/app/css/main.css"></link>
+            </head>
 
             <body style={{fontFamily: ['Quattrocento', 'sans-serif']}}>
-                <script src="assets/js/bundle.js"></script>
+                <script src="assets/app-bundle.js"></script>
                 <div id="task-panel"></div>
             </body>
             </html>
