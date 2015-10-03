@@ -56,7 +56,7 @@ server.register([require('vision'), require('inert')], function (err) {
                 template: 'index.html',
                 context: {
                     title: 'NUSCollab',
-                    header: 'blah'
+                    header: 'Collaborate with your project mates with ease'
                 }
             }
         }
