@@ -5,5 +5,5 @@
     "node_modules/**/node_modules",
     "assets/*"
   ],
-  "ext": "js json jsx"
+  "ext": "js json jsx html css"
 }
