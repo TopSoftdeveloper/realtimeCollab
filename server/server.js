@@ -21,7 +21,8 @@ server.register([require('vision'), require('inert')], function (err) {
 
     server.views({
         engines: {
-            jsx: require('hapi-react-views')
+            jsx: require('hapi-react-views'),
+            html: require('handlebars')
         },
         relativeTo: __dirname,
         path: 'views'
@@ -43,15 +44,21 @@ server.register([require('vision'), require('inert')], function (err) {
         method: 'GET',
         path: '/app',
         handler: {
-            view: 'Default'
+            view: 'Default.jsx'
         }
     });
 
     server.route({
         method: 'GET',
         path: '/',
-        handler: function(request, reply) {
-            reply('heya');
+        handler: {
+            view: {
+                template: 'index.html',
+                context: {
+                    title: 'NUSCollab',
+                    header: 'blah'
+                }
+            }
         }
     });
 
