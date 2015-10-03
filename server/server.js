@@ -27,23 +27,31 @@ server.register([require('vision'), require('inert')], function (err) {
         path: 'views'
     });
 
-    // Add a route to serve static assets (CSS, JS, IMG)
+
     server.route({
         method: 'GET',
         path: '/{param*}',
         handler: {
             directory: {
-                path: './'
+                path: './',
+                redirectToSlash: true
             }
         }
     });
 
-    // Add main app route
+    server.route({
+        method: 'GET',
+        path: '/app',
+        handler: {
+            view: 'Default'
+        }
+    });
+
     server.route({
         method: 'GET',
         path: '/',
-        handler: {
-            view: 'Default'
+        handler: function(request, reply) {
+            reply('heya');
         }
     });
 
