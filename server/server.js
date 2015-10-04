@@ -9,7 +9,7 @@ var Boom = require('boom');
 var config = require('config');
 var Jwt = require('jsonwebtoken');
 
-var token_expiry = config.get('authentication.tokenExpiry');
+var token_expiry = config.get('authentication.tokenExpirySeconds');
 var privateKey = config.get('authentication.privateKey');
 
 // Create a server with a host and port
