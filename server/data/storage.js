@@ -4,6 +4,8 @@ var Promise = require("bluebird");
 var models = require('./models/modelManager');
 var Task = models.Task;
 var Milestone = models.Milestone;
+var User = models.User;
+
 var format = require('string-format');
 
 function _create(task) {
@@ -32,6 +34,25 @@ function _create(task) {
 }
 
 module.exports = {
+    findUser: function(email) {
+        return User.find({
+            where: {
+                email: email
+            }
+        });
+    },
+    doesUserExist: function(email) {
+        return User.isExist(email);
+    },
+    createUser: function(salt, hashed_password, email) {
+        var id = shortid.generate();
+        return User.create({
+            id: id,
+            password: hashed_password,
+            salt: salt,
+            email: email
+        });
+    },
     markDone: function(task_id) {
         return Task.update(
             {
@@ -101,7 +122,6 @@ module.exports = {
                 resolve(id);
             });
         }.bind(this));
-
     },
     deleteTask: function(task_id) {
         return Task.destroy({

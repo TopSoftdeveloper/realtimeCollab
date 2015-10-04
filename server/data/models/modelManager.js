@@ -16,7 +16,8 @@ var sequelize = new Sequelize(
 
 var modelFiles = [
     'Milestone',
-    'Task'
+    'Task',
+    'User'
 ];
 
 modelFiles.forEach(function(model) {

@@ -12,5 +12,9 @@
         "idle": 10000
       }
     }
+  },
+  "authentication": {
+    "privateKey": "37LvDSm4XvjYOh9Y",
+    "tokenExpiry": 3600 // seconds
   }
 }

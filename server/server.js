@@ -4,6 +4,13 @@ var storage = require('./data/storage');
 var Joi = require('joi');
 var constants = require('./constants');
 var format = require('string-format');
+var Bcrypt = require('bcrypt');
+var Boom = require('boom');
+var config = require('config');
+var Jwt = require('jsonwebtoken');
+
+var token_expiry = config.get('authentication.tokenExpiry');
+var privateKey = config.get('authentication.privateKey');
 
 // Create a server with a host and port
 var server = new Hapi.Server();
@@ -13,11 +20,24 @@ server.connection({
     port: 4000
 });
 
-server.register([require('vision'), require('inert')], function (err) {
+var validate = function(request, decodedToken, callback) {
+    var diff = Date.now() /1000 - decodedToken.iat;
+    if (diff > decodedToken.expiresIn) {
+        return callback(null, false);
+    }
+    callback(null, true, decodedToken);
+};
+
+server.register([require('vision'), require('inert'), require('hapi-auth-jwt')], function (err) {
 
     if (err) {
-        console.log('Failed to load vision.');
+        console.log(err);
     }
+
+    server.auth.strategy('token', 'jwt', {
+        validateFunc: validate,
+        key: privateKey
+    });
 
     server.views({
         engines: {
@@ -199,6 +219,104 @@ function markTaskAsDone(request, reply) {
         }
     });
 }
+/************************** AUTHENTICATION*************************/
+
+
+function create_account(request, reply) {
+    var password = request.payload.password;
+    var email = request.payload.email;
+
+    storage.doesUserExist(email).then(function(exists) {
+        if (exists) {
+            reply(Boom.forbidden(format(constants.EMAIL_ALREADY_EXISTS, email)));
+            return;
+        }
+
+        Bcrypt.genSalt(10, function(err, salt) {
+            Bcrypt.hash(password, salt, function(err, hash) {
+                storage.createUser(salt, hash, email).then(function(user) {
+                    reply({
+                        status: constants.STATUS_OK,
+                        user_id: user.id
+                    });
+                }, function(error) {
+                    reply(Boom.forbidden(error));
+                });
+            });
+        });
+
+    });
+}
+
+function login(request, reply) {
+    var password = request.payload.password;
+    var email = request.payload.email;
+
+    storage.findUser(email).then(function(user) {
+        if (user === null) {
+            reply(Boom.forbidden(constants.AUTHENTICATION_ERROR));
+            return;
+        }
+
+        Bcrypt.hash(password, user.salt, function(err, hash) {
+            if (hash !== user.password) {
+                reply(Boom.forbidden(constants.AUTHENTICATION_ERROR));
+                return;
+            }
+
+            var token_data = {
+                email: user.email,
+                user_id: user.id,
+                expiresIn: token_expiry
+            };
+
+            reply({
+                email: user.email,
+                user_id: user.id,
+                token: Jwt.sign(token_data, privateKey)
+            });
+        });
+
+    }, function(error) {
+        reply(Boom.forbidden(constants.AUTHENTICATION_ERROR));
+    })
+}
+
+server.route({
+    method: 'POST',
+    path: '/create_account',
+    config: {
+        handler: create_account,
+        payload: {
+            parse: true
+        },
+        validate: {
+            payload: {
+                email: Joi.string().email().required(),
+                password: Joi.string().min(3).required()
+            }
+        }
+    }
+});
+
+server.route({
+    method: 'POST',
+    path: '/login',
+    config: {
+        handler: login,
+        payload: {
+            parse: true
+        },
+        validate: {
+            payload: {
+                email: Joi.string().email().required(),
+                password: Joi.string().min(3).required()
+            }
+        }
+    }
+});
+/*****************************************************************/
+
 
 server.route({
     method: 'GET',
@@ -217,6 +335,7 @@ server.route({
     method: 'GET',
     path: '/milestone',
     config: {
+        auth: 'token',
         handler: getMilestones
     }
 });
