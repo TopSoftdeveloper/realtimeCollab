@@ -34,6 +34,13 @@ function _create(task) {
 }
 
 module.exports = {
+    removeUser: function(email) {
+        return User.destroy({
+            where: {
+                email: email
+            }
+        });
+    },
     findUser: function(email) {
         return User.find({
             where: {
