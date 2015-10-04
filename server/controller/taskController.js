@@ -2,6 +2,7 @@ var constants = require('../constants');
 var storage = require('../data/storage');
 var format = require('string-format');
 var Joi = require('joi');
+var Boom = require('boom');
 
 module.exports = {
     createTask: {
@@ -54,10 +55,7 @@ module.exports = {
 function getTaskById(task_id, reply) {
     storage.doesTaskExist(task_id).then(function(exists) {
         if (!exists) {
-            reply({
-                status: constants.STATUS_FAIL,
-                error: format(constants.TASK_NOT_EXIST, task_id)
-            });
+            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
         } else {
             storage.getTask(task_id).then(function(task) {
                 reply({
@@ -94,9 +92,7 @@ function createTask(request, reply) {
         task.id = id;
         reply(task);
     }, function(error) {
-        reply({
-            error: error
-        });
+        reply(Boom.badRequest(error));
     });
 }
 
@@ -104,10 +100,7 @@ function markTaskAsDone(request, reply) {
     var task_id = request.payload.task_id;
     storage.doesTaskExist(task_id).then(function(exists) {
         if (!exists) {
-            reply({
-                status: constants.STATUS_FAIL,
-                error: format(constants.TASK_NOT_EXIST, task_id)
-            });
+            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
         } else {
             storage.markDone(task_id).then(function() {
                 reply({
@@ -120,13 +113,9 @@ function markTaskAsDone(request, reply) {
 
 function deleteTask(request, reply) {
     var task_id = request.payload.task_id;
-
     storage.doesTaskExist(task_id).then(function(exists) {
         if (!exists) {
-            reply({
-                status: constants.STATUS_FAIL,
-                error: format(constants.TASK_NOT_EXIST, task_id)
-            });
+            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
         } else {
             storage.deleteTask(task_id).then(function() {
                 reply({

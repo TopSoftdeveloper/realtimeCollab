@@ -2,6 +2,7 @@ var constants = require('../constants');
 var storage = require('../data/storage');
 var format = require('string-format');
 var Joi = require('joi');
+var Boom = require('boom');
 
 module.exports = {
     createMilestone: {
@@ -17,7 +18,6 @@ module.exports = {
         }
     },
     getMilestone: {
-        auth: 'token',
         handler: getMilestones
     },
     removeMilestone: {
@@ -42,9 +42,7 @@ function createMilestone(request, reply) {
         milestone.id = id;
         reply(milestone);
     }, function(error) {
-        reply({
-            error: error
-        });
+        reply(Boom.internal(error));
     });
 }
 
@@ -62,10 +60,7 @@ function deleteMilestone(request, reply) {
 
     storage.doesMilestoneExist(milestone_id).then(function(exists) {
         if (!exists) {
-            reply({
-                status: constants.STATUS_FAIL,
-                error: format(constants.MILESTONE_NOT_EXIST, milestone_id)
-            });
+            reply(Boom.badRequest(format(constants.MILESTONE_NOT_EXIST, milestone_id)));
         } else {
             storage.deleteMilestone(milestone_id).then(function() {
                 reply({
