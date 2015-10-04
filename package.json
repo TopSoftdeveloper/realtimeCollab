@@ -4,7 +4,8 @@
   "scripts": {
     "start": "node server/server.js",
     "build": "webpack -p --progress",
-    "dev": "webpack --progress --color --watch & nodemon"
+    "dev": "webpack --progress --color --watch & nodemon",
+    "test": "mocha --timeout 5000"
   },
   "dependencies": {
     "bcrypt": "^0.8.5",
@@ -35,8 +36,13 @@
     "vision": "^3.0.0"
   },
   "devDependencies": {
+    "chai": "^3.3.0",
+    "code": "^1.5.0",
     "jsx-loader": "^0.13.2",
+    "lab": "^6.1.0",
+    "mocha": "^2.3.3",
     "nodemon": "^1.4.1",
+    "supertest": "^1.1.0",
     "webpack": "^1.12.1"
   }
 }
