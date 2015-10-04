@@ -96,15 +96,16 @@ module.exports = {
         return Milestone.isExist(milestone_id);
     },
     createTask: function(task) {
-        if (task.milestone_id === null) {
-            return _create(task);
+        if ('milestone_id' in task && task.milestone_id !== null) {
+            return Milestone.isExist(task.milestone_id).then(function(exists) {
+                if (!exists) {
+                    return Promise.reject(format(constants.MILESTONE_NOT_EXIST, task.milestone_id));
+                }
+                return _create(task);
+            });
+
         }
-        return Milestone.isExist(task.milestone_id).then(function(exists) {
-            if (!exists) {
-                return Promise.reject(format(constants.MILESTONE_NOT_EXIST, task.milestone_id));
-            }
-            return _create(task);
-        });
+        return _create(task);
     },
     createMilestone: function(milestone) {
         return new Promise(function(resolve, reject) {
