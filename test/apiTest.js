@@ -19,10 +19,8 @@ var task_id = null;
 var milestone_id = null;
 
 describe('Authentication', function() {
-    var token = null;
     var user_id = null;
-    var created_time = null;
-    var BUFFER_SECONDS = 5;
+    var BUFFER_SECONDS = 3;
 
     before(function(done) {
        // Prepare database
@@ -31,8 +29,8 @@ describe('Authentication', function() {
         });
     });
 
-    it('should return user id', function(done) {
-        created_time = Math.floor((new Date()).getTime() / 1000);
+    it('should return token, email and user id upon account creation', function(done) {
+        var created_time = Math.floor((new Date()).getTime() / 1000);
 
         api.post('/create_account')
             .set('Accept', 'application/x-www-form-urlencoded')
@@ -44,9 +42,17 @@ describe('Authentication', function() {
             .expect(200)
             .end(function(err, res) {
                 user_id = res.body.user_id;
-                expect(res.body.status).to.equal(constants.STATUS_OK);
+                expect(res.body.email).to.equal(TEST_EMAIL);
                 expect(user_id).to.have.length.above(6);
-                done();
+                Jwt.verify(res.body.token, secret_key, function(err, decoded) {
+                    console.log(err);
+                    expect(err).to.equal(null);
+                    expect(decoded.email).to.equal(TEST_EMAIL);
+                    expect(decoded.user_id).to.equal(user_id);
+                    expect(decoded.expiresIn).to.equal(token_expiry);
+                    expect(decoded.iat).to.be.within(created_time, created_time + BUFFER_SECONDS);
+                    done();
+                });
             });
     });
 
@@ -66,7 +72,9 @@ describe('Authentication', function() {
             });
     });
 
-    it('should return authentication token, email and user id', function(done) {
+    it('should return token, email and user id upon login', function(done) {
+        var created_time = Math.floor((new Date()).getTime() / 1000);
+
         api.post('/login')
             .set('Accept', 'application/x-www-form-urlencoded')
             .send({
@@ -76,10 +84,9 @@ describe('Authentication', function() {
             .expect('Content-Type', /json/)
             .expect(200)
             .end(function(err, res) {
-                token = res.body.token;
                 expect(res.body.email).to.equal(TEST_EMAIL);
                 expect(res.body.user_id).to.equal(user_id);
-                Jwt.verify(token, secret_key, function(err, decoded) {
+                Jwt.verify(res.body.token, secret_key, function(err, decoded) {
                     expect(err).to.equal(null);
                     expect(decoded.email).to.equal(TEST_EMAIL);
                     expect(decoded.user_id).to.equal(user_id);

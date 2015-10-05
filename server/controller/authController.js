@@ -39,6 +39,15 @@ module.exports = {
     }
 };
 
+function get_token(private_key, email, user_id, expires_in) {
+    var token_data = {
+        email: email,
+        user_id: user_id,
+        expiresIn: expires_in
+    };
+    return Jwt.sign(token_data, private_key);
+}
+
 function create_account(request, reply) {
     var password = request.payload.password;
     var email = request.payload.email;
@@ -53,8 +62,9 @@ function create_account(request, reply) {
             Bcrypt.hash(password, salt, function(err, hash) {
                 storage.createUser(salt, hash, email).then(function(user) {
                     reply({
-                        status: constants.STATUS_OK,
-                        user_id: user.id
+                        email: email,
+                        user_id: user.id,
+                        token: get_token(privateKey, user.email, user.id, token_expiry)
                     });
                 }, function(error) {
                     reply(Boom.forbidden(error));
@@ -81,16 +91,10 @@ function login(request, reply) {
                 return;
             }
 
-            var token_data = {
-                email: user.email,
-                user_id: user.id,
-                expiresIn: token_expiry
-            };
-
             reply({
                 email: user.email,
                 user_id: user.id,
-                token: Jwt.sign(token_data, privateKey)
+                token: get_token(privateKey, user.email, user.id, token_expiry)
             });
         });
 
