@@ -23,36 +23,51 @@ var validate = function(request, decodedToken, callback) {
     callback(null, true, decodedToken);
 };
 
-server.register([require('vision'), require('inert'), require('hapi-auth-jwt')], function (err) {
-
-    if (err) {
-        console.log(err);
-    }
-
-    server.auth.strategy('token', 'jwt', {
-        validateFunc: validate,
-        key: privateKey
-    });
-
-    server.auth.default('token');
-
-    server.views({
-        engines: {
-            jsx: require('hapi-react-views'),
-            html: require('handlebars')
-        },
-        relativeTo: __dirname,
-        path: 'views'
-    });
-
-    server.route(Routes.endpoints);
-
-
-    server.start(function (err) {
-        if (err) {
-            throw err;
+server.register([
+        require('vision'),
+        require('inert'),
+        require('hapi-auth-jwt'),
+        {
+            register: Good,
+            options: {
+                reporters: [{
+                    reporter: require('good-console'),
+                    events: {
+                        response: '*',
+                        log: '*'
+                    }
+                }]
+            }
         }
-        console.log(__dirname);
-        console.log('Server is listening at ' + server.info.uri);
-    });
+    ],
+    function (err) {
+        if (err) {
+            console.log(err);
+        }
+
+        server.auth.strategy('token', 'jwt', {
+            validateFunc: validate,
+            key: privateKey
+        });
+
+        server.auth.default('token');
+
+        server.views({
+            engines: {
+                jsx: require('hapi-react-views'),
+                html: require('handlebars')
+            },
+            relativeTo: __dirname,
+            path: 'views'
+        });
+
+        server.route(Routes.endpoints);
+
+        server.start(function (err) {
+            if (err) {
+                throw err;
+            }
+            console.log(__dirname);
+            console.log('Server is listening at ' + server.info.uri);
+        });
 });
