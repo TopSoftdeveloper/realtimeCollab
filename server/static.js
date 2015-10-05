@@ -1,5 +1,6 @@
 module.exports = {
     getPublic: {
+        auth: false,
         handler: {
             directory: {
                 path: './',
@@ -13,6 +14,7 @@ module.exports = {
         }
     },
     index: {
+        auth: false,
         handler: {
             view: {
                 template: 'index.html',
