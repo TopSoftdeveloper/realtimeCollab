@@ -11,6 +11,7 @@ var Jwt = require('jsonwebtoken');
 var config = require('config');
 
 var secret_key = config.get('authentication.privateKey');
+var token_expiry = config.get('authentication.tokenExpirySeconds');
 
 var TEST_EMAIL = 'test@test.com';
 var TEST_PASSWORD = 'abcdefg';
@@ -18,6 +19,11 @@ var task_id = null;
 var milestone_id = null;
 
 describe('Authentication', function() {
+    var token = null;
+    var user_id = null;
+    var created_time = null;
+    var BUFFER_SECONDS = 5;
+
     before(function(done) {
        // Prepare database
         storage.removeUser(TEST_EMAIL).then(function() {
@@ -26,6 +32,8 @@ describe('Authentication', function() {
     });
 
     it('should return user id', function(done) {
+        created_time = Math.floor((new Date()).getTime() / 1000);
+
         api.post('/create_account')
             .set('Accept', 'application/x-www-form-urlencoded')
             .send({
@@ -35,8 +43,9 @@ describe('Authentication', function() {
             .expect('Content-Type', /json/)
             .expect(200)
             .end(function(err, res) {
+                user_id = res.body.user_id;
                 expect(res.body.status).to.equal(constants.STATUS_OK);
-                expect(res.body.user_id).to.have.length.above(6);
+                expect(user_id).to.have.length.above(6);
                 done();
             });
     });
@@ -55,6 +64,63 @@ describe('Authentication', function() {
                 expect(res.body.message).to.equal(format(constants.EMAIL_ALREADY_EXISTS, TEST_EMAIL));
                 done();
             });
+    });
+
+    it('should return authentication token, email and user id', function(done) {
+        api.post('/login')
+            .set('Accept', 'application/x-www-form-urlencoded')
+            .send({
+                email: TEST_EMAIL,
+                password: TEST_PASSWORD
+            })
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end(function(err, res) {
+                token = res.body.token;
+                expect(res.body.email).to.equal(TEST_EMAIL);
+                expect(res.body.user_id).to.equal(user_id);
+                Jwt.verify(token, secret_key, function(err, decoded) {
+                    expect(err).to.equal(null);
+                    expect(decoded.email).to.equal(TEST_EMAIL);
+                    expect(decoded.user_id).to.equal(user_id);
+                    expect(decoded.expiresIn).to.equal(token_expiry);
+                    expect(decoded.iat).to.be.within(created_time, created_time + BUFFER_SECONDS);
+                    done();
+                });
+            });
+    });
+
+    it('should indicate access forbidden when token timeout', function(done) {
+        var token_data = {
+            email: 'myemail@u.nus.edu',
+            user_id: 'abc123',
+            expiresIn: 1
+        };
+
+        var token_1_sec_expiry = Jwt.sign(token_data, secret_key);
+
+        setTimeout(function() {
+            api.get('/task')
+                .set('Accept', 'application/json')
+                .set('Authorization', 'bearer ' + token_1_sec_expiry)
+                .expect('Content-Type', /json/)
+                .expect(401, done);
+        }, 1100);
+    });
+
+    it('should indicate access forbidden when given token signed with wrong key', function(done) {
+        var token_data = {
+            email: 'myemail@u.nus.edu',
+            user_id: 'abc123',
+            expiresIn: 100
+        };
+
+        var fake_token = Jwt.sign(token_data, 'someWrongKey');
+        api.get('/task')
+            .set('Accept', 'application/json')
+            .set('Authorization', 'bearer ' + fake_token)
+            .expect('Content-Type', /json/)
+            .expect(401, done);
     });
 });
 
