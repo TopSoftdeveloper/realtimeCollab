@@ -16,20 +16,39 @@
 
     <div class="container">
         <!--class prefix must be equal to the popup div id prefix -->
-        <button class="my_popup_open">Get Started!</button>
+        <button class="signup_popup_open">Get Started!</button>
 
-        <div id="my_popup">
-            <h2><span class="fontawesome-lock"></span>Sign In</h2>
-            <form action="#">
+        <div id="signup_popup" class="auth_popup">
+            <h2><span class="fontawesome-lock"></span>Sign Up</h2>
+            <form class="signup_form">
                 <fieldset>
 
-                    <p><label for="email">E-mail address</label></p>
-                    <p><input type="email" id="email" placeholder="mail@address.com"></p>
+                    <p><label>E-mail address</label></p>
+                    <p><input type="email" class="email_input" placeholder="mail@address.com"></p>
 
-                    <p><label for="password">Password</label></p>
-                    <p><input type="password" id="password" placeholder="password"></p>
+                    <p><label>Password</label></p>
+                    <p><input type="password" class="password_input" placeholder="password"></p>
 
                     <p><input type="submit" value="Sign Up"></p>
+
+                </fieldset>
+            </form>
+        </div>
+
+        <button class="login_popup_open">Log in</button>
+
+        <div id="login_popup" class="auth_popup">
+            <h2><span class="fontawesome-lock"></span>Log In</h2>
+            <form class="login_form">
+                <fieldset>
+
+                    <p><label>E-mail address</label></p>
+                    <p><input type="email" class="email_input" placeholder="mail@address.com"></p>
+
+                    <p><label>Password</label></p>
+                    <p><input type="password" class="password_input" placeholder="password"></p>
+
+                    <p><input type="submit" value="Log in"></p>
 
                 </fieldset>
             </form>
@@ -37,10 +56,12 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            $('#my_popup').popup({
-                transition: 'all 0.3s'
-            });
+        $('#signup_popup').popup({
+            transition: 'all 0.3s'
+        });
+
+        $('#login_popup').popup({
+            transition: 'all 0.3s'
         });
     </script>
 
