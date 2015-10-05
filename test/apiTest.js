@@ -7,16 +7,19 @@ var constants = require('../server/constants');
 var storage = require('../server/data/storage');
 var format = require('string-format');
 var Promise = require("bluebird");
+var Jwt = require('jsonwebtoken');
+var config = require('config');
+
+var secret_key = config.get('authentication.privateKey');
 
 var TEST_EMAIL = 'test@test.com';
 var TEST_PASSWORD = 'abcdefg';
 var task_id = null;
 var milestone_id = null;
 
-
 describe('Authentication', function() {
     before(function(done) {
-       //Prepare database
+       // Prepare database
         storage.removeUser(TEST_EMAIL).then(function() {
             done();
         });
@@ -24,14 +27,14 @@ describe('Authentication', function() {
 
     it('should return user id', function(done) {
         api.post('/create_account')
-        .set('Accept', 'application/x-www-form-urlencoded')
-        .send({
-                email: TEST_EMAIL,
-                password: TEST_PASSWORD
-            })
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end(function(err, res) {
+            .set('Accept', 'application/x-www-form-urlencoded')
+            .send({
+                    email: TEST_EMAIL,
+                    password: TEST_PASSWORD
+                })
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end(function(err, res) {
                 expect(res.body.status).to.equal(constants.STATUS_OK);
                 expect(res.body.user_id).to.have.length.above(6);
                 done();
@@ -56,12 +59,23 @@ describe('Authentication', function() {
 });
 
 describe('Task', function() {
+    var token = null;
+
     before(function(done) {
         //Prepare database
         storage.createMilestone({content: 'my great milestone'}).then(function(id) {
             milestone_id = id;
             done();
         }) ;
+
+        // Get auth token
+        var token_data = {
+            email: 'myemail@u.nus.edu',
+            user_id: 'abc123',
+            expiresIn: 200
+        };
+
+        token = Jwt.sign(token_data, secret_key);
     });
 
     after(function(done) {
@@ -77,6 +91,7 @@ describe('Task', function() {
         var content = 'submit report';
         api.post('/create_task')
             .set('Accept', 'application/x-www-form-urlencoded')
+            .set('Authorization', 'bearer ' + token)
             .send({
                 content: content
             })
@@ -100,6 +115,7 @@ describe('Task', function() {
         var deadline = '2015-10-04T18:13:09+00:00';
         api.post('/create_task')
             .set('Accept', 'application/x-www-form-urlencoded')
+            .set('Authorization', 'bearer ' + token)
             .send({
                 content: content,
                 deadline: deadline,
@@ -124,6 +140,7 @@ describe('Task', function() {
         var non_existent_id = 'blah??';
         api.post('/create_task')
             .set('Accept', 'application/x-www-form-urlencoded')
+            .set('Authorization', 'bearer ' + token)
             .send({
                 content: content,
                 milestone_id: non_existent_id
@@ -141,6 +158,7 @@ describe('Task', function() {
         storage.createTask({content: 'sample'}).then(function(task_id) {
             api.post('/mark_completed')
                 .set('Accept', 'application/x-www-form-urlencoded')
+                .set('Authorization', 'bearer ' + token)
                 .send({
                     task_id: task_id
                 })
@@ -159,6 +177,7 @@ describe('Task', function() {
         storage.createTask({content: 'hello world'}).then(function(id) {
             api.delete('/delete_task')
                 .set('Accept', 'application/x-www-form-urlencoded')
+                .set('Authorization', 'bearer ' + token)
                 .send({
                     task_id: id
                 })
@@ -175,6 +194,7 @@ describe('Task', function() {
         var non_existent_id = 'blah??';
         api.post('/mark_completed')
             .set('Accept', 'application/x-www-form-urlencoded')
+            .set('Authorization', 'bearer ' + token)
             .send({
                 task_id: non_existent_id
             })
@@ -189,6 +209,19 @@ describe('Task', function() {
 });
 
 describe('Milestone', function() {
+    var token = null;
+    before(function(done) {
+        // Get auth token
+        var token_data = {
+            email: 'myemail@u.nus.edu',
+            user_id: 'abc123',
+            expiresIn: 200
+        };
+
+        token = Jwt.sign(token_data, secret_key);
+        done();
+    });
+
     after(function(done) {
         //Clean up database
         storage.deleteMilestone(milestone_id).then(function() {
@@ -200,6 +233,7 @@ describe('Milestone', function() {
         var content = 'Complete Marathon';
         api.post('/create_milestone')
             .set('Accept', 'application/x-www-form-urlencoded')
+            .set('Authorization', 'bearer ' + token)
             .send({
                 content: content
             })
@@ -219,6 +253,7 @@ describe('Milestone', function() {
         storage.createMilestone({content: content}).then(function(id) {
             api.delete('/delete_milestone')
                 .set('Accept', 'application/x-www-form-urlencoded')
+                .set('Authorization', 'bearer ' + token)
                 .send({
                     milestone_id: id
                 })
