@@ -34,6 +34,8 @@ server.register([require('vision'), require('inert'), require('hapi-auth-jwt')],
         key: privateKey
     });
 
+    server.auth.default('token');
+
     server.views({
         engines: {
             jsx: require('hapi-react-views'),

@@ -12,6 +12,7 @@ var privateKey = config.get('authentication.privateKey');
 
 module.exports = {
     createAccount: {
+        auth: false,
         handler: create_account,
         payload: {
             parse: true
@@ -24,6 +25,7 @@ module.exports = {
         }
     },
     login: {
+        auth: false,
         handler: login,
         payload: {
             parse: true
