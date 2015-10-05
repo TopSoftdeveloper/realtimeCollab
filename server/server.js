@@ -15,7 +15,7 @@ server.connection({
     port: 4000
 });
 
-var validate = function(request, decodedToken, callback) {
+var validate = function(decodedToken, request, callback) {
     var diff = Date.now() /1000 - decodedToken.iat;
     if (diff > decodedToken.expiresIn) {
         return callback(null, false);
@@ -26,7 +26,7 @@ var validate = function(request, decodedToken, callback) {
 server.register([
         require('vision'),
         require('inert'),
-        require('hapi-auth-jwt'),
+        require('hapi-auth-jwt2'),
         {
             register: Good,
             options: {
@@ -44,13 +44,13 @@ server.register([
         if (err) {
             console.log(err);
         }
-
-        server.auth.strategy('token', 'jwt', {
+        server.auth.strategy('jwt', 'jwt', {
             validateFunc: validate,
-            key: privateKey
+            key: privateKey,
+            verifyOptions: { algorithms: [ 'HS256' ]}
         });
 
-        server.auth.default('token');
+        server.auth.default('jwt');
 
         server.views({
             engines: {
