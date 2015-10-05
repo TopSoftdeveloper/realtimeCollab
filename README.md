@@ -33,5 +33,6 @@ Testing
 -----------------
 
 Testing is done with [Chai](http://chaijs.com/), [Supertest](https://github.com/visionmedia/supertest) and [Mocha](https://mochajs.org/).
+Make sure the server is already running.
 
 `npm test`
