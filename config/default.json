@@ -10,11 +10,12 @@
         "max": 5,
         "min": 0,
         "idle": 10000
-      }
+      },
+      "logging": false
     }
   },
   "authentication": {
     "privateKey": "37LvDSm4XvjYOh9Y",
-    "tokenExpirySeconds": 3600
+    "tokenExpirySeconds": 3600000
   }
 }
