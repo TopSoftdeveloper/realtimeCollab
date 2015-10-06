@@ -9,6 +9,7 @@ module.exports = {
         }
     },
     app: {
+        auth: false,
         handler: {
             view: 'Default.jsx'
         }

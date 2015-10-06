@@ -2,7 +2,7 @@
 module.exports = {
     entry: {
         home: './assets/home/js/home.js',
-        app: './assets/app/js/components/TaskPanel.jsx'
+        app: './assets/app/js/app.js'
     },
     output: {
         path: __dirname + '/assets',

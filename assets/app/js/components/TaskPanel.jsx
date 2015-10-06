@@ -1,6 +1,9 @@
 var React = require('react');
 var TaskStore = require('../stores/TaskStore');
+var UserStore = require('../stores/UserStore');
 var TaskService = require('../services/TaskService');
+var UserService = require('../services/UserService');
+
 var $ = require('jquery');
 var _ = require('lodash');
 
@@ -100,10 +103,13 @@ var TaskTable = React.createClass({
     },
     componentDidMount: function() {
         TaskStore.addChangeListener(this._onChange);
+        UserStore.addChangeListener(this._onChange);
+        UserService.update();
         TaskService.loadTasks();
     },
     componentWillUnmount: function() {
         TaskStore.removeChangeListener(this._onChange);
+        UserStore.removeChangeListener(this._onChange);
     },
     _onChange: function() {
         this.setState(TaskStore.getList());
