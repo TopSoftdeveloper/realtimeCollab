@@ -5,6 +5,8 @@ var models = require('./models/modelManager');
 var Task = models.Task;
 var Milestone = models.Milestone;
 var User = models.User;
+var Project = models.Project;
+var UserProject = models.UserProject;
 
 var format = require('string-format');
 
@@ -34,10 +36,39 @@ function _create(task) {
 }
 
 module.exports = {
+    removeUserProject: function(user_id, project_id) {
+        return UserProject.destroy({
+            where: {
+                user_id: user_id,
+                project_id: project_id
+            }
+        });
+    },
+    removeProject: function(id) {
+        return Project.destroy({
+            where: {
+                id: id
+            }
+        });
+    },
+    createProject: function(content) {
+        var id = shortid.generate();
+        return Project.create({
+            id: id,
+            content: content
+        });
+    },
     removeUser: function(email) {
         return User.destroy({
             where: {
                 email: email
+            }
+        });
+    },
+    removeUserById: function(id) {
+        return User.destroy({
+            where: {
+                id: id
             }
         });
     },
@@ -46,6 +77,11 @@ module.exports = {
             where: {
                 email: email
             }
+        });
+    },
+    addProjectToUser: function(user_id, project) {
+        return User.findById(user_id).then(function(user) {
+            return user.addProject(project, {role: constants.ROLE_CREATOR});
         });
     },
     doesUserExist: function(email) {

@@ -17,7 +17,9 @@ var sequelize = new Sequelize(
 var modelFiles = [
     'Milestone',
     'Task',
-    'User'
+    'User',
+    'Project',
+    'UserProject'
 ];
 
 modelFiles.forEach(function(model) {
@@ -25,8 +27,17 @@ modelFiles.forEach(function(model) {
 });
 
 (function(m) {
+    m.Task.belongsTo(m.Project);
     m.Task.belongsTo(m.Milestone);
+
+    m.Milestone.belongsTo(m.Project);
     m.Milestone.hasMany(m.Task);
+
+    m.Project.belongsToMany(m.User, {through: m.UserProject});
+    m.Project.hasMany(m.Milestone);
+
+    m.User.belongsToMany(m.Project, {through: m.UserProject});
+
 })(module.exports);
 
 sequelize.sync().then(function() {

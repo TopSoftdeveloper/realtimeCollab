@@ -2,7 +2,7 @@ var Static = require('./static');
 var Auth = require('./controller/authController');
 var Task = require('./controller/taskController');
 var Milestone = require('./controller/milestoneController');
-
+var Project = require('./controller/projectController');
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
@@ -19,5 +19,7 @@ module.exports.endpoints = [
 
     { method: 'POST',  path: '/create_milestone', config: Milestone.createMilestone },
     { method: 'GET',  path: '/milestone', config: Milestone.getMilestone },
-    { method: 'DELETE',  path: '/delete_milestone', config: Milestone.removeMilestone }
+    { method: 'DELETE',  path: '/delete_milestone', config: Milestone.removeMilestone },
+
+    { method: 'POST',  path: '/create_project', config: Project.createProject }
 ];
