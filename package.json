@@ -5,7 +5,7 @@
     "start": "node server/server.js",
     "build": "webpack -p --progress",
     "dev": "webpack --progress --color --watch & nodemon",
-    "test": "mocha --timeout 5000"
+    "test": "istanbul cover _mocha"
   },
   "dependencies": {
     "bcrypt": "^0.8.5",
@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "chai": "^3.3.0",
+    "istanbul": "^0.3.22",
     "jsx-loader": "^0.13.2",
     "mocha": "^2.3.3",
     "nodemon": "^1.4.1",

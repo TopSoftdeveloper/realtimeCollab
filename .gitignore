@@ -2,3 +2,4 @@
 node_modules
 assets/home-bundle.js
 assets/app-bundle.js
+coverage
