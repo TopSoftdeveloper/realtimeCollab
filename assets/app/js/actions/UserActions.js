@@ -2,10 +2,14 @@ var AppDispatcher = require('../AppDispatcher');
 var AppConstants = require('../AppConstants');
 
 module.exports = {
-    update: function(store) {
+    init: function() {
         AppDispatcher.handleServerAction({
-            actionType: AppConstants.UPDATE_USER_STORE,
-            store: store
+            actionType: AppConstants.INIT_USER_STORE
+        });
+    },
+    logOut: function() {
+        AppDispatcher.handleViewAction({
+            actionType: AppConstants.LOG_OUT
         });
     }
 };

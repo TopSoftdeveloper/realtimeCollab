@@ -38,8 +38,21 @@ AppDispatcher.register(function(payload) {
     var action = payload.action;
 
     switch(action.actionType) {
-        case AppConstants.UPDATE_USER_STORE:
-            _store = action.store;
+        case AppConstants.INIT_USER_STORE:
+            _store = {
+                jwt: sessionStorage.getItem('jwt'),
+                user_id: sessionStorage.getItem('user_id'),
+                email: sessionStorage.getItem('email')
+            };
+            UserStore.emit(CHANGE_EVENT);
+            break;
+        case AppConstants.LOG_OUT:
+            _store = {
+                user_id: null,
+                jwt: null,
+                email: null
+            };
+            sessionStorage.clear();
             UserStore.emit(CHANGE_EVENT);
             break;
         default:

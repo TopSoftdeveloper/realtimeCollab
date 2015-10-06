@@ -3,7 +3,6 @@ var TaskStore = require('../stores/TaskStore');
 var UserStore = require('../stores/UserStore');
 var TaskService = require('../services/TaskService');
 var UserService = require('../services/UserService');
-var Cookie = require('cookies-js');
 var $ = require('jquery');
 var _ = require('lodash');
 
@@ -104,7 +103,7 @@ var TaskTable = React.createClass({
     componentDidMount: function() {
         TaskStore.addChangeListener(this._onChange);
         UserStore.addChangeListener(this._onChange);
-        UserService.update();
+        UserService.init();
         TaskService.loadTasks();
     },
     componentWillUnmount: function() {
@@ -113,6 +112,12 @@ var TaskTable = React.createClass({
     },
     _onChange: function() {
         this.setState(TaskStore.getList());
+        if (!UserStore.getJwt()) {
+            window.location.replace('http://localhost:4000/');
+        }
+    },
+    logOut: function () {
+        UserService.logOut();
     },
     addTask: function(e) {
         var milestone_name = this.state.inputMilestone;
@@ -191,7 +196,8 @@ var TaskTable = React.createClass({
         }.bind(this));
 
         return (
-            <div>            
+            <div>
+                <button className='btn btn-default' onClick={this.logOut}>Log Out</button>
                 <table>
                     <tbody>{rows}</tbody>
                 </table>
@@ -215,7 +221,7 @@ var TaskTable = React.createClass({
 
 
 $(window).bind("load", function() {
-    if (Cookie.get('jwt')) {
+    if (sessionStorage.getItem('jwt')) {
         React.render(<TaskTable />, document.getElementById('task-panel'));
     } else {
         window.location.replace('http://localhost:4000/');

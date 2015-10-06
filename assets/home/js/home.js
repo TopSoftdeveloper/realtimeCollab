@@ -1,10 +1,7 @@
 var $ = require('jquery');
-var Cookies = require('cookies-js');
-
 var API_BASE_URL = 'http://localhost:4000';
 var CREATE_ACCOUNT_ENDPOINT = '/create_account';
 var LOGIN_ENDPOINT = '/login';
-var JWT_COOKIE_NAME = 'jwt';
 var APP_MAIN_PAGE = 'http://localhost:4000/app';
 
 $(document).ready(function() {
@@ -16,9 +13,9 @@ $(document).ready(function() {
             email: email,
             password: password
         }).done(function(res) {
-            Cookies.set(JWT_COOKIE_NAME, res.token);
-            Cookies.set('user_id', res.user_id);
-            Cookies.set('email', res.email);
+            sessionStorage.setItem('jwt', res.token);
+            sessionStorage.setItem('user_id', res.user_id);
+            sessionStorage.setItem('email', res.email);
             window.location.replace(APP_MAIN_PAGE);
         }).fail(function(err) {
             console.log(err);
@@ -34,9 +31,9 @@ $(document).ready(function() {
             email: email,
             password: password
         }).done(function(res) {
-            Cookies.set(JWT_COOKIE_NAME, res.token);
-            Cookies.set('user_id', res.user_id);
-            Cookies.set('email', res.email);
+            sessionStorage.setItem('jwt', res.token);
+            sessionStorage.setItem('user_id', res.user_id);
+            sessionStorage.setItem('email', res.email);
             window.location.replace(APP_MAIN_PAGE);
         }).fail(function(err) {
             console.log(err);
