@@ -3,7 +3,7 @@ var TaskStore = require('../stores/TaskStore');
 var UserStore = require('../stores/UserStore');
 var TaskService = require('../services/TaskService');
 var UserService = require('../services/UserService');
-
+var Cookie = require('cookies-js');
 var $ = require('jquery');
 var _ = require('lodash');
 
@@ -215,5 +215,9 @@ var TaskTable = React.createClass({
 
 
 $(window).bind("load", function() {
-    React.render(<TaskTable />, document.getElementById('task-panel'));
+    if (Cookie.get('jwt')) {
+        React.render(<TaskTable />, document.getElementById('task-panel'));
+    } else {
+        window.location.replace('http://localhost:4000/');
+    }
 });
