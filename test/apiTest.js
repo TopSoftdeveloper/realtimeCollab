@@ -45,7 +45,6 @@ describe('Authentication', function() {
                 expect(res.body.email).to.equal(TEST_EMAIL);
                 expect(user_id).to.have.length.above(6);
                 Jwt.verify(res.body.token, secret_key, function(err, decoded) {
-                    console.log(err);
                     expect(err).to.equal(null);
                     expect(decoded.email).to.equal(TEST_EMAIL);
                     expect(decoded.user_id).to.equal(user_id);

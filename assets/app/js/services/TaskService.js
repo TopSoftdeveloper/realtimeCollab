@@ -1,5 +1,3 @@
-var AppDispatcher = require('../AppDispatcher');
-var AppConstants = require('../AppConstants');
 var apiUtil = require('../apiUtils/apiUtil');
 var TaskActions = require('../actions/TaskActions');
 var MilestoneActions = require('../actions/MilestoneActions');

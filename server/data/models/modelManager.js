@@ -30,7 +30,6 @@ modelFiles.forEach(function(model) {
 })(module.exports);
 
 sequelize.sync().then(function() {
-    console.log('tables created');
 },function(error) {
     console.log(error);
 });
