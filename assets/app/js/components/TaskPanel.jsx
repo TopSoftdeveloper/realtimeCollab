@@ -1,8 +1,11 @@
 var React = require('react');
 var TaskStore = require('../stores/TaskStore');
 var UserStore = require('../stores/UserStore');
+var ProjectStore = require('../stores/ProjectStore');
 var TaskService = require('../services/TaskService');
 var UserService = require('../services/UserService');
+var ProjectService = require('../services/ProjectService');
+
 var $ = require('jquery');
 var _ = require('lodash');
 
@@ -98,20 +101,32 @@ var TaskRow = React.createClass({
 
 var TaskTable = React.createClass({
     getInitialState: function() {
-        return {milestones:[]};
+        return {
+            milestones:[],
+            project_id: null
+        };
     },
     componentDidMount: function() {
         TaskStore.addChangeListener(this._onChange);
         UserStore.addChangeListener(this._onChange);
+        ProjectStore.addChangeListener(this._onChange);
+
         UserService.init();
-        TaskService.loadTasks();
+        ProjectService.init();
     },
     componentWillUnmount: function() {
         TaskStore.removeChangeListener(this._onChange);
         UserStore.removeChangeListener(this._onChange);
     },
     _onChange: function() {
-        this.setState(TaskStore.getList());
+        var project_id = null;
+        if (ProjectStore.getProjects().length > 0) {
+            project_id = ProjectStore.getProjects()[0].id;
+        }
+        this.setState({
+            milestones: TaskStore.getList(),
+            project_id: project_id
+        });
         if (!UserStore.getJwt()) {
             window.location.replace('http://localhost:4000/');
         }
@@ -121,6 +136,10 @@ var TaskTable = React.createClass({
     },
     addTask: function(e) {
         var milestone_name = this.state.inputMilestone;
+        var stripped_of_spaces = $(this).text().replace(/ /g,'');
+        if (stripped_of_spaces === '') {
+            milestone_name =  'Uncategorized';
+        }
         var matches = this.state.milestones.filter(function(milestone) {
             return milestone.content === milestone_name;
         });
@@ -134,7 +153,7 @@ var TaskTable = React.createClass({
             milestone_content: milestone_name,
             content: this.state.inputTaskname,
             completed_on: null
-        });
+        }, this.state.project_id);
 
         this.setState({
             inputTaskname: '',

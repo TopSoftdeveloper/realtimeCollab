@@ -22,7 +22,7 @@ var TaskStore = ObjectAssign( {}, EventEmitter.prototype, {
     },
 
     getList: function() {
-        return _store;
+        return _store.milestones;
     }
 });
 

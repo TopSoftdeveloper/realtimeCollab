@@ -4,16 +4,24 @@ var CREATE_TASK_ENDPOINT = '/create_task';
 var DELETE_TASK_ENDPOINT =  '/delete_task';
 var COMPLETE_TASK_ENDPOINT = '/mark_completed';
 var CREATE_MILESTONE_ENDPOINT = '/create_milestone';
-var TaskActions = require('../actions/TaskActions');
-var ErrorActions = require('../actions/ErrorActions');
-var UserStore = require('../stores/UserStore');
+var PROJECT_ENDPOINT = '/project';
 
+var UserStore = require('../stores/UserStore');
 var $ = require('jquery');
 
 module.exports = {
-    getAllMilestones: function() {
+    getAllProjects: function(user_id) {
         return $.ajax({
-            url: API_BASE_URL + MILESTONE_ENDPOINT,
+            url: API_BASE_URL + PROJECT_ENDPOINT + '/' + user_id,
+            headers: {
+                'Authorization': 'Bearer ' + UserStore.getJwt()
+            },
+            type: 'GET'
+        });
+    },
+    getAllMilestones: function(project_id) {
+        return $.ajax({
+            url: API_BASE_URL + MILESTONE_ENDPOINT + '/' + project_id,
             headers: {
                 'Authorization': 'Bearer ' + UserStore.getJwt()
             },

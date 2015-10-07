@@ -21,15 +21,15 @@ function _addTask(task) {
 }
 
 module.exports = {
-    loadTasks: function() {
-        apiUtil.getAllMilestones().done(function(milestones) {
+    loadTasks: function(project_id) {
+        apiUtil.getAllMilestones(project_id).done(function(milestones) {
             TaskActions.loadTasks(milestones);
         }).fail(function(e) {
             console.log('load tasks failed');
             console.log(e);
         });
     },
-    addTask: function(task) {
+    addTask: function(task, project_id) {
         // create milestone first if not present
         if (task.milestone_id === null) {
             var temp_milestone_id = _.uniqueId("milestone_id");
@@ -37,11 +37,13 @@ module.exports = {
                 id: temp_milestone_id,
                 content: task.milestone_content,
                 deadline: null,
-                tasks: []
+                tasks: [],
+                project_id: project_id
             });
 
             apiUtil.createMilestone({
-                content: task.milestone_content
+                content: task.milestone_content,
+                project_id: project_id
             }).done(function(res) {
                 MilestoneActions.replaceMilestoneId(temp_milestone_id, res.id);
                 task.milestone_id = res.id;
