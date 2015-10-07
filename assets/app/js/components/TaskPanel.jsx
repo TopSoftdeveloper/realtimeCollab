@@ -1,4 +1,5 @@
 var React = require('react');
+var Sticky = require('react-sticky');
 var TaskStore = require('../stores/TaskStore');
 var UserStore = require('../stores/UserStore');
 var ProjectStore = require('../stores/ProjectStore');
@@ -131,9 +132,6 @@ var TaskTable = React.createClass({
             window.location.replace('http://localhost:4000/');
         }
     },
-    logOut: function () {
-        UserService.logOut();
-    },
     addTask: function(e) {
         var milestone_name = this.state.inputMilestone;
         var stripped_of_spaces = $(this).text().replace(/ /g,'');
@@ -215,8 +213,7 @@ var TaskTable = React.createClass({
         }.bind(this));
 
         return (
-            <div>
-                <button className='btn btn-default' onClick={this.logOut}>Log Out</button>
+            <div className='task-table'>
                 <table>
                     <tbody>{rows}</tbody>
                 </table>
@@ -239,9 +236,38 @@ var TaskTable = React.createClass({
 });
 
 
+var App = React.createClass({
+    render: function() {
+        return (
+            <div>
+                <Header />
+                <TaskTable />
+            </div>
+        );
+    }
+});
+
+var Header = React.createClass({
+    logOut: function() {
+        UserService.logOut();
+    },
+   render: function() {
+       return (
+               <Sticky>
+                   <header className='app-header'>
+
+                       <button className='btn btn-default logout' onClick={this.logOut}>Log Out</button>
+                       <h1>NUS Collab </h1>
+                       <nav />
+                   </header>
+               </Sticky>
+           );
+   }
+});
+
 $(window).bind("load", function() {
     if (sessionStorage.getItem('jwt')) {
-        React.render(<TaskTable />, document.getElementById('task-panel'));
+        React.render(<App />, document.getElementById('task-panel'));
     } else {
         window.location.replace('http://localhost:4000/');
     }
