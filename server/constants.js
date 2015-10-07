@@ -14,5 +14,6 @@ module.exports = {
     ROLE_CREATOR: 'creator',
     ROLE_ADMIN: 'admin',
     ROLE_BASIC: 'basic',
-    ROLE_FOLLOWER: 'follower'
+    ROLE_FOLLOWER: 'follower',
+    FORBIDDEN: 'The token given does not have access to this resource'
 };

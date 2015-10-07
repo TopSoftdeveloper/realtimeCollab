@@ -18,8 +18,10 @@ module.exports.endpoints = [
     { method: 'DELETE',  path: '/delete_task', config: Task.removeTask },
 
     { method: 'POST',  path: '/create_milestone', config: Milestone.createMilestone },
-    { method: 'GET',  path: '/milestone', config: Milestone.getMilestone },
+    { method: 'GET',  path: '/milestone/{project_id}', config: Milestone.getMilestone },
     { method: 'DELETE',  path: '/delete_milestone', config: Milestone.removeMilestone },
 
-    { method: 'POST',  path: '/create_project', config: Project.createProject }
+    { method: 'POST',  path: '/create_project', config: Project.createProject },
+    { method: 'POST',  path: '/join_project', config: Project.joinProject },
+    { method: 'GET',  path: '/project/{user_id}', config: Project.getProjects }
 ];

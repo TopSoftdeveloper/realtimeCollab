@@ -134,28 +134,31 @@ describe('Authentication', function() {
 
 describe('Task', function() {
     var token = null;
-
+    var milestone_id = null;
+    var project_id = null;
     before(function(done) {
         //Prepare database
-        storage.createMilestone({content: 'my great milestone'}).then(function(id) {
-            milestone_id = id;
-            done();
-        }) ;
+        storage.createProject('test project').then(function(project) {
+            project_id = project.id;
+            storage.createMilestone({content: 'my great milestone', project_id: project.id}).then(function(id) {
+                milestone_id = id;
+                // Get auth token
+                var token_data = {
+                    email: 'myemail@u.nus.edu',
+                    user_id: 'abc123',
+                    expiresIn: 200
+                };
 
-        // Get auth token
-        var token_data = {
-            email: 'myemail@u.nus.edu',
-            user_id: 'abc123',
-            expiresIn: 200
-        };
-
-        token = Jwt.sign(token_data, secret_key);
+                token = Jwt.sign(token_data, secret_key);
+                done();
+            }) ;
+        });
     });
 
     after(function(done) {
         //Clean up database
         storage.deleteMilestone(milestone_id).then(function() {
-            storage.deleteTask(task_id).then(function() {
+            storage.removeProject(project_id).then(function() {
                 done();
             });
         });
@@ -167,7 +170,8 @@ describe('Task', function() {
             .set('Accept', 'application/x-www-form-urlencoded')
             .set('Authorization', 'bearer ' + token)
             .send({
-                content: content
+                content: content,
+                milestone_id: milestone_id
             })
             .expect('Content-Type', /json/)
             .expect(200)
@@ -176,7 +180,7 @@ describe('Task', function() {
                 expect(res.body.content).to.equal(content);
                 expect(res.body.deadline).to.equal(null);
                 expect(res.body.is_time_specified).to.equal(false);
-                expect(res.body.milestone_id).to.equal(null);
+                expect(res.body.milestone_id).to.equal(milestone_id);
                 expect(task_id).to.have.length.above(6);
                 storage.deleteTask(task_id).then(function() {
                     done();
@@ -284,16 +288,22 @@ describe('Task', function() {
 
 describe('Milestone', function() {
     var token = null;
+    var milestone_id = null;
+    var project_id = null;
     before(function(done) {
-        // Get auth token
-        var token_data = {
-            email: 'myemail@u.nus.edu',
-            user_id: 'abc123',
-            expiresIn: 200
-        };
+        //Prepare database
+        storage.createProject('test project').then(function(project) {
+            project_id = project.id;
+            // Get auth token
+            var token_data = {
+                email: 'myemail@u.nus.edu',
+                user_id: 'abc123',
+                expiresIn: 200
+            };
 
-        token = Jwt.sign(token_data, secret_key);
-        done();
+            token = Jwt.sign(token_data, secret_key);
+            done();
+        });
     });
 
     after(function(done) {
@@ -309,7 +319,8 @@ describe('Milestone', function() {
             .set('Accept', 'application/x-www-form-urlencoded')
             .set('Authorization', 'bearer ' + token)
             .send({
-                content: content
+                content: content,
+                project_id: project_id
             })
             .expect('Content-Type', /json/)
             .expect(200)
@@ -324,7 +335,7 @@ describe('Milestone', function() {
 
     it('should return status OK upon successful deletion', function(done) {
         var content = 'some temp milestone';
-        storage.createMilestone({content: content}).then(function(id) {
+        storage.createMilestone({content: content, project_id: project_id}).then(function(id) {
             api.delete('/delete_milestone')
                 .set('Accept', 'application/x-www-form-urlencoded')
                 .set('Authorization', 'bearer ' + token)
@@ -345,6 +356,7 @@ describe('Project', function() {
     var token = null;
     var user_id = null;
     const MOCK_EMAIL = 'hi@project';
+    var project_id = null;
 
     before(function(done) {
         storage.removeUser(MOCK_EMAIL).then(function() {
@@ -366,7 +378,9 @@ describe('Project', function() {
     after(function(done) {
         //Clean up database
         storage.removeUser(MOCK_EMAIL).then(function() {
-            done();
+            storage.removeProject(project_id).then(function() {
+                done();
+            });
         });
     });
 
@@ -383,6 +397,7 @@ describe('Project', function() {
             .end(function(err, res) {
                 expect(err).to.equal(null);
                 expect(res.body.project_id).to.have.length.above(6);
+                project_id = res.body.project_id;
                 UserProject.findAll({
                     where: {
                         user_id: user_id,
@@ -395,4 +410,29 @@ describe('Project', function() {
                 });
             });
     });
+
+    //it('should return a list of projects the user has', function(done) {
+    //    api.get('/project?user_id=' + user_id)
+    //        .set('Accept', 'application/x-www-form-urlencoded')
+    //        .set('Authorization', 'bearer ' + token)
+    //        .expect('Content-Type', /json/)
+    //        .expect(200)
+    //        .end(function(err, res) {
+    //            expect(err).to.equal(null);
+    //            expect(res.user_id).to.equal(user_id);
+    //            expect(res.projects.length).to.have.length.above(0);
+    //
+    //            res.projects.forEach(function(project) {
+    //                expect(project.id).to.be.equal(project_id);
+    //                expect(project.content).to.equal('Collaboration Tool');
+    //                expect(project.users).to.have.length.above(0);
+    //                project.users.forEach(function(user) {
+    //                    expect(user.id).to.be.equal(user_id);
+    //                    expect(user.role).to.be.equal(constants.ROLE_CREATOR);
+    //                });
+    //            });
+    //
+    //            done();
+    //        });
+    //});
 });

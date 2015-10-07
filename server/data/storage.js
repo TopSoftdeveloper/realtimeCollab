@@ -36,6 +36,23 @@ function _create(task) {
 }
 
 module.exports = {
+    joinProject: function(user_id, project_id) {
+        return UserProject.create({
+            user_id: user_id,
+            project_id: project_id,
+            role: constants.ROLE_BASIC
+        });
+    },
+    getProjectsOfUser: function(user_id) {
+        return User.findById(user_id).then(function(user) {
+            return user.getProjects();
+        });
+    },
+    getUsersOfProject: function(project_id) {
+        return Project.findById(project_id).then(function(project) {
+            return project.getUsers();
+        });
+    },
     removeUserProject: function(user_id, project_id) {
         return UserProject.destroy({
             where: {
@@ -105,8 +122,11 @@ module.exports = {
                 where: {id: task_id}
             })
     },
-    getMilestonesWithTasks: function() {
+    getMilestonesWithTasks: function(project_id) {
         return Milestone.findAll({
+            where: {
+                project_id: project_id
+            },
             include: [
                 {
                     model: Task,
