@@ -6,7 +6,7 @@ var COMPLETE_TASK_ENDPOINT = '/mark_completed';
 var CREATE_MILESTONE_ENDPOINT = '/create_milestone';
 var PROJECT_ENDPOINT = '/project';
 
-var UserStore = require('../stores/UserStore');
+var UserStore = require('./UserStore');
 var $ = require('jquery');
 
 module.exports = {

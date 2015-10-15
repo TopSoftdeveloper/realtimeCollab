@@ -1,7 +1,7 @@
 var apiUtil = require('../apiUtils/apiUtil');
 var ProjectActions = require('../actions/ProjectActions');
-var UserStore = require('../stores/UserStore');
-var ProjectStore = require('../stores/ProjectStore');
+var UserStore = require('./UserStore');
+var ProjectStore = require('./ProjectStore');
 var TaskService = require('../services/TaskService');
 
 module.exports = {

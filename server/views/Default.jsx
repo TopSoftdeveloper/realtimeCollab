@@ -8,15 +8,15 @@ var Default = React.createClass({
             <head>
                 <meta charSet="utf-8"></meta>
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta>
-                <title>Tiny</title>
+                <title>Collab</title>
                 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"></link>
                 <link href='https://fonts.googleapis.com/css?family=Quattrocento|Open+Sans' rel='stylesheet' type='text/css'></link>
                 <link rel="stylesheet" type="text/css" href="assets/app/css/main.css"></link>
             </head>
 
             <body style={{fontFamily: ['Quattrocento', 'sans-serif']}}>
-                <script src="assets/app-bundle.js"></script>
                 <div id="task-panel"></div>
+                <script src="assets/app-bundle.js"></script>
             </body>
             </html>
         );

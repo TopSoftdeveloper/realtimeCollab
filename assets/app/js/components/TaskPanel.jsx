@@ -1,14 +1,15 @@
-var React = require('react');
-var Sticky = require('react-sticky');
-var TaskStore = require('../stores/TaskStore');
-var UserStore = require('../stores/UserStore');
-var ProjectStore = require('../stores/ProjectStore');
-var TaskService = require('../services/TaskService');
-var UserService = require('../services/UserService');
-var ProjectService = require('../services/ProjectService');
+import React, { Component, PropTypes } from 'react';
+import _ from 'lodash'
+import $ from 'jquery'
+import Sticky from 'react-sticky'
 
-var $ = require('jquery');
-var _ = require('lodash');
+
+//var UserStore = require('./UserStore');
+//var ProjectStore = require('./ProjectStore');
+//var TaskService = require('../services/TaskService');
+//var UserService = require('../services/UserService');
+//var ProjectService = require('../services/ProjectService');
+
 
 var MilestoneRow = React.createClass({
     render: function() {
@@ -72,13 +73,12 @@ var CompletedRow = React.createClass({
     }
 });
 
-var TaskRow = React.createClass({
-    render: function () {
-        var dateStr = "";
+class TaskRow extends Component {
+    render() {
+        let dateStr = "";
         if (this.props.task.deadline !== null) {
             dateStr = this.props.task.deadline;
         }
-
         return (
             <tr>
                 <td width="5">
@@ -98,95 +98,102 @@ var TaskRow = React.createClass({
             </tr>
         );
     }
-});
+}
 
-var TaskTable = React.createClass({
-    getInitialState: function() {
-        return {
-            milestones:[],
-            project_id: null
+class TaskPanel extends Component {
+    constructor(props, context) {
+        super(props, context); 
+        this.state = {
+            inputTaskname: this.props.inputTaskname || '',
+            inputMilestone: this.props.inputMilestone || ''
         };
-    },
-    componentDidMount: function() {
-        TaskStore.addChangeListener(this._onChange);
-        UserStore.addChangeListener(this._onChange);
-        ProjectStore.addChangeListener(this._onChange);
+    }
+    //getInitialState: function() {
+    //    return {
+    //        milestones:[],
+    //        project_id: null
+    //    };
+    //},
 
-        UserService.init();
-        ProjectService.init();
-    },
-    componentWillUnmount: function() {
-        TaskStore.removeChangeListener(this._onChange);
-        UserStore.removeChangeListener(this._onChange);
-    },
-    _onChange: function() {
-        var project_id = null;
-        if (ProjectStore.getProjects().length > 0) {
-            project_id = ProjectStore.getProjects()[0].id;
-        }
-        this.setState({
-            milestones: TaskStore.getList(),
-            project_id: project_id
-        });
-        if (!UserStore.getJwt()) {
-            window.location.replace('http://localhost:4000/');
-        }
-    },
-    addTask: function(e) {
-        var milestone_name = this.state.inputMilestone;
-        var stripped_of_spaces = $(this).text().replace(/ /g,'');
-        if (stripped_of_spaces === '') {
-            milestone_name =  'Uncategorized';
-        }
-        var matches = this.state.milestones.filter(function(milestone) {
-            return milestone.content === milestone_name;
-        });
-        var milestone_id = null;
+    //componentWillUnmount: function() {
+    //    TaskStore.removeChangeListener(this._onChange);
+    //    UserStore.removeChangeListener(this._onChange);
+    //},
+    //_onChange: function() {
+    //    var project_id = null;
+    //    if (ProjectStore.getProjects().length > 0) {
+    //        project_id = ProjectStore.getProjects()[0].id;
+    //    }
+    //    this.setState({
+    //        milestones: TaskStore.getList(),
+    //        project_id: project_id
+    //    });
+    //    if (!UserStore.getJwt()) {
+    //        window.location.replace('http://localhost:4000/');
+    //    }
+    //},
+    addTask(e) {
+        e.preventDefault();
+        let milestone_name = this.state.inputMilestone.trim();
+        let matches = this.props.milestones.filter(
+            milestone => milestone.content === milestone_name
+        );
+        let milestone_id = _.uniqueId('milestone');
         if (matches.length !== 0) {
             milestone_id = matches[0].id;
         }
-        TaskService.addTask({
+
+        this.props.actions.addTask(milestone_id, {
             id: _.uniqueId('task'), //temp id
-            milestone_id: milestone_id,
-            milestone_content: milestone_name,
-            content: this.state.inputTaskname,
+            deadline: null,
+            is_time_specified: false,
+            content: this.state.inputTaskname.trim(),
             completed_on: null
-        }, this.state.project_id);
+        });
+        //TaskService.addTask({
+        //    id: _.uniqueId('task'), //temp id
+        //    milestone_id: milestone_id,
+        //    milestone_content: milestone_name,
+        //    content: this.state.inputTaskname,
+        //    completed_on: null
+        //}, this.state.project_id);
 
         this.setState({
             inputTaskname: '',
             inputMilestone: ''
-        });
+        });        
+    }
 
-        e.preventDefault();
-    },
-    deleteTask: function(task_id) {
-        TaskService.deleteTask(task_id);
-    },
-    markDone: function(task_id) {
-        TaskService.markDone(task_id);
-    },
-    handleTaskNameChange: function(e) {
+    deleteTask(task_id) {
+        this.props.actions.markAsDirty(task_id)
+        // TaskService.deleteTask(task_id);
+    }
+    markDone(task_id) {
+        this.props.actions.markDone(task_id);
+        // TaskService.markDone(task_id);
+    }
+    handleTaskNameChange(e) {
         this.setState({
             inputTaskname: e.target.value
         });
-    },
-    handleMilestoneChange: function(e) {
+    }
+    handleMilestoneChange(e) {
         this.setState({
             inputMilestone: e.target.value
         });
-    },
-    getCompletedTasks: function(milestone_id) {
-        var curr_milestone = this.state.milestones.filter(function(elem) {
+    }
+    getCompletedTasks(milestone_id) {
+        let curr_milestone = this.props.milestones.filter(function(elem) {
             return elem.id === milestone_id;
         })[0];
         return curr_milestone.tasks.filter(function(task) {
             return task.completed_on !== null;
         }.bind(this));
-    },
-    render: function() {
-        var rows = [];
-        this.state.milestones.forEach(function(milestone) {
+    }
+    render() {
+        let actions = this.props.actions;
+        let rows = [];
+        this.props.milestones.forEach(function(milestone) {
             rows.push(<MilestoneRow
                 milestone={milestone.content}
                 key={_.uniqueId('milestone_row')}
@@ -194,7 +201,6 @@ var TaskTable = React.createClass({
 
             milestone.tasks.forEach(function(task) {
                 // Only show non-completed tasks and non-dirtied tasks
-
                 if (task.completed_on === null && task.dirty !== true) {
                     rows.push(<TaskRow
                         task={task}
@@ -217,13 +223,13 @@ var TaskTable = React.createClass({
                 <table>
                     <tbody>{rows}</tbody>
                 </table>
-                <form className='addTask-form' onSubmit={this.addTask}>
+                <form className='addTask-form' onSubmit={this.addTask.bind(this)}>
                     <div className='input-group'>
                         <input type="text" placeholder="Submit report..." 
-                            value={this.state.inputTaskname} onChange={this.handleTaskNameChange} />
+                            value={this.state.inputTaskname} onChange={this.handleTaskNameChange.bind(this)} />
 
                         <input type="text" placeholder="Milestone name" 
-                            value={this.state.inputMilestone} onChange={this.handleMilestoneChange} />
+                            value={this.state.inputMilestone} onChange={this.handleMilestoneChange.bind(this)} />
                         
                         <span className='input-group-btn addTask-btn'>
                             <button className='btn btn-default'>Add Task</button>
@@ -233,19 +239,21 @@ var TaskTable = React.createClass({
             </div>
         );
     }
-});
+}
 
+export default TaskPanel;
 
-var App = React.createClass({
-    render: function() {
-        return (
-            <div>
-                <Header />
-                <TaskTable />
-            </div>
-        );
-    }
-});
+//
+//var App = React.createClass({
+//    render: function() {
+//        //return (
+//        //    <div>
+//        //        <Header />
+//        //        <TaskTable />
+//        //    </div>
+//        //);
+//    }
+//});
 
 var Header = React.createClass({
     logOut: function() {
@@ -263,12 +271,4 @@ var Header = React.createClass({
                </Sticky>
            );
    }
-});
-
-$(window).bind("load", function() {
-    if (sessionStorage.getItem('jwt')) {
-        React.render(<App />, document.getElementById('task-panel'));
-    } else {
-        window.location.replace('http://localhost:4000/');
-    }
 });

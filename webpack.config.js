@@ -1,8 +1,10 @@
 // Webpack config file
+var webpack = require('webpack');
+
 module.exports = {
     entry: {
         home: './assets/home/js/home.js',
-        app: './assets/app/js/app.js'
+        app: './assets/app/js/index.jsx'
     },
     output: {
         path: __dirname + '/assets',
@@ -10,8 +12,9 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.jsx$/,
-                loader: 'jsx-loader'
+            {
+                test: /\.jsx?$/,
+                loaders: ['babel']
             }
         ]
     }
