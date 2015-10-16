@@ -21,6 +21,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 .logout {
@@ -29,4 +30,79 @@ body {
 
 .app-header {
     background-color: lavender;
+}
+
+
+/* panel stuff*/
+.border-box {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+body > div > span,
+body > div > h1 {
+  float: left;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 10px;
+}
+body > div > button {
+  float: left;
+  margin-right: 10px;
+}
+span {
+  color: #888888;
+}
+button {
+  width: auto;
+  padding: 7px 22px;
+}
+.menu {
+  display: block;
+}
+.menu > div {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-transition: -webkit-transform ease 250ms;
+  -moz-transition: -webkit-transform ease 250ms;
+  -ms-transition: -webkit-transform ease 250ms;
+  -o-transition: -webkit-transform ease 250ms;
+  transition: -webkit-transform ease 250ms;
+  -webkit-transition: transform ease 250ms;
+  -moz-transition: transform ease 250ms;
+  -ms-transition: transform ease 250ms;
+  -o-transition: transform ease 250ms;
+  transition: transform ease 250ms;
+}
+.menu > div.left {
+  background: #273D7A;
+  left: -250px;
+}
+.menu > div.panel_visible.left {
+  transform: translate3d(250px, 0, 0);
+  -ms-transform: translate3d(250px, 0, 0);
+  -webkit-transform: translate3d(250px, 0, 0);
+  -o-transform: translate3d(250px, 0, 0);
+  -moz-transform: translate3d(250px, 0, 0);
+}
+
+.menu > div > .menu-item {
+  float: left;
+  width: 100%;
+  margin: 0;
+  padding: 10px 15px;
+  border-bottom: solid 1px #555;
+  cursor: pointer;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  color: #B0B0B0;
+}
+.menu > div > .menu-item:hover {
+  color: #F0F0F0;
 }

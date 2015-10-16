@@ -1,8 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
 import _ from 'lodash'
 import $ from 'jquery'
-import Sticky from 'react-sticky'
-
 
 //var UserStore = require('./UserStore');
 //var ProjectStore = require('./ProjectStore');
@@ -242,33 +240,3 @@ class TaskPanel extends Component {
 }
 
 export default TaskPanel;
-
-//
-//var App = React.createClass({
-//    render: function() {
-//        //return (
-//        //    <div>
-//        //        <Header />
-//        //        <TaskTable />
-//        //    </div>
-//        //);
-//    }
-//});
-
-var Header = React.createClass({
-    logOut: function() {
-        UserService.logOut();
-    },
-   render: function() {
-       return (
-               <Sticky>
-                   <header className='app-header'>
-
-                       <button className='btn btn-default logout' onClick={this.logOut}>Log Out</button>
-                       <h1>NUS Collab </h1>
-                       <nav />
-                   </header>
-               </Sticky>
-           );
-   }
-});

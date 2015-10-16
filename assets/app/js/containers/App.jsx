@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import TaskPanel from '../components/TaskPanel.jsx';
 import * as TaskActions from '../actions/ReduxTaskActions';
+import Header from '../components/Header.jsx';
 
 class App extends Component {
     render() {
@@ -10,6 +11,7 @@ class App extends Component {
         const actions = bindActionCreators(TaskActions, dispatch);
         return (
             <div>
+                <Header />
                 <TaskPanel milestones={milestones} actions={actions} />
             </div>
         );
