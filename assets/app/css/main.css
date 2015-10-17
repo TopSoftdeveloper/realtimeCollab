@@ -18,18 +18,51 @@ td {
 }
 
 body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
-.logout {
-    float: right;
+
+
+.app-header ul {
+  list-style: none;
+  background-color: lavender;
+  text-align: center;
+  padding: 0;
+  margin: 0;
 }
 
-.app-header {
-    background-color: lavender;
+
+.app-header li {
+  padding-top: 1em;
+  width: 120px;
+  height: 50px;
+  font-size: 1em;
+  display: inline-block;
+}
+
+.app-header a {
+  text-decoration: none;
+  display: block;
+  transition: .3s background-color;
+}
+
+.app-header span {
+  text-decoration: none;
+  display: block;
+  transition: .3s background-color;
+}
+
+
+.app-header a:hover {
+  opacity: 0.4;
+}
+
+.app-header span:hover {
+  opacity: 0.4;
+  cursor: pointer;
 }
 
 
@@ -81,7 +114,7 @@ button {
   transition: transform ease 250ms;
 }
 .menu > div.left {
-  background: #273D7A;
+  background: lavender;
   left: -250px;
 }
 .menu > div.panel_visible.left {
@@ -97,12 +130,12 @@ button {
   width: 100%;
   margin: 0;
   padding: 10px 15px;
-  border-bottom: solid 1px #555;
+  border-bottom: solid 1px #dadae7;
   cursor: pointer;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-  color: #B0B0B0;
+  color: gray;
 }
 .menu > div > .menu-item:hover {
-  color: #F0F0F0;
+  color: orange;
 }
