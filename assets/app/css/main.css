@@ -3,10 +3,9 @@
 }
 
 .task-table {
-    width: 300px;
+    width: 500px;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 30%;
 }
 
 .task-table .project-name {
@@ -15,9 +14,20 @@
   padding-bottom: 10px;
 }
 
+
+.task-table-header {
+  padding-top: 5px;
+  padding-bottom: 15px;
+  display: inline-block;
+}
+
+.add-milestone-btn {
+  position: relative;
+  left: 200px;
+}
+
 .task-table .milestone-name {
   font-size: 18px;
-  padding-top: 5px;
 }
 
 td {
@@ -76,8 +86,7 @@ body {
   cursor: pointer;
 }
 
-/* Notification badge */
-/* 
+/* Notification badge 
  Notification Icon made by Google from www.flaticon.com is licensed under CC BY 3.0
 */
 .notif {

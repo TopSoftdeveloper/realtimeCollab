@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import _ from 'lodash'
 import $ from 'jquery'
+import TaskPanelHeader from './TaskPanelHeader.jsx'
 
 //var UserStore = require('./UserStore');
 //var ProjectStore = require('./ProjectStore');
@@ -102,8 +103,7 @@ class TaskPanel extends Component {
     constructor(props, context) {
         super(props, context); 
         this.state = {
-            inputTaskname: this.props.inputTaskname || '',
-            inputMilestone: this.props.inputMilestone || ''
+            inputTaskname: this.props.inputTaskname || ''
         };
     }
     //getInitialState: function() {
@@ -162,6 +162,10 @@ class TaskPanel extends Component {
         });        
     }
 
+    addMilestone(content) {
+        console.log(content);
+    }
+
     deleteTask(task_id) {
         this.props.actions.markAsDirty(task_id)
         // TaskService.deleteTask(task_id);
@@ -175,11 +179,7 @@ class TaskPanel extends Component {
             inputTaskname: e.target.value
         });
     }
-    handleMilestoneChange(e) {
-        this.setState({
-            inputMilestone: e.target.value
-        });
-    }
+
     getCompletedTasks(milestone_id) {
         let curr_milestone = this.props.milestones.filter(function(elem) {
             return elem.id === milestone_id;
@@ -218,18 +218,15 @@ class TaskPanel extends Component {
 
         return (
             <div className='task-table'>
+                <TaskPanelHeader projectName={this.props.projectName} onAddMilestone={this.addMilestone.bind(this)} />
                 <table>
-                    <thead><tr><th className='project-name'>{this.props.projectName}</th></tr></thead>
                     <tbody>{rows}</tbody>
                 </table>
+
                 <form className='addTask-form' onSubmit={this.addTask.bind(this)}>
                     <div className='input-group'>
                         <input type="text" placeholder="Submit report..." 
-                            value={this.state.inputTaskname} onChange={this.handleTaskNameChange.bind(this)} />
-
-                        <input type="text" placeholder="Milestone name" 
-                            value={this.state.inputMilestone} onChange={this.handleMilestoneChange.bind(this)} />
-                        
+                            value={this.state.inputTaskname} onChange={this.handleTaskNameChange.bind(this)} />                        
                         <span className='input-group-btn addTask-btn'>
                             <button className='btn btn-default'>Add Task</button>
                         </span>      
