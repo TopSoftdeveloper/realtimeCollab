@@ -56,9 +56,9 @@ class TaskPanelHeader extends Component {
                         <input type="text" placeholder="Milestone name" 
                             value={this.state.inputMilestone}
                             onChange={this.handleMilestoneChange.bind(this)}/>                    
-                        <button>Add Milestone</button>
+                        <button className='btn btn-default'>Add Milestone</button>
                     </form>
-            </Modal>
+                </Modal>
             </div>
         );
     }

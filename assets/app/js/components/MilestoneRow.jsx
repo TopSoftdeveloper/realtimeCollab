@@ -57,7 +57,7 @@ class MilestoneRow extends Component {
                         <input type="text" placeholder="Task name" 
                             value={this.state.inputMilestone}
                             onChange={this.handleTasknameChange.bind(this)}/>                    
-                        <button>Add Task</button>
+                        <button className='btn btn-default'>Add Task</button>
                     </form>
                 </Modal>
             </div>
