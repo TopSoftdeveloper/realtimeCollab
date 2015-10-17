@@ -11,7 +11,7 @@ import $ from 'jquery'
 
 var MilestoneRow = React.createClass({
     render: function() {
-        return (<tr><th colSpan="3">{this.props.milestone}</th></tr>);
+        return (<tr><th colSpan="3" className="milestone-name">{this.props.milestone}</th></tr>);
     }
 });
 
@@ -219,6 +219,7 @@ class TaskPanel extends Component {
         return (
             <div className='task-table'>
                 <table>
+                    <thead><tr><th className='project-name'>{this.props.projectName}</th></tr></thead>
                     <tbody>{rows}</tbody>
                 </table>
                 <form className='addTask-form' onSubmit={this.addTask.bind(this)}>

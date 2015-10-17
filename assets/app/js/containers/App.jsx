@@ -20,11 +20,12 @@ class App extends Component {
             }
         ]
         let displayName = 'Yan Yi';
+        let projectName = 'FYP';
 
         return (
             <div>
                 <Header notifCount={3} projects={mockProjects} displayName={displayName} />
-                <TaskPanel milestones={milestones} actions={actions} />
+                <TaskPanel milestones={milestones} actions={actions} projectName={projectName}/>
             </div>
         );
     }

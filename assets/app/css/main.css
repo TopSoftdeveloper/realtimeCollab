@@ -9,6 +9,17 @@
     margin-right: auto;
 }
 
+.task-table .project-name {
+  font-size: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.task-table .milestone-name {
+  font-size: 18px;
+  padding-top: 5px;
+}
+
 td {
     padding: 5px;
 }
