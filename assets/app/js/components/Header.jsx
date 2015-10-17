@@ -48,7 +48,7 @@ class Header extends Component {
                         </ul>                
                     </nav>
                         <LeftPanel visibility={this.state.panel_visible} showLeft={e => this.showLeft()} 
-                            hideLeft={e => this.hideLeft()} />
+                            hideLeft={e => this.hideLeft()} projects={this.props.projects}/>
                </div>
            );
     }

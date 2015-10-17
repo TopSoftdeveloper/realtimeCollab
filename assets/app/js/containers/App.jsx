@@ -9,9 +9,20 @@ class App extends Component {
     render() {
         const {milestones, dispatch} = this.props;
         const actions = bindActionCreators(TaskActions, dispatch);
+        const mockProjects = [
+            {
+                id: '0f0ajw',
+                content: 'FYP'
+            },
+            {
+                id: 'jf0fas',
+                content: 'CS3201'
+            }
+        ]
+
         return (
             <div>
-                <Header notif_count={3} />
+                <Header notif_count={3} projects={mockProjects} />
                 <TaskPanel milestones={milestones} actions={actions} />
             </div>
         );

@@ -12,14 +12,15 @@ class MenuItem extends Component {
     }
 }
 
-class LeftPanel extends Component {
+class LeftPanel extends Component {    
     render() {
+        let menuItems = this.props.projects.map(project => 
+            <MenuItem key={project.id} hash={project.id}>{project.content}</MenuItem>);
+
         return (
             <div className="menu">
                 <div className={(this.props.visibility ? "panel_visible " : "") + " left"}>
-                    <MenuItem hash="first-page">First Page</MenuItem>
-                    <MenuItem hash="second-page">Second Page</MenuItem>
-                    <MenuItem hash="third-page">Third Page</MenuItem>
+                    {menuItems}
                 </div>
             </div>
         );
