@@ -12,13 +12,15 @@ import TaskPanelHeader from './TaskPanelHeader.jsx'
 
 var MilestoneRow = React.createClass({
     render: function() {
-        return (<tr><th colSpan="3" className="milestone-name">{this.props.milestone}</th></tr>);
+        return (
+            <div><span className="milestone-name">{this.props.milestone}</span></div>
+            );
     }
 });
 
 var CompletedTask = React.createClass({
     render: function() {
-        return (<tr><td>{this.props.taskName}</td></tr>);
+        return (<div><span>{this.props.taskName}</span></div>);
     }
 });
 
@@ -36,39 +38,33 @@ var CompletedRow = React.createClass({
     render: function() {
         if (this.props.completedTasks.length == 0) {
             return (
-                <tr>
-                    <td></td>
-                </tr>
+                <div className='completed-row'></div>
             );
         }
 
         if (this.state.toShow) {
             var rows = this.props.completedTasks.map(function(task) {
                 return (
-                        <CompletedTask
-                        key={_.uniqueId('completed_task')}
-                        taskName={task.content}
-                        />
+                        <div className='completed-row' key={_.uniqueId('completed')}>
+                            <span>{task.content}</span>
+                        </div>
                     );
             });
 
             return (
-                <tr>
-                    <td className="completed" colSpan="3" onClick={this.handleChange}>
-                        showing list
-                        <table>
-                            <tbody>{rows}</tbody>
-                        </table>
-                    </td>
-                </tr>);
+                <div className='completed-row'>
+                    <span className="completed" onClick={this.handleChange}> Completed </span>
+                    {rows}
+                </div>
+                );
         }
 
         return (
-            <tr>
-                <td className="completed" colSpan="3" onClick={this.handleChange}>
+            <div className='completed-row'>
+                <span className="completed" onClick={this.handleChange}>
                     {this.props.completedTasks.length} completed
-                </td>
-            </tr>);
+                </span>
+            </div>);
     }
 });
 
@@ -79,22 +75,12 @@ class TaskRow extends Component {
             dateStr = this.props.task.deadline;
         }
         return (
-            <tr>
-                <td width="5">
-                    <input 
-                        type="checkbox" 
-                        onChange={this.props.onClickDone}
-                    />
-                </td>
-                <td>{this.props.task.content}</td>
-                <td>{dateStr}</td>
-                <td>
-                    <button 
-                        type="button" 
-                        className="destroy" 
-                        onClick={this.props.onClickDelete}
-                    >x</button></td>
-            </tr>
+            <div className='taskrow'>
+                <i className='fa fa-circle-thin' onClick={this.props.onClickDone}> </i>    
+                <span>{this.props.task.content}</span>
+                <span>{dateStr}</span>        
+                <i className='fa fa-close' onClick={this.props.onClickDelete}></i>
+            </div>
         );
     }
 }
@@ -219,9 +205,9 @@ class TaskPanel extends Component {
         return (
             <div className='task-table'>
                 <TaskPanelHeader projectName={this.props.projectName} onAddMilestone={this.addMilestone.bind(this)} />
-                <table>
-                    <tbody>{rows}</tbody>
-                </table>
+                <div className='task-items'>
+                    {rows}
+                </div>
 
                 <form className='addTask-form' onSubmit={this.addTask.bind(this)}>
                     <div className='input-group'>
