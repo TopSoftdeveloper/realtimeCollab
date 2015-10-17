@@ -19,10 +19,11 @@ class App extends Component {
                 content: 'CS3201'
             }
         ]
+        let displayName = 'Yan Yi';
 
         return (
             <div>
-                <Header notif_count={3} projects={mockProjects} />
+                <Header notifCount={3} projects={mockProjects} displayName={displayName} />
                 <TaskPanel milestones={milestones} actions={actions} />
             </div>
         );

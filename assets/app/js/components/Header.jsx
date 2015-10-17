@@ -32,16 +32,17 @@ class Header extends Component {
 
 
     render() {
-       return (
+        return (
                <div className='app-header'>
                     <nav>
                         <ul>
                             <li><span onClick={e => this.showLeft()}>Projects</span></li>
                             <li><a href="#">NUS Collab</a></li>
+                            <li><a href="#">{this.props.displayName}</a></li>
                             <li>
                                 <a href="#" className="notif">
                                 <img src="/assets/app/images/notifications.png" className="fa"> </img>
-                                <span className="btn__badge btn__badge--red"><b>{this.props.notif_count}</b></span>    
+                                <span className="btn__badge btn__badge--red"><b>{this.props.notifCount}</b></span>    
                                 </a>
                             </li>
                             <li><a href="#"> Log Out </a></li>
@@ -50,7 +51,7 @@ class Header extends Component {
                         <LeftPanel visibility={this.state.panel_visible} showLeft={e => this.showLeft()} 
                             hideLeft={e => this.hideLeft()} projects={this.props.projects}/>
                </div>
-           );
+            );
     }
 }
 
