@@ -38,6 +38,12 @@ class Header extends Component {
                         <ul>
                             <li><span onClick={e => this.showLeft()}>Projects</span></li>
                             <li><a href="#">NUS Collab</a></li>
+                            <li>
+                                <a href="#" className="notif">
+                                <img src="/assets/app/images/notifications.png" className="fa"> </img>
+                                <span className="btn__badge btn__badge--red"><b>{this.props.notif_count}</b></span>    
+                                </a>
+                            </li>
                             <li><a href="#"> Log Out </a></li>
                         </ul>                
                     </nav>

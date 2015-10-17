@@ -65,6 +65,29 @@ body {
   cursor: pointer;
 }
 
+/* Notification badge */
+/* 
+ Notification Icon made by Google from www.flaticon.com is licensed under CC BY 3.0
+*/
+.notif {
+  position: relative;
+}
+
+.btn__badge {
+  background: #FF5D5D;
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: -7px;
+  right: 40px;
+  padding: 1px 6px;
+  border-radius: 50%;
+}
+
+.btn__badge--red {
+  background: red;
+}
+
 
 /* panel stuff*/
 .border-box {

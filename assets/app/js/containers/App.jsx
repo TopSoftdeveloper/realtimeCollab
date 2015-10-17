@@ -11,7 +11,7 @@ class App extends Component {
         const actions = bindActionCreators(TaskActions, dispatch);
         return (
             <div>
-                <Header />
+                <Header notif_count={3} />
                 <TaskPanel milestones={milestones} actions={actions} />
             </div>
         );
