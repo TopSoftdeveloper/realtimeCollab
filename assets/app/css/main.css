@@ -1,13 +1,14 @@
 
-/* task row */
+/*****************task row *****************/
 .task-items {
   position: relative;
   margin: 10px;
 }
 
 .taskrow .fa-close, .taskrow .fa-circle-thin {
-  font-size: 20px;
+  font-size: 25px;
   transition: opacity 0.1s linear, color 0.1s linear;
+  color: gray;
 }
 
 .taskrow .fa-circle-thin {
@@ -28,18 +29,50 @@
   display: inline;
 }
 
-.taskrow:hover {
-  /*margin: 0;*/
+.taskrow >span {
+  font-size: 16px;
 }
-/* task row end */
 
-
-/* completed row end */
+/*****************completed row *****************/
 
 .completed-row {
   padding-bottom: 10px;
 }
-/* completed end */
+
+.completed-row >span {
+  font-size: 12pt;
+  display: block;
+}
+
+.completed-item {
+  text-decoration: line-through;
+}
+
+/****************** milestone row ***********************/
+
+.milestone-row >span {
+  padding-top: 20px;
+  font-weight: bold;
+}
+
+.milestone-row .fa-plus-square-o {
+  font-size: 30pt;
+  transition: opacity 0.1s linear, color 0.1s linear;
+  color: gray;
+  position: absolute;
+  right: 200px;
+  display: none;
+}
+
+.milestone-row:hover .fa-plus-square-o {
+  display: inline;
+}
+
+.milestone-row .fa-plus-square-o:hover {
+  color: #53f165;
+}
+
+/********************** General ***************************/
 
 
 #task-panel {
@@ -126,8 +159,9 @@ body {
   cursor: pointer;
 }
 
-/* Notification badge 
- Notification Icon made by Google from www.flaticon.com is licensed under CC BY 3.0
+/******************* Notification badge ****************************/ 
+ /*
+  Notification Icon made by Google from www.flaticon.com is licensed under CC BY 3.0
 */
 .notif {
   position: relative;
@@ -149,7 +183,7 @@ body {
 }
 
 
-/* panel stuff*/
+/************************* left panel *********************/
 .border-box {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
