@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import LeftPanel from '../components/LeftPanel.jsx';
+import LeftPanel from './LeftPanel.jsx';
 import $ from 'jquery';
+import Notification from './Notification.jsx';
 
 class Header extends Component {
     constructor(props, context) {
@@ -32,19 +33,19 @@ class Header extends Component {
 
 
     render() {
+        let notifs = [{
+            text: 'Cristina invited you to the project CS3201',
+            fuzzyTime: '2 minutes ago',
+            id: 'notif-1'
+        }];
         return (
                <div className='app-header'>
                     <nav>
                         <ul>
                             <li><span onClick={e => this.showLeft()}>Projects</span></li>
-                            <li><a href="#">NUS Collab</a></li>
-                            <li><a href="#">{this.props.displayName}</a></li>
-                            <li>
-                                <a href="#" className="notif">
-                                <img src="/assets/app/images/notifications.png" className="fa"> </img>
-                                <span className="btn__badge btn__badge--red"><b>{this.props.notifCount}</b></span>    
-                                </a>
-                            </li>
+                            <li className='app-logo'><a href="#">NUS Collab</a></li>
+                            <li className='header-displayName'><a href="#">{this.props.displayName}</a></li>
+                            <li className='header-notif'><Notification notifs={notifs} /></li>
                             <li><a href="#"> Log Out </a></li>
                         </ul>                
                     </nav>
