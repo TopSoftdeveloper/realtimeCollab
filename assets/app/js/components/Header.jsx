@@ -15,25 +15,22 @@ class Header extends Component {
         console.log('logged out');
     }
 
-    hideLeftEventHandler(event) {
+    hideLeft(event) {
         if (!$(event.target).closest('.menu').length) {
-            this.hideLeft();
+            $(document).unbind('click');                      
+            this.setState({
+                panel_visible: false
+            }); 
         }
     }
 
-    showLeft(event) {
+    showLeft() {
         this.setState({
             panel_visible: true
         });
-        $(document).on('click', this.hideLeftEventHandler.bind(this));              
+        $(document).bind('click', this.hideLeft.bind(this));    
     }
 
-    hideLeft() {
-        $(document).off('click');                      
-        this.setState({
-            panel_visible: false
-        });        
-    }
 
     render() {
        return (
