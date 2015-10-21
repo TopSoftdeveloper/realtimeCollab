@@ -29,12 +29,13 @@ class TaskPanel extends Component {
     }
 
     addTask(milestone_id, content) {
-        this.props.actions.addTask(milestone_id, {
+        this.props.actions.addTask({
             id: _.uniqueId('task'), //temp id
             deadline: null,
             is_time_specified: false,
             content: content,
-            completed_on: null
+            completed_on: null,
+            milestone_id: milestone_id
         });      
     }
 
@@ -43,7 +44,7 @@ class TaskPanel extends Component {
             id: _.uniqueId('milestone'),
             content: content,
             deadline: null,
-            project_id: 'NJ-5My0Jg',
+            project_id: this.props.projectId,
             tasks: []
         });
     }
@@ -57,26 +58,26 @@ class TaskPanel extends Component {
     }
 
     getCompletedTasks(milestone_id) {
-        let curr_milestone = this.props.milestones.filter(function(elem) {
-            return elem.id === milestone_id;
-        })[0];
-        return curr_milestone.tasks.filter(function(task) {
-            return task.completed_on !== null;
-        }.bind(this));
+        return this.props.tasks.filter(task => 
+            task.milestone_id === milestone_id && task.completed_on !== null);
     }
+
     render() {
         let actions = this.props.actions;
         let rows = [];
-        this.props.milestones.forEach(function(milestone) {
+
+        this.props.milestones.forEach(milestone => {
             rows.push(<MilestoneRow
                 milestone={milestone.content}
                 key={milestone.id}
                 onAddTask={this.addTask.bind(this, milestone.id)}
                 />);
 
-            milestone.tasks.forEach(function(task) {
+            this.props.tasks.forEach(task => {
                 // Only show non-completed tasks and non-dirtied tasks
-                if (task.completed_on === null && task.dirty !== true) {
+                if (task.completed_on === null && 
+                    task.dirty !== true && 
+                    task.milestone_id === milestone.id) {
                     rows.push(<TaskRow
                         task={task}
                         key={task.id}
@@ -84,14 +85,14 @@ class TaskPanel extends Component {
                         onClickDelete={this.deleteTask.bind(this, task.id)}
                         />);
                 }
-            }.bind(this));
+            });
 
             rows.push(<CompletedRow
                 key={_.uniqueId('completed')}
                 completedTasks={this.getCompletedTasks(milestone.id)}
                 />);
 
-        }.bind(this));
+        });
 
         return (
             <div className='task-table'>
