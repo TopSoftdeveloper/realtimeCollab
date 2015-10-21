@@ -3,54 +3,8 @@ import _ from 'lodash'
 import $ from 'jquery'
 import TaskPanelHeader from './TaskPanelHeader.jsx'
 import MilestoneRow from './MilestoneRow.jsx'
+import CompletedRow from './CompletedRow.jsx'
 
-var CompletedTask = React.createClass({
-    render: function() {
-        return (<div><span>{this.props.taskName}</span></div>);
-    }
-});
-
-var CompletedRow = React.createClass({
-    getInitialState: function () {
-        return {
-            toShow: false
-        };
-    },
-    handleChange: function() {
-        this.setState({
-            toShow: !this.state.toShow
-        });
-    },
-    render: function() {
-        if (this.props.completedTasks.length == 0) {
-            return (
-                <div className='completed-row'></div>
-            );
-        }
-
-        if (this.state.toShow) {
-            var rows = this.props.completedTasks.map(function(task) {
-                return (
-                        <span className='completed-item' key={_.uniqueId('completed')}>{task.content}</span>
-                    );
-            });
-
-            return (
-                <div className='completed-row'>
-                    <span className="completed-text" onClick={this.handleChange}> Completed </span>
-                    {rows}
-                </div>
-                );
-        }
-
-        return (
-            <div className='completed-row'>
-                <span className="completed-text" onClick={this.handleChange}>
-                    {this.props.completedTasks.length} completed
-                </span>
-            </div>);
-    }
-});
 
 class TaskRow extends Component {
     render() {
