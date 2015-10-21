@@ -9,6 +9,8 @@ const initialState = {
 
 export default function app(state=initialState, action) {
     switch (action.type) {
+        case AppConstants.SWITCH_TO_PROJECT:
+            return assign({}, state, {current_project : action.project_id});
         default:
             return state;
     }

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import TaskPanel from '../components/TaskPanel.jsx';
 import * as Actions from '../actions/ReduxTaskActions';
 import Header from '../components/Header.jsx';
+var AppConstants = require('../AppConstants');
 
 class App extends Component {
     constructor(props, context) {
@@ -19,6 +20,13 @@ class App extends Component {
         let ids = [];
         milestones.forEach(milestone => ids.push(milestone.id));
         return ids;
+    }
+
+    switchToProject(project_id) {
+        this.props.dispatch({
+            type: AppConstants.SWITCH_TO_PROJECT,
+            project_id: project_id
+        })
     }
 
 
@@ -42,7 +50,13 @@ class App extends Component {
 
         return (
             <div>
-                <Header notifs={notifications} projects={projects} displayName={displayName} />
+                <Header 
+                notifs={notifications} 
+                projects={projects} 
+                displayName={displayName} 
+                switchProject={this.switchToProject.bind(this)}
+                />
+
                 <TaskPanel 
                 milestones={milestonesInProj} 
                 tasks={tasksInProj} 

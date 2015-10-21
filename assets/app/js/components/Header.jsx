@@ -31,20 +31,30 @@ class Header extends Component {
         $(document).bind('click', this.hideLeft.bind(this));    
     }
 
+    swtich(project_id) {
+        this.setState({
+            panel_visible: false
+        });
+        this.props.switchProject(project_id);
+        $(document).unbind('click');                      
+    }
 
     render() {
         return (
                <div className='app-header'>
                     <nav>
                         <ul>
-                            <li><span onClick={e => this.showLeft()}>Projects</span></li>
+                            <li><span onClick={this.showLeft.bind(this)}>Projects</span></li>
                             <li className='app-logo'><a href="#">NUS Collab</a></li>
                             <li className='header-displayName'><a href="#">{this.props.displayName}</a></li>
                             <li className='header-notif'><Notification notifs={this.props.notifs} /></li>
                         </ul>                
                     </nav>
-                        <LeftPanel visibility={this.state.panel_visible} showLeft={e => this.showLeft()} 
-                            hideLeft={e => this.hideLeft()} projects={this.props.projects}/>
+                        <LeftPanel 
+                        visibility={this.state.panel_visible} 
+                        projects={this.props.projects}
+                        switchProject={this.swtich.bind(this)}
+                        />
                </div>
             );
     }

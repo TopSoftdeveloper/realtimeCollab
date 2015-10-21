@@ -20,3 +20,4 @@ export const unmarkDirty = makeActionCreator(AppConstants.UNMARK_DIRTY, 'id');
 export const markDone = makeActionCreator(AppConstants.MARK_DONE, 'id');
 export const unmarkDone = makeActionCreator(AppConstants.UNMARK_DONE, 'id');
 export const createMilestone = makeActionCreator(AppConstants.CREATE_MILESTONE, 'milestone');
+export const switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
