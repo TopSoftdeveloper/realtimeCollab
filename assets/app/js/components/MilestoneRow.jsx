@@ -33,11 +33,13 @@ class MilestoneRow extends Component {
     submit(e) {
         e.preventDefault();
         let content = this.state.inputTaskname.trim();
-        console.log(content)
-        // if (content !== '') {
-        //     this.props.onAddMilestone(content);
-        // }
+        if (content !== '') {
+            this.props.onAddTask(content);
+        }
         this.closeModal();
+        this.setState({
+            inputTaskname: ''
+        });
     }
 
     handleTasknameChange(e) {

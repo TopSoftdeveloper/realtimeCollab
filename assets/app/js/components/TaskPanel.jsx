@@ -3,12 +3,6 @@ import _ from 'lodash'
 import $ from 'jquery'
 import TaskPanelHeader from './TaskPanelHeader.jsx'
 import MilestoneRow from './MilestoneRow.jsx'
-//var UserStore = require('./UserStore');
-//var ProjectStore = require('./ProjectStore');
-//var TaskService = require('../services/TaskService');
-//var UserService = require('../services/UserService');
-//var ProjectService = require('../services/ProjectService');
-
 
 var CompletedTask = React.createClass({
     render: function() {
@@ -78,77 +72,34 @@ class TaskRow extends Component {
 class TaskPanel extends Component {
     constructor(props, context) {
         super(props, context); 
-        this.state = {
-            inputTaskname: this.props.inputTaskname || ''
-        };
     }
-    //getInitialState: function() {
-    //    return {
-    //        milestones:[],
-    //        project_id: null
-    //    };
-    //},
 
-    //componentWillUnmount: function() {
-    //    TaskStore.removeChangeListener(this._onChange);
-    //    UserStore.removeChangeListener(this._onChange);
-    //},
-    //_onChange: function() {
-    //    var project_id = null;
-    //    if (ProjectStore.getProjects().length > 0) {
-    //        project_id = ProjectStore.getProjects()[0].id;
-    //    }
-    //    this.setState({
-    //        milestones: TaskStore.getList(),
-    //        project_id: project_id
-    //    });
-    //    if (!UserStore.getJwt()) {
-    //        window.location.replace('http://localhost:4000/');
-    //    }
-    //},
-    addTask(e) {
-        e.preventDefault();
-        let milestone_name = this.state.inputMilestone.trim();
-        let matches = this.props.milestones.filter(
-            milestone => milestone.content === milestone_name
-        );
-        let milestone_id = _.uniqueId('milestone');
-        if (matches.length !== 0) {
-            milestone_id = matches[0].id;
-        }
-
+    addTask(milestone_id, content) {
         this.props.actions.addTask(milestone_id, {
             id: _.uniqueId('task'), //temp id
             deadline: null,
             is_time_specified: false,
-            content: this.state.inputTaskname.trim(),
+            content: content,
             completed_on: null
-        });
-        //TaskService.addTask({
-        //    id: _.uniqueId('task'), //temp id
-        //    milestone_id: milestone_id,
-        //    milestone_content: milestone_name,
-        //    content: this.state.inputTaskname,
-        //    completed_on: null
-        //}, this.state.project_id);
-
-        this.setState({
-            inputTaskname: '',
-            inputMilestone: ''
-        });        
+        });      
     }
 
     addMilestone(content) {
-        console.log(content);
+        this.props.actions.createMilestone({
+            id: _.uniqueId('milestone'),
+            content: content,
+            deadline: null,
+            project_id: 'NJ-5My0Jg',
+            tasks: []
+        });
     }
 
     deleteTask(task_id) {
         this.props.actions.markAsDirty(task_id)
-        // TaskService.deleteTask(task_id);
     }
+
     markDone(task_id) {
         this.props.actions.markDone(task_id);
-        // TaskService.markDone(task_id);
     }
 
     getCompletedTasks(milestone_id) {
@@ -165,7 +116,8 @@ class TaskPanel extends Component {
         this.props.milestones.forEach(function(milestone) {
             rows.push(<MilestoneRow
                 milestone={milestone.content}
-                key={_.uniqueId('milestone_row')}
+                key={milestone.id}
+                onAddTask={this.addTask.bind(this, milestone.id)}
                 />);
 
             milestone.tasks.forEach(function(task) {

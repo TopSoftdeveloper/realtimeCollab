@@ -7,8 +7,8 @@ export default function milestones(state = initialState, action) {
         case AppConstants.LOAD_TASKS:
             return action.milestones;
         case AppConstants.CREATE_MILESTONE:
-            // Check whether this milestone is unique
-            let milestones_same_id = _store.filter(
+            // Check whether this milestone is already present
+            let milestones_same_id = state.filter(
                 milestone => milestone.id === action.milestone.id
             );
             if (milestones_same_id.length === 0) {

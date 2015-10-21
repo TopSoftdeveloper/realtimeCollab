@@ -36,6 +36,9 @@ class TaskPanelHeader extends Component {
             this.props.onAddMilestone(content);
         }
         this.closeModal();
+        this.setState({
+            inputMilestone: ''
+        });        
     }
 
     handleMilestoneChange(e) {
