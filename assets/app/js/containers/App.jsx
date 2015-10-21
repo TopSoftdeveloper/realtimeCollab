@@ -21,10 +21,23 @@ class App extends Component {
         ]
         let displayName = 'Yan Yi';
         let projectName = 'FYP';
-
+        let notifs = [{
+            text: 'Cristina invited you to the project CS3201',
+            time: new Date().toISOString(), 
+            id: 'notif-1',
+            link: 'http://www.nus.edu.sg/',
+            read: false
+        },
+        {
+            text: 'Ken uploaded a file in CG3002',
+            time: new Date().toISOString(), 
+            id: 'notif-2',
+            link: 'http://www.nus.edu.sg/',            
+            read: false
+        }];
         return (
             <div>
-                <Header notifCount={3} projects={mockProjects} displayName={displayName} />
+                <Header notifs={notifs} projects={mockProjects} displayName={displayName} />
                 <TaskPanel milestones={milestones} actions={actions} projectName={projectName}/>
             </div>
         );

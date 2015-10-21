@@ -164,6 +164,76 @@ body {
   text-decoration: none;
 }
 
+/******************* Notification badge ****************************/ 
+ /*
+  Notification Icon made by Google from www.flaticon.com is licensed under CC BY 3.0
+*/
+.notif {
+  position: relative;
+}
+
+.unread-count {
+  background: #FF5D5D;
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: -7px;
+  right: -6px;
+  padding: 1px 6px;
+  border-radius: 50%;
+}
+
+
+/******************* Notification List****************************/ 
+.notif-title {
+  font-size: 13pt;
+  background-color: white;
+  z-index: 1000;
+  border-bottom: 1px solid #dddddd;
+  font-weight: bold;
+}
+
+.notif-text, .notif-fuzzy-time {
+  display: block;
+}
+
+.notification-list {
+  list-style: none;
+  max-height: 300px;
+}
+
+.notification-list .notif-item {
+  margin-bottom: 10px;
+  display: block;
+  padding: 5px;
+  background-color: white;
+  border-bottom: 1px solid rgba(100, 100, 100, .4);
+}
+
+.notification-container {
+  background-color: white;
+  border: 1px solid rgba(100, 100, 100, .4);
+  overflow: visible;
+  position: absolute;
+  top: 60px;
+  margin-left: -170px;
+  width: 400px;
+  z-index: 100;
+}
+
+/*Popup Arrow*/
+.notification-container:before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  color: transparent;
+  border: 10px solid black;
+  border-color: transparent transparent white;
+  margin-top: -20px;
+  margin-left: 188px;
+}
 
 /************************* left panel *********************/
 .border-box {
@@ -238,4 +308,3 @@ button {
 .menu > div > .menu-item:hover {
   color: orange;
 }
-*/

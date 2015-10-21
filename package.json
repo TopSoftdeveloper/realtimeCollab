@@ -29,11 +29,6 @@
     "normalizr": "^1.2.0",
     "object-assign": "^4.0.1",
     "path": "^0.11.14",
-    "pui-react-labels": "^2.0.0",
-    "pui-react-media": "^2.0.0",
-    "pui-react-notifications": "^2.0.0",
-    "pui-react-panels": "^2.0.0",
-    "pui-react-typography": "^2.0.0",
     "react": "^0.13.3",
     "react-modal": "^0.5.0",
     "react-redux": "^3.1.0",
@@ -42,8 +37,7 @@
     "sequelize": "^3.9.0",
     "shortid": "^2.2.2",
     "string-format": "^0.5.0",
-    "vision": "^3.0.0",
-    "webpack": "^1.12.2"
+    "vision": "^3.0.0"
   },
   "devDependencies": {
     "babel": "^5.8.23",

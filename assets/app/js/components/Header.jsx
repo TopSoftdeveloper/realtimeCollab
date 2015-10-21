@@ -33,11 +33,6 @@ class Header extends Component {
 
 
     render() {
-        let notifs = [{
-            text: 'Cristina invited you to the project CS3201',
-            fuzzyTime: '2 minutes ago',
-            id: 'notif-1'
-        }];
         return (
                <div className='app-header'>
                     <nav>
@@ -45,8 +40,7 @@ class Header extends Component {
                             <li><span onClick={e => this.showLeft()}>Projects</span></li>
                             <li className='app-logo'><a href="#">NUS Collab</a></li>
                             <li className='header-displayName'><a href="#">{this.props.displayName}</a></li>
-                            <li className='header-notif'><Notification notifs={notifs} /></li>
-                            <li><a href="#"> Log Out </a></li>
+                            <li className='header-notif'><Notification notifs={this.props.notifs} /></li>
                         </ul>                
                     </nav>
                         <LeftPanel visibility={this.state.panel_visible} showLeft={e => this.showLeft()} 
@@ -55,5 +49,6 @@ class Header extends Component {
             );
     }
 }
+//                            
 
 export default Header
