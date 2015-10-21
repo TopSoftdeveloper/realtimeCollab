@@ -7,11 +7,13 @@ class CompletedTask extends Component {
 }
 
 class CompletedRow extends Component {
-    getInitialState () {
-        return {
+    constructor(props, context) {
+        super(props, context); 
+        this.state = {
             toShow: false
         };
     }
+
     handleChange() {
         this.setState({
             toShow: !this.state.toShow
@@ -25,15 +27,13 @@ class CompletedRow extends Component {
         }
 
         if (this.state.toShow) {
-            var rows = this.props.completedTasks.map(function(task) {
-                return (
-                        <span className='completed-item' key={_.uniqueId('completed')}>{task.content}</span>
-                    );
-            });
+            let rows = this.props.completedTasks.map(task =>                    
+                <span className='completed-item' key={_.uniqueId('completed')}>{task.content}</span>
+            );
 
             return (
                 <div className='completed-row'>
-                    <span className="completed-text" onClick={this.handleChange}> Completed </span>
+                    <span className="completed-text" onClick={e => this.handleChange()}> Completed </span>
                     {rows}
                 </div>
                 );
@@ -41,7 +41,7 @@ class CompletedRow extends Component {
 
         return (
             <div className='completed-row'>
-                <span className="completed-text" onClick={this.handleChange}>
+                <span className="completed-text" onClick={e => this.handleChange()}>
                     {this.props.completedTasks.length} completed
                 </span>
             </div>);
