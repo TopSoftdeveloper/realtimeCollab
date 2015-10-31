@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react'
 import NotificationList from './NotificationList.jsx'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 class NotificationIcon extends Component {
     render() {
