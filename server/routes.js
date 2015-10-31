@@ -3,6 +3,7 @@ var Auth = require('./controller/authController');
 var Task = require('./controller/taskController');
 var Milestone = require('./controller/milestoneController');
 var Project = require('./controller/projectController');
+var User = require('./controller/userController');
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
@@ -23,5 +24,7 @@ module.exports.endpoints = [
 
     { method: 'POST',  path: '/create_project', config: Project.createProject },
     { method: 'POST',  path: '/join_project', config: Project.joinProject },
-    { method: 'GET',  path: '/project/{user_id}', config: Project.getProjects }
+    { method: 'GET',  path: '/project/{user_id}', config: Project.getProjects },
+
+    { method: 'GET',  path: '/user/populate/{user_id}', config: User.getInfo }
 ];

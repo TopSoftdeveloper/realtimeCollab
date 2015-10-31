@@ -45,7 +45,13 @@ module.exports = {
     },
     getProjectsOfUser: function(user_id) {
         return User.findById(user_id).then(function(user) {
-            return user.getProjects();
+            return user.getProjects(
+            {
+                model: Project,
+                attributes: ['id', 'content'],
+                joinTableAttributes: []                                    
+            }
+            );
         });
     },
     getUsersOfProject: function(project_id) {
@@ -127,12 +133,13 @@ module.exports = {
             where: {
                 project_id: project_id
             },
+            attributes: ['id', 'content', 'deadline'],
             include: [
                 {
                     model: Task,
                     attributes: ['id', 'content', 'deadline', 'completed_on',
-                        'is_time_specified', 'created_at', 'updated_at']
-                }
+                        'is_time_specified']
+                }             
             ]
         })
     },
