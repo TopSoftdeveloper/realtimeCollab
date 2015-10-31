@@ -52,7 +52,7 @@ export default function tasks(state=initialState, action) {
             return [action.task, ...state];
 
         case AppConstants.DELETE_TASK:
-            return state.filter(task => ask.id !== action.id);                 
+            return state.filter(task => task.id !== action.id);                 
         
         case AppConstants.MARK_DONE:
             return state.map(task => 
