@@ -110,13 +110,14 @@ module.exports = {
     doesUserExist: function(email) {
         return User.isExist(email);
     },
-    createUser: function(salt, hashed_password, email) {
+    createUser: function(salt, hashed_password, email, display_name) {
         var id = shortid.generate();
         return User.create({
             id: id,
             password: hashed_password,
             salt: salt,
-            email: email
+            email: email,
+            display_name: display_name
         });
     },
     markDone: function(task_id) {

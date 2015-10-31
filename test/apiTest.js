@@ -17,6 +17,7 @@ var token_expiry = config.get('authentication.tokenExpirySeconds');
 
 var TEST_EMAIL = 'test@test.com';
 var TEST_PASSWORD = 'abcdefg';
+var DISPLAY_NAME = 'Yan Yi';
 var task_id = null;
 var milestone_id = null;
 
@@ -38,7 +39,8 @@ describe('Authentication', function() {
             .set('Accept', 'application/x-www-form-urlencoded')
             .send({
                     email: TEST_EMAIL,
-                    password: TEST_PASSWORD
+                    password: TEST_PASSWORD,
+                    display_name: DISPLAY_NAME
                 })
             .expect('Content-Type', /json/)
             .expect(200)
@@ -46,6 +48,7 @@ describe('Authentication', function() {
                 user_id = res.body.user_id;
                 expect(res.body.email).to.equal(TEST_EMAIL);
                 expect(user_id).to.have.length.above(6);
+                expect(res.body.display_name).to.equal(DISPLAY_NAME);
                 Jwt.verify(res.body.token, secret_key, function(err, decoded) {
                     expect(err).to.equal(null);
                     expect(decoded.email).to.equal(TEST_EMAIL);
@@ -62,7 +65,8 @@ describe('Authentication', function() {
             .set('Accept', 'application/x-www-form-urlencoded')
             .send({
                 email: TEST_EMAIL,
-                password: TEST_PASSWORD
+                password: TEST_PASSWORD,
+                display_name: DISPLAY_NAME                
             })
             .expect('Content-Type', /json/)
             .expect(403)
@@ -73,7 +77,7 @@ describe('Authentication', function() {
             });
     });
 
-    it('should return token, email and user id upon login', function(done) {
+    it('should return token, email, display name and user id upon login', function(done) {
         var created_time = Math.floor((new Date()).getTime() / 1000);
 
         api.post('/login')
@@ -87,6 +91,7 @@ describe('Authentication', function() {
             .end(function(err, res) {
                 expect(res.body.email).to.equal(TEST_EMAIL);
                 expect(res.body.user_id).to.equal(user_id);
+                expect(res.body.display_name).to.equal(DISPLAY_NAME);                
                 Jwt.verify(res.body.token, secret_key, function(err, decoded) {
                     expect(err).to.equal(null);
                     expect(decoded.email).to.equal(TEST_EMAIL);

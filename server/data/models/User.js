@@ -11,7 +11,8 @@ module.exports = function(sequelize, DataTypes) {
         email: {
             type: DataTypes.STRING,
             unique: true
-        }
+        },
+        display_name: DataTypes.STRING
     },{
         underscored: true,
         classMethods: {

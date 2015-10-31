@@ -8,14 +8,17 @@ $(document).ready(function() {
     $('.signup_form').submit(function(event) {
         var email = $('.signup_form .email_input').val();
         var password = $('.signup_form .password_input').val();
+        var displayName = $('.signup_form .display_name_input').val();
 
         $.post(API_BASE_URL + CREATE_ACCOUNT_ENDPOINT, {
             email: email,
-            password: password
+            password: password,
+            display_name: displayName
         }).done(function(res) {
             sessionStorage.setItem('jwt', res.token);
             sessionStorage.setItem('user_id', res.user_id);
             sessionStorage.setItem('email', res.email);
+            sessionStorage.setItem('display_name', res.display_name);
             window.location.replace(APP_MAIN_PAGE);
         }).fail(function(err) {
             console.log(err);
@@ -34,6 +37,7 @@ $(document).ready(function() {
             sessionStorage.setItem('jwt', res.token);
             sessionStorage.setItem('user_id', res.user_id);
             sessionStorage.setItem('email', res.email);
+            sessionStorage.setItem('display_name', res.display_name);            
             window.location.replace(APP_MAIN_PAGE);
         }).fail(function(err) {
             console.log(err);

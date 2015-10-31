@@ -20,7 +20,8 @@ module.exports = {
         validate: {
             payload: {
                 email: Joi.string().email().required(),
-                password: Joi.string().min(3).required()
+                password: Joi.string().min(3).required(),
+                display_name: Joi.string().required()
             }
         }
     },
@@ -51,6 +52,7 @@ function get_token(private_key, email, user_id, expires_in) {
 function create_account(request, reply) {
     var password = request.payload.password;
     var email = request.payload.email;
+    var display_name = request.payload.display_name;
 
     storage.doesUserExist(email).then(function(exists) {
         if (exists) {
@@ -60,11 +62,12 @@ function create_account(request, reply) {
 
         Bcrypt.genSalt(10, function(err, salt) {
             Bcrypt.hash(password, salt, function(err, hash) {
-                storage.createUser(salt, hash, email).then(function(user) {
+                storage.createUser(salt, hash, email, display_name).then(function(user) {
                     reply({
                         email: email,
                         user_id: user.id,
-                        token: get_token(privateKey, user.email, user.id, token_expiry)
+                        token: get_token(privateKey, user.email, user.id, token_expiry),
+                        display_name: display_name
                     });
                 }, function(error) {
                     reply(Boom.forbidden(error));
@@ -94,7 +97,8 @@ function login(request, reply) {
             reply({
                 email: user.email,
                 user_id: user.id,
-                token: get_token(privateKey, user.email, user.id, token_expiry)
+                token: get_token(privateKey, user.email, user.id, token_expiry),
+                display_name: user.display_name                
             });
         });
 
