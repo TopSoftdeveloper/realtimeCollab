@@ -5,10 +5,13 @@ import 'babel-core/polyfill';
 import React from 'react';
 import { Provider } from 'react-redux';
 import App from './containers/App.jsx';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware} from 'redux';
 import reducer from './reducers/index';
+import thunk from 'redux-thunk';
 
-let store = createStore(reducer);
+const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
+const store = createStoreWithMiddleware(reducer);
+
 let rootElement = document.getElementById('task-panel');
 
 // console.log(store.getState());

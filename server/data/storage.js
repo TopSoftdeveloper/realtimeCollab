@@ -104,7 +104,8 @@ module.exports = {
     },
     addProjectToUser: function(user_id, project) {
         return User.findById(user_id).then(function(user) {
-            return user.addProject(project, {role: constants.ROLE_CREATOR});
+            return user === null ? Promise.reject(new Error('No user found')) :
+                user.addProject(project, {role: constants.ROLE_CREATOR});
         });
     },
     doesUserExist: function(email) {

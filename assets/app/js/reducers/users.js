@@ -3,7 +3,7 @@ import assign from 'object-assign';
 
 const initialState = [
     {
-        id: 'uid1',
+        id: 'EynH-wT-l',
         email: 'a@a',
         display_name: 'Yan Yi'
     },
@@ -14,8 +14,10 @@ const initialState = [
     }        
 ];
 
-export default function users(state=initialState, action) {
+export default function users(state=[], action) {
     switch (action.type) {
+        case AppConstants.INIT_USERS:
+            return action.users;        
         default:
             return state;
     }

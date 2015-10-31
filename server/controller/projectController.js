@@ -65,10 +65,12 @@ function createProject(request, reply) {
         if (err) {
             reply(Boom.forbidden(constants.FORBIDDEN));
             return;
-        }
+        }       
         storage.createProject(request.payload.content).then(function(project) {
             storage.addProjectToUser(decoded.user_id, project).then(function(obj) {
                 reply({project_id: project.id});
+            }, function(err) {
+                reply(Boom.forbidden(constants.FORBIDDEN));
             });
         }, function(error) {
             reply(Boom.internal(error));

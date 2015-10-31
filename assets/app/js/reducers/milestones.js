@@ -25,8 +25,10 @@ const initialState = [
         }        
     ];
 
-export default function milestones(state=initialState, action) {
+export default function milestones(state=[], action) {
     switch (action.type) {
+        case AppConstants.INIT_MILESTONES:
+            return action.milestones;
         case AppConstants.CREATE_MILESTONE:
             return [action.milestone, ...state];
 

@@ -18,8 +18,10 @@ const initialState = [
     }
 ];
 
-export default function notifications(state=initialState, action) {
+export default function notifications(state=[], action) {
     switch (action.type) {
+        case AppConstants.INIT_NOTIFICATIONS:
+            return action.notifications;                
         default:
             return state;
     }

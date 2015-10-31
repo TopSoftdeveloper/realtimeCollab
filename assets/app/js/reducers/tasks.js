@@ -1,43 +1,46 @@
 import AppConstants from '../AppConstants';
 import assign from 'object-assign';
 
-const initialState = [
-    {
-        id: 'taskid1',
-        content: 'Create survey',
-        deadline: null,
-        completed_on: null,
-        is_time_specified: false,
-        milestone_id: 'mid1'
-    },
-    {
-        id: 'taskid2',
-        content: 'Send to friends',
-        deadline: null,
-        completed_on: null,
-        is_time_specified: false,
-        milestone_id: 'mid1'        
-    },
-    {
-        id: 'taskid3',
-        content: 'Prepare report',
-        deadline: null,
-        completed_on: null,
-        is_time_specified: false,
-        milestone_id: 'mid2'        
-    },
-    {
-        id: 'taskid4',
-        content: 'Complete prototype',
-        deadline: null,
-        completed_on: null,
-        is_time_specified: false,
-        milestone_id: 'mid3'        
-    }                
-];
+// const initialState = [
+//     {
+//         id: 'taskid1',
+//         content: 'Create survey',
+//         deadline: null,
+//         completed_on: null,
+//         is_time_specified: false,
+//         milestone_id: 'mid1'
+//     },
+//     {
+//         id: 'taskid2',
+//         content: 'Send to friends',
+//         deadline: null,
+//         completed_on: null,
+//         is_time_specified: false,
+//         milestone_id: 'mid1'        
+//     },
+//     {
+//         id: 'taskid3',
+//         content: 'Prepare report',
+//         deadline: null,
+//         completed_on: null,
+//         is_time_specified: false,
+//         milestone_id: 'mid2'        
+//     },
+//     {
+//         id: 'taskid4',
+//         content: 'Complete prototype',
+//         deadline: null,
+//         completed_on: null,
+//         is_time_specified: false,
+//         milestone_id: 'mid3'        
+//     }                
+// ];
 
-export default function tasks(state=initialState, action) {
+export default function tasks(state=[], action) {
     switch (action.type) {
+        case AppConstants.INIT_TASKS:
+            return action.tasks;
+
         case AppConstants.MARK_AS_DIRTY:
             return state.map(task => 
                 task.id === action.id? 

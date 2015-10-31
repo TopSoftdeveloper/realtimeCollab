@@ -50,7 +50,7 @@ class TaskPanel extends Component {
     }
 
     deleteTask(task_id) {
-        this.props.actions.markAsDirty(task_id)
+        this.props.actions.deleteTask(task_id)
     }
 
     markDone(task_id) {

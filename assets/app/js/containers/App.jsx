@@ -4,17 +4,27 @@ import { connect } from 'react-redux';
 import TaskPanel from '../components/TaskPanel.jsx';
 import * as Actions from '../actions/ReduxTaskActions';
 import Header from '../components/Header.jsx';
+
 var AppConstants = require('../AppConstants');
+
+class Hydrate extends Component {
+    constructor(props, context) {
+        super(props, context); 
+        this.props.actions.initializeApp();
+    }    
+
+    render() {        
+        return (
+            <div>
+            </div>
+        );
+    }
+}
 
 class App extends Component {
     constructor(props, context) {
         super(props, context); 
-
     }    
-
-    loadProject(project_id) {
-        console.log('loading project ' + project_id)
-    }
 
     getMilestoneIds(milestones) {
         let ids = [];
@@ -29,16 +39,23 @@ class App extends Component {
         })
     }
 
-
     render() {
         const {app, milestones, notifications, projects, tasks, users, dispatch} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
 
-        let displayName = users.filter(
-            user => user.id === app.current_user)[0].display_name;
+        if (users.length == 0) {
+            return (<div><Hydrate actions={actions} /></div>);
+        } 
 
-        let projectName = projects.filter(
-            proj => proj.id === app.current_project)[0].content;
+
+        let displayName = users.filter(
+            user => user.id === sessionStorage.getItem('user_id'))[0].display_name;
+
+        let projectName = '';
+        if (projects.length > 0) {
+            projectName = projects.filter(
+                proj => proj.id === app.current_project)[0].content;
+        } 
 
         let milestonesInProj = milestones.filter(
             milestone => milestone.project_id === app.current_project);
@@ -47,6 +64,7 @@ class App extends Component {
 
         let tasksInProj = tasks.filter(
             task => milestoneIds.includes(task.milestone_id));
+
 
         return (
             <div>
