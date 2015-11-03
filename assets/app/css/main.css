@@ -16,7 +16,7 @@
 
 .taskrow .fa-close {
   position: absolute;
-  right: 200px;
+  right: 250px;
   display: none;
 }
 
@@ -50,7 +50,6 @@
 /****************** milestone row ***********************/
 
 .milestone-row >span {
-  padding-top: 20px;
   font-weight: bold;
 }
 
@@ -60,11 +59,11 @@
   color: gray;
   position: absolute;
   right: 200px;
-  display: none;
+  opacity: 0.2;
 }
 
 .milestone-row:hover .fa-plus-square-o {
-  display: inline;
+  opacity: 1;
 }
 
 .milestone-row .fa-plus-square-o:hover {
@@ -127,22 +126,29 @@ body {
 
 .app-logo {
   width: 200px;
+  margin-left: 100px;
 }
 
 .app-header .header-notif {
   width: auto;
+  text-align: center;
 }
 
 .app-header .header-displayName {
-  width: 100px;
+  width: auto;
+  text-align: center;
 }
 
 .app-header ul {
   list-style: none;
-  background-color: lavender;
-  text-align: center;
-  padding: 0;
-  margin: 0;
+  display: table;  
+  width: 100%;
+}
+
+.app-header {
+  -webkit-box-shadow: 0px 4px 9px -5px rgba(136,136,136,0.43);
+  -moz-box-shadow: 0px 4px 9px -5px rgba(136,136,136,0.43);
+  box-shadow: 0px 4px 9px -5px rgba(136,136,136,0.43);
 }
 
 
@@ -150,7 +156,7 @@ body {
   padding-top: 1em;
   height: 50px;
   font-size: 1em;
-  display: inline-block;
+  display: table-cell;
 }
 
 .app-header a:hover {
@@ -216,9 +222,9 @@ body {
   overflow: visible;
   position: absolute;
   top: 60px;
-  margin-left: -170px;
+  margin-left: -100px;
   width: 400px;
-  z-index: 100;
+  z-index: 1000;
 }
 
 /*Popup Arrow*/
@@ -230,7 +236,7 @@ body {
   height: 0;
   color: transparent;
   border: 10px solid black;
-  border-color: transparent transparent white;
+  border-color: transparent transparent gray;
   margin-top: -20px;
   margin-left: 188px;
 }
@@ -283,8 +289,11 @@ button {
   transition: transform ease 250ms;
 }
 .menu > div.left {
-  background: lavender;
   left: -250px;
+  -webkit-box-shadow: 10px 8px 47px -21px rgba(92,92,92,1);
+  -moz-box-shadow: 10px 8px 47px -21px rgba(92,92,92,1);
+  box-shadow: 10px 8px 47px -21px rgba(92,92,92,1);
+  background-color: #5d687a;
 }
 .menu > div.panel_visible.left {
   transform: translate3d(250px, 0, 0);
@@ -299,12 +308,12 @@ button {
   width: 100%;
   margin: 0;
   padding: 10px 15px;
-  border-bottom: solid 1px #dadae7;
+  font-size: 20px;
   cursor: pointer;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-  color: gray;
+  color: #aeafc2;
 }
 .menu > div > .menu-item:hover {
-  color: orange;
+  color: #d8d8e8;
 }

@@ -44,10 +44,10 @@ class Header extends Component {
                <div className='app-header'>
                     <nav>
                         <ul>
+                            <li className='app-logo'><a href="#">Collab</a></li>                        
                             <li><span onClick={this.showLeft.bind(this)}>Projects</span></li>
-                            <li className='app-logo'><a href="#">NUS Collab</a></li>
-                            <li className='header-displayName'><a href="#">{this.props.displayName}</a></li>
                             <li className='header-notif'><Notification notifs={this.props.notifs} /></li>
+                            <li className='header-displayName'><a href="#">{this.props.displayName}</a></li>                                                    
                         </ul>                
                     </nav>
                         <LeftPanel 
