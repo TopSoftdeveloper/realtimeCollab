@@ -26,7 +26,8 @@ class Header extends Component {
     }
 
     logOut() {
-        console.log('logged out');
+        sessionStorage.clear();
+        window.location.replace('http://localhost:4000');
     }
 
     hideLeft(event) {
@@ -87,7 +88,8 @@ class Header extends Component {
                             <li><i onClick={this.showLeft.bind(this)} className="fa fa-bars"></i></li>
                             <li><i onClick={this.openModal.bind(this)} className="fa fa-plus-circle"></i></li>
                             <li className='header-notif'><Notification notifs={this.props.notifs} /></li>
-                            <li className='header-displayName'><a href="#">{this.props.displayName}</a></li>                                                    
+                            <li className='header-displayName'><a href="#">{this.props.displayName}</a></li>    
+                            <li><button className='btn btn-default' onClick={this.logOut.bind(this)}>Log Out</button></li>                                                                    
                         </ul>                
                     </nav>
 
