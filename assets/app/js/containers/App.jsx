@@ -73,6 +73,7 @@ class App extends Component {
                 projects={projects} 
                 displayName={displayName} 
                 switchProject={this.switchToProject.bind(this)}
+                onCreateProject={actions.createProject}
                 />
 
                 <TaskPanel 

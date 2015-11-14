@@ -4,6 +4,7 @@ let CREATE_TASK_ENDPOINT = '/create_task';
 let DELETE_TASK_ENDPOINT =  '/delete_task';
 let COMPLETE_TASK_ENDPOINT = '/mark_completed';
 let CREATE_MILESTONE_ENDPOINT = '/create_milestone';
+let CREATE_PROJECT_ENDPOINT = '/create_project';
 let POPULATE_ENDPOINT = '/user/populate';
 
 import $ from 'jquery'
@@ -39,7 +40,18 @@ export function serverCreateMilestone(payload) {
         type: 'POST'
     });
 }
- 
+
+export function serverCreateProject(payload) {
+    return $.ajax({
+        url: API_BASE_URL + CREATE_PROJECT_ENDPOINT,
+        headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
+        },
+        data: payload,
+        type: 'POST'
+    });
+}
+
  export function serverDeleteTask(task_id) {
     return $.ajax({
         url: API_BASE_URL + DELETE_TASK_ENDPOINT,

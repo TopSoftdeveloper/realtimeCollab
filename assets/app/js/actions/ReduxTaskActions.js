@@ -1,6 +1,7 @@
 import {serverCreateTask, serverDeleteTask, serverMarkDone, 
-        serverPopulate, serverCreateMilestone} from '../apiUtils/apiUtil'
+        serverPopulate, serverCreateMilestone, serverCreateProject} from '../apiUtils/apiUtil'
 import assign from 'object-assign';
+import _ from 'lodash'
 
 let AppConstants = require('../AppConstants');
 
@@ -25,6 +26,9 @@ export const _markDone = makeActionCreator(AppConstants.MARK_DONE, 'id');
 export const _unmarkDone = makeActionCreator(AppConstants.UNMARK_DONE, 'id');
 export const _createMilestone = makeActionCreator(AppConstants.CREATE_MILESTONE, 'milestone');
 export const _deleteMilestone = makeActionCreator(AppConstants.DELETE_MILESTONE, 'id');
+export const _createProject = makeActionCreator(AppConstants.CREATE_PROJECT, 'project');
+export const _deleteProject = makeActionCreator(AppConstants.DELETE_PROJECT, 'id');
+export const replaceProjectId = makeActionCreator(AppConstants.REPLACE_PROJECT_ID, 'original', 'replacement');
 
 export const switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
 
@@ -95,6 +99,25 @@ export function createMilestone(milestone) {
         }).fail(e => {
             console.log(e);
             dispatch(_deleteMilestone(milestone.id));
+        });
+    }
+}
+
+export function createProject(content) {
+    let tempId = _.uniqueId('project');
+    let project = {
+        id: tempId,
+        content: content,
+        milestones: []
+    }    
+    return function(dispatch) {
+        dispatch(_createProject(project));
+        serverCreateProject({content:content})
+        .done(res => {
+            dispatch(replaceProjectId(tempId, res.project_id));
+        }).fail(e => {
+            console.log(e);
+            dispatch(_deleteProject(tempId));
         });
     }
 }

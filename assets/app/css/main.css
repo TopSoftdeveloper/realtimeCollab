@@ -16,7 +16,7 @@
 
 .taskrow .fa-close {
   position: absolute;
-  right: 250px;
+  right: 80px;
   display: none;
 }
 
@@ -58,7 +58,7 @@
   transition: opacity 0.1s linear, color 0.1s linear;
   color: gray;
   position: absolute;
-  right: 200px;
+  right: 50px;
   opacity: 0.2;
 }
 
@@ -164,10 +164,14 @@ body {
   text-decoration: none;
 }
 
-.app-header span:hover {
-  opacity: 0.4;
+.app-header i:hover {
+  opacity: 0.6;
   cursor: pointer;
   text-decoration: none;
+}
+
+.app-header i{
+  font-size: 16pt;
 }
 
 /******************* Notification badge ****************************/ 
