@@ -112,9 +112,11 @@ export function createProject(content) {
     }    
     return function(dispatch) {
         dispatch(_createProject(project));
+        dispatch(switchToProject(tempId))
         serverCreateProject({content:content})
         .done(res => {
             dispatch(replaceProjectId(tempId, res.project_id));
+            dispatch(switchToProject(res.project_id))
         }).fail(e => {
             console.log(e);
             dispatch(_deleteProject(tempId));

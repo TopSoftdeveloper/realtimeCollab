@@ -53,8 +53,11 @@ class App extends Component {
 
         let projectName = '';
         if (projects.length > 0) {
-            projectName = projects.filter(
-                proj => proj.id === app.current_project)[0].content;
+            let currentProjectMatches = projects.filter(
+                proj => proj.id === app.current_project);
+            if (currentProjectMatches.length === 1) {
+                projectName = currentProjectMatches[0].content;
+            }
         } 
 
         let milestonesInProj = milestones.filter(
