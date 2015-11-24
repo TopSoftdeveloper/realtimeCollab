@@ -1,7 +1,7 @@
 
 import $ from 'jquery';
 
-import 'babel-core/polyfill';
+import ReactDOM from 'react-dom';
 import React from 'react';
 import { Provider } from 'react-redux';
 import App from './containers/App.jsx';
@@ -17,9 +17,9 @@ let rootElement = document.getElementById('task-panel');
 // console.log(store.getState());
 
 function run() {
-    React.render(
+    ReactDOM.render(
         <Provider store={store}>
-            {() => <App />}
+            <App />
         </Provider>,
         rootElement
     );

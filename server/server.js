@@ -9,6 +9,9 @@ var privateKey = config.get('authentication.privateKey');
 
 // Create a server with a host and port
 var server = new Hapi.Server();
+require('babel-core/register')({
+    presets: ['react', 'es2015']
+});
 
 server.connection({
     host: 'localhost',
@@ -22,6 +25,7 @@ var validate = function(decodedToken, request, callback) {
     }
     callback(null, true, decodedToken);
 };
+
 
 server.register([
         require('vision'),
