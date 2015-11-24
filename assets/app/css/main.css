@@ -117,81 +117,6 @@ body {
 }
 
 
-/****************** app header **********************/
-
-.app-logo >a {
-  font-size: 16pt;
-  font-family: Helvetica;
-}
-
-.app-logo {
-  width: 200px;
-  margin-left: 100px;
-}
-
-.app-header .header-notif {
-  width: auto;
-  text-align: center;
-}
-
-.app-header .header-displayName {
-  width: auto;
-  text-align: center;
-}
-
-.app-header ul {
-  list-style: none;
-  display: table;  
-  width: 100%;
-}
-
-.app-header {
-  -webkit-box-shadow: 0px 4px 9px -5px rgba(136,136,136,0.43);
-  -moz-box-shadow: 0px 4px 9px -5px rgba(136,136,136,0.43);
-  box-shadow: 0px 4px 9px -5px rgba(136,136,136,0.43);
-}
-
-
-.app-header li {
-  padding-top: 1em;
-  height: 50px;
-  font-size: 1em;
-  display: table-cell;
-}
-
-.app-header a:hover {
-  opacity: 0.4;
-  text-decoration: none;
-}
-
-.app-header i:hover {
-  opacity: 0.6;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.app-header i{
-  font-size: 16pt;
-}
-
-/******************* Notification badge ****************************/ 
- /*
-  Notification Icon made by Google from www.flaticon.com is licensed under CC BY 3.0
-*/
-.notif {
-  position: relative;
-}
-
-.unread-count {
-  background: #FF5D5D;
-  color: white;
-  font-size: 12px;
-  position: absolute;
-  top: -7px;
-  right: -6px;
-  padding: 1px 6px;
-  border-radius: 50%;
-}
 
 
 /******************* Notification List****************************/ 
@@ -205,15 +130,16 @@ body {
 
 .notif-text, .notif-fuzzy-time {
   display: block;
+  text-align: center;
 }
 
 .notification-list {
   list-style: none;
   max-height: 300px;
+  margin-right: 50px;
 }
 
 .notification-list .notif-item {
-  margin-bottom: 10px;
   display: block;
   padding: 5px;
   background-color: white;
@@ -224,25 +150,10 @@ body {
   background-color: white;
   border: 1px solid rgba(100, 100, 100, .4);
   overflow: visible;
-  position: absolute;
   top: 60px;
-  margin-left: -100px;
+  margin-left: 400px;
   width: 400px;
   z-index: 1000;
-}
-
-/*Popup Arrow*/
-.notification-container:before {
-  content: '';
-  display: block;
-  position: absolute;
-  width: 0;
-  height: 0;
-  color: transparent;
-  border: 10px solid black;
-  border-color: transparent transparent gray;
-  margin-top: -20px;
-  margin-left: 188px;
 }
 
 /************************* left panel *********************/

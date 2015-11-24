@@ -29,13 +29,16 @@ class NotificationList extends Component {
                 fuzzyTime={this.toFuzzyTime(notif.time)} />
         );
 
-        return (
-            <div className='notification-list'>
-                <ul>
-                    {notificationItems}             
-                </ul>         
+        return this.props.show_list ? 
+        (
+            <div className='notification-container'>
+                <div className='notification-list'>
+                    <ul>
+                        {notificationItems}             
+                    </ul>         
+                </div>
             </div>
-        );
+        ): false;
     }
 }
 

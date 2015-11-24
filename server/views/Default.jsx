@@ -13,7 +13,6 @@ var Default = React.createClass({
                 <link href='https://fonts.googleapis.com/css?family=Quattrocento|Open+Sans' rel='stylesheet' type='text/css'></link>
                 <link rel="stylesheet" type="text/css" href="assets/app/css/main.css"></link>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"></link>
-                <link rel="stylesheet" href="assets/app/css/components.css"></link>
             </head>
 
             <body style={{fontFamily: ['Quattrocento', 'sans-serif']}}>

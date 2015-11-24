@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
-import LeftPanel from './LeftPanel.jsx';
-import $ from 'jquery';
-import Notification from './Notification.jsx';
+import React, { Component } from 'react'
+import LeftPanel from './LeftPanel.jsx'
+import $ from 'jquery'
 import Modal from 'react-modal'
+import { Navbar, Nav, NavDropdown, NavItem, MenuItem, Badge, Dropdown, Button } from 'react-bootstrap'
+import NotificationList from './NotificationList.jsx'
 
 const customStyles = {
     content : {
@@ -15,12 +16,14 @@ const customStyles = {
     }
 };
 
+
 class Header extends Component {
     constructor(props, context) {
         super(props, context); 
         this.state = {
             panel_visible: false,
             modalIsOpen: false,
+            show_list: false,            
             inputProject: ''            
         };
     }
@@ -79,38 +82,63 @@ class Header extends Component {
             inputProject: e.target.value
         });
     }
-    render() {
-        return (
-               <div className='app-header'>
-                    <nav>
-                        <ul>
-                            <li className='app-logo'><a href="#">NUSCollab</a></li>      
-                            <li><i onClick={this.showLeft.bind(this)} className="fa fa-bars"></i></li>
-                            <li><i onClick={this.openModal.bind(this)} className="fa fa-plus-circle"></i></li>
-                            <li className='header-notif'><Notification notifs={this.props.notifs} /></li>
-                            <li className='header-displayName'><a href="#">{this.props.displayName}</a></li>    
-                            <li><button className='btn btn-default' onClick={this.logOut.bind(this)}>Log Out</button></li>                                                                    
-                        </ul>                
-                    </nav>
 
-                    <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >                                    
-                        <h3>Add a project</h3>
-                        <form onSubmit={this.submit.bind(this)}>
-                            <input type="text" placeholder="Project name" 
-                                value={this.state.inputProject}
-                                onChange={this.handleProjectChange.bind(this)}/>                    
-                            <button className='btn btn-default'>Create Project</button>
-                        </form>
-                    </Modal>
-                    <LeftPanel 
-                    visibility={this.state.panel_visible} 
-                    projects={this.props.projects}
-                    switchProject={this.switch.bind(this)}
-                    />
-                </div>
+    toggleList() {
+        this.setState({
+            show_list: !this.state.show_list
+        });
+    }
+
+    render() {
+        let unreadCount = this.props.notifs.reduce((total, notif) => notif.read ? total : total+1, 0);
+
+        return (
+            <div className='app-header'>
+                <Navbar>
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <a href="#">NUSCollab</a>
+                        </Navbar.Brand>
+                        <Navbar.Toggle />
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <Nav>
+                            <NavItem eventKey={1} onClick={this.showLeft.bind(this)}>Show Projects</NavItem>
+                            <NavItem eventKey={2} onClick={this.openModal.bind(this)}>Add Project</NavItem>
+                        </Nav>
+                        <Nav pullRight>
+                            <NavItem eventKey={2} onClick={this.toggleList.bind(this)}>
+                                Notifs <Badge>{unreadCount}</Badge> 
+                            </NavItem>
+
+                            <NavDropdown eventKey={3} title={this.props.displayName} id="basic-nav-dropdown">
+                                <MenuItem eventKey={3.1}>Account Settings</MenuItem>
+                                <MenuItem divider />
+                                <MenuItem eventKey={3.2} onClick={this.logOut.bind(this)}>Log Out</MenuItem>
+                            </NavDropdown>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+
+                <NotificationList notifs={this.props.notifs} show_list={this.state.show_list}/>
+                
+                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >                                    
+                    <h3>Add a project</h3>
+                    <form onSubmit={this.submit.bind(this)}>
+                        <input type="text" placeholder="Project name" 
+                            value={this.state.inputProject}
+                            onChange={this.handleProjectChange.bind(this)}/>                    
+                        <button className='btn btn-default'>Create Project</button>
+                    </form>
+                </Modal>
+                <LeftPanel 
+                visibility={this.state.panel_visible} 
+                projects={this.props.projects}
+                switchProject={this.switch.bind(this)}
+                />                
+            </div>    
             );
     }
-}
-//                            
+}                            
 
-export default Header
+export default Header                                
