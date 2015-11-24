@@ -66,7 +66,7 @@ class App extends Component {
         let milestoneIds = this.getMilestoneIds(milestonesInProj)
 
         let tasksInProj = tasks.filter(
-            task => milestoneIds.includes(task.milestone_id));
+            task => milestoneIds.indexOf(task.milestone_id) >= 0);
 
 
         return (
