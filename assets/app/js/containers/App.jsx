@@ -39,6 +39,10 @@ class App extends Component {
         })
     }
 
+    isItemPresent(arr, id) {
+        return arr.indexOf(id) >= 0;
+    }
+
     render() {
         const {app, milestones, notifications, projects, tasks, users, dispatch} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
@@ -52,11 +56,24 @@ class App extends Component {
             user => user.id === sessionStorage.getItem('user_id'))[0].display_name;
 
         let projectName = '';
+        let basicUsers = [];
+        let pendingUsers = [];
+        let projectCreator = '';
+
         if (projects.length > 0) {
             let currentProjectMatches = projects.filter(
                 proj => proj.id === app.current_project);
             if (currentProjectMatches.length === 1) {
                 projectName = currentProjectMatches[0].content;
+                projectCreator = currentProjectMatches[0].creator;                
+                let basicUserIds = currentProjectMatches[0].basic;
+                let pendingUserIds = currentProjectMatches[0].pending;
+
+                basicUsers = users.filter(
+                    user => this.isItemPresent(basicUserIds, user.id));
+
+                pendingUsers = users.filter(
+                    user => this.isItemPresent(pendingUserIds, user.id));
             }
         } 
 
@@ -66,8 +83,7 @@ class App extends Component {
         let milestoneIds = this.getMilestoneIds(milestonesInProj)
 
         let tasksInProj = tasks.filter(
-            task => milestoneIds.indexOf(task.milestone_id) >= 0);
-
+            task => this.isItemPresent(milestoneIds, task.milestone_id));
 
         return (
             <div>

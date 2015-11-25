@@ -55,6 +55,7 @@ export function initializeApp() {
                 dispatch(initNotifications(notifState));
                 dispatch(initProjects(normalizedTables.projects));
                 dispatch(initTasks(normalizedTables.tasks));
+                dispatch(initUsers(normalizedTables.users));
             }
         }).fail(e => {
             console.log(e);
@@ -137,6 +138,12 @@ export function deleteTask(taskId) {
 	}
 }
 
+function isItemPresent(arr, id) {
+    return _.findIndex(arr, function(item) {
+        return item.id == id;
+    }) >= 0;
+}
+
 function normalize(projects) {
     /* 
     * Normalizes nested API response for ease of manipulation in
@@ -145,85 +152,117 @@ function normalize(projects) {
     let projectState = [];
     let milestoneState = [];
     let taskState = [];
+    let userState = [];
     projects.forEach(project => {
         // project table
-        let currProj = assign({}, project, {milestones: []});
+        let currProj = {
+            id: project.id, 
+            content: project.content, 
+            milestones: [], 
+            creator: '', 
+            basic: [], 
+            pending: []
+        };
         currProj.milestones = project.milestones.map(milestone => milestone.id);
-        projectState.push(currProj);
+
         // milestone table
         project.milestones.forEach(milestone => {
             let currMilestone = assign({}, milestone, {tasks: []});
             currMilestone.tasks = milestone.tasks.map(task => task.id);
             currMilestone.project_id = project.id;
             milestoneState.push(currMilestone);
+
             // task table
             taskState = taskState.concat(milestone.tasks.map(task =>
                 assign({}, task, {milestone_id : milestone.id})));
         });
+
+        // fill in user table and update project table
+        project.users.forEach(user => {
+            if (user.role === 'creator') {
+                currProj.creator = user.id;
+            } else if (user.role === 'basic') {
+                currProj.basic.push(user.id); 
+            } else if (user.role === 'pending') {
+                currProj.pending.push(user.id);
+            } else {
+                throw new Error("user has invalid role: " + user.role);
+            }
+
+            if (!isItemPresent(userState, user.id)) {
+                userState.push(user);
+            }
+
+        });
+
+        projectState.push(currProj);
     });
     return {
         projects: projectState, 
         milestones: milestoneState,
-        tasks:taskState
+        tasks:taskState,
+        users: userState
     };
 }
 
 let mockRes = {
-    "projects": [
+  "projects": [
+    {
+      "id": "EkNbTQ6me",
+      "content": "FYP",
+      "users": [
         {
-            "id": "EkszSYTWe",
-            "content": "heya",
-            "milestones": [
-                    {
-            "id": "V1MXXvpWx",
-            "content": "write mid term report",
-            "deadline": null,
-            "tasks": [
-                {
-                    "id": "4kwwXDT-l",
-                    "content": "blah",
-                    "deadline": null,
-                    "completed_on": null,
-                    "is_time_specified": false
-                },
-                {
-                    "id": "EkadzO6-x",
-                    "content": "zookey",
-                    "deadline": null,
-                    "completed_on": null,
-                    "is_time_specified": false
-                }
-            ]
-        }]
+          "id": "Ekwkgb6ml",
+          "email": "a@a",
+          "display_name": "Yan Yi",
+          "role": "creator"
         },
         {
-            "id": "Vkz-7vT-x",
-            "content": "Final Year Project",
-            "milestones": [
-                {
-                    "id": "V1MXXvaspWx",
-                    "content": "Sundown Marathon",
-                    "deadline": null,
-                    "tasks": [
-                        {
-                            "id": "4kwwXhtDT-l",
-                            "content": "Interval training",
-                            "deadline": null,
-                            "completed_on": null,
-                            "is_time_specified": false
-                        },
-                        {
-                            "id": "Eaoasfx",
-                            "content": "Swimming",
-                            "deadline": null,
-                            "completed_on": null,
-                            "is_time_specified": false
-                        }
-                    ]
-                }                
-            ]
+          "id": "NkM3toC7x",
+          "email": "b@b",
+          "display_name": "Eugene",
+          "role": "pending"
         }
-    ]
+      ],
+      "milestones": [
+        {
+          "id": "NJb3fHC7g",
+          "content": "FIFA World Cup",
+          "deadline": null,
+          "tasks": [
+            {
+              "id": "Nyv2MrC7g",
+              "content": "soccer",
+              "deadline": null,
+              "completed_on": "2015-11-25T14:37:05.000Z",
+              "is_time_specified": false
+            },
+            {
+              "id": "VJlTGHAXe",
+              "content": "basketball",
+              "deadline": null,
+              "completed_on": null,
+              "is_time_specified": false
+            }
+          ]
+        },
+        {
+          "id": "NkbIFoTXe",
+          "content": "run a marathon",
+          "deadline": null,
+          "tasks": [
+            {
+              "id": "EJw89jaQe",
+              "content": "create training plan",
+              "deadline": null,
+              "completed_on": "2015-11-25T14:37:10.000Z",
+              "is_time_specified": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
 };
 
 const notifState = [

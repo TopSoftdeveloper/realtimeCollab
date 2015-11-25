@@ -7,14 +7,8 @@ import assign from 'object-assign';
 //         content: 'FYP',
 //         creator: 'uid1',
 //         basic: ['uid2'],
+//         pending: ['user_who_was_invited'],
 //         milestones: ['mid1', 'mid2']
-//     },
-//     {
-//         id: '4yMtMyCyx',
-//         content: 'CS3201',
-//         creator: 'uid2',
-//         basic: ['uid1'],
-//         milestones: ['mid3']
 //     }             
 // ];
 
