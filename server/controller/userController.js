@@ -32,21 +32,20 @@ function normalize(projectsData) {
     return projectsData;
 }
 
-function filterPending(normalizedProjectsData, userId) {
-    var projects = [];
-    normalizedProjectsData.forEach(function(project) {
+function filterPending(projects, userId) {
+    return projects.filter(function(project) {
         var pending = false;
-        project.users.forEach(function(user) {     
-            console.log(user.id + ' ' + userId + ' ' +  user.role)
-            if (user.id === userId && user.role === constants.ROLE_PENDING) {
+        project.users.forEach(function(user) {    
+            console.log(user.id + ' ' + userId + ' ' + user.user_project.role) 
+            if (user.id === userId && user.user_project.role === constants.ROLE_PENDING) {
                 pending = true;
             }       
         });       
         if (!pending) {
-            projects.push(project);
+            return true;
         }         
     });
-    return projects;
+    return filteredProjects;
 }
 
 function populate(request, reply) {
@@ -56,16 +55,16 @@ function populate(request, reply) {
             return;
         }
         storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
-            Promise.map(projects, function(project) {
+            filteredProjects = filterPending(projects, decoded.user_id);
+            Promise.map(filteredProjects, function(project) {
                 return storage.getMilestonesWithTasks(project.id);
             }).then(function(milestones) {
-                var projectsData = JSON.parse(JSON.stringify(projects));
+                var projectsData = JSON.parse(JSON.stringify(filteredProjects));
                 var milestonesData = JSON.parse(JSON.stringify(milestones));
                 milestonesData = milestonesData.map(function(arr) {
                     return {milestones: arr};
                 });
-                var normalized = normalize(projectsData);
-                reply({projects:_.merge(filterPending(normalized, decoded.user_id), milestonesData)});
+                reply({projects:_.merge(normalize(projectsData), milestonesData)});
             });
         });
 
