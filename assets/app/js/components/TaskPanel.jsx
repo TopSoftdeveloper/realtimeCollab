@@ -22,7 +22,11 @@ class TaskPanel extends Component {
     }
 
     render() {   
-
+        if (this.props.projectId === undefined) {
+            return (
+                <h2>You have no projects yet!</h2>
+            )
+        }
         return (
             <div className='task-table'>
                 <TaskPanelHeader projectName={this.props.projectName}/>
