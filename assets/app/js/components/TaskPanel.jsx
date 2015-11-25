@@ -43,7 +43,12 @@ class TaskPanel extends Component {
                     </TabPanel>
 
                     <TabPanel>
-                        <Settings projectName={this.props.projectName}/>
+                        <Settings 
+                            projectName={this.props.projectName}
+                            basicUsers={this.props.basicUsers}
+                            pendingUsers={this.props.pendingUsers}
+                            projectCreator={this.props.projectCreator}                            
+                        />
                     </TabPanel>
                     
                 </Tabs>                        

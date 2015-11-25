@@ -58,20 +58,20 @@ class App extends Component {
         let projectName = '';
         let basicUsers = [];
         let pendingUsers = [];
-        let projectCreator = '';
+        let projectCreator = {};
 
         if (projects.length > 0) {
             let currentProjectMatches = projects.filter(
                 proj => proj.id === app.current_project);
             if (currentProjectMatches.length === 1) {
                 projectName = currentProjectMatches[0].content;
-                projectCreator = currentProjectMatches[0].creator;                
                 let basicUserIds = currentProjectMatches[0].basic;
                 let pendingUserIds = currentProjectMatches[0].pending;
 
+                projectCreator = users.filter(
+                    user  => currentProjectMatches[0].creator === user.id)[0];
                 basicUsers = users.filter(
                     user => this.isItemPresent(basicUserIds, user.id));
-
                 pendingUsers = users.filter(
                     user => this.isItemPresent(pendingUserIds, user.id));
             }
@@ -101,6 +101,9 @@ class App extends Component {
                 actions={actions} 
                 projectName={projectName}
                 projectId={app.current_project}
+                basicUsers={basicUsers}
+                pendingUsers={pendingUsers}
+                projectCreator={projectCreator}
                 />
             </div>
         );

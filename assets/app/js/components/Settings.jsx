@@ -16,13 +16,28 @@ class Settings extends Component {
     }
 
     render() {   
+        let listGroups = [];
+        listGroups.push(
+            <ListGroupItem key={this.props.projectCreator.id}>
+                {this.props.projectCreator.display_name} (creator)
+            </ListGroupItem>);
+        this.props.basicUsers.forEach(user => listGroups.push(
+            <ListGroupItem key={user.id}>
+                {user.display_name}
+            </ListGroupItem>
+        ));
+
+        this.props.pendingUsers.forEach(user => listGroups.push(
+            <ListGroupItem key={user.id}>
+                {user.display_name} (pending)
+            </ListGroupItem>
+        ));
 
         return (
             <div className='settings'>
                 <ListGroup>
                     <ListGroupItem bsStyle="info">Members</ListGroupItem>
-                    <ListGroupItem href="#link1">Yan Yi</ListGroupItem>
-                    <ListGroupItem href="#link2">Cristina</ListGroupItem>
+                        {listGroups}
                     <ListGroupItem>
                         <form>
                             <Input type="email" label="Search by email" buttonAfter={addMember}/>
