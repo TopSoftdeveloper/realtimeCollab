@@ -78,9 +78,9 @@
 }
 
 .task-table {
-    width: 500px;
+    /*width: 500px;*/
     display: block;
-    margin-left: 30%;
+    /*margin-left: 30%;*/
 }
 
 .task-table .project-name {
@@ -186,7 +186,7 @@ button {
 }
 .menu > div {
   position: absolute;
-  z-index: 2;
+  z-index: 1000;
   top: 0;
   width: 250px;
   height: 100%;

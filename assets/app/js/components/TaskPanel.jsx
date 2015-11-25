@@ -6,6 +6,7 @@ import TaskPanelHeader from './TaskPanelHeader.jsx'
 import MilestoneRow from './MilestoneRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
 import MilestoneView from './MilestoneView.jsx'
+import Settings from './Settings.jsx'
 
 const Tab = ReactTabs.Tab;
 const Tabs = ReactTabs.Tabs;
@@ -24,9 +25,7 @@ class TaskPanel extends Component {
 
         return (
             <div className='task-table'>
-                <TaskPanelHeader 
-                    projectName={this.props.projectName} 
-                />
+                <TaskPanelHeader projectName={this.props.projectName}/>
                 <Tabs onSelect={this.handleSelect.bind(this)}>
                     
                     <TabList>
@@ -42,9 +41,11 @@ class TaskPanel extends Component {
                             projectId={this.props.projectId}
                         />   
                     </TabPanel>
+
                     <TabPanel>
-                        <h2>Settings</h2>
+                        <Settings projectName={this.props.projectName}/>
                     </TabPanel>
+                    
                 </Tabs>                        
             </div>
         );
