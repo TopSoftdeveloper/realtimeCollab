@@ -50,7 +50,10 @@ module.exports = {
                 model: Project,
                 attributes: ['id', 'content'],
                 joinTableAttributes: [],
-                include: [{model: User, as:'users'}]                                  
+                include: [{
+                    model: User, as:'users',
+                    attributes: ['id', 'email', 'display_name']
+                }]                                  
             }
             );
         });

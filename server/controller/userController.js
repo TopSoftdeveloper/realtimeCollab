@@ -21,6 +21,34 @@ module.exports = {
     }
 };
 
+function normalize(projectsData) {
+    // removes the nested 'user_project' and just retains 'role' attribute
+    projectsData.forEach(function(project) {
+        project.users.forEach(function(user) {            
+            _.assign(user, {'role': user.user_project.role});
+            delete user['user_project'];            
+        });
+    });
+    return projectsData;
+}
+
+function filterPending(normalizedProjectsData, userId) {
+    var projects = [];
+    normalizedProjectsData.forEach(function(project) {
+        var pending = false;
+        project.users.forEach(function(user) {     
+            console.log(user.id + ' ' + userId + ' ' +  user.role)
+            if (user.id === userId && user.role === constants.ROLE_PENDING) {
+                pending = true;
+            }       
+        });       
+        if (!pending) {
+            projects.push(project);
+        }         
+    });
+    return projects;
+}
+
 function populate(request, reply) {
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
         if (err || (decoded.user_id !== request.params.user_id)) {
@@ -36,7 +64,8 @@ function populate(request, reply) {
                 milestonesData = milestonesData.map(function(arr) {
                     return {milestones: arr};
                 });
-                reply({projects:_.merge(projectsData, milestonesData)});
+                var normalized = normalize(projectsData);
+                reply({projects:_.merge(filterPending(normalized, decoded.user_id), milestonesData)});
             });
         });
 
