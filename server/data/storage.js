@@ -36,11 +36,11 @@ function _create(task) {
 }
 
 module.exports = {
-    joinProject: function(user_id, project_id) {
+    inviteToProject: function(user_id, project_id) {
         return UserProject.create({
             user_id: user_id,
             project_id: project_id,
-            role: constants.ROLE_BASIC
+            role: constants.ROLE_PENDING
         });
     },
     getProjectsOfUser: function(user_id) {
@@ -49,7 +49,8 @@ module.exports = {
             {
                 model: Project,
                 attributes: ['id', 'content'],
-                joinTableAttributes: []                                    
+                joinTableAttributes: [],
+                include: [{model: User, as:'users'}]                                  
             }
             );
         });

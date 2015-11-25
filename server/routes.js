@@ -23,7 +23,7 @@ module.exports.endpoints = [
     { method: 'DELETE',  path: '/delete_milestone', config: Milestone.removeMilestone },
 
     { method: 'POST',  path: '/create_project', config: Project.createProject },
-    { method: 'POST',  path: '/join_project', config: Project.joinProject },
+    { method: 'POST',  path: '/invite_to_project', config: Project.inviteToProject },
     { method: 'GET',  path: '/project/{user_id}', config: Project.getProjects },
 
     { method: 'GET',  path: '/user/populate/{user_id}', config: User.getInfo }

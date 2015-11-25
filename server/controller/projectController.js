@@ -6,6 +6,8 @@ var Boom = require('boom');
 var Jwt = require('jsonwebtoken');
 var config = require('config');
 var helper = require('../utils/helper');
+var _ = require('lodash');
+
 var secret_key = config.get('authentication.privateKey');
 
 module.exports = {
@@ -28,8 +30,8 @@ module.exports = {
             }
         }
     },
-    joinProject: {
-        handler: joinProject,
+    inviteToProject: {
+        handler: inviteToProject,
         validate: {
             payload: {
                 project_id: Joi.string().required(),
@@ -39,13 +41,27 @@ module.exports = {
     }
 };
 
-function joinProject(request, reply) {
-    storage.joinProject(request.payload.user_id, request.payload.project_id).then(function() {
-        return reply({status: constants.STATUS_OK});
-    }, function(err) {
-        console.log(err);
-        return reply({status: constants.STATUS_FAIL});
-    });
+function inviteToProject(request, reply) {
+    // User needs to be in current project to invite someone else
+    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+        storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
+            var isProjectPresent = _.findIndex(projects, function(project) {
+                return project.id === request.payload.project_id;
+            });
+
+            if (err || isProjectPresent < 0) {
+                reply(Boom.forbidden(constants.FORBIDDEN));
+                return;
+            }
+
+            storage.inviteToProject(request.payload.user_id, request.payload.project_id).then(function() {
+                return reply({status: constants.STATUS_OK});
+            }, function(err) {
+                console.log(err);
+                return reply({status: constants.STATUS_FAIL});
+            });            
+        });
+    });    
 }
 
 function getProjects(request, reply) {
