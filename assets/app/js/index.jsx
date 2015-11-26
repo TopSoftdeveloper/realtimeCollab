@@ -14,8 +14,6 @@ const store = createStoreWithMiddleware(reducer);
 
 let rootElement = document.getElementById('task-panel');
 
-// console.log(store.getState());
-
 function run() {
     ReactDOM.render(
         <Provider store={store}>
@@ -26,12 +24,6 @@ function run() {
 }
 
 if (window.addEventListener) {
-        //if (sessionStorage.getItem('jwt')) {
-        //}
-         //} else {
-    //    window.location.replace('http://localhost:4000/');
-    //}
-
     window.addEventListener('DOMContentLoaded', run);
 } else {
     window.attachEvent('onload', run);

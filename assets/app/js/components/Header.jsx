@@ -31,8 +31,12 @@ class Header extends Component {
     logOut() {
         sessionStorage.clear();
         window.location.replace('http://localhost:4000');
-    }
+    }   
 
+
+    /****************************************************************************/
+    /*****************************  LEFT PANEL   ********************************/
+    /****************************************************************************/
     hideLeft(event) {
         if (!$(event.target).closest('.menu').length) {
             $(document).unbind('click');                      
@@ -57,6 +61,10 @@ class Header extends Component {
         $(document).unbind('click');                      
     }
 
+
+    /****************************************************************************/
+    /*************************  MODAL FOR ADDING PROJECTS  **********************/
+    /****************************************************************************/
     openModal() {
         this.setState({modalIsOpen: true});
     }
