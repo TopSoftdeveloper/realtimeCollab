@@ -5,9 +5,25 @@ let DELETE_TASK_ENDPOINT =  '/delete_task';
 let COMPLETE_TASK_ENDPOINT = '/mark_completed';
 let CREATE_MILESTONE_ENDPOINT = '/create_milestone';
 let CREATE_PROJECT_ENDPOINT = '/create_project';
+let INVITE_TO_PROJECT_ENDPOINT = '/invite_to_project';
 let POPULATE_ENDPOINT = '/user/populate';
 
 import $ from 'jquery'
+
+function ajaxPost(endpoint, payload) {
+    return $.ajax({
+        url: API_BASE_URL + endpoint,
+        headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
+        },
+        data: payload,
+        type: 'POST'
+    });
+}
+
+export function serverInviteToProject(payload) {
+    return ajaxPost(INVITE_TO_PROJECT_ENDPOINT, payload);
+}
 
 export function serverPopulate() {
     return $.ajax({
@@ -20,36 +36,15 @@ export function serverPopulate() {
 }
 
 export function serverCreateTask(payload) {
-    return $.ajax({
-        url: API_BASE_URL + CREATE_TASK_ENDPOINT,
-        headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
-        },
-        data: payload,
-        type: 'POST'
-    });
+    return ajaxPost(CREATE_TASK_ENDPOINT, payload);
 }
 
 export function serverCreateMilestone(payload) {
-    return $.ajax({
-        url: API_BASE_URL + CREATE_MILESTONE_ENDPOINT,
-        headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
-        },
-        data: payload,
-        type: 'POST'
-    });
+    return ajaxPost(CREATE_MILESTONE_ENDPOINT, payload);
 }
 
 export function serverCreateProject(payload) {
-    return $.ajax({
-        url: API_BASE_URL + CREATE_PROJECT_ENDPOINT,
-        headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
-        },
-        data: payload,
-        type: 'POST'
-    });
+    return ajaxPost(CREATE_PROJECT_ENDPOINT, payload);
 }
 
  export function serverDeleteTask(task_id) {

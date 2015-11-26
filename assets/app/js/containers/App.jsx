@@ -44,7 +44,7 @@ class App extends Component {
     }
 
     render() {
-        const {app, milestones, notifications, projects, tasks, users, dispatch} = this.props;
+        const {app, alerts, milestones, notifications, projects, tasks, users, dispatch} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
 
         if (users.length == 0) {
@@ -88,22 +88,23 @@ class App extends Component {
         return (
             <div>
                 <Header 
-                notifs={notifications} 
-                projects={projects} 
-                displayName={displayName} 
-                switchProject={this.switchToProject.bind(this)}
-                onCreateProject={actions.createProject}
+                    notifs={notifications} 
+                    projects={projects} 
+                    displayName={displayName} 
+                    switchProject={this.switchToProject.bind(this)}
+                    onCreateProject={actions.createProject}
                 />
 
                 <TaskPanel 
-                milestones={milestonesInProj} 
-                tasks={tasksInProj} 
-                actions={actions} 
-                projectName={projectName}
-                projectId={app.current_project}
-                basicUsers={basicUsers}
-                pendingUsers={pendingUsers}
-                projectCreator={projectCreator}
+                    milestones={milestonesInProj} 
+                    tasks={tasksInProj} 
+                    actions={actions} 
+                    projectName={projectName}
+                    projectId={app.current_project}
+                    basicUsers={basicUsers}
+                    pendingUsers={pendingUsers}
+                    projectCreator={projectCreator}
+                    alerts={alerts}
                 />
             </div>
         );
@@ -113,6 +114,7 @@ class App extends Component {
 App.propTypes = {
     dispatch: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,    
+    alerts: PropTypes.object.isRequired,        
     milestones: PropTypes.array.isRequired,
     notifications: PropTypes.array.isRequired,
     projects: PropTypes.array.isRequired,
@@ -122,7 +124,8 @@ App.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        app: state.app,        
+        app: state.app,     
+        alerts: state.alerts,   
         milestones: state.milestones,
         notifications: state.notifications,
         projects: state.projects,

@@ -5,6 +5,7 @@ import projects from './projects';
 import tasks from './tasks';
 import users from './users';
 import app from './app';
+import alerts from './alerts';
 
 export default combineReducers({
     milestones,
@@ -12,5 +13,6 @@ export default combineReducers({
     projects,
     tasks,
     users,
+    alerts,
     app
 });

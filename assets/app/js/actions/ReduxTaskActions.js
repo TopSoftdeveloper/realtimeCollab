@@ -1,9 +1,11 @@
 import {serverCreateTask, serverDeleteTask, serverMarkDone, 
-        serverPopulate, serverCreateMilestone, serverCreateProject} from '../apiUtils/apiUtil'
+        serverPopulate, serverCreateMilestone, serverCreateProject,
+        serverInviteToProject} from '../apiUtils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
 let AppConstants = require('../AppConstants');
+let ServerConstants = require('../../../../server/constants');
 
 function makeActionCreator(type, ...argNames) {
     return function(...args) {
@@ -31,6 +33,7 @@ export const _deleteProject = makeActionCreator(AppConstants.DELETE_PROJECT, 'id
 export const replaceProjectId = makeActionCreator(AppConstants.REPLACE_PROJECT_ID, 'original', 'replacement');
 
 export const switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
+export const projectAlert = makeActionCreator(AppConstants.PROJECT_INVITATION_ALERT, 'alert');
 
 export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
 export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
@@ -38,6 +41,12 @@ export const initNotifications = makeActionCreator(AppConstants.INIT_NOTIFICATIO
 export const initProjects = makeActionCreator(AppConstants.INIT_PROJECTS, 'projects');
 export const initTasks = makeActionCreator(AppConstants.INIT_TASKS, 'tasks');
 export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
+
+export function dismissProjectAlert() {
+    return function(dispatch) {
+        dispatch(projectAlert(null))
+    }
+}
 
 export function initializeApp() {
     return function(dispatch) {
@@ -77,7 +86,7 @@ export function markDone(id) {
 export function addTask(task) {
 	// return a thunk function here
 	// thunk function needs to dispatch some actions to change 
-  	// the Store status, so get ive it the "dispatch function"
+  	// the Store status, so give it the "dispatch function"
   	return function(dispatch) {
   		dispatch(_addTask(task));
 	    serverCreateTask({content: task.content, milestone_id: task.milestone_id})
@@ -121,6 +130,23 @@ export function createProject(content) {
         }).fail(e => {
             console.log(e);
             dispatch(_deleteProject(tempId));
+        });
+    }
+}
+
+export function inviteToProject(projectId, email) {
+    return function(dispatch) {
+        serverInviteToProject({email: email, project_id: projectId})
+        .done(res => {
+            dispatch(projectAlert(AppConstants.INVITED_TO_PROJECT));
+        }).fail(e => {
+            if (e.responseJSON.message === ServerConstants.USER_ALREADY_PRESENT) {
+                dispatch(projectAlert(AppConstants.USER_ALREADY_EXISTS));
+            } else if (e.responseJSON.message === ServerConstants.USER_NOT_FOUND) {
+                dispatch(projectAlert(AppConstants.USER_NOT_FOUND));
+            } else {
+                throw new Error('Unknown error message ' + e.responseJSON.message);
+            }
         });
     }
 }

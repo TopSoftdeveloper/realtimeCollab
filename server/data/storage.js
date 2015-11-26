@@ -36,11 +36,15 @@ function _create(task) {
 }
 
 module.exports = {
-    inviteToProject: function(user_id, project_id) {
-        return UserProject.create({
-            user_id: user_id,
-            project_id: project_id,
-            role: constants.ROLE_PENDING
+    inviteToProject: function(email, project_id) {
+        return this.findUser(email).then(function(user) {
+            return user === null ? 
+                Promise.reject(constants.USER_NOT_FOUND) :        
+            UserProject.create({
+                user_id: user.id,
+                project_id: project_id,
+                role: constants.ROLE_PENDING
+            });
         });
     },
     getProjectsOfUser: function(user_id) {

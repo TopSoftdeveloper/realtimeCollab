@@ -35,7 +35,7 @@ module.exports = {
         validate: {
             payload: {
                 project_id: Joi.string().required(),
-                user_id: Joi.string().required()
+                email: Joi.string().email().required()
             }
         }
     }
@@ -54,11 +54,16 @@ function inviteToProject(request, reply) {
                 return;
             }
 
-            storage.inviteToProject(request.payload.user_id, request.payload.project_id).then(function() {
+            storage.inviteToProject(request.payload.email, request.payload.project_id).then(function() {
                 return reply({status: constants.STATUS_OK});
-            }, function(err) {
-                console.log(err);
-                return reply({status: constants.STATUS_FAIL});
+            }, function(err) {  
+                var errorMessage = err;
+                if (typeof err !== 'string') {
+                    if (err.errors[0].message === constants.DUPLICATE_PRIMARY_KEY) {
+                        errorMessage = constants.USER_ALREADY_PRESENT;
+                    }
+                }    
+                return reply(Boom.badRequest(errorMessage));          
             });            
         });
     });    
