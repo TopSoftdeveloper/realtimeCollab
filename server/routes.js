@@ -7,7 +7,7 @@ var User = require('./controller/userController');
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
-    { method: 'GET',  path: '/app', config: Static.app },
+    { method: 'GET',  path: '/app/{param*}', config: Static.app },
     { method: 'GET',  path: '/', config: Static.index },
 
     { method: 'POST',  path: '/create_account', config: Auth.createAccount },

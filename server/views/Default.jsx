@@ -11,13 +11,13 @@ var Default = React.createClass({
                 <title>Collab</title>
                 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"></link>
                 <link href='https://fonts.googleapis.com/css?family=Quattrocento|Open+Sans' rel='stylesheet' type='text/css'></link>
-                <link rel="stylesheet" type="text/css" href="assets/app/css/main.css"></link>
+                <link rel="stylesheet" type="text/css" href="/assets/app/css/main.css"></link>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"></link>
             </head>
 
             <body style={{fontFamily: ['Quattrocento', 'sans-serif']}}>
                 <div id="task-panel"></div>
-                <script src="assets/app-bundle.js"></script>
+                <script src="/assets/app-bundle.js"></script>
             </body>
             </html>
         );
