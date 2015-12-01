@@ -1,9 +1,9 @@
 import AppConstants from '../AppConstants';
 import assign from 'object-assign';
-
-const initialState = {
-    current_project: 'NJ-5My0Jg',
-};
+// Example state tree: 
+// {
+//     current_project: 'NJ-5My0Jg',
+// }
 
 export default function app(state={}, action) {
     switch (action.type) {

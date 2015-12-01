@@ -1,7 +1,7 @@
 import AppConstants from '../AppConstants';
 import assign from 'object-assign';
-
-// const initialState = [
+// Example state tree:
+// [
 //     {
 //         id: 'taskid1',
 //         content: 'Create survey',
@@ -11,30 +11,14 @@ import assign from 'object-assign';
 //         milestone_id: 'mid1'
 //     },
 //     {
-//         id: 'taskid2',
-//         content: 'Send to friends',
-//         deadline: null,
-//         completed_on: null,
-//         is_time_specified: false,
-//         milestone_id: 'mid1'        
-//     },
-//     {
 //         id: 'taskid3',
 //         content: 'Prepare report',
 //         deadline: null,
 //         completed_on: null,
 //         is_time_specified: false,
 //         milestone_id: 'mid2'        
-//     },
-//     {
-//         id: 'taskid4',
-//         content: 'Complete prototype',
-//         deadline: null,
-//         completed_on: null,
-//         is_time_specified: false,
-//         milestone_id: 'mid3'        
-//     }                
-// ];
+//     }
+// ]
 
 export default function tasks(state=[], action) {
     switch (action.type) {

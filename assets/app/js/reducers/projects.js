@@ -1,7 +1,7 @@
 import AppConstants from '../AppConstants';
 import assign from 'object-assign';
-
-// const initialState = [
+// Example state tree:
+// [
 //     {
 //         id: 'NJ-5My0Jg',
 //         content: 'FYP',
@@ -10,7 +10,7 @@ import assign from 'object-assign';
 //         pending: ['user_who_was_invited'],
 //         milestones: ['mid1', 'mid2']
 //     }             
-// ];
+// ]
 
 
 export default function projects(state=[], action) {

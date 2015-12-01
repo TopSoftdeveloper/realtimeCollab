@@ -1,29 +1,30 @@
 import AppConstants from '../AppConstants';
 import assign from 'object-assign';
 
-const initialState = [
-        {
-            id: 'mid1',
-            content: 'Do user surveys',
-            deadline: null,
-            tasks: ['taskid1', 'taskid2'],
-            project_id: 'NJ-5My0Jg'
-        },
-        {
-            id: 'mid2',
-            content: 'Week 7 evaluation',
-            deadline: null,
-            tasks: ['taskid3'],
-            project_id: 'NJ-5My0Jg'
-        },
-        {
-            id: 'mid3',
-            content: 'Final Presentation',
-            deadline: null,
-            tasks: ['taskid4'],
-            project_id: '4yMtMyCyx'
-        }        
-    ];
+// Example state tree: 
+// [
+//     {
+//         id: 'mid1',
+//         content: 'Do user surveys',
+//         deadline: null,
+//         tasks: ['taskid1', 'taskid2'],
+//         project_id: 'NJ-5My0Jg'
+//     },
+//     {
+//         id: 'mid2',
+//         content: 'Week 7 evaluation',
+//         deadline: null,
+//         tasks: ['taskid3'],
+//         project_id: 'NJ-5My0Jg'
+//     },
+//     {
+//         id: 'mid3',
+//         content: 'Final Presentation',
+//         deadline: null,
+//         tasks: ['taskid4'],
+//         project_id: '4yMtMyCyx'
+//     }        
+// ]
 
 export default function milestones(state=[], action) {
     switch (action.type) {

@@ -1,6 +1,7 @@
 import AppConstants from '../AppConstants';
 import assign from 'object-assign';
 
+// Example state tree: 
 //{
 //     project_invitation: 'INVITED_TO_PROJECT/USER_NOT_FOUND/USER_ALREADY_EXISTS'
 //}
