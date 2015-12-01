@@ -1,6 +1,6 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 
-class TaskPanelHeader extends Component {
+class ProjectHeader extends Component {
     constructor(props, context) {
         super(props, context); 
     }    
@@ -16,4 +16,4 @@ class TaskPanelHeader extends Component {
     }
 }
 
-export default TaskPanelHeader;
+export default ProjectHeader;

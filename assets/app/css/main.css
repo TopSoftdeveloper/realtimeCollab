@@ -227,8 +227,12 @@ button {
   cursor: pointer;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-  color: #aeafc2;
 }
 .menu > div > .menu-item:hover {
   color: #d8d8e8;
+}
+
+.menu-item > a {
+  color: #aeafc2;
+  text-decoration: none;
 }

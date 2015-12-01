@@ -1,9 +1,10 @@
-import {isLoggedIn} from '../apiUtils/auth.js'
-import App from '../containers/App.jsx'
 import React from 'react'
 import { Route } from 'react-router'
+import {isLoggedIn} from '../apiUtils/auth.js'
+import App from '../containers/App.jsx'
+import Project from '../components/Project.jsx'
 
-function redirectToLandingPage(nextState, replaceState) {
+function requireLogin(nextState, replaceState) {
   if (!isLoggedIn()) {
     window.location.assign('http://localhost:4000');
   }
@@ -16,6 +17,9 @@ function redirectToDashboard(nextState, replaceState) {
 }
 
 export default (
-  <Route path='/app' component={App} onEnter={redirectToLandingPage}>
+  <Route path='/app' component={App}>
+    <Route onEnter={requireLogin}>
+      <Route path='project/:id' component={Project}/>
+    </Route>
   </Route>
 );

@@ -1,4 +1,3 @@
-
 import $ from 'jquery'
 import ReactDOM from 'react-dom'
 import React from 'react'
@@ -6,7 +5,7 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware} from 'redux'
 import reducer from './reducers/index'
 import thunk from 'redux-thunk'
-import { Router, Route } from 'react-router'
+import { Router } from 'react-router'
 import { syncReduxAndRouter } from 'redux-simple-router'
 import createBrowserHistory from 'history/lib/createBrowserHistory'
 import routes from './config/routes.jsx'
