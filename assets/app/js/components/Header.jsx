@@ -4,6 +4,7 @@ import $ from 'jquery'
 import Modal from 'react-modal'
 import { Navbar, Nav, NavDropdown, NavItem, MenuItem, Badge, Dropdown, Button } from 'react-bootstrap'
 import NotificationList from './NotificationList.jsx'
+import {logout} from '../apiUtils/auth.js'
 
 const customStyles = {
     content : {
@@ -27,12 +28,6 @@ class Header extends Component {
             inputProject: ''            
         };
     }
-
-    logOut() {
-        sessionStorage.clear();
-        window.location.replace('http://localhost:4000');
-    }   
-
 
     /****************************************************************************/
     /*****************************  LEFT PANEL   ********************************/
@@ -122,7 +117,7 @@ class Header extends Component {
                             <NavDropdown eventKey={3} title={this.props.displayName} id="basic-nav-dropdown">
                                 <MenuItem eventKey={3.1}>Account Settings</MenuItem>
                                 <MenuItem divider />
-                                <MenuItem eventKey={3.2} onClick={this.logOut.bind(this)}>Log Out</MenuItem>
+                                <MenuItem eventKey={3.2} onClick={logout}>Log Out</MenuItem>
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>

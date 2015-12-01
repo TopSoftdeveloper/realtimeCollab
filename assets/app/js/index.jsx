@@ -9,7 +9,7 @@ import thunk from 'redux-thunk'
 import { Router, Route } from 'react-router'
 import { syncReduxAndRouter } from 'redux-simple-router'
 import createBrowserHistory from 'history/lib/createBrowserHistory'
-import App from './containers/App.jsx'
+import routes from './config/routes.jsx'
 
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 const store = createStoreWithMiddleware(reducer);
@@ -19,10 +19,7 @@ let rootElement = document.getElementById('task-panel');
 function run() {
     ReactDOM.render(
     	<Provider store={store}>
-    		<Router history={history}>
-    			<Route path='/app' component={App}>
-      		</Route>
-      	</Router>
+    		<Router history={history} routes={routes} />
       </Provider>,
       rootElement
     );

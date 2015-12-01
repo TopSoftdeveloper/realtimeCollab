@@ -67,8 +67,6 @@ export function initializeApp() {
                 dispatch(initUsers(normalizedTables.users));
             }
         }).fail(e => {
-            console.log(e);
-            window.location.replace('http://localhost:4000');
         });
     }
 }
