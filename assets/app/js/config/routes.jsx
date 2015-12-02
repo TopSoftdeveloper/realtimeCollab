@@ -17,8 +17,8 @@ function redirectToDashboard(nextState, replaceState) {
 }
 
 export default (
-  <Route path='/app' component={App}>
-    <Route onEnter={requireLogin}>
+  <Route path='/app' component={App} onEnter={requireLogin}>
+    <Route>
       <Route path='project/:id' component={Project}/>
     </Route>
   </Route>
