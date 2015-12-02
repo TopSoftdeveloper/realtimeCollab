@@ -20,7 +20,7 @@ class CompletedRow extends Component {
         });
     }
     render() {
-        if (this.props.completedTasks.length == 0) {
+        if (this.props.completedTasks.length === 0) {
             return (
                 <div className='completed-row'></div>
             );

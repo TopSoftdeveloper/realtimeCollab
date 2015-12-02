@@ -22,7 +22,7 @@ class App extends Component {
         const {notifications, projects, users, dispatch} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
 
-        if (users.length == 0) {
+        if (users.length === 0) {
             actions.initializeApp();
             return (<div></div>);
         } 

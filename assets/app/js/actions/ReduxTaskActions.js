@@ -182,7 +182,7 @@ export function deleteTask(taskId) {
 
 function isItemPresent(arr, id) {
     return _.findIndex(arr, function(item) {
-        return item.id == id;
+        return item.id === id;
     }) >= 0;
 }
 
