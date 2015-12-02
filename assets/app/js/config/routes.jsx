@@ -3,10 +3,11 @@ import { Route } from 'react-router'
 import {isLoggedIn} from '../utils/auth.js'
 import App from '../containers/App.jsx'
 import Project from '../components/Project.jsx'
+let AppConstants = require('../AppConstants');
 
 function requireLogin(nextState, replaceState) {
   if (!isLoggedIn()) {
-    window.location.assign('http://localhost:4000');
+    window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
   }
 }
 

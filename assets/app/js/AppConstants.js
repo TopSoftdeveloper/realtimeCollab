@@ -27,4 +27,6 @@ module.exports = {
     INIT_PROJECTS: 'INIT_PROJECTS',
     INIT_TASKS: 'INIT_TASKS',
     INIT_USERS: 'INIT_USERS',
+    APP_ROOT_URL: 'http://localhost:4000/app',
+    LANDING_PAGE_ROOT_URL: 'http://localhost:4000'
 };

@@ -84,7 +84,7 @@ export function initializeApp() {
                 dispatch(initUsers(normalizedTables.users));
             }
         }).fail(e => {
-            window.location.assign('http://localhost:4000');
+            window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
         });
     }
 }
