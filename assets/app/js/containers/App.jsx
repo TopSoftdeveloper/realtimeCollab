@@ -6,20 +6,6 @@ import Header from '../components/Header.jsx';
 
 var AppConstants = require('../AppConstants');
 
-class Hydrate extends Component {
-    constructor(props, context) {
-        super(props, context); 
-        this.props.actions.initializeApp();
-    }    
-
-    render() {        
-        return (
-            <div>
-            </div>
-        );
-    }
-}
-
 class App extends Component {
     constructor(props, context) {
         super(props, context); 
@@ -37,9 +23,9 @@ class App extends Component {
         const actions = bindActionCreators(Actions, dispatch);
 
         if (users.length == 0) {
-            return (<div><Hydrate actions={actions} /></div>);
+            actions.initializeApp();
+            return (<div></div>);
         } 
-
 
         let displayName = users.filter(
             user => user.id === sessionStorage.getItem('user_id'))[0].display_name;
