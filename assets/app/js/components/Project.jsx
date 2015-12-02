@@ -10,6 +10,7 @@ import MilestoneRow from './MilestoneRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
 import MilestoneView from './MilestoneView.jsx'
 import Settings from './Settings.jsx'
+import {isProjectPresent} from '../utils/collection'
 
 const Tab = ReactTabs.Tab;
 const Tabs = ReactTabs.Tabs;
@@ -40,30 +41,17 @@ class Project extends Component {
         let basicUsers = [];
         let pendingUsers = [];
         let projectCreator = {};
-        let noProjects = true;
 
-        // fill in attributes if project is found
-        if (projects.length > 0) {
-            let currentProjectMatches = projects.filter(
-                proj => proj.id === currentProjectId);
+        if (isProjectPresent(projects, currentProjectId)) {
+            let currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
+            let basicUserIds = currentProject.basic;
+            let pendingUserIds = currentProject.pending;
 
-            if (currentProjectMatches.length === 1) {                 
-                projectName = currentProjectMatches[0].content;
-                let basicUserIds = currentProjectMatches[0].basic;
-                let pendingUserIds = currentProjectMatches[0].pending;
-
-                projectCreator = users.filter(
-                    user  => currentProjectMatches[0].creator === user.id)[0];
-                basicUsers = users.filter(
-                    user => this.isItemPresent(basicUserIds, user.id));
-                pendingUsers = users.filter(
-                    user => this.isItemPresent(pendingUserIds, user.id));
-
-                noProjects = false;
-            }              
-        }       
-
-        if (noProjects) {
+            projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
+            basicUsers = users.filter(user => this.isItemPresent(basicUserIds, user.id));
+            pendingUsers = users.filter(user => this.isItemPresent(pendingUserIds, user.id));
+            projectName = currentProject.content;
+        } else {
             return (
                 <h2>You have no projects yet!</h2>
             )
