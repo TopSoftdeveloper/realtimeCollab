@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route } from 'react-router'
-import {isLoggedIn} from '../apiUtils/auth.js'
+import {isLoggedIn} from '../utils/auth.js'
 import App from '../containers/App.jsx'
 import Project from '../components/Project.jsx'
 

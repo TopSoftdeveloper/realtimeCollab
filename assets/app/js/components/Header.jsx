@@ -4,7 +4,7 @@ import $ from 'jquery'
 import Modal from 'react-modal'
 import { Navbar, Nav, NavDropdown, NavItem, MenuItem, Badge, Dropdown, Button } from 'react-bootstrap'
 import NotificationList from './NotificationList.jsx'
-import {logout} from '../apiUtils/auth.js'
+import {logout} from '../utils/auth.js'
 
 const customStyles = {
     content : {

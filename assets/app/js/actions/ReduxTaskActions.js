@@ -1,6 +1,6 @@
 import {serverCreateTask, serverDeleteTask, serverMarkDone, 
         serverPopulate, serverCreateMilestone, serverCreateProject,
-        serverInviteToProject} from '../apiUtils/apiUtil'
+        serverInviteToProject} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
