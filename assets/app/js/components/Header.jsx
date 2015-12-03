@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
+import { LinkContainer } from 'react-router-bootstrap'
+import { Link } from 'react-router'
 import LeftPanel from './LeftPanel.jsx'
 import $ from 'jquery'
 import Modal from 'react-modal'
 import { Navbar, Nav, NavDropdown, NavItem, MenuItem, Badge, Dropdown, Button } from 'react-bootstrap'
-import NotificationList from './NotificationList.jsx'
 import {logout} from '../utils/auth.js'
 
 const customStyles = {
@@ -24,7 +25,6 @@ class Header extends Component {
         this.state = {
             panel_visible: false,
             modalIsOpen: false,
-            show_list: false,            
             inputProject: ''            
         };
     }
@@ -86,21 +86,18 @@ class Header extends Component {
         });
     }
 
-    toggleList() {
-        this.setState({
-            show_list: !this.state.show_list
-        });
-    }
-
     render() {
-        let unreadCount = this.props.notifs.reduce((total, notif) => notif.read ? total : total+1, 0);
+        let badge = (<div></div>);
+        if (this.props.unreadCount > 0) {
+            badge = (<Badge>{this.props.unreadCount}</Badge>);
+        } 
 
         return (
             <div className='app-header'>
                 <Navbar>
                     <Navbar.Header>
                         <Navbar.Brand>
-                            <a href="#">NUSCollab</a>
+                            <Link to="/app">Collab</Link>
                         </Navbar.Brand>
                         <Navbar.Toggle />
                     </Navbar.Header>
@@ -110,9 +107,11 @@ class Header extends Component {
                             <NavItem eventKey={2} onClick={this.openModal.bind(this)}>Add Project</NavItem>
                         </Nav>
                         <Nav pullRight>
-                            <NavItem eventKey={2} onClick={this.toggleList.bind(this)}>
-                                Notifs <Badge>{unreadCount}</Badge> 
-                            </NavItem>
+                            <LinkContainer to='/app/notifications' >
+                                <NavItem eventKey={2}>
+                                    Notifs {badge}
+                                </NavItem>
+                            </LinkContainer>
 
                             <NavDropdown eventKey={3} title={this.props.displayName} id="basic-nav-dropdown">
                                 <MenuItem eventKey={3.1}>Account Settings</MenuItem>
@@ -122,8 +121,6 @@ class Header extends Component {
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
-
-                <NotificationList notifs={this.props.notifs} show_list={this.state.show_list}/>
                 
                 <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >                                    
                     <h3>Add a project</h3>

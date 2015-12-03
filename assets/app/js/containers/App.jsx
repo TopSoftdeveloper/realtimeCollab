@@ -49,10 +49,12 @@ class App extends Component {
         let displayName = users.filter(
             user => user.id === sessionStorage.getItem('user_id'))[0].display_name;
 
+        let unreadCount = notifications.reduce((total, notif) => notif.read ? total : total+1, 0);
+
         return (
             <div>
             <Header 
-                notifs={notifications} 
+                unreadCount={unreadCount} 
                 projects={projects} 
                 displayName={displayName} 
                 switchProject={this.switchToProject.bind(this)}

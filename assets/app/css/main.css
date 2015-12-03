@@ -130,13 +130,11 @@ body {
 
 .notif-text, .notif-fuzzy-time {
   display: block;
-  text-align: center;
 }
 
 .notification-list {
   list-style: none;
   max-height: 300px;
-  margin-right: 50px;
 }
 
 .notification-list .notif-item {
@@ -148,10 +146,8 @@ body {
 
 .notification-container {
   background-color: white;
-  border: 1px solid rgba(100, 100, 100, .4);
   overflow: visible;
   top: 60px;
-  margin-left: 400px;
   width: 400px;
   z-index: 1000;
 }

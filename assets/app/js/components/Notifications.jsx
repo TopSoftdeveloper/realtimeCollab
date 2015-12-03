@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
 
 class NotificationItem extends Component {
     render() {
@@ -29,8 +29,7 @@ class NotificationList extends Component {
                 fuzzyTime={this.toFuzzyTime(notif.time)} />
         );
 
-        return this.props.show_list ? 
-        (
+        return (
             <div className='notification-container'>
                 <div className='notification-list'>
                     <ul>
@@ -38,8 +37,31 @@ class NotificationList extends Component {
                     </ul>         
                 </div>
             </div>
-        ): false;
+        );
     }
 }
 
-export default NotificationList
+class Notifications extends Component {    
+    render() {
+        const {notifications} = this.props;
+        return (
+            <div>
+                <h3>All Notifications</h3>  
+                <NotificationList notifs={notifications} />         
+            </div>            
+        );
+    }
+}
+
+Notifications.propTypes = {
+    notifications: PropTypes.array.isRequired,
+};
+
+function mapStateToProps(state) {
+    return {
+        notifications: state.notifications
+    };
+}
+
+
+export default connect(mapStateToProps)(Notifications)
