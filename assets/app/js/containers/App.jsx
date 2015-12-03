@@ -1,8 +1,10 @@
-import React, { Component, PropTypes } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import * as Actions from '../actions/ReduxTaskActions';
-import Header from '../components/Header.jsx';
+import React, { Component, PropTypes } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { connectHistory } from '../components/connectHistory.jsx'
+import * as Actions from '../actions/ReduxTaskActions'
+import Header from '../components/Header.jsx'
+import {matchesUrl} from '../utils/general'
 
 var AppConstants = require('../AppConstants');
 
@@ -18,14 +20,31 @@ class App extends Component {
         })
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        const { projects } = this.props;
+        if (matchesUrl(window.location.href, AppConstants.APP_ROOT_URL) && projects.length > 0) {
+            // Redirect to default project (current set as project at index 0)            
+            let defaultProjectId = projects[0].id;
+            this.props.history.replaceState(null, '/app/project/' + defaultProjectId);   
+            return false;         
+        }
+        return true;
+    }
+
     render() {
         const {notifications, projects, users, dispatch} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
 
         if (users.length === 0) {
+            // First initialization of app            
             actions.initializeApp();
             return (<div></div>);
         } 
+
+        let children = this.props.children;
+        if (projects.length === 0) {
+            children = (<h2>You have no projects yet!</h2>);
+        }
 
         let displayName = users.filter(
             user => user.id === sessionStorage.getItem('user_id'))[0].display_name;
@@ -39,7 +58,7 @@ class App extends Component {
                 switchProject={this.switchToProject.bind(this)}
                 onCreateProject={actions.createProject}
             />
-            {this.props.children}
+            {children}
             </div>
         );
     }
@@ -60,4 +79,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(App)
+export default connect(mapStateToProps)(connectHistory(App))
