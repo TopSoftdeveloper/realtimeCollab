@@ -9,6 +9,7 @@ import ProjectHeader from './ProjectHeader.jsx'
 import MilestoneRow from './MilestoneRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
 import MilestoneView from './MilestoneView.jsx'
+import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
 import {isProjectPresent} from '../utils/collection'
 
@@ -52,9 +53,7 @@ class Project extends Component {
             pendingUsers = users.filter(user => this.isItemPresent(pendingUserIds, user.id));
             projectName = currentProject.content;
         } else {
-            return (
-                <h2>You have no projects yet!</h2>
-            )
+            return (<_404 />);
         }
 
         let milestonesInProj = milestones.filter(

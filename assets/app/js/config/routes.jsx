@@ -3,6 +3,7 @@ import { Route } from 'react-router'
 import {isLoggedIn} from '../utils/auth.js'
 import App from '../containers/App.jsx'
 import Project from '../components/Project.jsx'
+import _404 from '../components/_404.jsx'
 let AppConstants = require('../AppConstants');
 
 function requireLogin(nextState, replaceState) {
@@ -21,6 +22,7 @@ export default (
   <Route path='/app' component={App} onEnter={requireLogin}>
     <Route>
       <Route path='project/:id' component={Project}/>
+      <Route path='*' component={_404}/>
     </Route>
   </Route>
 );
