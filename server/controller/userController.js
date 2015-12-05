@@ -36,7 +36,6 @@ function filterPending(projects, userId) {
     return projects.filter(function(project) {
         var pending = false;
         project.users.forEach(function(user) {    
-            console.log(user.id + ' ' + userId + ' ' + user.user_project.role) 
             if (user.id === userId && user.user_project.role === constants.ROLE_PENDING) {
                 pending = true;
             }       

@@ -234,6 +234,7 @@ function normalize(projects) {
             } else {
                 throw new Error("user has invalid role: " + user.role);
             }
+            user.online = false;
 
             if (!isItemPresent(userState, user.id)) {
                 userState.push(user);
