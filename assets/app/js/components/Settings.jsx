@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert } from 'react-bootstrap'
+import _ from 'lodash'
 let AppConstants = require('../AppConstants');
 
 class Settings extends Component {
@@ -35,17 +36,17 @@ class Settings extends Component {
         let listGroups = [];
         let alertStatus = this.props.alerts.project_invitation;
         listGroups.push(
-            <ListGroupItem key={this.props.projectCreator.id}>
+            <ListGroupItem key={_.uniqueId('settings_creator')}>
                 {this.props.projectCreator.display_name} (creator)
             </ListGroupItem>);
         this.props.basicUsers.forEach(user => listGroups.push(
-            <ListGroupItem key={user.id}>
+            <ListGroupItem key={_.uniqueId('settings_basic')}>
                 {user.display_name}
             </ListGroupItem>
         ));
 
         this.props.pendingUsers.forEach(user => listGroups.push(
-            <ListGroupItem key={user.id}>
+            <ListGroupItem key={_.uniqueId('settings_pending')}>
                 {user.display_name} (pending)
             </ListGroupItem>
         ));
