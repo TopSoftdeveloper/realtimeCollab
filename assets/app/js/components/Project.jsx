@@ -41,7 +41,7 @@ class Project extends Component {
         let projectName = '';
         let basicUsers = [];
         let pendingUsers = [];
-        let projectCreator = {};
+        let projectCreator = '';
 
         if (isProjectPresent(projects, currentProjectId)) {
             let currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
@@ -64,9 +64,14 @@ class Project extends Component {
         let tasksInProj = tasks.filter(
             task => this.isItemPresent(milestoneIds, task.milestone_id));
 
+        let membersInProj = basicUsers;
+        if (projectCreator !== undefined) { // undefined because user not initialized yet
+            membersInProj.push(projectCreator);
+        }
+
         return (
             <div className='task-table'>
-                <ProjectHeader projectName={projectName}/>
+                <ProjectHeader projectName={projectName} members={membersInProj}/>
                 <Tabs>
                     
                     <TabList>

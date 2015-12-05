@@ -89,13 +89,6 @@
   padding-bottom: 10px;
 }
 
-
-.task-table-header {
-  padding-top: 5px;
-  padding-bottom: 15px;
-  display: inline-block;
-}
-
 .add-milestone-btn {
   position: relative;
   left: 200px;
@@ -117,7 +110,21 @@ body {
 }
 
 
+/************************ Project header ***************************/
+ul.online-users li {
+  display: inline;
+  padding: 10px 20px;
+  list-style-type: none;
+}
 
+ul.online-users {
+  float: right;
+}
+
+.project-header {
+  padding-top: 5px;
+  padding-bottom: 15px;
+}
 
 /******************* Notification List****************************/ 
 .notif-title {

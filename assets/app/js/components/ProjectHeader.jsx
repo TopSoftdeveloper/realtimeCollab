@@ -8,11 +8,10 @@ class ProjectHeader extends Component {
 
 
     render() {
-
         return (
-            <div className='task-table-header'>
+            <div className='project-header'>
                 <span className='project-name'>{this.props.projectName} </span>
-                <OnlineUsers />
+                <OnlineUsers members={this.props.members} />
             </div>
         );
     }
