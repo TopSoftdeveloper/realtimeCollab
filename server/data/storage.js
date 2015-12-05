@@ -13,14 +13,15 @@ var format = require('string-format');
 function _create(task) {
     return new Promise(function(resolve, reject) {
         var id = shortid.generate();
-        Task.create({
+        var newTask = {
             id: id,
             content: task.content,
             deadline: task.deadline,
             is_time_specified: task.is_time_specified,
             milestone_id: task.milestone_id,
-            project_id: task.project_id
-        }).catch(function (error) {
+            completed_on: task.completed_on
+        };
+        Task.create(newTask).catch(function (error) {
             console.log(error);
             var errorList = error.errors;
             if (errorList === undefined || errorList.length !== 1 ||
@@ -30,7 +31,7 @@ function _create(task) {
                 _create(task);
             }
         }).then(function() {
-            resolve(id);
+            resolve(newTask);
         });
     });
 }

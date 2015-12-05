@@ -93,10 +93,10 @@ export function initializeApp() {
     }
 }
 
-export function markDone(id) {
+export function markDone(id, projectId) {
     return function(dispatch) {
         dispatch(_markDone(id));
-        serverMarkDone(id).done(res => {}).fail(e => {
+        serverMarkDone(id, projectId).done(res => {}).fail(e => {
             console.log(e);
             dispatch(_unmarkDone(id));
         });
@@ -109,7 +109,10 @@ export function addTask(task) {
   	// the Store status, so give it the "dispatch function"
   	return function(dispatch) {
   		dispatch(_addTask(task));
-	    serverCreateTask({content: task.content, milestone_id: task.milestone_id})
+	    serverCreateTask({
+            content: task.content, 
+            milestone_id: task.milestone_id, 
+            project_id: task.project_id})
         .done(res => {
 	        // update the stores with the actual id
 	        dispatch(replaceTaskId(task.id, res.id));
@@ -171,10 +174,10 @@ export function inviteToProject(projectId, email) {
     }
 }
 
-export function deleteTask(taskId) {
+export function deleteTask(taskId, projectId) {
 	return function(dispatch) {
 		dispatch(markAsDirty(taskId));
-		serverDeleteTask(taskId).done(res => {
+		serverDeleteTask(taskId, projectId).done(res => {
 	        // update the stores with the actual id
 	        dispatch(_deleteTask(taskId));
 	    }).fail(e => {

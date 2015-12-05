@@ -176,7 +176,8 @@ describe('Task', function() {
             .set('Authorization', 'bearer ' + token)
             .send({
                 content: content,
-                milestone_id: milestone_id
+                milestone_id: milestone_id,
+                project_id: 'temp'
             })
             .expect('Content-Type', /json/)
             .expect(200)
@@ -203,7 +204,8 @@ describe('Task', function() {
                 content: content,
                 deadline: deadline,
                 is_time_specified: true,
-                milestone_id: milestone_id
+                milestone_id: milestone_id,
+                project_id: 'temp'                
             })
             .expect('Content-Type', /json/)
             .expect(200)
@@ -226,7 +228,8 @@ describe('Task', function() {
             .set('Authorization', 'bearer ' + token)
             .send({
                 content: content,
-                milestone_id: non_existent_id
+                milestone_id: non_existent_id,
+                project_id: 'temp'                
             })
             .expect('Content-Type', /json/)
             .expect(400)
@@ -238,12 +241,13 @@ describe('Task', function() {
     });
 
     it('should return status OK upon successful marking complete', function(done) {
-        storage.createTask({content: 'sample'}).then(function(task_id) {
+        storage.createTask({content: 'sample'}).then(function(task) {
             api.post('/mark_completed')
                 .set('Accept', 'application/x-www-form-urlencoded')
                 .set('Authorization', 'bearer ' + token)
                 .send({
-                    task_id: task_id
+                    task_id: task.id,
+                    project_id: 'temp'                    
                 })
                 .expect('Content-Type', /json/)
                 .expect(200)
@@ -257,16 +261,18 @@ describe('Task', function() {
     });
 
     it('should return status OK upon successful deletion', function(done) {
-        storage.createTask({content: 'hello world'}).then(function(id) {
+        storage.createTask({content: 'hello world'}).then(function(task) {
             api.delete('/delete_task')
                 .set('Accept', 'application/x-www-form-urlencoded')
                 .set('Authorization', 'bearer ' + token)
                 .send({
-                    task_id: id
+                    task_id: task.id,
+                    project_id: 'temp'                    
                 })
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end(function(err, res) {
+                    console.log(res.body)
                     expect(res.body.status).to.equal(constants.STATUS_OK);
                     done();
                 });
@@ -279,7 +285,8 @@ describe('Task', function() {
             .set('Accept', 'application/x-www-form-urlencoded')
             .set('Authorization', 'bearer ' + token)
             .send({
-                task_id: non_existent_id
+                task_id: non_existent_id,
+                project_id: 'temp'                                
             })
             .expect('Content-Type', /json/)
             .expect(400)
@@ -415,29 +422,4 @@ describe('Project', function() {
                 });
             });
     });
-
-    //it('should return a list of projects the user has', function(done) {
-    //    api.get('/project?user_id=' + user_id)
-    //        .set('Accept', 'application/x-www-form-urlencoded')
-    //        .set('Authorization', 'bearer ' + token)
-    //        .expect('Content-Type', /json/)
-    //        .expect(200)
-    //        .end(function(err, res) {
-    //            expect(err).to.equal(null);
-    //            expect(res.user_id).to.equal(user_id);
-    //            expect(res.projects.length).to.have.length.above(0);
-    //
-    //            res.projects.forEach(function(project) {
-    //                expect(project.id).to.be.equal(project_id);
-    //                expect(project.content).to.equal('Collaboration Tool');
-    //                expect(project.users).to.have.length.above(0);
-    //                project.users.forEach(function(user) {
-    //                    expect(user.id).to.be.equal(user_id);
-    //                    expect(user.role).to.be.equal(constants.ROLE_CREATOR);
-    //                });
-    //            });
-    //
-    //            done();
-    //        });
-    //});
 });

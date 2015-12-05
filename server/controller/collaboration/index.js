@@ -1,4 +1,5 @@
 var Handlers = require('./handlers');
+
 exports.register = function (server, options, next) {
 	var onlineUsers = {};
 
@@ -7,6 +8,8 @@ exports.register = function (server, options, next) {
         socket.on('is_online', Handlers.is_online.bind(null, socket));
         socket.on('disconnect', Handlers.is_offline.bind(null, socket));
     });
+
+    exports.io = io;
 
     next();
 };

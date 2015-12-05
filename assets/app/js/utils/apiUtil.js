@@ -47,24 +47,24 @@ export function serverCreateProject(payload) {
     return ajaxPost(CREATE_PROJECT_ENDPOINT, payload);
 }
 
- export function serverDeleteTask(task_id) {
+ export function serverDeleteTask(task_id, project_id) {
     return $.ajax({
         url: API_BASE_URL + DELETE_TASK_ENDPOINT,
         headers: {
             'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
         },
-        data: {task_id: task_id},
+        data: {task_id: task_id, project_id: project_id},
         type: 'DELETE'
     });
 }
 
-export function serverMarkDone(task_id) {
+export function serverMarkDone(task_id, project_id) {
     return $.ajax({
         url: API_BASE_URL + COMPLETE_TASK_ENDPOINT,
         headers: {
             'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
         },
-        data: {task_id: task_id},
+        data: {task_id: task_id, project_id: project_id},
         type: 'POST'
     });
 }

@@ -3,6 +3,12 @@ var storage = require('../data/storage');
 var format = require('string-format');
 var Joi = require('joi');
 var Boom = require('boom');
+var io = require('./collaboration');
+var helper = require('../utils/helper');
+var config = require('config');
+var Jwt = require('jsonwebtoken');
+
+var secret_key = config.get('authentication.privateKey');
 
 module.exports = {
     createTask: {
@@ -16,6 +22,7 @@ module.exports = {
                 deadline: Joi.string().isoDate().default(null),
                 is_time_specified: Joi.boolean().default(false),
                 milestone_id: Joi.string().required(),
+                project_id: Joi.string().required(),
                 completed_on: Joi.string().isoDate().default(null)
             }
         }
@@ -35,7 +42,8 @@ module.exports = {
         },
         validate: {
             payload: {
-                task_id: Joi.string().required()
+                task_id: Joi.string().required(),
+                project_id: Joi.string().required()
             }
         }
     },
@@ -46,7 +54,8 @@ module.exports = {
         },
         validate: {
             payload: {
-                task_id: Joi.string().required()
+                task_id: Joi.string().required(),
+                project_id: Joi.string().required()
             }
         }
     }
@@ -86,11 +95,16 @@ function createTask(request, reply) {
         content: request.payload.content,
         deadline: request.payload.deadline,
         is_time_specified: request.payload.is_time_specified,
-        milestone_id: request.payload.milestone_id
+        milestone_id: request.payload.milestone_id,
+        completed_on: null
     };
-    storage.createTask(task).then(function(id) {
-        task.id = id;
-        reply(task);
+    storage.createTask(task).then(function(newTask) {
+        Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+            io.io.in(request.payload.project_id).emit('new_task', {
+                task: newTask, sender: decoded.user_id
+            });
+        });  
+        reply(newTask);                
     }, function(error) {
         reply(Boom.badRequest(error));
     });
@@ -102,10 +116,15 @@ function markTaskAsDone(request, reply) {
         if (!exists) {
             reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
         } else {
-            storage.markDone(task_id).then(function() {
+            storage.markDone(task_id).then(function() {               
+                Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+                    io.io.in(request.payload.project_id).emit('mark_done', {
+                        task_id: task_id, sender: decoded.user_id
+                    });
+                });    
                 reply({
                     status: constants.STATUS_OK
-                });
+                });                               
             });
         }
     });
@@ -118,9 +137,14 @@ function deleteTask(request, reply) {
             reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
         } else {
             storage.deleteTask(task_id).then(function() {
+                Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+                    io.io.in(request.payload.project_id).emit('delete_task', {
+                        task_id: task_id, sender: decoded.user_id
+                    });
+                });    
                 reply({
                     status: constants.STATUS_OK
-                });
+                });                              
             });
         }
     });

@@ -94,16 +94,17 @@ class MilestoneView extends Component {
             is_time_specified: false,
             content: content,
             completed_on: null,
-            milestone_id: milestone_id
+            milestone_id: milestone_id,
+            project_id: this.props.projectId
         });      
     }
 
     deleteTask(task_id) {
-        this.props.actions.deleteTask(task_id)
+        this.props.actions.deleteTask(task_id, this.props.projectId)
     }
 
     markDone(task_id) {
-        this.props.actions.markDone(task_id);
+        this.props.actions.markDone(task_id, this.props.projectId);
     }
 
     getCompletedTasks(milestone_id) {

@@ -17,6 +17,7 @@ class App extends Component {
         this.state = { socket };
         this.userIsOnline();    
         this.monitorOnlineStatus();        
+        this.monitorProjectChanges();
     }      
 
     userIsOnline() {
@@ -32,6 +33,24 @@ class App extends Component {
             this.props.dispatch(Actions.userOffline(data.user_id));
         });   
     }    
+
+    monitorProjectChanges() {
+        this.state.socket.on('new_task', (data) => {
+            if (data.sender !== sessionStorage.getItem('user_id')) {
+                this.props.dispatch(Actions._addTask(data.task));
+            }
+        });        
+        this.state.socket.on('mark_done', (data) => {
+            if (data.sender !== sessionStorage.getItem('user_id')) {
+                this.props.dispatch(Actions._markDone(data.task_id));                
+            }
+        });     
+        this.state.socket.on('delete_task', (data) => {
+            if (data.sender !== sessionStorage.getItem('user_id')) {
+                this.props.dispatch(Actions._deleteTask(data.task_id));                
+            }
+        });              
+    }
 
     switchToProject(project_id) {
         this.props.dispatch({
