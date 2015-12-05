@@ -42,6 +42,9 @@ export const initProjects = makeActionCreator(AppConstants.INIT_PROJECTS, 'proje
 export const initTasks = makeActionCreator(AppConstants.INIT_TASKS, 'tasks');
 export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
 
+export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
+export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
+
 export function dismissProjectAlert() {
     return function(dispatch) {
         dispatch(projectAlert(null))
@@ -70,7 +73,8 @@ export function initializeApp() {
         dispatch(initUsers([{
             id: sessionStorage.getItem('user_id'),
             email: sessionStorage.getItem('email'),
-            display_name: sessionStorage.getItem('display_name')
+            display_name: sessionStorage.getItem('display_name'),
+            online: false
         }]));                
 
         serverPopulate().done(res => {

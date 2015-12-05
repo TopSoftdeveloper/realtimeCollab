@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import io from 'socket.io-client'
 import { connectHistory } from '../components/connectHistory.jsx'
 import * as Actions from '../actions/ReduxTaskActions'
 import Header from '../components/Header.jsx'
@@ -11,6 +12,25 @@ var AppConstants = require('../AppConstants');
 class App extends Component {
     constructor(props, context) {
         super(props, context); 
+        let host = 'ws://localhost:4001/';
+        let socket = io.connect(host);
+        this.state = { socket };
+        this.userIsOnline();    
+        this.monitorOnlineStatus();        
+    }      
+
+    userIsOnline() {
+        this.state.socket.emit('is_online', {user_id: sessionStorage.getItem('user_id')});
+        this.props.dispatch(Actions.userOnline(sessionStorage.getItem('user_id')));
+    }
+
+    monitorOnlineStatus() {
+        this.state.socket.on('teammate_online', (data) => {
+            this.props.dispatch(Actions.userOnline(data.user_id));
+        });        
+        this.state.socket.on('teammate_offline', (data) => {
+            this.props.dispatch(Actions.userOffline(data.user_id));
+        });   
     }    
 
     switchToProject(project_id) {

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import OnlineUsers from '../components/OnlineUsers.jsx'
 
 class ProjectHeader extends Component {
     constructor(props, context) {
@@ -11,6 +12,7 @@ class ProjectHeader extends Component {
         return (
             <div className='task-table-header'>
                 <span className='project-name'>{this.props.projectName} </span>
+                <OnlineUsers />
             </div>
         );
     }

@@ -110,6 +110,13 @@ module.exports = {
             }
         });
     },
+    findUserById: function(id) {
+        return User.find({
+            where: {
+                id: id
+            }
+        });
+    },    
     addProjectToUser: function(user_id, project) {
         return User.findById(user_id).then(function(user) {
             return user === null ? Promise.reject(new Error('No user found')) :

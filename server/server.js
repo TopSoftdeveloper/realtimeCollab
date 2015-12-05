@@ -15,9 +15,17 @@ require('babel-core/register')({
 
 server.connection({
     host: 'localhost',
-    port: 4000
+    port: 4000,
+    labels: ['api']
 });
 
+server.connection({
+    host: 'localhost',
+    port: 4001,
+    labels: ['collaboration']
+});
+
+// Token-based authentication validation function
 var validate = function(decodedToken, request, callback) {
     var diff = Date.now() /1000 - decodedToken.iat;
     if (diff > decodedToken.expiresIn) {
@@ -26,11 +34,11 @@ var validate = function(decodedToken, request, callback) {
     callback(null, true, decodedToken);
 };
 
-
 server.register([
         require('vision'),
         require('inert'),
         require('hapi-auth-jwt2'),
+        require('./controller/collaboration'),
         {
             register: Good,
             options: {
@@ -72,6 +80,7 @@ server.register([
                 throw err;
             }
             console.log(__dirname);
-            console.log('Server is listening at ' + server.info.uri);
+            console.log('Server is listening at ' + server.select('api').info.uri);
+            console.log('Server is listening at ' + server.select('collaboration').info.uri);            
         });
 });
