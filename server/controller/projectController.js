@@ -30,6 +30,9 @@ module.exports = {
             }
         }
     },
+    getProject: {
+        handler: getProject
+    },
     inviteToProject: {
         handler: inviteToProject,
         validate: {
@@ -71,12 +74,29 @@ function inviteToProject(request, reply) {
 
 function getProjects(request, reply) {
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-        if (err || (decoded.user_id !== request.params.user_id)) {
+        if (err) {
             reply(Boom.forbidden(constants.FORBIDDEN));
             return;
         }
         storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
             reply({user_id: decoded.user_id, projects: projects});
+        });
+    });
+}
+
+function getProject(request, reply) {
+    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+        accessControl.isUserPartOfProject(decoded.user_id, request.params.project_id).then(function(isPartOf) {
+            if (!isPartOf) {
+                reply(Boom.forbidden(constants.FORBIDDEN));
+                return;
+            }
+            storage.getMilestonesWithTasks(request.params.project_id).then(function(milestones) {
+                reply({
+                    status: constants.STATUS_OK,
+                    milestones: milestones
+                })
+            });
         });
     });
 }

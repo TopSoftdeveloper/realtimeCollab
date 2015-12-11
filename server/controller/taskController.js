@@ -28,12 +28,7 @@ module.exports = {
         }
     },
     getTask: {
-        handler: getTasks,
-        validate: {
-            query: {
-                task_id: Joi.string().default(null)
-            }
-        }
+        handler: getTasks
     },
     markComplete: {
         handler: markTaskAsDone,
@@ -54,7 +49,6 @@ module.exports = {
         },
         validate: {
             payload: {
-                task_id: Joi.string().required(),
                 project_id: Joi.string().required()
             }
         }
@@ -77,7 +71,7 @@ function getTaskById(task_id, reply) {
 }
 
 function getTasks(request, reply) {
-    var task_id = request.query.task_id;
+    var task_id = request.params.task_id;
     if (task_id === null) {
         storage.getAllTasks().then(function(tasks) {
             reply({
@@ -131,7 +125,7 @@ function markTaskAsDone(request, reply) {
 }
 
 function deleteTask(request, reply) {
-    var task_id = request.payload.task_id;
+    var task_id = request.params.task_id;
     storage.doesTaskExist(task_id).then(function(exists) {
         if (!exists) {
             reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));

@@ -23,19 +23,8 @@ module.exports = {
             }
         }
     },
-    getMilestone: {
-        handler: getMilestones
-    },
     removeMilestone: {
-        handler: deleteMilestone,
-        payload: {
-            parse: true
-        },
-        validate: {
-            payload: {
-                milestone_id: Joi.string().required()
-            }
-        }
+        handler: deleteMilestone
     }
 };
 
@@ -53,25 +42,8 @@ function createMilestone(request, reply) {
     });
 }
 
-function getMilestones(request, reply) {
-    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-        accessControl.isUserPartOfProject(decoded.user_id, request.params.project_id).then(function(isPartOf) {
-            if (!isPartOf) {
-                reply(Boom.forbidden(constants.FORBIDDEN));
-                return;
-            }
-            storage.getMilestonesWithTasks(request.params.project_id).then(function(milestones) {
-                reply({
-                    status: constants.STATUS_OK,
-                    milestones: milestones
-                })
-            });
-        });
-    });
-}
-
 function deleteMilestone(request, reply) {
-    var milestone_id = request.payload.milestone_id;
+    var milestone_id = request.params.milestone_id;
 
     storage.doesMilestoneExist(milestone_id).then(function(exists) {
         if (!exists) {

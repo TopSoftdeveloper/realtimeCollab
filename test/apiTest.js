@@ -6,7 +6,6 @@ var api = supertest('http://localhost:4000');
 var constants = require('../server/constants');
 var storage = require('../server/data/storage');
 var format = require('string-format');
-var Promise = require("bluebird");
 var Jwt = require('jsonwebtoken');
 var config = require('config');
 var models = require('../server/data/models/modelManager');
@@ -19,7 +18,6 @@ var TEST_EMAIL = 'test@test.com';
 var TEST_PASSWORD = 'abcdefg';
 var DISPLAY_NAME = 'Yan Yi';
 var task_id = null;
-var milestone_id = null;
 
 describe('Authentication', function() {
     var user_id = null;
@@ -113,7 +111,7 @@ describe('Authentication', function() {
         var token_1_sec_expiry = Jwt.sign(token_data, secret_key);
 
         setTimeout(function() {
-            api.get('/task')
+            api.get('/task/123')
                 .set('Accept', 'application/json')
                 .set('Authorization', 'bearer ' + token_1_sec_expiry)
                 .expect('Content-Type', /json/)
@@ -129,7 +127,7 @@ describe('Authentication', function() {
         };
 
         var fake_token = Jwt.sign(token_data, 'someWrongKey');
-        api.get('/task')
+        api.get('/task/123')
             .set('Accept', 'application/json')
             .set('Authorization', 'bearer ' + fake_token)
             .expect('Content-Type', /json/)
@@ -171,7 +169,7 @@ describe('Task', function() {
 
     it('should return task object with correct defaults', function(done) {
         var content = 'submit report';
-        api.post('/create_task')
+        api.post('/tasks')
             .set('Accept', 'application/x-www-form-urlencoded')
             .set('Authorization', 'bearer ' + token)
             .send({
@@ -197,7 +195,7 @@ describe('Task', function() {
     it('should return task object with correct properties set', function(done) {
         var content = 'submit report';
         var deadline = '2015-10-04T18:13:09+00:00';
-        api.post('/create_task')
+        api.post('/tasks')
             .set('Accept', 'application/x-www-form-urlencoded')
             .set('Authorization', 'bearer ' + token)
             .send({
@@ -223,7 +221,7 @@ describe('Task', function() {
     it('should not create a task using non-existent milestone id', function(done) {
         var content = 'submit report';
         var non_existent_id = 'blah??';
-        api.post('/create_task')
+        api.post('/tasks')
             .set('Accept', 'application/x-www-form-urlencoded')
             .set('Authorization', 'bearer ' + token)
             .send({
@@ -262,12 +260,11 @@ describe('Task', function() {
 
     it('should return status OK upon successful deletion', function(done) {
         storage.createTask({content: 'hello world'}).then(function(task) {
-            api.delete('/delete_task')
+            api.delete('/task/' + task.id)
                 .set('Accept', 'application/x-www-form-urlencoded')
                 .set('Authorization', 'bearer ' + token)
                 .send({
-                    task_id: task.id,
-                    project_id: 'temp'                    
+                    project_id: 'temp'
                 })
                 .expect('Content-Type', /json/)
                 .expect(200)
@@ -327,7 +324,7 @@ describe('Milestone', function() {
 
     it('should return milestone object with correct defaults', function(done) {
         var content = 'Complete Marathon';
-        api.post('/create_milestone')
+        api.post('/milestones')
             .set('Accept', 'application/x-www-form-urlencoded')
             .set('Authorization', 'bearer ' + token)
             .send({
@@ -348,12 +345,9 @@ describe('Milestone', function() {
     it('should return status OK upon successful deletion', function(done) {
         var content = 'some temp milestone';
         storage.createMilestone({content: content, project_id: project_id}).then(function(id) {
-            api.delete('/delete_milestone')
+            api.delete('/milestone/' + id)
                 .set('Accept', 'application/x-www-form-urlencoded')
                 .set('Authorization', 'bearer ' + token)
-                .send({
-                    milestone_id: id
-                })
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end(function(err, res) {
@@ -398,7 +392,7 @@ describe('Project', function() {
 
     it('should return project id and link user id with this project', function(done) {
         var content = 'Collaboration Tool';
-        api.post('/create_project')
+        api.post('/projects')
             .set('Accept', 'application/x-www-form-urlencoded')
             .set('Authorization', 'bearer ' + token)
             .send({

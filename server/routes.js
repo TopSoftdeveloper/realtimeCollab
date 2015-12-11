@@ -13,18 +13,18 @@ module.exports.endpoints = [
     { method: 'POST',  path: '/create_account', config: Auth.createAccount },
     { method: 'POST',  path: '/login', config: Auth.login },
 
-    { method: 'POST',  path: '/create_task', config: Task.createTask },
-    { method: 'GET',  path: '/task', config: Task.getTask },
+    { method: 'POST',  path: '/tasks', config: Task.createTask },
+    { method: 'GET',  path: '/task/{task_id}', config: Task.getTask },
     { method: 'POST',  path: '/mark_completed', config: Task.markComplete },
-    { method: 'DELETE',  path: '/delete_task', config: Task.removeTask },
+    { method: 'DELETE',  path: '/task/{task_id}', config: Task.removeTask },
 
-    { method: 'POST',  path: '/create_milestone', config: Milestone.createMilestone },
-    { method: 'GET',  path: '/milestone/{project_id}', config: Milestone.getMilestone },
-    { method: 'DELETE',  path: '/delete_milestone', config: Milestone.removeMilestone },
+    { method: 'POST',  path: '/milestones', config: Milestone.createMilestone },
+    { method: 'DELETE',  path: '/milestone/{milestone_id}', config: Milestone.removeMilestone },
 
-    { method: 'POST',  path: '/create_project', config: Project.createProject },
+    { method: 'POST',  path: '/projects', config: Project.createProject },
     { method: 'POST',  path: '/invite_to_project', config: Project.inviteToProject },
-    { method: 'GET',  path: '/project/{user_id}', config: Project.getProjects },
+    { method: 'GET',  path: '/project/{project_id}', config: Project.getProject },
+    { method: 'GET',  path: '/projects', config: Project.getProjects },
 
     { method: 'GET',  path: '/user/populate/{user_id}', config: User.getInfo }
 ];
