@@ -15,6 +15,7 @@ module.exports.endpoints = [
 
     { method: 'POST',  path: '/tasks', config: Task.createTask },
     { method: 'GET',  path: '/task/{task_id}', config: Task.getTask },
+    { method: 'PUT',  path: '/task/{task_id}', config: Task.updateTask },
     { method: 'POST',  path: '/mark_completed', config: Task.markComplete },
     { method: 'DELETE',  path: '/task/{task_id}', config: Task.removeTask },
 

@@ -146,6 +146,26 @@ module.exports = {
                 where: {id: task_id}
             })
     },
+    updateTask: function(task_id, completed_on, is_time_specified, deadline, content) {
+        var task = {}
+        if (completed_on !== null) {
+            task.completed_on = completed_on
+        }
+        if (is_time_specified !== null) {
+            task.is_time_specified = is_time_specified
+        }
+        if (deadline !== null) {
+            task.deadline = deadline
+        }
+        if (content !== null) {
+            task.content = content
+        }
+        return Task.update(
+            task,
+            {
+                where: {id: task_id}
+            })
+    },
     getMilestonesWithTasks: function(project_id) {
         return Milestone.findAll({
             where: {
