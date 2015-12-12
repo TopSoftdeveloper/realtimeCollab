@@ -19,7 +19,8 @@ var modelFiles = [
     'Task',
     'User',
     'Project',
-    'UserProject'
+    'UserProject',
+    'Notification'
 ];
 
 modelFiles.forEach(function(model) {
@@ -36,6 +37,9 @@ modelFiles.forEach(function(model) {
     m.Project.hasMany(m.Milestone);
 
     m.User.belongsToMany(m.Project, {through: m.UserProject});
+    m.User.hasMany(m.Notification);
+
+    m.Notification.belongsTo(m.User);
 })(module.exports);
 
 sequelize.sync().then(function() {

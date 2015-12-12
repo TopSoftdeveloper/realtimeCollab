@@ -7,6 +7,7 @@ var Milestone = models.Milestone;
 var User = models.User;
 var Project = models.Project;
 var UserProject = models.UserProject;
+var Notification = models.Notification;
 
 var format = require('string-format');
 
@@ -37,15 +38,21 @@ function _create(task) {
 }
 
 module.exports = {
-    inviteToProject: function(email, project_id) {
-        return this.findUser(email).then(function(user) {
-            return user === null ? 
-                Promise.reject(constants.USER_NOT_FOUND) :        
-            UserProject.create({
-                user_id: user.id,
-                project_id: project_id,
-                role: constants.ROLE_PENDING
-            });
+    saveNotification: function(data, template, userId) {
+        return Notification.create({
+            id: shortid.generate(),
+            data: data,
+            template: template,
+            user_id: userId,
+            is_read: false
+        });
+    },
+
+    inviteToProject: function(user_id, project_id) {
+        return UserProject.create({
+            user_id: user_id,
+            project_id: project_id,
+            role: constants.ROLE_PENDING
         });
     },
     getProjectsOfUser: function(user_id) {

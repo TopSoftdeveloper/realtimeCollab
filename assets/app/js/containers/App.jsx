@@ -11,18 +11,19 @@ var AppConstants = require('../AppConstants');
 
 class App extends Component {
     constructor(props, context) {
-        super(props, context); 
-        let host = 'ws://localhost:4001/';
-        let socket = io.connect(host);
-        this.state = { socket };
-        this.userIsOnline();    
-        this.monitorOnlineStatus();        
-        this.monitorProjectChanges();
+        super(props, context)
+        let host = 'ws://localhost:4001/'
+        let socket = io.connect(host)
+        this.state = { socket }
+        this.userIsOnline()
+        this.monitorOnlineStatus()
+        this.monitorProjectChanges()
+        this.monitorNotifications()
     }      
 
     userIsOnline() {
-        this.state.socket.emit('is_online', {user_id: sessionStorage.getItem('user_id')});
-        this.props.dispatch(Actions.userOnline(sessionStorage.getItem('user_id')));
+        this.state.socket.emit('is_online', {user_id: sessionStorage.getItem('user_id')})
+        this.props.dispatch(Actions.userOnline(sessionStorage.getItem('user_id')))
     }
 
     monitorOnlineStatus() {
@@ -50,6 +51,12 @@ class App extends Component {
                 this.props.dispatch(Actions._deleteTask(data.task_id));                
             }
         });              
+    }
+
+    monitorNotifications() {
+        this.state.socket.on('new_notification', (data) => {
+            console.log(data)
+        });
     }
 
     switchToProject(project_id) {

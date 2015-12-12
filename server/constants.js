@@ -1,4 +1,7 @@
 module.exports = {
+    BASE_URL: 'http://localhost:4000',
+
+    NOTIFICATION_MODEL_NAME: 'notifications',
     USER_PROJECT: 'user_project',
     PROJECT_MODEL_NAME: 'projects',
     TASK_MODEL_NAME: 'tasks',

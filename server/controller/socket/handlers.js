@@ -1,22 +1,32 @@
-var storage = require('../../data/storage');
-
+var storage = require('../../data/storage')
 var onlineUsers = {}
+var sockets = {}
 
-function isUserOnline(userId) {
+function getUserOfSocketId(socketId) {
 	for (var key in onlineUsers) {
-		if (onlineUsers[key] === userId) return true;
+		if (onlineUsers.hasOwnProperty(key)) {
+			if (onlineUsers[key] === socketId) return key
+		}
 	}
-	return false;
+	return false
+}
+
+exports.sendMessageToUser = function(userId, type, payload) {
+	if (!onlineUsers[userId]) {
+		return false
+	}
+	sockets[onlineUsers[userId]].emit(type, payload)
+	return true
 }
 
 exports.is_online = function (socket, payload) {
-    onlineUsers[socket.id] = payload.user_id;
+    onlineUsers[payload.user_id] = socket.id;
+	sockets[socket.id] = socket;
 
     storage.getProjectsOfUser(payload.user_id).then(function(projects) {
     	// join project room if project has > 1 user
     	projects.forEach(function(project) {
     		if (project.users.length > 1) {
-
     			socket.join(project.id, function() {
     				// let others in the project know user is online  	
     				socket.to(project.id).emit('teammate_online', {
@@ -24,15 +34,14 @@ exports.is_online = function (socket, payload) {
 			    	});				    				   			
     			});
 
-				// let user know who is online
 		    	project.users.forEach(function(user) {
-		    		if (isUserOnline(user.id)) {
+					// let user know who is online
+		    		if (onlineUsers[user.id]) {
 	    				socket.emit('teammate_online', {
 				    		user_id: user.id
 				    	});
 		    		}
-		    	});	    		
-
+		    	});
     		}
     	});  	
 
@@ -40,17 +49,20 @@ exports.is_online = function (socket, payload) {
 };
 
 exports.is_offline = function(socket) {
-	if (!(socket.id in onlineUsers)) return;
-    storage.getProjectsOfUser(onlineUsers[socket.id]).then(function(projects) {
+	var userId = getUserOfSocketId(socket.id)
+	if (!userId) return
+
+    storage.getProjectsOfUser(userId).then(function(projects) {
     	projects.forEach(function(project) {
     		if (project.users.length > 1) {
  				// let others in the project know user is offline  	
 				socket.to(project.id).emit('teammate_offline', {
-		    		user_id: onlineUsers[socket.id]
-		    	});		
+		    		user_id: userId
+		    	})
     		}
-    	});  
+    	})
 
-		delete onlineUsers[socket.id];
-    }); 	
+		delete onlineUsers[userId]
+		delete sockets[socket.id]
+    })
 }

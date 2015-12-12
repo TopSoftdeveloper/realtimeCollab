@@ -1,6 +1,5 @@
 var Hapi = require('hapi');
 var Good = require('good');
-var storage = require('./data/storage');
 var constants = require('./constants');
 var format = require('string-format');
 var Routes = require('./routes');
@@ -38,7 +37,7 @@ server.register([
         require('vision'),
         require('inert'),
         require('hapi-auth-jwt2'),
-        require('./controller/collaboration'),
+        require('./controller/socket'),
         {
             register: Good,
             options: {

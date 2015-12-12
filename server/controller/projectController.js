@@ -1,14 +1,17 @@
-var constants = require('../constants');
-var storage = require('../data/storage');
-var format = require('string-format');
-var Joi = require('joi');
-var Boom = require('boom');
-var Jwt = require('jsonwebtoken');
-var config = require('config');
-var helper = require('../utils/helper');
-var _ = require('lodash');
+var constants = require('../constants')
+var storage = require('../data/storage')
+var format = require('string-format')
+var Joi = require('joi')
+var Boom = require('boom')
+var Jwt = require('jsonwebtoken')
+var config = require('config')
+var helper = require('../utils/helper')
+var notifications = require('./notification/notificationController')
+var templates = require('./notification/templates')
 
-var secret_key = config.get('authentication.privateKey');
+var _ = require('lodash')
+
+var secret_key = config.get('authentication.privateKey')
 
 module.exports = {
     createProject: {
@@ -48,26 +51,37 @@ function inviteToProject(request, reply) {
     // User needs to be in current project to invite someone else
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
         storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
-            var isProjectPresent = _.findIndex(projects, function(project) {
-                return project.id === request.payload.project_id;
-            });
+            var matchingProjects = projects.filter(function(project) {
+                return project.id === request.payload.project_id
+            })
 
-            if (err || isProjectPresent < 0) {
+            if (err || matchingProjects.length !== 1) {
                 reply(Boom.forbidden(constants.FORBIDDEN));
                 return;
             }
 
-            storage.inviteToProject(request.payload.email, request.payload.project_id).then(function() {
-                return reply({status: constants.STATUS_OK});
-            }, function(err) {  
-                var errorMessage = err;
-                if (typeof err !== 'string') {
-                    if (err.errors[0].message === constants.DUPLICATE_PRIMARY_KEY) {
-                        errorMessage = constants.USER_ALREADY_PRESENT;
+            storage.findUser(request.payload.email).then(function(user) {
+                if (user === null) {
+                    reply(Boom.badRequest(constants.USER_NOT_FOUND))
+                    return
+                }
+                storage.inviteToProject(user.id, request.payload.project_id).then(function() {
+                    var notifData = {
+                        user: user.display_name,
+                        project: matchingProjects[0].content
                     }
-                }    
-                return reply(Boom.badRequest(errorMessage));          
-            });            
+                    notifications.newUserNotification(notifData, templates.INVITE_TO_PROJECT, user.id)
+                    return reply({status: constants.STATUS_OK});
+
+                }, function(err) {
+                    if (typeof err !== 'string') {
+                        if (err.errors[0].message === constants.DUPLICATE_PRIMARY_KEY) {
+                            errorMessage = constants.USER_ALREADY_PRESENT;
+                        }
+                    }
+                    return reply(Boom.badRequest(errorMessage))
+                })
+            })
         });
     });    
 }
