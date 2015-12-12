@@ -36,6 +36,10 @@ module.exports = {
     getProject: {
         handler: getProject
     },
+
+    acceptInvitation: {
+        handler: acceptInvitation
+    },
     inviteToProject: {
         handler: inviteToProject,
         validate: {
@@ -46,6 +50,19 @@ module.exports = {
         }
     }
 };
+
+function acceptInvitation(request, reply) {
+    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+        storage.joinProject(decoded.user_id, request.params.project_id).then(function() {
+            var notifData = {
+                user_id: decoded.user_id,
+                project_id: request.params.project_id
+            }
+            notifications.newProjectNotification(notifData, templates.JOINED_PROJECT, request.params.project_id, decoded.user_id)
+            reply({status: constants.STATUS_OK})
+        })
+    })
+}
 
 function inviteToProject(request, reply) {
     // User needs to be in current project to invite someone else

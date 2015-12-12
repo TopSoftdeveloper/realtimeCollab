@@ -60,7 +60,7 @@ class App extends Component {
 
     monitorNotifications() {
         this.state.socket.on('new_notification', (data) => {
-            console.log(data)
+            this.props.dispatch(Actions.newNotification(data))
         });
     }
 

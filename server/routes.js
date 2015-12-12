@@ -27,10 +27,12 @@ module.exports.endpoints = [
     { method: 'POST',  path: '/invite_to_project', config: Project.inviteToProject },
     { method: 'GET',  path: '/project/{project_id}', config: Project.getProject },
     { method: 'GET',  path: '/projects', config: Project.getProjects },
+    { method: 'PUT',  path: '/join_project/{project_id}', config: Project.acceptInvitation },
 
     { method: 'GET',  path: '/user/populate/{user_id}', config: User.getInfo },
 
     { method: 'GET',  path: '/notifications', config: Notification.getNotifications },
+    { method: 'DELETE',  path: '/notification/{notification_id}', config: Notification.removeNotification },
     { method: 'PUT',  path: '/notification/{notification_id}', config: Notification.updateNotification }
 
 ];

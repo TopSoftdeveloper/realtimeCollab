@@ -1,6 +1,7 @@
 import {serverCreateTask, serverDeleteTask, serverMarkDone, 
         serverPopulate, serverCreateMilestone, serverCreateProject,
-        serverInviteToProject, serverGetNotifications} from '../utils/apiUtil'
+        serverInviteToProject, serverGetNotifications, serverAcceptProject,
+        serverDeleteNotification} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -44,9 +45,26 @@ export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
 
+export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
+export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
+
 export function dismissProjectAlert() {
     return function(dispatch) {
         dispatch(projectAlert(null))
+    }
+}
+
+export function acceptProject(projectId, notificationId) {
+    return function(dispatch) {
+        serverAcceptProject(projectId).done(res => {
+            serverDeleteNotification(notificationId).done(res => {
+                dispatch(_deleteNotification(notificationId))
+            }).fail(e => {
+                console.log(e)
+            })
+        }).fail(e => {
+            console.log(e)
+        })
     }
 }
 

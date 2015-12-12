@@ -64,12 +64,31 @@ module.exports = {
         })
     },
 
+    removeNotification: function(id) {
+        return Notification.destroy({
+            where: {
+                id: id
+            }
+        });
+    },
+
     inviteToProject: function(user_id, project_id) {
         return UserProject.create({
             user_id: user_id,
             project_id: project_id,
             role: constants.ROLE_PENDING
         });
+    },
+
+    joinProject: function(userId, projectId) {
+        return UserProject.update({
+            role: constants.ROLE_BASIC
+        }, {
+            where: {
+                user_id: userId,
+                project_id: projectId
+            }
+        })
     },
     getProjectsOfUser: function(user_id) {
         return User.findById(user_id).then(function(user) {
@@ -101,9 +120,7 @@ module.exports = {
     },
 
     getProject: function(id) {
-        return Project.find({
-            where: {id: id}
-        })
+        return Project.findById(id)
     },
 
     removeProject: function(id) {
@@ -142,11 +159,7 @@ module.exports = {
         });
     },
     findUserById: function(id) {
-        return User.find({
-            where: {
-                id: id
-            }
-        });
+        return User.findById(id)
     },    
     addProjectToUser: function(user_id, project) {
         return User.findById(user_id).then(function(user) {

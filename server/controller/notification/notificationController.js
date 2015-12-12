@@ -34,7 +34,15 @@ module.exports = {
         }
     },
 
+    removeNotification: {
+        handler: removeNotification
+    },
+
     newUserNotification: function(data, template, recipientId) {
+        /**
+         * 'data' can have user_id, project_id which will be translated into
+         *  names and inserted into the respective template if needed
+         */
         storage.saveNotification(JSON.stringify(data), template, recipientId).then(function(notification) {
             idToNames(data).done(function(res) {
                 console.log(res)
@@ -49,8 +57,14 @@ module.exports = {
         })
     },
 
-    newProjectNotification: function(template, userId) {
-
+    newProjectNotification: function(data, template, projectId, ignoreId) {
+        storage.getUsersOfProject(projectId).then(function(users) {
+            users.forEach(function(user) {
+                if (user.id !== ignoreId) {
+                    this.newUserNotification(data, template, user.id)
+                }
+            }.bind(this))
+        }.bind(this))
     },
 
     broadcastToUser: function(userId, id, text, time, link, template, meta) {
@@ -82,6 +96,15 @@ function updateNotification(request, reply) {
         reply({status: 'OK'})
     }, function(err) {
         reply(err)
+    })
+}
+
+function removeNotification(request, reply) {
+    storage.removeNotification(request.params.notification_id).then(function() {
+        reply({status: 'OK'})
+    }, function(err) {
+        console.log(err)
+        reply(Boom.badRequest(err))
     })
 }
 
