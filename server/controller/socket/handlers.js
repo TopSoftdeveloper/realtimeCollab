@@ -1,4 +1,5 @@
 var storage = require('../../data/storage')
+var io = require('./index');
 var onlineUsers = {}
 var sockets = {}
 
@@ -17,6 +18,10 @@ exports.sendMessageToUser = function(userId, type, payload) {
 	}
 	sockets[onlineUsers[userId]].emit(type, payload)
 	return true
+}
+
+exports.sendMessageToProject = function(projectId, type, payload) {
+	io.io.in(projectId).emit(type, payload)
 }
 
 exports.is_online = function (socket, payload) {

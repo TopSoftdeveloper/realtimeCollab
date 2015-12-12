@@ -3,7 +3,7 @@ var storage = require('../data/storage');
 var format = require('string-format');
 var Joi = require('joi');
 var Boom = require('boom');
-var io = require('./socket');
+var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
 var config = require('config');
 var Jwt = require('jsonwebtoken');
@@ -121,10 +121,10 @@ function createTask(request, reply) {
     };
     storage.createTask(task).then(function(newTask) {
         Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-            io.io.in(request.payload.project_id).emit('new_task', {
+            socket.sendMessageToProject(request.payload.project_id, 'new_task', {
                 task: newTask, sender: decoded.user_id
-            });
-        });  
+            })
+        });
         reply(newTask);                
     }, function(error) {
         reply(Boom.badRequest(error));
@@ -139,9 +139,9 @@ function markTaskAsDone(request, reply) {
         } else {
             storage.markDone(task_id).then(function() {               
                 Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-                    io.io.in(request.payload.project_id).emit('mark_done', {
+                    socket.sendMessageToProject(request.payload.project_id, 'mark_done', {
                         task_id: task_id, sender: decoded.user_id
-                    });
+                    })
                 });    
                 reply({
                     status: constants.STATUS_OK
@@ -159,9 +159,9 @@ function deleteTask(request, reply) {
         } else {
             storage.deleteTask(task_id).then(function() {
                 Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-                    io.io.in(request.payload.project_id).emit('delete_task', {
+                    socket.sendMessageToProject(request.payload.project_id, 'delete_task', {
                         task_id: task_id, sender: decoded.user_id
-                    });
+                    })
                 });    
                 reply({
                     status: constants.STATUS_OK

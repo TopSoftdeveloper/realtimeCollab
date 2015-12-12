@@ -44,7 +44,6 @@ function filterPending(projects, userId) {
             return true;
         }         
     });
-    return filteredProjects;
 }
 
 function populate(request, reply) {
