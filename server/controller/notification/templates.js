@@ -5,10 +5,10 @@ module.exports = {
         var message = ''
         switch (template){
             case this.INVITE_TO_PROJECT:
-                message = data.user + ' has invited you to the project ' + data.project
+                message = data.displayName + ' has invited you to the project ' + data.projectName
                 break
             case this.JOINED_PROJECT:
-                message = data.user + ' has joined the project ' + data.project
+                message = data.displayName + ' has joined the project ' + data.projectName
                 break
             default:
                 message = ''

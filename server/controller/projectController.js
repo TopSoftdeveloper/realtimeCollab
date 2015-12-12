@@ -50,7 +50,9 @@ module.exports = {
 function inviteToProject(request, reply) {
     // User needs to be in current project to invite someone else
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-        storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
+        var fromUser = decoded.user_id
+
+        storage.getProjectsOfUser(fromUser).then(function(projects) {
             var matchingProjects = projects.filter(function(project) {
                 return project.id === request.payload.project_id
             })
@@ -65,12 +67,15 @@ function inviteToProject(request, reply) {
                     reply(Boom.badRequest(constants.USER_NOT_FOUND))
                     return
                 }
-                storage.inviteToProject(user.id, request.payload.project_id).then(function() {
+
+                var toUser = user.id
+
+                storage.inviteToProject(toUser, request.payload.project_id).then(function() {
                     var notifData = {
-                        user: user.display_name,
-                        project: matchingProjects[0].content
+                        user_id: fromUser,
+                        project_id: matchingProjects[0].id
                     }
-                    notifications.newUserNotification(notifData, templates.INVITE_TO_PROJECT, user.id)
+                    notifications.newUserNotification(notifData, templates.INVITE_TO_PROJECT, toUser)
                     return reply({status: constants.STATUS_OK});
 
                 }, function(err) {

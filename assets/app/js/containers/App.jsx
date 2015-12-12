@@ -15,11 +15,16 @@ class App extends Component {
         let host = 'ws://localhost:4001/'
         let socket = io.connect(host)
         this.state = { socket }
+        this.initApp()
         this.userIsOnline()
         this.monitorOnlineStatus()
         this.monitorProjectChanges()
         this.monitorNotifications()
-    }      
+    }
+
+    initApp() {
+        this.props.dispatch(Actions.initializeApp())
+    }
 
     userIsOnline() {
         this.state.socket.emit('is_online', {user_id: sessionStorage.getItem('user_id')})
@@ -82,13 +87,12 @@ class App extends Component {
         const actions = bindActionCreators(Actions, dispatch);
 
         if (users.length === 0) {
-            // First initialization of app            
-            actions.initializeApp();
+            // First initialization of app
             return (<div></div>);
-        } 
+        }
 
         let children = this.props.children;
-        if (projects.length === 0) {
+        if (projects.length === 0 && matchesUrl(window.location.href, AppConstants.APP_ROOT_URL)) {
             children = (<h2>You have no projects yet!</h2>);
         }
 

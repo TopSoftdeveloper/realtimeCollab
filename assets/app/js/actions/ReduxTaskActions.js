@@ -1,6 +1,6 @@
 import {serverCreateTask, serverDeleteTask, serverMarkDone, 
         serverPopulate, serverCreateMilestone, serverCreateProject,
-        serverInviteToProject} from '../utils/apiUtil'
+        serverInviteToProject, serverGetNotifications} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -17,7 +17,6 @@ function makeActionCreator(type, ...argNames) {
     }
 }
 
-export const loadTasks = makeActionCreator(AppConstants.LOAD_TASKS, 'milestones');
 export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original', 'replacement');
 export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID, 'original', 'replacement');
 export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
@@ -51,23 +50,6 @@ export function dismissProjectAlert() {
     }
 }
 
-const notifState = [
-    {
-        id: 'notif-1',
-        text: 'Cristina invited you to the project CS3201',
-        time: new Date().toISOString(), 
-        link: 'http://www.nus.edu.sg/',
-        read: false
-    },
-    {
-        id: 'notif-2',            
-        text: 'Ken uploaded a file in CG3002',
-        time: new Date().toISOString(), 
-        link: 'http://www.nus.edu.sg/',            
-        read: false
-    }
-];
-
 export function initializeApp() {
     return function(dispatch) {
         dispatch(initUsers([{
@@ -82,7 +64,6 @@ export function initializeApp() {
                 let normalizedTables = normalize(res.projects);
                 dispatch(initApp({current_project: normalizedTables.projects[0].id}));
                 dispatch(initMilestones(normalizedTables.milestones));
-                dispatch(initNotifications(notifState));
                 dispatch(initProjects(normalizedTables.projects));
                 dispatch(initTasks(normalizedTables.tasks));
                 dispatch(initUsers(normalizedTables.users));
@@ -90,6 +71,12 @@ export function initializeApp() {
         }).fail(e => {
             window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
         });
+
+        serverGetNotifications().done(res => {
+            dispatch(initNotifications(res.notifications));
+        }).fail(e => {
+            console.log(e)
+        })
     }
 }
 

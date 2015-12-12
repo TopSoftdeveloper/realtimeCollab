@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
+import vagueTime from 'vague-time'
 
 class NotificationItem extends Component {
     render() {
@@ -17,7 +18,11 @@ class NotificationItem extends Component {
 
 class NotificationList extends Component {
     toFuzzyTime(time) {
-        return '3 minutes ago'
+        return vagueTime.get({
+            from: time,
+            to: 0,
+            units: 's'
+        })
     }
 
     render() {

@@ -38,6 +38,14 @@ function _create(task) {
 }
 
 module.exports = {
+    getNotifications: function(userId) {
+        return Notification.findAll({
+            where: {
+                user_id: userId
+            }
+        })
+    },
+
     saveNotification: function(data, template, userId) {
         return Notification.create({
             id: shortid.generate(),
@@ -46,6 +54,14 @@ module.exports = {
             user_id: userId,
             is_read: false
         });
+    },
+
+    updateNotification: function(id, data) {
+        return Notification.update(data, {
+            where: {
+                id: id
+            }
+        })
     },
 
     inviteToProject: function(user_id, project_id) {
@@ -83,6 +99,13 @@ module.exports = {
             }
         });
     },
+
+    getProject: function(id) {
+        return Project.find({
+            where: {id: id}
+        })
+    },
+
     removeProject: function(id) {
         return Project.destroy({
             where: {

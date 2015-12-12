@@ -4,6 +4,7 @@ var Task = require('./controller/taskController');
 var Milestone = require('./controller/milestoneController');
 var Project = require('./controller/projectController');
 var User = require('./controller/userController');
+var Notification = require('./controller/notification/notificationController');
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
@@ -27,5 +28,9 @@ module.exports.endpoints = [
     { method: 'GET',  path: '/project/{project_id}', config: Project.getProject },
     { method: 'GET',  path: '/projects', config: Project.getProjects },
 
-    { method: 'GET',  path: '/user/populate/{user_id}', config: User.getInfo }
+    { method: 'GET',  path: '/user/populate/{user_id}', config: User.getInfo },
+
+    { method: 'GET',  path: '/notifications', config: Notification.getNotifications },
+    { method: 'PUT',  path: '/notification/{notification_id}', config: Notification.updateNotification }
+
 ];
