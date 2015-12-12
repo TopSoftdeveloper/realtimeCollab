@@ -8,9 +8,9 @@ var secret_key = config.get('authentication.privateKey')
 var Sequelize = require('sequelize');
 var Boom = require('boom');
 var _ = require('lodash')
-var promises = []
 
 function idToNames(data) {
+    var promises = []
     // convert ID to names only when needed, as names might change
     if (data.user_id) {
         promises.push(storage.findUserById(data.user_id))
@@ -37,11 +37,12 @@ module.exports = {
     newUserNotification: function(data, template, recipientId) {
         storage.saveNotification(JSON.stringify(data), template, recipientId).then(function(notification) {
             idToNames(data).done(function(res) {
+                console.log(res)
                 var displayName = res[0].display_name
                 var projectName = res[1].content
                 var message = templates.getMessage(template, {displayName: displayName, projectName: projectName})
                 var link = templates.getLink(notification.id)
-                this.broadcastToUser(recipientId, notification.created_at, message, link)
+                this.broadcastToUser(recipientId, notification.id, message, notification.created_at, link, data)
             }.bind(this))
         }.bind(this), function(err) {
             console.error(err)
@@ -52,11 +53,15 @@ module.exports = {
 
     },
 
-    broadcastToUser: function(userId, createdTime, message, redirectLink) {
+    broadcastToUser: function(userId, id, text, time, link, template, meta) {
         var payload = {
-            created_time: createdTime,
-            message: message,
-            redirect_link: redirectLink
+            id: id,
+            text: text,
+            time: time,
+            read: false,
+            link: link,
+            type: template,
+            meta: meta
         }
         socket.sendMessageToUser(userId, 'new_notification', payload)
     },
@@ -81,9 +86,9 @@ function updateNotification(request, reply) {
 }
 
 function getNotifications(request, reply) {
-    var promises = []
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
         storage.getNotifications(decoded.user_id).then(function(notifications) {
+            var promises = []
             notifications.forEach(function(notification) {
                 promises.push(idToNames(JSON.parse(notification.data)))
             })
@@ -96,19 +101,23 @@ function getNotifications(request, reply) {
                 })
 
                 var mergedNotifs = _.merge(names, JSON.parse(JSON.stringify(notifications)))
-
                 reply({
                     notifications: mergedNotifs.map(function(notif) {
                         var message = templates.getMessage(notif.template, {
                             displayName: notif.displayName,
                             projectName: notif.projectName
                         })
+                        var data = JSON.parse(notif.data)
                         return {
                             id: notif.id,
                             text: message,
                             time: notif.created_at,
                             read: notif.is_read,
-                            link: templates.getLink(notif.id)
+                            link: templates.getLink(notif.id),
+                            type: notif.template,
+                            meta: {
+                                project_id: data.project_id
+                            }
                         }
                     })
                 })
