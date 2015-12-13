@@ -6,6 +6,7 @@ import { connectHistory } from '../components/connectHistory.jsx'
 import * as Actions from '../actions/ReduxTaskActions'
 import Header from '../components/Header.jsx'
 import {matchesUrl} from '../utils/general'
+import LeftPanel from '../components/LeftPanel.jsx'
 
 var AppConstants = require('../AppConstants');
 
@@ -64,13 +65,6 @@ class App extends Component {
         });
     }
 
-    switchToProject(project_id) {
-        this.props.dispatch({
-            type: AppConstants.SWITCH_TO_PROJECT,
-            project_id: project_id
-        })
-    }
-
     shouldComponentUpdate(nextProps, nextState) {
         const { projects } = this.props;
         if (matchesUrl(window.location.href, AppConstants.APP_ROOT_URL) && projects.length > 0) {
@@ -101,21 +95,36 @@ class App extends Component {
 
         let unreadCount = notifications.reduce((total, notif) => notif.read ? total : total+1, 0);
 
+
+        //style={{backgroundColor: 'orange'}}
         return (
             <div>
-            <Header 
-                unreadCount={unreadCount} 
-                projects={projects} 
-                displayName={displayName} 
-                switchProject={this.switchToProject.bind(this)}
-                onCreateProject={actions.createProject}
-            />
-            {children}
+                <Header
+                    unreadCount={unreadCount}
+                    projects={projects}
+                    displayName={displayName}
+                    onCreateProject={actions.createProject}
+                />
+
+                <div className="row around-xs">
+                    <div className="col-xs-3">
+                        <div className="box" >
+                            <LeftPanel
+                                projects={this.props.projects}
+                                history={this.props.history}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-xs-8">
+                        <div className="box">
+                            {children}
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 }
-
 App.propTypes = {
     dispatch: PropTypes.func.isRequired,
     notifications: PropTypes.array.isRequired,

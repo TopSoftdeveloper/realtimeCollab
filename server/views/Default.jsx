@@ -10,9 +10,9 @@ var Default = React.createClass({
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta>
                 <title>Collab</title>
                 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"></link>
-                <link href='https://fonts.googleapis.com/css?family=Quattrocento|Open+Sans' rel='stylesheet' type='text/css'></link>
-                <link rel="stylesheet" type="text/css" href="/assets/app/css/main.css"></link>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"></link>
+                <link rel="stylesheet" type="text/css" href="/assets/app/css/flexboxgrid.css"></link>
+                <link rel="stylesheet" type="text/css" href="/assets/app/css/main.css"></link>
             </head>
 
             <body style={{fontFamily: ['Quattrocento', 'sans-serif']}}>

@@ -1,35 +1,29 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router'
+import List from 'material-ui/lib/lists/list'
+import ListDivider from 'material-ui/lib/lists/list-divider'
+import ListItem from 'material-ui/lib/lists/list-item'
 
-class MenuItem extends Component {
-    render() {
-        let projectUrl = '/app/project/' + this.props.projectId;
-        return (
-            <div className="menu-item" onClick={this.props.switchProject}>
-                <Link to={projectUrl}>{this.props.children}</Link>
-            </div>
-        );
+class LeftPanel extends Component {
+    switchProject(projectId) {
+        let projectUrl = '/app/project/' + projectId;
+        this.props.history.pushState(null, projectUrl)
     }
-}
 
-class LeftPanel extends Component {    
     render() {
 
-        let menuItems = this.props.projects.map(project => 
-            <MenuItem 
-            key={project.id} 
-            projectId={project.id}
-            switchProject={this.props.switchProject.bind(this, project.id)}
-            >{project.content}
-            </MenuItem>
-            );
+        let listItems = this.props.projects.map(project =>
+            <ListItem
+                key={project.id}
+                primaryText={project.content}
+                onClick={this.switchProject.bind(this, project.id)}
+            />
+         );
 
         return (
-            <div className="menu">
-                <div className={(this.props.visibility ? "panel_visible " : "") + " left"}>
-                    {menuItems}
-                </div>
-            </div>
+            <List subheader="Projects">
+                {listItems}
+            </List>
         );
     }
 }

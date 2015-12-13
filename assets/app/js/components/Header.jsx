@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Link } from 'react-router'
-import LeftPanel from './LeftPanel.jsx'
 import $ from 'jquery'
 import Modal from 'react-modal'
 import { Navbar, Nav, NavDropdown, NavItem, MenuItem, Badge, Dropdown, Button } from 'react-bootstrap'
@@ -28,34 +27,7 @@ class Header extends Component {
             inputProject: ''            
         };
     }
-
-    /****************************************************************************/
-    /*****************************  LEFT PANEL   ********************************/
-    /****************************************************************************/
-    hideLeft(event) {
-        if (!$(event.target).closest('.menu').length) {
-            $(document).unbind('click');                      
-            this.setState({
-                panel_visible: false
-            }); 
-        }
-    }
-
-    showLeft() {
-        this.setState({
-            panel_visible: true
-        });
-        $(document).bind('click', this.hideLeft.bind(this));    
-    }
-
-    switch(project_id) {
-        this.setState({
-            panel_visible: false
-        });
-        this.props.switchProject(project_id);
-        $(document).unbind('click');                      
-    }
-
+    
 
     /****************************************************************************/
     /*************************  MODAL FOR ADDING PROJECTS  **********************/
@@ -93,8 +65,8 @@ class Header extends Component {
         } 
 
         return (
-            <div className='app-header'>
-                <Navbar>
+            <div>
+                <Navbar className='nav-bar'>
                     <Navbar.Header>
                         <Navbar.Brand>
                             <Link to="/app">Collab</Link>
@@ -103,17 +75,27 @@ class Header extends Component {
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav>
-                            <NavItem eventKey={1} onClick={this.showLeft.bind(this)}>Show Projects</NavItem>
-                            <NavItem eventKey={2} onClick={this.openModal.bind(this)}>Add Project</NavItem>
+                            <NavItem
+                                className='nav-link'
+                                eventKey={2}
+                                onClick={this.openModal.bind(this)}>
+                                Add Project
+                            </NavItem>
                         </Nav>
                         <Nav pullRight>
                             <LinkContainer to='/app/notifications' >
-                                <NavItem eventKey={2}>
+                                <NavItem
+                                    className='nav-link'
+                                    eventKey={2}>
                                     Notifs {badge}
                                 </NavItem>
                             </LinkContainer>
 
-                            <NavDropdown eventKey={3} title={this.props.displayName} id="basic-nav-dropdown">
+                            <NavDropdown
+                                className='nav-link'
+                                eventKey={3}
+                                title={this.props.displayName}
+                                id="basic-nav-dropdown">
                                 <MenuItem eventKey={3.1}>Account Settings</MenuItem>
                                 <MenuItem divider />
                                 <MenuItem eventKey={3.2} onClick={logout}>Log Out</MenuItem>
@@ -121,24 +103,18 @@ class Header extends Component {
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
-                
-                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >                                    
+                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >
                     <h3>Add a project</h3>
                     <form onSubmit={this.submit.bind(this)}>
-                        <input type="text" placeholder="Project name" 
-                            value={this.state.inputProject}
-                            onChange={this.handleProjectChange.bind(this)}/>                    
+                        <input type="text" placeholder="Project name"
+                               value={this.state.inputProject}
+                               onChange={this.handleProjectChange.bind(this)}/>
                         <button className='btn btn-default'>Create Project</button>
                     </form>
                 </Modal>
-                <LeftPanel 
-                visibility={this.state.panel_visible} 
-                projects={this.props.projects}
-                switchProject={this.switch.bind(this)}
-                />                
-            </div>    
+            </div>
             );
     }
 }                            
 
-export default Header                                
+export default Header
