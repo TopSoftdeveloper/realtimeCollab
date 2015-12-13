@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-import ReactTabs from 'react-tabs'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions/ReduxTaskActions';
@@ -13,10 +12,9 @@ import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
 import {isProjectPresent} from '../utils/collection'
 
-const Tab = ReactTabs.Tab;
-const Tabs = ReactTabs.Tabs;
-const TabList = ReactTabs.TabList;
-const TabPanel = ReactTabs.TabPanel;
+import Tabs from 'material-ui/lib/tabs/tabs'
+import Tab from 'material-ui/lib/tabs/tab'
+
 
 class Project extends Component {
     constructor(props, context) {
@@ -68,41 +66,32 @@ class Project extends Component {
         if (projectCreator !== undefined) { // undefined because user not initialized yet
             membersInProj.push(projectCreator);
         }
-
         return (
             <div className='task-table'>
                 <ProjectHeader projectName={projectName} members={membersInProj}/>
                 <Tabs>
-                    
-                    <TabList>
-                        <Tab>Milestone View</Tab>
-                        <Tab>Settings</Tab>
-                    </TabList>
-
-                    <TabPanel>
-                        <MilestoneView 
+                    <Tab label="Milestones" >
+                        <MilestoneView
                             milestones={milestonesInProj}
-                            tasks={tasksInProj}  
+                            tasks={tasksInProj}
                             actions={actions}
                             projectId={currentProjectId}
-                        />   
-                    </TabPanel>
-
-                    <TabPanel>
-                        <Settings 
+                        />
+                    </Tab>
+                    <Tab label="Settings" >
+                        <Settings
                             projectName={projectName}
-                            projectId={currentProjectId}                            
+                            projectId={currentProjectId}
                             basicUsers={basicUsers}
                             pendingUsers={pendingUsers}
-                            projectCreator={projectCreator}    
-                            actions={actions}     
-                            alerts={alerts}                                               
+                            projectCreator={projectCreator}
+                            actions={actions}
+                            alerts={alerts}
                         />
-                    </TabPanel>
-                    
-                </Tabs>                        
+                    </Tab>
+                </Tabs>
             </div>
-        );
+        )
     }
 }
 
