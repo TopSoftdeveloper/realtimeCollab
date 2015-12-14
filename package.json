@@ -42,7 +42,6 @@
     "react-sticky": "^3.0.0",
     "react-tap-event-plugin": "^0.2.1",
     "redux": "^3.0.4",
-    "redux-simple-router": "0.0.10",
     "redux-thunk": "^1.0.0",
     "sequelize": "^3.14.1",
     "shortid": "^2.2.4",
