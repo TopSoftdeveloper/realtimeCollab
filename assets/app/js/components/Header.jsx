@@ -6,18 +6,6 @@ import Modal from 'react-modal'
 import { Navbar, Nav, NavDropdown, NavItem, MenuItem, Badge, Dropdown, Button } from 'react-bootstrap'
 import {logout} from '../utils/auth.js'
 
-const customStyles = {
-    content : {
-        top                   : '50%',
-        left                  : '50%',
-        right                 : 'auto',
-        bottom                : 'auto',
-        marginRight           : '-50%',
-        transform             : 'translate(-50%, -50%)'
-    }
-};
-
-
 class Header extends Component {
     constructor(props, context) {
         super(props, context); 
@@ -65,54 +53,43 @@ class Header extends Component {
         } 
 
         return (
-            <div>
-                <Navbar className='nav-bar'>
-                    <Navbar.Header>
-                        <Navbar.Brand>
-                            <Link to="/app">Collab</Link>
-                        </Navbar.Brand>
-                        <Navbar.Toggle />
-                    </Navbar.Header>
-                    <Navbar.Collapse>
-                        <Nav>
+            <Navbar className='nav-bar'>
+                <Navbar.Header>
+                    <Navbar.Brand>
+                        <Link to="/app">Collab</Link>
+                    </Navbar.Brand>
+                    <Navbar.Toggle />
+                </Navbar.Header>
+                <Navbar.Collapse>
+                    <Nav>
+                        <NavItem
+                            className='nav-link'
+                            eventKey={2}
+                            onClick={this.openModal.bind(this)}>
+                            Add Project
+                        </NavItem>
+                    </Nav>
+                    <Nav pullRight>
+                        <LinkContainer to='/app/notifications' >
                             <NavItem
                                 className='nav-link'
-                                eventKey={2}
-                                onClick={this.openModal.bind(this)}>
-                                Add Project
+                                eventKey={2}>
+                                Notifs {badge}
                             </NavItem>
-                        </Nav>
-                        <Nav pullRight>
-                            <LinkContainer to='/app/notifications' >
-                                <NavItem
-                                    className='nav-link'
-                                    eventKey={2}>
-                                    Notifs {badge}
-                                </NavItem>
-                            </LinkContainer>
+                        </LinkContainer>
 
-                            <NavDropdown
-                                className='nav-link'
-                                eventKey={3}
-                                title={this.props.displayName}
-                                id="basic-nav-dropdown">
-                                <MenuItem eventKey={3.1}>Account Settings</MenuItem>
-                                <MenuItem divider />
-                                <MenuItem eventKey={3.2} onClick={logout}>Log Out</MenuItem>
-                            </NavDropdown>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Navbar>
-                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >
-                    <h3>Add a project</h3>
-                    <form onSubmit={this.submit.bind(this)}>
-                        <input type="text" placeholder="Project name"
-                               value={this.state.inputProject}
-                               onChange={this.handleProjectChange.bind(this)}/>
-                        <button className='btn btn-default'>Create Project</button>
-                    </form>
-                </Modal>
-            </div>
+                        <NavDropdown
+                            className='nav-link'
+                            eventKey={3}
+                            title={this.props.displayName}
+                            id="basic-nav-dropdown">
+                            <MenuItem eventKey={3.1}>Account Settings</MenuItem>
+                            <MenuItem divider />
+                            <MenuItem eventKey={3.2} onClick={logout}>Log Out</MenuItem>
+                        </NavDropdown>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
             );
     }
 }                            

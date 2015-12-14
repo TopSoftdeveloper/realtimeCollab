@@ -62,13 +62,13 @@ class Project extends Component {
         let tasksInProj = tasks.filter(
             task => this.isItemPresent(milestoneIds, task.milestone_id));
 
-        let membersInProj = basicUsers;
-        if (projectCreator !== undefined) { // undefined because user not initialized yet
-            membersInProj.push(projectCreator);
-        }
         return (
             <div className='task-table'>
-                <ProjectHeader projectName={projectName} members={membersInProj}/>
+                <ProjectHeader
+                    projectName={projectName}
+                    members={basicUsers}
+                    actions={actions}
+                />
                 <Tabs>
                     <Tab label="Milestones" >
                         <MilestoneView

@@ -3,19 +3,6 @@ import _ from 'lodash'
 import $ from 'jquery'
 import MilestoneRow from './MilestoneRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
-import Modal from 'react-modal'
-
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
-  }
-};
-
 
 class TaskRow extends Component {
     render() {
@@ -36,51 +23,7 @@ class TaskRow extends Component {
 
 class MilestoneView extends Component {
     constructor(props, context) {
-        super(props, context); 
-        this.state = {
-            modalIsOpen: false,
-            inputMilestone: ''
-        }        
-    }
-
-    /****************************************************************************/
-    /*************************     ADDING MILESTONES       **********************/
-    /****************************************************************************/
-
-    addMilestone(content) {
-        this.props.actions.createMilestone({
-            id: _.uniqueId('milestone'),
-            content: content,
-            deadline: null,
-            project_id: this.props.projectId,
-            tasks: []
-        });
-    }
-
-    openModal() {
-        this.setState({modalIsOpen: true});
-    }
-
-    closeModal() {
-        this.setState({modalIsOpen: false});
-    }
-
-    submit(e) {
-        e.preventDefault();
-        let content = this.state.inputMilestone.trim();
-        if (content !== '') {
-            this.addMilestone(content);
-        }
-        this.closeModal();
-        this.setState({
-            inputMilestone: ''
-        });        
-    }
-
-    handleMilestoneChange(e) {
-        this.setState({
-            inputMilestone: e.target.value
-        });
+        super(props, context);
     }
 
     /****************************************************************************/
@@ -113,7 +56,6 @@ class MilestoneView extends Component {
     }
 
     render() {
-        let actions = this.props.actions;
         let rows = [];
 
         this.props.milestones.forEach(milestone => {
@@ -146,17 +88,6 @@ class MilestoneView extends Component {
 
         return (
             <div className='milestone-view'>
-                <a onClick={this.openModal.bind(this)} className='add-milestone-btn btn btn-default'>Add Milestone</a>
-                    <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >                                    
-                        <h3>Add a milestone</h3>
-                        <form onSubmit={this.submit.bind(this)}>
-                            <input type="text" placeholder="Milestone name" 
-                                value={this.state.inputMilestone}
-                                onChange={this.handleMilestoneChange.bind(this)}/>                    
-                            <button className='btn btn-default'>Add Milestone</button>
-                        </form>
-                    </Modal>
-
                 <div className='task-items'>
                     {rows}
                 </div>          

@@ -13,3 +13,9 @@ export function matchesUrl(a, b) {
 	// Checks whether url a matches url b
 	return trimUrlString(a) === trimUrlString(b);
 }
+
+export function getCurrentProject() {
+	// prefix: /app/project/
+	const CHARS_IN_PREFIX = 13
+	return window.location.pathname.slice(CHARS_IN_PREFIX)
+}
