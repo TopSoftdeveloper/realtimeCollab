@@ -8,6 +8,7 @@ import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
 import {isProjectPresent} from '../utils/collection'
+import {getCurrentProject} from '../utils/general'
 
 import Tabs from 'material-ui/lib/tabs/tabs'
 import Tab from 'material-ui/lib/tabs/tab'
@@ -29,9 +30,10 @@ class Project extends Component {
     }
 
     render() {   
-        const {alerts, milestones, projects, tasks, users, dispatch} = this.props;        
-        const actions = bindActionCreators(Actions, dispatch);
-        const currentProjectId = this.props.params.id;
+        const {alerts, milestones, projects, tasks, users, dispatch, app} = this.props
+        const actions = bindActionCreators(Actions, dispatch)
+
+        const currentProjectId = getCurrentProject()
 
         let projectName = '';
         let basicUsers = [];
@@ -94,7 +96,8 @@ class Project extends Component {
 
 Project.propTypes = {
     dispatch: PropTypes.func.isRequired,    
-    alerts: PropTypes.object.isRequired, 
+    alerts: PropTypes.object.isRequired,
+    app: PropTypes.object.isRequired,
     milestones: PropTypes.array.isRequired,    
     projects: PropTypes.array.isRequired,
     tasks: PropTypes.array.isRequired,    
@@ -104,6 +107,7 @@ Project.propTypes = {
 function mapStateToProps(state) {
     return {
         alerts: state.alerts,
+        app: state.app,
         milestones: state.milestones,
         projects: state.projects,
         tasks: state.tasks,

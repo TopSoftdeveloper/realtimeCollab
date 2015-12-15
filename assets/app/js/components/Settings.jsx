@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert } from 'react-bootstrap'
 import _ from 'lodash'
 let AppConstants = require('../AppConstants');
+import {getCurrentProject} from '../utils/general'
 
 class Settings extends Component {
     constructor(props, context) {
@@ -35,6 +36,14 @@ class Settings extends Component {
     render() {   
         let listGroups = [];
         let alertStatus = this.props.alerts.project_invitation;
+        if (this.props.projectCreator) {
+            listGroups.push(
+                <ListGroupItem key={_.uniqueId('settings_basic')}>
+                    {this.props.projectCreator.display_name} (creator)
+                </ListGroupItem>
+            )
+        }
+
         this.props.basicUsers.forEach(user => listGroups.push(
             <ListGroupItem key={_.uniqueId('settings_basic')}>
                 {user.display_name}
@@ -53,7 +62,7 @@ class Settings extends Component {
                 <Alert 
                     bsStyle="success" 
                     onDismiss={this.handleAlertDismiss.bind(this)}  
-                    dismissAfter={2500}>
+                    >
                     Successfully invited!
                 </Alert>
             );
@@ -62,7 +71,7 @@ class Settings extends Component {
                 <Alert 
                     bsStyle="warning" 
                     onDismiss={this.handleAlertDismiss.bind(this)} 
-                    dismissAfter={2500}>
+                    >
                     User already invited!
                 </Alert>
             );            
@@ -71,11 +80,11 @@ class Settings extends Component {
                 <Alert 
                     bsStyle="danger" 
                     onDismiss={this.handleAlertDismiss.bind(this)} 
-                    dismissAfter={2500}>
+                    >
                     User not found!
                 </Alert>
             );              
-        }      
+        }
 
         return (
             <div className='settings'>
@@ -102,7 +111,6 @@ class Settings extends Component {
                         <Input 
                             type="text" 
                             label="Project name" 
-                            defaultValue={this.props.projectName} 
                             buttonAfter={<ButtonInput value="Rename"/>}
                         />
                     </form>                

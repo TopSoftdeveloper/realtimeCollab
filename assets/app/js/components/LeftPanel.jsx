@@ -6,6 +6,7 @@ class LeftPanel extends Component {
     switchProject(projectId) {
         let projectUrl = '/app/project/' + projectId;
         this.props.history.pushState(null, projectUrl)
+        this.props.onSwitchProject(projectId)
     }
 
     render() {
@@ -14,7 +15,7 @@ class LeftPanel extends Component {
             <ListItem
                 key={project.id}
                 primaryText={project.content}
-                onClick={this.switchProject.bind(this, project.id)}
+                onTouchTap={this.switchProject.bind(this, project.id)}
             />
          );
 
