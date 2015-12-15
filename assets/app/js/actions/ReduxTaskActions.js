@@ -153,22 +153,19 @@ export function deleteMilestone(milestoneId, projectId) {
 
 
 export function createProject(content) {
-    let tempId = _.uniqueId('project');
-    let project = {
-        id: tempId,
-        content: content,
-        milestones: []
-    }    
     return function(dispatch) {
-        dispatch(_createProject(project));
-        dispatch(switchToProject(tempId))
         serverCreateProject({content:content})
         .done(res => {
-            dispatch(replaceProjectId(tempId, res.project_id));
-            dispatch(switchToProject(res.project_id))
+            dispatch(_createProject({
+                id: res.project_id,
+                content: content,
+                creator: sessionStorage.getItem('user_id'),
+                basic: [],
+                pending: [],
+                milestones: []
+            }))
         }).fail(e => {
             console.log(e);
-            dispatch(_deleteProject(tempId));
         });
     }
 }

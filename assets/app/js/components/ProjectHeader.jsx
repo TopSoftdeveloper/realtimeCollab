@@ -1,32 +1,38 @@
 import React, { Component } from 'react'
 import OnlineUsers from '../components/OnlineUsers.jsx'
-import Modal from 'react-modal'
 import Add from './../icons/Add.jsx'
 import {getCurrentProject} from '../utils/general'
-import { IconButton } from 'material-ui'
-
-const customStyles = {
-    content : {
-        top                   : '50%',
-        left                  : '50%',
-        right                 : 'auto',
-        bottom                : 'auto',
-        marginRight           : '-50%',
-        transform             : 'translate(-50%, -50%)'
-    }
-}
+import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
 
 class ProjectHeader extends Component {
     constructor(props, context) {
         super(props, context)
         this.state = {
-            modalIsOpen: false,
-            inputMilestone: ''
+            isDialogOpen: false
         }
     }
-    /****************************************************************************/
-    /*************************     ADDING MILESTONES       **********************/
-    /****************************************************************************/
+
+    handleRequestClose(buttonClicked) {
+        if (!buttonClicked && this.state.openDialogStandardActions) return
+        this.setState({
+            isDialogOpen: false
+        })
+    }
+    onDialogSubmit() {
+        let content = this.refs.milestoneField.getValue().trim()
+        if (content !== '') {
+            this.addMilestone(content)
+        }
+        this.setState({
+            isDialogOpen: false
+        })
+    }
+
+    openModal() {
+        this.setState({
+            isDialogOpen: true
+        })
+    }
 
     addMilestone(content) {
         this.props.actions.createMilestone({
@@ -38,34 +44,20 @@ class ProjectHeader extends Component {
         })
     }
 
-    openModal() {
-        this.setState({modalIsOpen: true})
-    }
-
-    closeModal() {
-        this.setState({modalIsOpen: false})
-    }
-
-    submit(e) {
-        e.preventDefault()
-        let content = this.state.inputMilestone.trim()
-        if (content !== '') {
-            this.addMilestone(content)
-        }
-        this.closeModal()
-        this.setState({
-            inputMilestone: ''
-        })
-    }
-
-    handleMilestoneChange(e) {
-        this.setState({
-            inputMilestone: e.target.value
-        })
-    }
-
-
     render() {
+        let actions = [
+            <FlatButton
+                key={1}
+                label="Cancel"
+                secondary={true}
+                onTouchTap={this.onDialogSubmit.bind(this)} />,
+            <FlatButton
+                key={2}
+                label="Submit"
+                primary={true}
+                onTouchTap={this.onDialogSubmit.bind(this)} />
+        ]
+
         return (
             <div className='project-header'>
                 <h1 className='project-header-text'>{this.props.projectName} </h1>
@@ -73,15 +65,17 @@ class ProjectHeader extends Component {
                     <Add className="add-milestone-btn"/>
                 </IconButton>
 
-                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >
-                    <h3>Add a milestone</h3>
-                    <form onSubmit={this.submit.bind(this)}>
-                        <input type="text" placeholder="Milestone name"
-                               value={this.state.inputMilestone}
-                               onChange={this.handleMilestoneChange.bind(this)}/>
-                        <button className='btn btn-default'>Add Milestone</button>
-                    </form>
-                </Modal>
+                <Dialog
+                    title="Add Milestone"
+                    actions={actions}
+                    open={this.state.isDialogOpen}
+                    onRequestClose={this.handleRequestClose.bind(this)}>
+                    <TextField
+                        hintText="Milestone name"
+                        onEnterKeyDown={this.onDialogSubmit.bind(this)}
+                        ref="milestoneField"
+                    />
+                </Dialog>
                 <OnlineUsers members={this.props.members} />
             </div>
         );

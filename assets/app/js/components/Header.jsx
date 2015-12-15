@@ -2,74 +2,75 @@ import React, { Component } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Link } from 'react-router'
 import $ from 'jquery'
-import Modal from 'react-modal'
 import { Navbar, Nav, NavDropdown, NavItem, MenuItem, Badge, Dropdown, Button } from 'react-bootstrap'
+import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
 import {logout} from '../utils/auth.js'
 
 class Header extends Component {
     constructor(props, context) {
         super(props, context); 
         this.state = {
-            panel_visible: false,
-            modalIsOpen: false,
-            inputProject: ''            
-        };
-    }
-    
-
-    /****************************************************************************/
-    /*************************  MODAL FOR ADDING PROJECTS  **********************/
-    /****************************************************************************/
-    openModal() {
-        this.setState({modalIsOpen: true});
-    }
-
-    closeModal() {
-        this.setState({modalIsOpen: false});
-    }
-
-    submit(e) {
-        e.preventDefault();
-        let content = this.state.inputProject.trim();
-        if (content !== '') {
-            this.props.onCreateProject(content);
+            isDialogOpen: false
         }
-        this.closeModal();
-        this.setState({
-            inputProject: ''
-        });        
     }
 
-    handleProjectChange(e) {
+    handleRequestClose(buttonClicked) {
+        if (!buttonClicked && this.state.openDialogStandardActions) return
         this.setState({
-            inputProject: e.target.value
-        });
+            isDialogOpen: false
+        })
+    }
+    onDialogSubmit() {
+        let content = this.refs.projectField.getValue().trim()
+        if (content !== '') {
+            this.props.onCreateProject(content)
+        }
+        this.setState({
+            isDialogOpen: false
+        })
+    }
+
+    openModal() {
+        this.setState({
+            isDialogOpen: true
+        })
     }
 
     render() {
         let badge = (<div></div>);
         if (this.props.unreadCount > 0) {
             badge = (<Badge>{this.props.unreadCount}</Badge>);
-        } 
+        }
+        let actions = [
+            <FlatButton
+                key={1}
+                label="Cancel"
+                secondary={true}
+                onTouchTap={this.onDialogSubmit.bind(this)} />,
+            <FlatButton
+                key={2}
+                label="Submit"
+                primary={true}
+                onTouchTap={this.onDialogSubmit.bind(this)} />
+        ]
 
         return (
+            <div>
             <Navbar className='nav-bar'>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <Link to="/app">Collab</Link>
+                        <a href="/app">Collab</a>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    <Nav>
+                    <Nav pullRight>
                         <NavItem
                             className='nav-link'
-                            eventKey={2}
+                            eventKey={1}
                             onClick={this.openModal.bind(this)}>
                             Add Project
                         </NavItem>
-                    </Nav>
-                    <Nav pullRight>
                         <LinkContainer to='/app/notifications' >
                             <NavItem
                                 className='nav-link'
@@ -90,6 +91,18 @@ class Header extends Component {
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
+            <Dialog
+                title="Add Project"
+                actions={actions}
+                open={this.state.isDialogOpen}
+                onRequestClose={this.handleRequestClose.bind(this)}>
+                <TextField
+                    hintText="Project name"
+                    onEnterKeyDown={this.onDialogSubmit.bind(this)}
+                    ref="projectField"
+                />
+            </Dialog>
+            </div>
             );
     }
 }                            
