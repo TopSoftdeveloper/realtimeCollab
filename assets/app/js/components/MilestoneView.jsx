@@ -31,6 +31,10 @@ class MilestoneView extends Component {
         this.props.actions.deleteTask(task_id, this.props.projectId)
     }
 
+    deleteMilestone(milestone_id) {
+        this.props.actions.deleteMilestone(milestone_id, this.props.projectId)
+    }
+
     markDone(task_id) {
         this.props.actions.markDone(task_id, this.props.projectId);
     }
@@ -48,6 +52,7 @@ class MilestoneView extends Component {
                 milestone={milestone.content}
                 key={milestone.id}
                 onAddTask={this.addTask.bind(this, milestone.id)}
+                onDeleteMilestone={this.deleteMilestone.bind(this, milestone.id)}
             />)
 
             let tasks = []

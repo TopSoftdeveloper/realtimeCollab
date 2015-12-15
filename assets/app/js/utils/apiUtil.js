@@ -77,6 +77,10 @@ export function serverCreateMilestone(payload) {
     return ajaxPost(CREATE_MILESTONE_ENDPOINT, payload);
 }
 
+export function serverDeleteMilestone(milestone_id, project_id) {
+    return ajaxDelete('/milestone/' + milestone_id, {project_id: project_id})
+}
+
 export function serverCreateProject(payload) {
     return ajaxPost(CREATE_PROJECT_ENDPOINT, payload);
 }

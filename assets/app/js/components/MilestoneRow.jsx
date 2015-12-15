@@ -1,7 +1,8 @@
 import Modal from 'react-modal'
 import React, { Component } from 'react'
-import Add from './../icons/Add.jsx'
-import { IconButton } from 'material-ui'
+import MoreVert from './../icons/MoreVert.jsx'
+import { IconButton, IconMenu } from 'material-ui'
+const MenuItem = require('material-ui/lib/menus/menu-item');
 
 const customStyles = {
   content : {
@@ -50,15 +51,23 @@ class MilestoneRow extends Component {
         });
     }
 
+    deleteMilestone() {
+        this.props.onDeleteMilestone()
+    }
+
     render() {
+        let iconButtonElement = <IconButton><MoreVert /></IconButton>
+
         return (
-            <div key={this.props.milestone.id} className="milestone-row">
+            <div className="milestone-row">
                 <h3 className="milestone-header">{this.props.milestone}</h3>
-                <IconButton
-                    className="add-task-btn-outer"
-                    onClick={this.openModal.bind(this)}>
-                    <Add className="add-task-btn"/>
-                </IconButton>
+                <IconMenu
+                    className="more-vert-btn"
+                    iconButtonElement={iconButtonElement}
+                    openDirection="bottom-right">
+                    <MenuItem primaryText="Add Task" onClick={this.openModal.bind(this)}/>
+                    <MenuItem primaryText="Delete Milestone" onClick={this.deleteMilestone.bind(this)}/>
+                </IconMenu>
                 <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >
                     <h3>Add a task</h3>
                     <form onSubmit={this.submit.bind(this)}>
@@ -68,9 +77,10 @@ class MilestoneRow extends Component {
                         <button className='btn btn-default'>Add Task</button>
                     </form>
                 </Modal>
+                <div className="clearfix"></div>
             </div>
         )
     }
 }
 
-export default MilestoneRow;
+export default MilestoneRow

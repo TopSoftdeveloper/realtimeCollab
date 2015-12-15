@@ -1,7 +1,7 @@
 import {serverCreateTask, serverDeleteTask, serverMarkDone, 
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
-        serverDeleteNotification} from '../utils/apiUtil'
+        serverDeleteNotification, serverDeleteMilestone} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -140,6 +140,17 @@ export function createMilestone(milestone) {
         });
     }
 }
+
+export function deleteMilestone(milestoneId, projectId) {
+    return function(dispatch) {
+        serverDeleteMilestone(milestoneId, projectId).done(res => {
+            dispatch(_deleteMilestone(milestoneId))
+        }).fail(e => {
+            console.log(e)
+        });
+    }
+}
+
 
 export function createProject(content) {
     let tempId = _.uniqueId('project');

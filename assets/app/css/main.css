@@ -62,26 +62,20 @@
 
 /****************** milestone row ***********************/
 
-.milestone-header, .add-task-btn-outer {
+.milestone-header, .more-vert-btn {
   float: left;
   display:inline;
 }
 
-.add-task-btn {
+.more-vert-btn {
   top: 9px;
   position: relative;
-}
-
-.milestone-row {
-  overflow: auto;
 }
 
 /********************** General ***************************/
 
 .task-table {
-    /*width: 500px;*/
     display: block;
-    /*margin-left: 30%;*/
 }
 
 .task-table .project-name {
