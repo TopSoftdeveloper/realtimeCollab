@@ -4,7 +4,7 @@ import $ from 'jquery'
 import MilestoneRow from './MilestoneRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
 import Trash from './../icons/Trash.jsx'
-import {List, ListDivider, ListItem, Checkbox, FlatButton, IconButton } from 'material-ui'
+import {List, ListDivider, ListItem, Checkbox, IconButton } from 'material-ui'
 
 class MilestoneView extends Component {
     constructor(props, context) {
@@ -44,7 +44,12 @@ class MilestoneView extends Component {
         let rows = [];
 
         this.props.milestones.forEach(milestone => {
-            rows.push(<h3 key={milestone.id}>{milestone.content}</h3>)
+            rows.push(<MilestoneRow
+                milestone={milestone.content}
+                key={milestone.id}
+                onAddTask={this.addTask.bind(this, milestone.id)}
+            />)
+
             let tasks = []
             this.props.tasks.forEach(task => {
                 // Only show non-completed tasks and non-dirtied tasks

@@ -1,5 +1,7 @@
 import Modal from 'react-modal'
 import React, { Component } from 'react'
+import Add from './../icons/Add.jsx'
+import { IconButton } from 'material-ui'
 
 const customStyles = {
   content : {
@@ -50,20 +52,24 @@ class MilestoneRow extends Component {
 
     render() {
         return (
-            <div className="milestone-row">
-                <span className="milestone-name">{this.props.milestone}</span>
-                <i className="fa fa-plus-square-o" onClick={this.openModal.bind(this)}></i>
-                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >                                    
+            <div key={this.props.milestone.id} className="milestone-row">
+                <h3 className="milestone-header">{this.props.milestone}</h3>
+                <IconButton
+                    className="add-task-btn-outer"
+                    onClick={this.openModal.bind(this)}>
+                    <Add className="add-task-btn"/>
+                </IconButton>
+                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >
                     <h3>Add a task</h3>
                     <form onSubmit={this.submit.bind(this)}>
-                        <input type="text" placeholder="Task name" 
+                        <input type="text" placeholder="Task name"
                             value={this.state.inputMilestone}
-                            onChange={this.handleTasknameChange.bind(this)}/>                    
+                            onChange={this.handleTasknameChange.bind(this)}/>
                         <button className='btn btn-default'>Add Task</button>
                     </form>
                 </Modal>
             </div>
-            );
+        )
     }
 }
 

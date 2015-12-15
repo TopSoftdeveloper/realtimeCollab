@@ -1,3 +1,16 @@
+/***************** Header *****************/
+.nav-bar {
+  background-color: white;
+}
+
+.nav-link {
+  border-top: 4px solid white;
+  transition: border-top .3s;
+}
+.nav-link:hover {
+  border-top: 4px solid dodgerblue;
+}
+
 /*****************task row *****************/
 .task-items {
   position: relative;
@@ -49,33 +62,21 @@
 
 /****************** milestone row ***********************/
 
-.milestone-row >span {
-  font-weight: bold;
+.milestone-header, .add-task-btn-outer {
+  float: left;
+  display:inline;
 }
 
-.milestone-row .fa-plus-square-o {
-  font-size: 30pt;
-  transition: opacity 0.1s linear, color 0.1s linear;
-  color: gray;
-  position: absolute;
-  right: 50px;
-  opacity: 0.2;
+.add-task-btn {
+  top: 9px;
+  position: relative;
 }
 
-.milestone-row:hover .fa-plus-square-o {
-  opacity: 1;
-}
-
-.milestone-row .fa-plus-square-o:hover {
-  color: #53f165;
+.milestone-row {
+  overflow: auto;
 }
 
 /********************** General ***************************/
-
-
-#task-panel {
-    padding: 5px;
-}
 
 .task-table {
     /*width: 500px;*/
@@ -89,24 +90,12 @@
   padding-bottom: 10px;
 }
 
-.add-milestone-btn {
-  position: relative;
-  left: 200px;
-}
-
 .task-table .milestone-name {
   font-size: 18px;
 }
 
 .completed {
     color: gray;
-}
-
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
 }
 
 
