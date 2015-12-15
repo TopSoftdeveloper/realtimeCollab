@@ -3,7 +3,7 @@ import _ from 'lodash'
 import $ from 'jquery'
 import MilestoneRow from './MilestoneRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
-import Trash from './../icons/Trash.jsx'
+import Remove from './../icons/Remove.jsx'
 import {List, ListDivider, ListItem, Checkbox, IconButton } from 'material-ui'
 
 class MilestoneView extends Component {
@@ -28,7 +28,10 @@ class MilestoneView extends Component {
     }
 
     deleteTask(task_id) {
-        this.props.actions.deleteTask(task_id, this.props.projectId)
+        // slight timeout for animation to take effect
+        setTimeout(function() {
+            this.props.actions.deleteTask(task_id, this.props.projectId)
+        }.bind(this), 300)
     }
 
     deleteMilestone(milestone_id) {
@@ -36,7 +39,10 @@ class MilestoneView extends Component {
     }
 
     markDone(task_id) {
-        this.props.actions.markDone(task_id, this.props.projectId);
+        // slight timeout for animation to take effect
+        setTimeout(function() {
+            this.props.actions.markDone(task_id, this.props.projectId)
+        }.bind(this), 300)
     }
 
     getCompletedTasks(milestone_id) {
@@ -72,7 +78,7 @@ class MilestoneView extends Component {
                             }
                             rightIconButton={
                                 <IconButton onClick={this.deleteTask.bind(this, task.id)}>
-                                    <Trash/>
+                                    <Remove/>
                                 </IconButton>
                             }
                         />)
