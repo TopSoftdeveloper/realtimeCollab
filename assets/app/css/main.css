@@ -11,55 +11,6 @@
   border-top: 4px solid dodgerblue;
 }
 
-/*****************task row *****************/
-.task-items {
-  position: relative;
-  margin: 10px;
-}
-
-.taskrow .fa-close, .taskrow .fa-circle-thin {
-  font-size: 25px;
-  transition: opacity 0.1s linear, color 0.1s linear;
-  color: gray;
-}
-
-.taskrow .fa-circle-thin {
-  margin-right: 30px;
-}
-
-.taskrow .fa-close {
-  position: absolute;
-  right: 80px;
-  display: none;
-}
-
-.taskrow .fa-close:hover {
-  color: #DD0000;
-}
-
-.taskrow:hover .fa-close {
-  display: inline;
-}
-
-.taskrow >span {
-  font-size: 16px;
-}
-
-/*****************completed row *****************/
-
-.completed-row {
-  padding-bottom: 10px;
-}
-
-.completed-row >span {
-  font-size: 12pt;
-  display: block;
-}
-
-.completed-item {
-  text-decoration: line-through;
-}
-
 /****************** milestone row ***********************/
 
 .milestone-header, .more-vert-btn {
@@ -72,28 +23,17 @@
   position: relative;
 }
 
-/********************** General ***************************/
-
-.task-table {
-    display: block;
-}
-
-.task-table .project-name {
-  font-size: 25px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.task-table .milestone-name {
-  font-size: 18px;
-}
-
-.completed {
-    color: gray;
-}
-
-
 /************************ Project header ***************************/
+.project-header-text, .add-milestone-btn {
+  float: left;
+  display:inline;
+}
+
+.add-milestone-btn {
+  top: 15px;
+  position: relative;
+}
+
 ul.online-users li {
   display: inline;
   padding: 10px 20px;
@@ -140,85 +80,4 @@ ul.online-users {
   top: 60px;
   width: 400px;
   z-index: 1000;
-}
-
-/************************* left panel *********************/
-.border-box {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-body > div > span,
-body > div > h1 {
-  float: left;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  margin-bottom: 10px;
-}
-body > div > button {
-  float: left;
-  margin-right: 10px;
-}
-span {
-  color: #888888;
-}
-button {
-  width: auto;
-  padding: 7px 22px;
-}
-.menu {
-  display: block;
-}
-.menu > div {
-  position: absolute;
-  z-index: 1000;
-  top: 0;
-  width: 250px;
-  height: 100%;
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-transition: -webkit-transform ease 250ms;
-  -moz-transition: -webkit-transform ease 250ms;
-  -ms-transition: -webkit-transform ease 250ms;
-  -o-transition: -webkit-transform ease 250ms;
-  transition: -webkit-transform ease 250ms;
-  -webkit-transition: transform ease 250ms;
-  -moz-transition: transform ease 250ms;
-  -ms-transition: transform ease 250ms;
-  -o-transition: transform ease 250ms;
-  transition: transform ease 250ms;
-}
-.menu > div.left {
-  left: -250px;
-  -webkit-box-shadow: 10px 8px 47px -21px rgba(92,92,92,1);
-  -moz-box-shadow: 10px 8px 47px -21px rgba(92,92,92,1);
-  box-shadow: 10px 8px 47px -21px rgba(92,92,92,1);
-  background-color: #5d687a;
-}
-.menu > div.panel_visible.left {
-  transform: translate3d(250px, 0, 0);
-  -ms-transform: translate3d(250px, 0, 0);
-  -webkit-transform: translate3d(250px, 0, 0);
-  -o-transform: translate3d(250px, 0, 0);
-  -moz-transform: translate3d(250px, 0, 0);
-}
-
-.menu > div > .menu-item {
-  float: left;
-  width: 100%;
-  margin: 0;
-  padding: 10px 15px;
-  font-size: 20px;
-  cursor: pointer;
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-.menu > div > .menu-item:hover {
-  color: #d8d8e8;
-}
-
-.menu-item > a {
-  color: #aeafc2;
-  text-decoration: none;
 }

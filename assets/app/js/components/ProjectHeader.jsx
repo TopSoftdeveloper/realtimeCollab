@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import OnlineUsers from '../components/OnlineUsers.jsx'
 import Modal from 'react-modal'
+import Add from './../icons/Add.jsx'
 import {getCurrentProject} from '../utils/general'
+import { IconButton } from 'material-ui'
+
 const customStyles = {
     content : {
         top                   : '50%',
@@ -65,8 +68,11 @@ class ProjectHeader extends Component {
     render() {
         return (
             <div className='project-header'>
-                <span className='project-name'>{this.props.projectName} </span>
-                <a onClick={this.openModal.bind(this)} className='add-milestone-btn btn btn-default'>Add Milestone</a>
+                <h1 className='project-header-text'>{this.props.projectName} </h1>
+                <IconButton onClick={this.openModal.bind(this)} tooltip="Add milestone">
+                    <Add className="add-milestone-btn"/>
+                </IconButton>
+
                 <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal.bind(this)} style={customStyles} >
                     <h3>Add a milestone</h3>
                     <form onSubmit={this.submit.bind(this)}>
