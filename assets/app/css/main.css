@@ -48,6 +48,18 @@ ul.online-users {
   padding-top: 5px;
   padding-bottom: 15px;
 }
+/******************* General ****************************/
+
+.content-container {
+  top: 50px;
+  position: absolute;
+}
+
+.left-panel {
+  position: fixed;
+  width: 20%;
+  height: 100%;
+}
 
 /******************* Notification List****************************/ 
 .notif-title {

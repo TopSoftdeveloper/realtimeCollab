@@ -56,7 +56,7 @@ class Header extends Component {
 
         return (
             <div>
-            <Navbar className='nav-bar'>
+            <Navbar className='nav-bar' fluid={true} fixedTop={true}>
                 <Navbar.Header>
                     <Navbar.Brand>
                         <a href="/app">Collab</a>

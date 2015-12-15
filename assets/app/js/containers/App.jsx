@@ -107,9 +107,9 @@ class App extends Component {
                     onCreateProject={actions.createProject}
                 />
 
-                <div className="row around-xs">
+                <div className="row around-xs content-container">
                     <div className="col-xs-3">
-                        <div className="box" >
+                        <div className="left-panel" >
                             <LeftPanel
                                 projects={this.props.projects}
                                 history={this.props.history}
@@ -117,10 +117,12 @@ class App extends Component {
                             />
                         </div>
                     </div>
-                    <div className="col-xs-8">
+                    <div className="col-xs-7">
                         <div className="box">
                             {children}
                         </div>
+                    </div>
+                    <div className="col-xs-1">
                     </div>
                 </div>
             </div>

@@ -7,6 +7,7 @@ import ProjectHeader from './ProjectHeader.jsx'
 import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
+import Files from './Files.jsx'
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject} from '../utils/general'
 
@@ -87,6 +88,9 @@ class Project extends Component {
                             actions={actions}
                             alerts={alerts}
                         />
+                    </Tab>
+                    <Tab label="Files" >
+                        <Files />
                     </Tab>
                 </Tabs>
             </div>

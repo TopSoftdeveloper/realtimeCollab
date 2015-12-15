@@ -20,7 +20,7 @@ class LeftPanel extends Component {
          );
 
         return (
-            <List subheader="Projects">
+            <List subheader="Projects" className="left-panel">
                 {listItems}
             </List>
         );
