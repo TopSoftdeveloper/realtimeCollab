@@ -41,6 +41,11 @@ export const initNotifications = makeActionCreator(AppConstants.INIT_NOTIFICATIO
 export const initProjects = makeActionCreator(AppConstants.INIT_PROJECTS, 'projects');
 export const initTasks = makeActionCreator(AppConstants.INIT_TASKS, 'tasks');
 export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
+export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
+
+export const addFile = makeActionCreator(AppConstants.ADD_FILE, 'file');
+export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
+
 
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');

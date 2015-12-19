@@ -10,6 +10,8 @@ import Settings from './Settings.jsx'
 import Files from './Files.jsx'
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject} from '../utils/general'
+import {isLoggedIntoGoogle} from '../utils/auth'
+import gapi from '../gapi'
 
 import Tabs from 'material-ui/lib/tabs/tabs'
 import Tab from 'material-ui/lib/tabs/tab'
@@ -30,8 +32,29 @@ class Project extends Component {
         return arr.indexOf(id) >= 0;
     }
 
+    handleFileViewActive() {
+        let self = this;
+        isLoggedIntoGoogle(function(authResult) {
+            if (authResult && !authResult.error) {
+                let request = gapi.client.request({
+                    'path': '/drive/v3/files',
+                    'method': 'GET',
+                    'params': {'pageSize': '10', 'orderBy': 'modifiedTime'}
+                })
+                request.then(res => {
+                    self.props.dispatch(Actions.initFiles(res.result.files))
+
+                }, function(err) {
+                    console.log(err)
+                });
+            } else {
+                console.log('auth fail. prompt for login')
+            }
+        })
+    }
+
     render() {   
-        const {alerts, milestones, projects, tasks, users, dispatch, app} = this.props
+        const {alerts, milestones, projects, tasks, users, dispatch, files} = this.props
         const actions = bindActionCreators(Actions, dispatch)
 
         const currentProjectId = getCurrentProject()
@@ -78,6 +101,12 @@ class Project extends Component {
                             projectId={currentProjectId}
                         />
                     </Tab>
+                    <Tab label="Files" onActive={this.handleFileViewActive.bind(this)} >
+                        <Files
+                            actions={actions}
+                            files={files}
+                        />
+                    </Tab>
                     <Tab label="Settings" >
                         <Settings
                             projectName={projectName}
@@ -88,9 +117,6 @@ class Project extends Component {
                             actions={actions}
                             alerts={alerts}
                         />
-                    </Tab>
-                    <Tab label="Files" >
-                        <Files />
                     </Tab>
                 </Tabs>
             </div>
@@ -105,7 +131,8 @@ Project.propTypes = {
     milestones: PropTypes.array.isRequired,    
     projects: PropTypes.array.isRequired,
     tasks: PropTypes.array.isRequired,    
-    users: PropTypes.array.isRequired            
+    users: PropTypes.array.isRequired,
+    files: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
@@ -115,7 +142,8 @@ function mapStateToProps(state) {
         milestones: state.milestones,
         projects: state.projects,
         tasks: state.tasks,
-        users: state.users        
+        users: state.users,
+        files: state.files
     };
 }
 
