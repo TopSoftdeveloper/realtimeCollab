@@ -18,6 +18,7 @@ function makeActionCreator(type, ...argNames) {
     }
 }
 
+export const updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app')
 export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original', 'replacement');
 export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID, 'original', 'replacement');
 export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
@@ -42,6 +43,10 @@ export const initProjects = makeActionCreator(AppConstants.INIT_PROJECTS, 'proje
 export const initTasks = makeActionCreator(AppConstants.INIT_TASKS, 'tasks');
 export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
 export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
+
+export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
+export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
+
 
 export const addFile = makeActionCreator(AppConstants.ADD_FILE, 'file');
 export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
@@ -85,7 +90,11 @@ export function initializeApp() {
         serverPopulate().done(res => {
             if (res.projects.length > 0) {
                 let normalizedTables = normalize(res.projects);
-                dispatch(initApp({current_project: normalizedTables.projects[0].id}));
+                dispatch(initApp({
+                    current_project: normalizedTables.projects[0].id,
+                    displayed_files: [],
+                    logged_into_google: false
+                }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
                 dispatch(initTasks(normalizedTables.tasks));

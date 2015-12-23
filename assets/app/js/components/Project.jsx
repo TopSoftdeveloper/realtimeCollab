@@ -10,8 +10,7 @@ import Settings from './Settings.jsx'
 import Files from './Files.jsx'
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject} from '../utils/general'
-import {isLoggedIntoGoogle} from '../utils/auth'
-import gapi from '../gapi'
+import {isLoggedIntoGoogle, loginGoogle} from '../utils/auth'
 
 import Tabs from 'material-ui/lib/tabs/tabs'
 import Tab from 'material-ui/lib/tabs/tab'
@@ -33,30 +32,28 @@ class Project extends Component {
     }
 
     handleFileViewActive() {
-        let self = this;
         isLoggedIntoGoogle(function(authResult) {
             if (authResult && !authResult.error) {
-                let request = gapi.client.request({
-                    'path': '/drive/v3/files',
-                    'method': 'GET',
-                    'params': {'pageSize': '10', 'orderBy': 'modifiedTime'}
-                })
-                request.then(res => {
-                    self.props.dispatch(Actions.initFiles(res.result.files))
-
-                }, function(err) {
-                    console.log(err)
-                });
+                this.props.dispatch(Actions.loggedIntoGoogle())
             } else {
-                console.log('auth fail. prompt for login')
+                this.props.dispatch(Actions.loggedOutGoogle())
             }
-        })
+        }.bind(this))
+    }
+
+    authorizeDrive() {
+        loginGoogle(function(authResult) {
+            if (authResult && !authResult.error) {
+                this.props.dispatch(Actions.loggedIntoGoogle())
+            } else {
+                this.props.dispatch(Actions.loggedOutGoogle())
+            }
+        }.bind(this))
     }
 
     render() {   
-        const {alerts, milestones, projects, tasks, users, dispatch, files} = this.props
+        const {alerts, milestones, projects, tasks, users, dispatch, files, app} = this.props
         const actions = bindActionCreators(Actions, dispatch)
-
         const currentProjectId = getCurrentProject()
 
         let projectName = '';
@@ -105,6 +102,9 @@ class Project extends Component {
                         <Files
                             actions={actions}
                             files={files}
+                            displayedFiles={app.displayed_files}
+                            loggedInGoogle={app.logged_into_google}
+                            authorizeDrive={this.authorizeDrive.bind(this)}
                         />
                     </Tab>
                     <Tab label="Settings" >

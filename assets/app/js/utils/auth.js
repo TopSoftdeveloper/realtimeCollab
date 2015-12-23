@@ -20,9 +20,18 @@ export function isLoggedIntoGoogle(callback) {
     gapi.auth.authorize(
         {
             'client_id': CLIENT_ID,
-            'scope': SCOPES.join(' '),
+            'scope': SCOPES,
             'immediate': true
         }, callback
     )
 }
 
+export function loginGoogle(callback) {
+    gapi.auth.authorize(
+        {
+            'client_id': CLIENT_ID,
+            'scope': SCOPES,
+            'immediate': false
+        }, callback
+    )
+}
