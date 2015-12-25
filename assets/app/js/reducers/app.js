@@ -4,7 +4,12 @@ import assign from 'object-assign';
 // {
 //     current_project: 'NJ-5My0Jg',
 //     logged_into_google: true,
-//     displayed_files: []
+//     current_directory: folderId
+//     root_folder: folderId,
+//     displayed_files: [],
+//     parent_folders: {child: parent},
+//     children_files: {parent: [children]},
+//     top_level_folders: [folderId],
 // }
 
 export default function app(state={}, action) {

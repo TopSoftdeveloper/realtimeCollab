@@ -6,9 +6,24 @@ let CREATE_PROJECT_ENDPOINT = '/projects';
 let INVITE_TO_PROJECT_ENDPOINT = '/invite_to_project';
 let POPULATE_ENDPOINT = '/user/populate';
 let GET_NOTIFICATION_ENDPOINT = '/notifications'
+import gapi from '../gapi'
 
 import $ from 'jquery'
 import Promise from 'bluebird'
+
+export function getGoogleDriveFolders() {
+    return gapi.client.request({
+        'path': '/drive/v3/files',
+        'method': 'GET',
+        'params': {
+            'pageSize': '1000',
+            'orderBy': 'modifiedTime desc',
+            'spaces': 'drive',
+            'q': "mimeType = 'application/vnd.google-apps.folder'",
+            'fields': 'files'
+        }
+    })
+}
 
 function ajaxPost(endpoint, payload) {
     return $.ajax({

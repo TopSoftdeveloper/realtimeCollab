@@ -1,7 +1,7 @@
 import {serverCreateTask, serverDeleteTask, serverMarkDone, 
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
-        serverDeleteNotification, serverDeleteMilestone} from '../utils/apiUtil'
+        serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -93,7 +93,12 @@ export function initializeApp() {
                 dispatch(initApp({
                     current_project: normalizedTables.projects[0].id,
                     displayed_files: [],
-                    logged_into_google: false
+                    logged_into_google: false,
+                    root_folder: null,
+                    current_directory: null,
+                    parent_folders: {},
+                    children_files: {},
+                    top_level_folders: []
                 }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
@@ -280,4 +285,44 @@ function normalize(projects) {
         tasks:taskState,
         users: userState
     };
+}
+
+
+function getDirectoryStructure(files) {
+    let parent = {}  // {child: parent}
+    let children = {} // {parent: [children]}
+    let topLevelFolders = []
+
+    files.forEach(file => {
+        if (file.parents) {
+            let parentOfThisFile = file.parents[0]
+            parent[file.id] = parentOfThisFile // assume one parent for now
+
+            if (!children[parentOfThisFile]) {
+                children[parentOfThisFile] = []
+            }
+            children[parentOfThisFile].push(file.id)
+        } else {
+            topLevelFolders.push(file.id)
+        }
+    })
+    return {parent: parent, children: children, topLevelFolders: topLevelFolders}
+}
+
+export function initGoogleDriveFolders() {
+    return function(dispatch) {
+        getGoogleDriveFolders().then(res => {
+            let directoryStructure = getDirectoryStructure(res.result.files)
+            dispatch(updateAppStatus({
+                parent_folders: directoryStructure.parent,
+                children_files: directoryStructure.children,
+                top_level_folders: directoryStructure.topLevelFolders,
+                displayed_files: directoryStructure.topLevelFolders
+            }))
+
+            dispatch(initFiles(res.result.files))
+        }, function (err) {
+            console.log(err)
+        });
+    }
 }

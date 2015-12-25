@@ -32,23 +32,21 @@ class Project extends Component {
     }
 
     handleFileViewActive() {
-        isLoggedIntoGoogle(function(authResult) {
-            if (authResult && !authResult.error) {
-                this.props.dispatch(Actions.loggedIntoGoogle())
-            } else {
-                this.props.dispatch(Actions.loggedOutGoogle())
-            }
-        }.bind(this))
-    }
+        let app = this.props.app
+        const actions = bindActionCreators(Actions, this.props.dispatch)
 
-    authorizeDrive() {
-        loginGoogle(function(authResult) {
-            if (authResult && !authResult.error) {
-                this.props.dispatch(Actions.loggedIntoGoogle())
-            } else {
-                this.props.dispatch(Actions.loggedOutGoogle())
-            }
-        }.bind(this))
+        if (!app.logged_into_google) {
+            isLoggedIntoGoogle(function(authResult) {
+                if (authResult && !authResult.error) {
+                    actions.loggedIntoGoogle()
+                    if (!app.root_folder && app.top_level_folders.length === 0) {
+                        actions.initGoogleDriveFolders()
+                    }
+                } else {
+                    actions.loggedOutGoogle()
+                }
+            })
+        }
     }
 
     render() {   
@@ -102,9 +100,7 @@ class Project extends Component {
                         <Files
                             actions={actions}
                             files={files}
-                            displayedFiles={app.displayed_files}
-                            loggedInGoogle={app.logged_into_google}
-                            authorizeDrive={this.authorizeDrive.bind(this)}
+                            app={app}
                         />
                     </Tab>
                     <Tab label="Settings" >
