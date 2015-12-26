@@ -25,6 +25,19 @@ export function getGoogleDriveFolders() {
     })
 }
 
+export function getChildrenFiles(folderId) {
+    return gapi.client.request({
+        'path': '/drive/v3/files',
+        'method': 'GET',
+        'params': {
+            'pageSize': '1000',
+            'orderBy': 'modifiedTime desc',
+            'q': "'" + folderId + "' in parents",
+            'fields': 'files'
+        }
+    })
+}
+
 function ajaxPost(endpoint, payload) {
     return $.ajax({
         url: API_BASE_URL + endpoint,

@@ -1,7 +1,8 @@
 import {serverCreateTask, serverDeleteTask, serverMarkDone, 
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
-        serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders} from '../utils/apiUtil'
+        serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
+        getChildrenFiles} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -50,6 +51,9 @@ export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGL
 
 export const addFile = makeActionCreator(AppConstants.ADD_FILE, 'file');
 export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
+export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'directory');
+export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'id');
+export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT, 'id');
 
 
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
@@ -92,13 +96,9 @@ export function initializeApp() {
                 let normalizedTables = normalize(res.projects);
                 dispatch(initApp({
                     current_project: normalizedTables.projects[0].id,
-                    displayed_files: [],
                     logged_into_google: false,
                     root_folder: null,
-                    current_directory: null,
-                    parent_folders: {},
-                    children_files: {},
-                    top_level_folders: []
+                    directory_structure: []
                 }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
@@ -288,41 +288,58 @@ function normalize(projects) {
 }
 
 
-function getDirectoryStructure(files) {
-    let parent = {}  // {child: parent}
-    let children = {} // {parent: [children]}
+function getTopLevelFolders(files) {
     let topLevelFolders = []
-
     files.forEach(file => {
-        if (file.parents) {
-            let parentOfThisFile = file.parents[0]
-            parent[file.id] = parentOfThisFile // assume one parent for now
-
-            if (!children[parentOfThisFile]) {
-                children[parentOfThisFile] = []
-            }
-            children[parentOfThisFile].push(file.id)
-        } else {
-            topLevelFolders.push(file.id)
+        if (!file.parents) {
+            topLevelFolders.push(file)
         }
     })
-    return {parent: parent, children: children, topLevelFolders: topLevelFolders}
+    return topLevelFolders
 }
 
-export function initGoogleDriveFolders() {
+export function initTopLevelFolders() {
     return function(dispatch) {
         getGoogleDriveFolders().then(res => {
-            let directoryStructure = getDirectoryStructure(res.result.files)
+            let topLevelFolders = getTopLevelFolders(res.result.files)
+            dispatch(initFiles(topLevelFolders))
             dispatch(updateAppStatus({
-                parent_folders: directoryStructure.parent,
-                children_files: directoryStructure.children,
-                top_level_folders: directoryStructure.topLevelFolders,
-                displayed_files: directoryStructure.topLevelFolders
+                directory_structure: [{id: 'root', name: 'Top level folders'}]
             }))
-
-            dispatch(initFiles(res.result.files))
         }, function (err) {
             console.log(err)
-        });
+        })
+    }
+}
+
+export function initChildrenFiles(folderId, folderName) {
+    return function(dispatch) {
+        getChildrenFiles(folderId).then(res => {
+            dispatch(initFiles(res.result.files))
+            dispatch(addDirectory({id: folderId, name: folderName}))
+        }, function (err) {
+            console.log(err)
+        })
+    }
+}
+
+export function initUpperLevelFolder(folderId) {
+    return function(dispatch) {
+        if (folderId === 'root') {
+            dispatch(initTopLevelFolders())
+        } else {
+            getChildrenFiles(folderId).then(res => {
+                dispatch(initFiles(res.result.files))
+                dispatch(goToDirectory(folderId))
+            }, function (err) {
+                console.log(err)
+            })
+        }
+    }
+}
+
+export function setDirectoryAsRoot(folderId) {
+    return function(dispatch) {
+        dispatch(_setDirectoryAsRoot(folderId))
     }
 }

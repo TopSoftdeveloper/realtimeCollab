@@ -1,17 +1,48 @@
 import React, { Component, PropTypes } from 'react'
-import Table from 'material-ui/lib/table/table'
-import TableBody from 'material-ui/lib/table/table-body'
-import TableHeader from 'material-ui/lib/table/table-header'
-import TableHeaderColumn from 'material-ui/lib/table/table-header-column'
-import TableRow from 'material-ui/lib/table/table-row'
-import TableRowColumn from 'material-ui/lib/table/table-row-column'
+import {Table} from 'react-bootstrap'
 import vagueTime from 'vague-time'
 import Steps from 'rc-steps'
 import RaisedButton from 'material-ui/lib/raised-button'
 import {loginGoogle} from '../utils/auth'
+import {getChildrenFiles} from '../utils/apiUtil'
+import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
+
+class BreadcrumbInstance extends Component {
+    changeCurrentDirectory(directoryId) {
+        this.props.initUpperLevelFolder(directoryId)
+    }
+
+    render() {
+        let breadcrumbItems = this.props.directories.map((directory, index) => {
+            if (index === this.props.directories.length - 1) {
+                return (
+                    <BreadcrumbItem
+                        active
+                        key={directory.id}>
+                        {directory.name}
+                    </BreadcrumbItem>
+                )
+            }
+
+            return (
+                <BreadcrumbItem
+                    onClick={this.changeCurrentDirectory.bind(this, directory.id)}
+                    key={directory.id}>
+                    {directory.name}
+                </BreadcrumbItem>
+            )
+        })
+
+        return (
+            <Breadcrumb>
+                {breadcrumbItems}
+            </Breadcrumb>
+        )
+    }
+}
 
 class FilesList extends Component {
 
@@ -22,38 +53,46 @@ class FilesList extends Component {
         })
     }
 
-    render() {
-        let filesToShow = this.props.files.filter(file => {
-            return this.props.displayedFiles.indexOf(file.id) > -1
-        })
+    navigate(fileId) {
+        let selectedFile = this.props.files.filter(file => file.id === fileId)[0]
+        if (selectedFile.mimeType === 'application/vnd.google-apps.folder') {
+            this.props.actions.initChildrenFiles(selectedFile.id, selectedFile.name)
+        } else {
+            window.open(selectedFile.webViewLink, '_newtab')
+        }
+    }
 
-        let rows = filesToShow.map(file => {
+    render() {
+
+        let rows = this.props.files.map(file => {
             let lastModifyingUser = file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
             let lastModified = this.toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
             return (
-                <TableRow key={file.id}>
-                    <TableRowColumn>{file.name}</TableRowColumn>
-                    <TableRowColumn>{lastModified}</TableRowColumn>
-                </TableRow>
+                <tr className="table-row-file" onClick={this.navigate.bind(this, file.id)} key={file.id}>
+                    <td><img src={file.iconLink}/><span className="table-filename">{file.name}</span></td>
+                    <td>{lastModified}</td>
+                </tr>
             )
         })
 
+        let directories = this.props.directoryStructure
+
         return (
             <div>
-                <Table fixedHeader={true}>
-                    <TableHeader displaySelectAll={false}>
-                        <TableRow>
-                            <TableHeaderColumn>Name</TableHeaderColumn>
-                            <TableHeaderColumn>Last modified</TableHeaderColumn>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody
-                        displayRowCheckbox={false}
-                        selectable={false}
-                        showRowHover={true}
-                    >
-                        {rows}
-                    </TableBody>
+                <BreadcrumbInstance
+                    directories={directories}
+                    initUpperLevelFolder={this.props.actions.initUpperLevelFolder.bind(this)}
+                />
+                <Table striped bordered condensed hover responsive>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Last modified</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {rows}
+                    </tbody>
                 </Table>
             </div>
         )
@@ -65,10 +104,8 @@ class Files extends Component {
         super(props, context)
     }
 
-    setAsRoot() {
-        this.props.actions.updateAppStatus({
-            root_folder: '123'
-        })
+    setAsRoot(id) {
+        this.props.actions.setDirectoryAsRoot(id)
     }
 
     authorizeDrive() {
@@ -85,11 +122,11 @@ class Files extends Component {
         let app = this.props.app
 
         if (app.logged_into_google && app.root_folder) {
-            //todo: grab files if haven't
             return (
                 <FilesList
-                    displayedFiles={app.displayed_files}
+                    directoryStructure={app.directory_structure}
                     files={this.props.files}
+                    actions={this.props.actions}
                 />)
         }
 
@@ -109,6 +146,7 @@ class Files extends Component {
         let content = null
         let currentStep = 0
         let steps = [{title: 'Authorize Google Drive'}, {title: 'Select root folder'}]
+        let currentDirectory = app.directory_structure[app.directory_structure.length-1] || 'root'
 
         if (!app.logged_into_google && !app.root_folder) {
             content = (
@@ -122,14 +160,15 @@ class Files extends Component {
             currentStep = 1
             content = (
                 <div>
+                    <FilesList
+                        directoryStructure={app.directory_structure}
+                        files={this.props.files}
+                        actions={this.props.actions}
+                    />
                     <RaisedButton
                         label="Set current directory as root"
-                        onTouchTap={this.setAsRoot.bind(this)}
+                        onTouchTap={this.setAsRoot.bind(this, currentDirectory.id)}
                         secondary={true}
-                    />
-                    <FilesList
-                        displayedFiles={app.displayed_files}
-                        files={this.props.files}
                     />
                 </div>
             )

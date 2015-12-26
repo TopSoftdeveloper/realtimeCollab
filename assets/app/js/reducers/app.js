@@ -4,12 +4,9 @@ import assign from 'object-assign';
 // {
 //     current_project: 'NJ-5My0Jg',
 //     logged_into_google: true,
-//     current_directory: folderId
 //     root_folder: folderId,
-//     displayed_files: [],
-//     parent_folders: {child: parent},
-//     children_files: {parent: [children]},
-//     top_level_folders: [folderId],
+//     directory_structure: [{name: 'upper level directory', id: 123},
+//          {name: 'curr directory', id: 999}]
 // }
 
 export default function app(state={}, action) {
@@ -18,6 +15,24 @@ export default function app(state={}, action) {
             return action.app
         case AppConstants.UPDATE_APP_STATUS:
             return assign({}, state, action.app)
+        case AppConstants.ADD_DIRECTORY:
+            return assign({}, state, {
+                directory_structure : [...state.directory_structure, action.directory]
+            })
+        case AppConstants.GO_TO_DIRECTORY:
+            let directoryStructure = state.directory_structure
+            let i = directoryStructure.length - 1
+            while(directoryStructure[i].id !== action.id && i >= 0) {
+                directoryStructure.pop()
+                i--
+            }
+            return assign({}, state, { directory_structure : directoryStructure })
+        case AppConstants.SET_DIRECTORY_AS_ROOT:
+            let updatedDirStructure = state.directory_structure.filter(dir => dir.id === action.id)
+            return assign({}, state, {
+                root_folder : action.id,
+                directory_structure: updatedDirStructure
+            })
         case AppConstants.SWITCH_TO_PROJECT:
             return assign({}, state, {current_project : action.project_id})
         case AppConstants.LOGGED_INTO_GOOGLE:

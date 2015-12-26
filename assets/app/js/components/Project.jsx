@@ -33,14 +33,15 @@ class Project extends Component {
 
     handleFileViewActive() {
         let app = this.props.app
+        let files = this.props.files
         const actions = bindActionCreators(Actions, this.props.dispatch)
 
         if (!app.logged_into_google) {
             isLoggedIntoGoogle(function(authResult) {
                 if (authResult && !authResult.error) {
                     actions.loggedIntoGoogle()
-                    if (!app.root_folder && app.top_level_folders.length === 0) {
-                        actions.initGoogleDriveFolders()
+                    if (!app.root_folder && files.length === 0) {
+                        actions.initTopLevelFolders()
                     }
                 } else {
                     actions.loggedOutGoogle()
