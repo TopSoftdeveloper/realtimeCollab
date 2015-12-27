@@ -53,7 +53,7 @@ function populate(request, reply) {
             return;
         }
         storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
-            filteredProjects = filterPending(projects, decoded.user_id);
+            var filteredProjects = filterPending(projects, decoded.user_id);
             Promise.map(filteredProjects, function(project) {
                 return storage.getMilestonesWithTasks(project.id);
             }).then(function(milestones) {
