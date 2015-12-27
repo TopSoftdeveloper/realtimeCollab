@@ -8,12 +8,12 @@ export function getToken() {
 }
 
 export function logout() {
-    sessionStorage.clear();
+    localStorage.clear();
     window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
 }
 
 export function isLoggedIn() {
-    return !!sessionStorage.jwt;
+    return !!localStorage.jwt;
 }
 
 export function isLoggedIntoGoogle(callback) {

@@ -15,10 +15,10 @@ $(document).ready(function() {
             password: password,
             display_name: displayName
         }).done(function(res) {
-            sessionStorage.setItem('jwt', res.token);
-            sessionStorage.setItem('user_id', res.user_id);
-            sessionStorage.setItem('email', res.email);
-            sessionStorage.setItem('display_name', res.display_name);
+            localStorage.setItem('jwt', res.token);
+            localStorage.setItem('user_id', res.user_id);
+            localStorage.setItem('email', res.email);
+            localStorage.setItem('display_name', res.display_name);
             window.location.replace(APP_MAIN_PAGE);
         }).fail(function(err) {
             console.log(err);
@@ -34,10 +34,10 @@ $(document).ready(function() {
             email: email,
             password: password
         }).done(function(res) {
-            sessionStorage.setItem('jwt', res.token);
-            sessionStorage.setItem('user_id', res.user_id);
-            sessionStorage.setItem('email', res.email);
-            sessionStorage.setItem('display_name', res.display_name);            
+            localStorage.setItem('jwt', res.token);
+            localStorage.setItem('user_id', res.user_id);
+            localStorage.setItem('email', res.email);
+            localStorage.setItem('display_name', res.display_name);
             window.location.replace(APP_MAIN_PAGE);
         }).fail(function(err) {
             console.log(err);

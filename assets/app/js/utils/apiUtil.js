@@ -42,7 +42,7 @@ function ajaxPost(endpoint, payload) {
     return $.ajax({
         url: API_BASE_URL + endpoint,
         headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
         },
         data: payload,
         type: 'POST'
@@ -53,7 +53,7 @@ function ajaxGet(endpoint) {
     return $.ajax({
         url: API_BASE_URL + endpoint,
         headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
         },
         type: 'GET'
     });
@@ -63,7 +63,7 @@ function ajaxDelete(endpoint, data) {
     return $.ajax({
         url: API_BASE_URL + endpoint,
         headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
         },
         data: data,
         type: 'DELETE'
@@ -75,7 +75,7 @@ export function serverAcceptProject(projectId) {
     return $.ajax({
         url: API_BASE_URL + '/join_project/' + projectId,
         headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
         },
         type: 'PUT'
     })
@@ -94,7 +94,7 @@ export function serverInviteToProject(payload) {
 }
 
 export function serverPopulate() {
-    return ajaxGet(POPULATE_ENDPOINT + '/' + sessionStorage.getItem('user_id'))
+    return ajaxGet(POPULATE_ENDPOINT + '/' + localStorage.getItem('user_id'))
 }
 
 export function serverCreateTask(payload) {

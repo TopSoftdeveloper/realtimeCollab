@@ -9,7 +9,7 @@ class OnlineUsers extends Component {
     render() {
         let onlineUsers = [];
         this.props.members.forEach(member => {
-            if (member.online && member.id !== sessionStorage.getItem('user_id')) {
+            if (member.online && member.id !== localStorage.getItem('user_id')) {
                 onlineUsers.push(<li key={_.uniqueId('online')}>{member.display_name}</li>);
             }                        
         });

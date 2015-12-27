@@ -85,9 +85,9 @@ export function acceptProject(projectId, notificationId) {
 export function initializeApp() {
     return function(dispatch) {
         dispatch(initUsers([{
-            id: sessionStorage.getItem('user_id'),
-            email: sessionStorage.getItem('email'),
-            display_name: sessionStorage.getItem('display_name'),
+            id: localStorage.getItem('user_id'),
+            email: localStorage.getItem('email'),
+            display_name: localStorage.getItem('display_name'),
             online: false
         }]));                
 
@@ -178,7 +178,7 @@ export function createProject(content) {
             dispatch(_createProject({
                 id: res.project_id,
                 content: content,
-                creator: sessionStorage.getItem('user_id'),
+                creator: localStorage.getItem('user_id'),
                 basic: [],
                 pending: [],
                 milestones: []

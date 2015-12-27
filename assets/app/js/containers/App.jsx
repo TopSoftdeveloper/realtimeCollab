@@ -28,8 +28,8 @@ class App extends Component {
     }
 
     userIsOnline() {
-        this.state.socket.emit('is_online', {user_id: sessionStorage.getItem('user_id')})
-        this.props.dispatch(Actions.userOnline(sessionStorage.getItem('user_id')))
+        this.state.socket.emit('is_online', {user_id: localStorage.getItem('user_id')})
+        this.props.dispatch(Actions.userOnline(localStorage.getItem('user_id')))
     }
 
     monitorOnlineStatus() {
@@ -43,17 +43,17 @@ class App extends Component {
 
     monitorProjectChanges() {
         this.state.socket.on('new_task', (data) => {
-            if (data.sender !== sessionStorage.getItem('user_id')) {
+            if (data.sender !== localStorage.getItem('user_id')) {
                 this.props.dispatch(Actions._addTask(data.task));
             }
         });        
         this.state.socket.on('mark_done', (data) => {
-            if (data.sender !== sessionStorage.getItem('user_id')) {
+            if (data.sender !== localStorage.getItem('user_id')) {
                 this.props.dispatch(Actions._markDone(data.task_id));                
             }
         });     
         this.state.socket.on('delete_task', (data) => {
-            if (data.sender !== sessionStorage.getItem('user_id')) {
+            if (data.sender !== localStorage.getItem('user_id')) {
                 this.props.dispatch(Actions._deleteTask(data.task_id));                
             }
         });              
@@ -92,7 +92,7 @@ class App extends Component {
         }
 
         let displayName = users.filter(
-            user => user.id === sessionStorage.getItem('user_id'))[0].display_name;
+            user => user.id === localStorage.getItem('user_id'))[0].display_name;
 
         let unreadCount = notifications.reduce((total, notif) => notif.read ? total : total+1, 0);
 
