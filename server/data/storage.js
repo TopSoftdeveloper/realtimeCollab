@@ -90,12 +90,26 @@ module.exports = {
             }
         })
     },
+    updateProject: function(payload, projectId) {
+        var project = {}
+        if (payload.content) {
+            project.content = payload.content
+        }
+        if (payload.root_folder) {
+            project.root_folder = payload.root_folder
+        }
+        return Project.update(project, {
+            where: {
+                id: projectId
+            }
+        })
+    },
     getProjectsOfUser: function(user_id) {
         return User.findById(user_id).then(function(user) {
             return user.getProjects(
             {
                 model: Project,
-                attributes: ['id', 'content'],
+                attributes: ['id', 'content', 'root_folder'],
                 joinTableAttributes: [],
                 include: [{
                     model: User, as:'users',

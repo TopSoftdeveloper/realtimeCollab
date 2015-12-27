@@ -28,6 +28,7 @@ module.exports.endpoints = [
     { method: 'GET',  path: '/project/{project_id}', config: Project.getProject },
     { method: 'GET',  path: '/projects', config: Project.getProjects },
     { method: 'PUT',  path: '/join_project/{project_id}', config: Project.acceptInvitation },
+    { method: 'PUT',  path: '/project/{project_id}', config: Project.updateProject },
 
     { method: 'GET',  path: '/user/populate/{user_id}', config: User.getInfo },
 

@@ -14,6 +14,12 @@ var _ = require('lodash')
 var secret_key = config.get('authentication.privateKey')
 
 module.exports = {
+    updateProject: {
+        handler: updateProject,
+        payload: {
+            parse: true
+        }
+    },
     createProject: {
         handler: createProject,
         payload: {
@@ -50,6 +56,29 @@ module.exports = {
         }
     }
 };
+
+function updateProject(request, reply) {
+    var projectId = request.params.project_id
+    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+        var fromUser = decoded.user_id
+
+        storage.getProjectsOfUser(fromUser).then(function(projects) {
+            var matchingProjects = projects.filter(function(project) {
+                return project.id === projectId
+            })
+
+            if (err || matchingProjects.length !== 1) {
+                reply(Boom.forbidden(constants.FORBIDDEN));
+            } else {
+                storage.updateProject(request.payload, projectId).then(function() {
+                    reply({status: constants.STATUS_OK})
+                }, function(error) {
+                    reply(Boom.internal(error));
+                })
+            }
+        });
+    });
+}
 
 function acceptInvitation(request, reply) {
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
