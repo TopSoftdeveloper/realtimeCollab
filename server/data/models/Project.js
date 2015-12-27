@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             primaryKey: true
         },
-        content: DataTypes.TEXT
+        content: DataTypes.TEXT,
+        root_folder: DataTypes.STRING
     },{
         underscored: true
     });
