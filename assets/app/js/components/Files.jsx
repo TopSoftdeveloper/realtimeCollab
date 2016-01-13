@@ -6,13 +6,14 @@ import RaisedButton from 'material-ui/lib/raised-button'
 import {loginGoogle} from '../utils/auth'
 import {getChildrenFiles} from '../utils/apiUtil'
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
+import _ from 'lodash'
 
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
 
 class BreadcrumbInstance extends Component {
     changeCurrentDirectory(directoryId) {
-        this.props.initUpperLevelFolder(directoryId)
+        this.props.initUpperLevelFolder(this.props.projectId, directoryId)
     }
 
     render() {
@@ -21,7 +22,7 @@ class BreadcrumbInstance extends Component {
                 return (
                     <BreadcrumbItem
                         active
-                        key={directory.id}>
+                        key={_.uniqueId('breadcrumb')}>
                         {directory.name}
                     </BreadcrumbItem>
                 )
@@ -30,7 +31,7 @@ class BreadcrumbInstance extends Component {
             return (
                 <BreadcrumbItem
                     onClick={this.changeCurrentDirectory.bind(this, directory.id)}
-                    key={directory.id}>
+                    key={_.uniqueId('breadcrumb')}>
                     {directory.name}
                 </BreadcrumbItem>
             )
@@ -56,15 +57,28 @@ class FilesList extends Component {
     navigate(fileId) {
         let selectedFile = this.props.files.filter(file => file.id === fileId)[0]
         if (selectedFile.mimeType === 'application/vnd.google-apps.folder') {
-            this.props.actions.initChildrenFiles(selectedFile.id, selectedFile.name)
+            this.props.actions.initChildrenFiles(this.props.projectId, selectedFile.id, selectedFile.name)
         } else {
             window.open(selectedFile.webViewLink, '_newtab')
         }
     }
 
     render() {
+        let directories = this.props.directoryStructure
+        // only display files under the current directory
+        let filesToDisplay = []
+        if (directories.length === 1 && directories[0].id === 'root') {
+            filesToDisplay = this.props.files.filter(file => {
+                return !(!!file.parents)
+            })
+        } else if (directories.length > 0) {
+            filesToDisplay = this.props.files.filter(file => {
+                let currDirectory = directories[directories.length-1].id
+                return file.parents && file.parents[0] === currDirectory
+            })
+        }
 
-        let rows = this.props.files.map(file => {
+        let rows = filesToDisplay.map(file => {
             let lastModifyingUser = file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
             let lastModified = this.toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
             return (
@@ -75,13 +89,13 @@ class FilesList extends Component {
             )
         })
 
-        let directories = this.props.directoryStructure
-
         return (
             <div>
                 <BreadcrumbInstance
                     directories={directories}
                     initUpperLevelFolder={this.props.actions.initUpperLevelFolder.bind(this)}
+                    projectId={this.props.projectId}
+                    key={'breadcrumb_' + this.props.projectId}
                 />
                 <Table striped bordered condensed hover responsive>
                     <thead>
@@ -105,7 +119,7 @@ class Files extends Component {
     }
 
     setAsRoot(id) {
-        this.props.actions.setDirectoryAsRoot(id)
+        this.props.actions.setDirectoryAsRoot(this.props.project.id, id)
     }
 
     authorizeDrive() {
@@ -120,17 +134,19 @@ class Files extends Component {
 
     render() {
         let app = this.props.app
+        let project = this.props.project
 
-        if (app.logged_into_google && app.root_folder) {
+        if (app.logged_into_google && project.root_folder) {
             return (
                 <FilesList
-                    directoryStructure={app.directory_structure}
+                    directoryStructure={project.directory_structure}
                     files={this.props.files}
                     actions={this.props.actions}
+                    projectId={project.id}
                 />)
         }
 
-        if (!app.logged_into_google && app.root_folder) {
+        if (!app.logged_into_google && project.root_folder) {
             return (
                 <div>
                     <span>Please authorize Google Drive</span>
@@ -146,9 +162,12 @@ class Files extends Component {
         let content = null
         let currentStep = 0
         let steps = [{title: 'Authorize Google Drive'}, {title: 'Select root folder'}]
-        let currentDirectory = app.directory_structure[app.directory_structure.length-1] || 'root'
+        let currentDirectory = {name: 'Top level directory', id: 'root'}
+        if (project.directory_structure.length > 0) {
+            currentDirectory = project.directory_structure[project.directory_structure.length-1]
+        }
 
-        if (!app.logged_into_google && !app.root_folder) {
+        if (!app.logged_into_google && !project.root_folder) {
             content = (
                 <RaisedButton
                     label="Authorize"
@@ -156,14 +175,15 @@ class Files extends Component {
                     primary={true}
                 />
             )
-        } else if (app.logged_into_google && !app.root_folder) {
+        } else if (app.logged_into_google && !project.root_folder) {
             currentStep = 1
             content = (
                 <div>
                     <FilesList
-                        directoryStructure={app.directory_structure}
+                        directoryStructure={project.directory_structure}
                         files={this.props.files}
                         actions={this.props.actions}
+                        projectId={project.id}
                     />
                     <RaisedButton
                         label="Set current directory as root"

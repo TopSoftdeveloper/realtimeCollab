@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions/ReduxTaskActions';
-import _ from 'lodash'
 import ProjectHeader from './ProjectHeader.jsx'
 import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
@@ -10,7 +9,7 @@ import Settings from './Settings.jsx'
 import Files from './Files.jsx'
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject} from '../utils/general'
-import {isLoggedIntoGoogle, loginGoogle} from '../utils/auth'
+import {isLoggedIntoGoogle} from '../utils/auth'
 
 import Tabs from 'material-ui/lib/tabs/tabs'
 import Tab from 'material-ui/lib/tabs/tab'
@@ -18,7 +17,7 @@ import Tab from 'material-ui/lib/tabs/tab'
 
 class Project extends Component {
     constructor(props, context) {
-        super(props, context); 
+        super(props, context);
     }
 
     getMilestoneIds(milestones) {
@@ -31,27 +30,24 @@ class Project extends Component {
         return arr.indexOf(id) >= 0;
     }
 
-    handleFileViewActive() {
-        let app = this.props.app
-        let files = this.props.files
+    handleFileViewActive(currentProject) {
         const actions = bindActionCreators(Actions, this.props.dispatch)
-
-        if (!app.logged_into_google) {
+        if (!this.props.app.logged_into_google) {
             isLoggedIntoGoogle(function(authResult) {
                 if (authResult && !authResult.error) {
                     actions.loggedIntoGoogle()
-                    if (!app.root_folder && files.length === 0) {
-                        actions.initTopLevelFolders()
-                    }
+                    actions.initializeFiles(currentProject)
                 } else {
                     actions.loggedOutGoogle()
                 }
             })
+        } else {
+            actions.initializeFiles(currentProject)
         }
     }
 
     render() {   
-        const {alerts, milestones, projects, tasks, users, dispatch, files, app} = this.props
+        const {alerts, milestones, projects, tasks, users, dispatch, app, files} = this.props
         const actions = bindActionCreators(Actions, dispatch)
         const currentProjectId = getCurrentProject()
 
@@ -59,9 +55,10 @@ class Project extends Component {
         let basicUsers = [];
         let pendingUsers = [];
         let projectCreator = '';
+        let currentProject = null
 
         if (isProjectPresent(projects, currentProjectId)) {
-            let currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
+            currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
             let basicUserIds = currentProject.basic;
             let pendingUserIds = currentProject.pending;
 
@@ -97,8 +94,9 @@ class Project extends Component {
                             projectId={currentProjectId}
                         />
                     </Tab>
-                    <Tab label="Files" onActive={this.handleFileViewActive.bind(this)} >
+                    <Tab label="Files" onActive={this.handleFileViewActive.bind(this, currentProject, files)} >
                         <Files
+                            project={currentProject}
                             actions={actions}
                             files={files}
                             app={app}

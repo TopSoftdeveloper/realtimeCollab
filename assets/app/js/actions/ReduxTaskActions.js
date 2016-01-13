@@ -2,7 +2,7 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
-        getChildrenFiles} from '../utils/apiUtil'
+        getChildrenFiles, getFileInfo, serverUpdateProject} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -30,12 +30,14 @@ export const _markDone = makeActionCreator(AppConstants.MARK_DONE, 'id');
 export const _unmarkDone = makeActionCreator(AppConstants.UNMARK_DONE, 'id');
 export const _createMilestone = makeActionCreator(AppConstants.CREATE_MILESTONE, 'milestone');
 export const _deleteMilestone = makeActionCreator(AppConstants.DELETE_MILESTONE, 'id');
+
 export const _createProject = makeActionCreator(AppConstants.CREATE_PROJECT, 'project');
 export const _deleteProject = makeActionCreator(AppConstants.DELETE_PROJECT, 'id');
 export const replaceProjectId = makeActionCreator(AppConstants.REPLACE_PROJECT_ID, 'original', 'replacement');
-
 export const switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
 export const projectAlert = makeActionCreator(AppConstants.PROJECT_INVITATION_ALERT, 'alert');
+export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id', 'payload');
+
 
 export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
 export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
@@ -49,11 +51,12 @@ export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE)
 export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
 
 
-export const addFile = makeActionCreator(AppConstants.ADD_FILE, 'file');
+export const addFiles = makeActionCreator(AppConstants.ADD_FILES, 'files');
 export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
-export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'directory');
-export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'id');
-export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT, 'id');
+export const _updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'payload');
+export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'id', 'directory');
+export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'projectId', 'dirId');
+export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT, 'projectId', 'dirId');
 
 
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
@@ -96,9 +99,7 @@ export function initializeApp() {
                 let normalizedTables = normalize(res.projects);
                 dispatch(initApp({
                     current_project: normalizedTables.projects[0].id,
-                    logged_into_google: false,
-                    root_folder: null,
-                    directory_structure: []
+                    logged_into_google: false
                 }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
@@ -114,6 +115,19 @@ export function initializeApp() {
         }).fail(e => {
             console.log(e)
         })
+    }
+}
+
+export function initializeFiles(project) {
+    return function(dispatch) {
+        if (!project.files_loaded) {
+            if (!project.root_folder || project.root_folder === 'root') {
+                dispatch(initTopLevelFolders(project.id))
+            } else {
+                dispatch(initChildrenFiles(project.id, project.root_folder))
+            }
+            dispatch(_updateProject(project.id, {files_loaded: true}))
+        }
     }
 }
 
@@ -242,8 +256,12 @@ function normalize(projects) {
             milestones: [], 
             creator: '', 
             basic: [], 
-            pending: []
+            pending: [],
+            root_folder: project.root_folder,
+            directory_structure: [],
+            files_loaded: false
         };
+
         currProj.milestones = project.milestones.map(milestone => milestone.id);
 
         // milestone table
@@ -298,48 +316,57 @@ function getTopLevelFolders(files) {
     return topLevelFolders
 }
 
-export function initTopLevelFolders() {
+export function initTopLevelFolders(projectId) {
     return function(dispatch) {
         getGoogleDriveFolders().then(res => {
             let topLevelFolders = getTopLevelFolders(res.result.files)
-            dispatch(initFiles(topLevelFolders))
-            dispatch(updateAppStatus({
-                directory_structure: [{id: 'root', name: 'Top level folders'}]
-            }))
+            dispatch(addFiles(topLevelFolders))
+            dispatch(_updateProject(projectId, {directory_structure: [{name: 'Top level directory', id: 'root'}]}))
         }, function (err) {
             console.log(err)
         })
     }
 }
 
-export function initChildrenFiles(folderId, folderName) {
+/**
+ * Used when user clicks on a sub folder
+ */
+export function initChildrenFiles(projectId, folderId, folderName) {
     return function(dispatch) {
         getChildrenFiles(folderId).then(res => {
-            dispatch(initFiles(res.result.files))
-            dispatch(addDirectory({id: folderId, name: folderName}))
+            dispatch(addFiles(res.result.files))
+            if (folderName) {
+                dispatch(addDirectory(projectId, {id: folderId, name: folderName}))
+            } else {
+                getFileInfo(folderId).then(res => {
+                    dispatch(addDirectory(projectId, {id: folderId, name: res.result.name}))
+                })
+            }
         }, function (err) {
             console.log(err)
         })
     }
 }
 
-export function initUpperLevelFolder(folderId) {
+/**
+ * Used when user navigates to a higher level folder (via breadcrumbs)
+ */
+export function initUpperLevelFolder(projectId, folderId) {
     return function(dispatch) {
         if (folderId === 'root') {
-            dispatch(initTopLevelFolders())
+            dispatch(_updateProject(projectId, {directory_structure: [{name: 'Top level directory', id: 'root'}]}))
         } else {
-            getChildrenFiles(folderId).then(res => {
-                dispatch(initFiles(res.result.files))
-                dispatch(goToDirectory(folderId))
-            }, function (err) {
-                console.log(err)
-            })
+            dispatch(goToDirectory(projectId, folderId))
         }
     }
 }
 
-export function setDirectoryAsRoot(folderId) {
+export function setDirectoryAsRoot(projectId, folderId) {
     return function(dispatch) {
-        dispatch(_setDirectoryAsRoot(folderId))
+        serverUpdateProject(projectId, {root_folder: folderId}).done(res => {
+            dispatch(_setDirectoryAsRoot(projectId, folderId))
+        }).fail(e => {
+            console.log(e)
+        })
     }
 }

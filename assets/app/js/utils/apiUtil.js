@@ -38,6 +38,13 @@ export function getChildrenFiles(folderId) {
     })
 }
 
+export function getFileInfo(fileId) {
+    return gapi.client.request({
+        'path': '/drive/v3/files/' + fileId,
+        'method': 'GET'
+    })
+}
+
 function ajaxPost(endpoint, payload) {
     return $.ajax({
         url: API_BASE_URL + endpoint,
@@ -46,6 +53,17 @@ function ajaxPost(endpoint, payload) {
         },
         data: payload,
         type: 'POST'
+    });
+}
+
+function ajaxPut(endpoint, payload) {
+    return $.ajax({
+        url: API_BASE_URL + endpoint,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+        },
+        data: payload,
+        type: 'PUT'
     });
 }
 
@@ -111,6 +129,10 @@ export function serverDeleteMilestone(milestone_id, project_id) {
 
 export function serverCreateProject(payload) {
     return ajaxPost(CREATE_PROJECT_ENDPOINT, payload);
+}
+
+export function serverUpdateProject(project_id, payload) {
+    return ajaxPut('/project/' + project_id, payload);
 }
 
 export function serverDeleteTask(task_id, project_id) {

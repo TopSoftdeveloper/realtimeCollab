@@ -68,7 +68,6 @@ class App extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         const { projects } = this.props;
         if (matchesUrl(window.location.href, AppConstants.APP_ROOT_URL) && projects.length > 0) {
-
             // Redirect to default project (current set as project at index 0)            
             let defaultProjectId = projects[0].id;
             this.props.history.replaceState(null, '/app/project/' + defaultProjectId);
@@ -96,8 +95,6 @@ class App extends Component {
 
         let unreadCount = notifications.reduce((total, notif) => notif.read ? total : total+1, 0);
 
-
-        //style={{backgroundColor: 'orange'}}
         return (
             <div>
                 <Header
@@ -113,7 +110,9 @@ class App extends Component {
                             <LeftPanel
                                 projects={this.props.projects}
                                 history={this.props.history}
-                                onSwitchProject={actions.switchToProject}
+                                app={this.props.app}
+                                files={this.props.files}
+                                actions={actions}
                             />
                         </div>
                     </div>
@@ -133,14 +132,18 @@ App.propTypes = {
     dispatch: PropTypes.func.isRequired,
     notifications: PropTypes.array.isRequired,
     projects: PropTypes.array.isRequired,
-    users: PropTypes.array.isRequired            
+    users: PropTypes.array.isRequired,
+    files: PropTypes.array.isRequired,
+    app: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     return {
         notifications: state.notifications,
         projects: state.projects,
-        users: state.users        
+        users: state.users,
+        files: state.files,
+        app: state.app
     };
 }
 
