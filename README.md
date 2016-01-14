@@ -22,6 +22,8 @@ Installation
 
 4. Install required dependencies
 
+  `sudo apt-get install g++`
+  `sudo npm i -g node-gyp && node-gyp clean`
   `npm install`
 
 5. Run the development server
