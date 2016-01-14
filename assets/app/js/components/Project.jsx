@@ -62,6 +62,7 @@ class Project extends Component {
             let basicUserIds = currentProject.basic;
             let pendingUserIds = currentProject.pending;
 
+
             projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
             basicUsers = users.filter(user => this.isItemPresent(basicUserIds, user.id));
             pendingUsers = users.filter(user => this.isItemPresent(pendingUserIds, user.id));
@@ -78,11 +79,14 @@ class Project extends Component {
         let tasksInProj = tasks.filter(
             task => this.isItemPresent(milestoneIds, task.milestone_id));
 
+        let allActiveUsers = basicUsers
+        if (projectCreator) allActiveUsers.push(projectCreator)
+
         return (
             <div className='task-table'>
                 <ProjectHeader
                     projectName={projectName}
-                    members={basicUsers}
+                    members={allActiveUsers}
                     actions={actions}
                 />
                 <Tabs>
