@@ -4,9 +4,11 @@ var format = require('string-format');
 var Joi = require('joi');
 var Boom = require('boom');
 var accessControl = require('./accessControl');
-var Jwt = require('jsonwebtoken');
-var config = require('config');
+var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
+var config = require('config');
+var Jwt = require('jsonwebtoken');
+
 var secret_key = config.get('authentication.privateKey');
 
 module.exports = {
@@ -36,6 +38,11 @@ function createMilestone(request, reply) {
     };
     storage.createMilestone(milestone).then(function(id) {
         milestone.id = id;
+        Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+            socket.sendMessageToProject(request.payload.project_id, 'new_milestone', {
+                milestone: milestone, sender: decoded.user_id
+            })
+        });
         reply(milestone);
     }, function(error) {
         reply(Boom.internal(error));
@@ -50,6 +57,11 @@ function deleteMilestone(request, reply) {
             reply(Boom.badRequest(format(constants.MILESTONE_NOT_EXIST, milestone_id)));
         } else {
             storage.deleteMilestone(milestone_id).then(function() {
+                Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+                    socket.sendMessageToProject(request.payload.project_id, 'delete_milestone', {
+                        milestone_id: milestone_id, sender: decoded.user_id
+                    })
+                });
                 reply({
                     status: constants.STATUS_OK
                 });

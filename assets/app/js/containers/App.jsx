@@ -56,7 +56,18 @@ class App extends Component {
             if (data.sender !== localStorage.getItem('user_id')) {
                 this.props.dispatch(Actions._deleteTask(data.task_id));                
             }
-        });              
+        });
+        this.state.socket.on('new_milestone', (data) => {
+            if (data.sender !== localStorage.getItem('user_id')) {
+                this.props.dispatch(Actions._createMilestone(data.milestone));
+            }
+        });
+        this.state.socket.on('delete_milestone', (data) => {
+            if (data.sender !== localStorage.getItem('user_id')) {
+                this.props.dispatch(Actions._deleteMilestone(data.milestone_id));
+            }
+        });
+
     }
 
     monitorNotifications() {
