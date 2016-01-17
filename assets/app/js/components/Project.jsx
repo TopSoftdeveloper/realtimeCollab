@@ -7,6 +7,8 @@ import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
 import Files from './Files.jsx'
+import Chat from './chat/Chat.jsx'
+
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject} from '../utils/general'
 import {isLoggedIntoGoogle} from '../utils/auth'
@@ -47,7 +49,7 @@ class Project extends Component {
     }
 
     render() {   
-        const {alerts, milestones, projects, tasks, users, dispatch, app, files} = this.props
+        const {alerts, milestones, projects, tasks, users, dispatch, app, files, messages} = this.props
         const actions = bindActionCreators(Actions, dispatch)
         const currentProjectId = getCurrentProject()
 
@@ -117,6 +119,12 @@ class Project extends Component {
                             alerts={alerts}
                         />
                     </Tab>
+                    <Tab label="Chat">
+                        <Chat
+                            messages={messages}
+                            actions={actions}
+                        />
+                    </Tab>
                 </Tabs>
             </div>
         )
@@ -131,7 +139,8 @@ Project.propTypes = {
     projects: PropTypes.array.isRequired,
     tasks: PropTypes.array.isRequired,    
     users: PropTypes.array.isRequired,
-    files: PropTypes.array.isRequired
+    files: PropTypes.array.isRequired,
+    messages: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
@@ -142,7 +151,8 @@ function mapStateToProps(state) {
         projects: state.projects,
         tasks: state.tasks,
         users: state.users,
-        files: state.files
+        files: state.files,
+        messages: state.messages
     };
 }
 

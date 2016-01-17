@@ -43,5 +43,9 @@ module.exports = {
     INIT_USERS: 'INIT_USERS',
     INIT_FILES: 'INIT_FILES',
     APP_ROOT_URL: 'http://localhost:4000/app',
-    LANDING_PAGE_ROOT_URL: 'http://localhost:4000'
+    LANDING_PAGE_ROOT_URL: 'http://localhost:4000',
+    INIT_MESSAGES: 'INIT_MESSAGES',
+    ADD_MESSAGE: 'ADD_MESSAGE',
+    DELETE_MESSAGE: 'DELETE_MESSAGE',
+    REPLACE_MESSAGE_ID: 'REPLACE_MESSAGE_ID'
 };
