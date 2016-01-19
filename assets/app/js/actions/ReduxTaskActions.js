@@ -46,6 +46,7 @@ export const initProjects = makeActionCreator(AppConstants.INIT_PROJECTS, 'proje
 export const initTasks = makeActionCreator(AppConstants.INIT_TASKS, 'tasks');
 export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
 export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
+export const initMessages = makeActionCreator(AppConstants.INIT_MESSAGES, 'messages');
 
 export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
 export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
@@ -57,6 +58,8 @@ export const _updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'pa
 export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'id', 'directory');
 export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'projectId', 'dirId');
 export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT, 'projectId', 'dirId');
+
+export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message')
 
 
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
@@ -368,5 +371,19 @@ export function setDirectoryAsRoot(projectId, folderId) {
         }).fail(e => {
             console.log(e)
         })
+    }
+}
+
+export function sendMessage(text) {
+    return function(dispatch) {
+        let message =     {
+            id: _.uniqueId(),
+            threadID: 't_3',
+            threadName: 'Bill and Brian',
+            authorName: 'Brian',
+            text: text,
+            timestamp: Date.now() - 39999
+        }
+        dispatch(addMessage(message))
     }
 }
