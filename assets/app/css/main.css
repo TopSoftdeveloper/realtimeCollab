@@ -4,6 +4,32 @@
   margin-left: 30px;
 }
 
+/************************ Project list *******************/
+.project-list {
+}
+
+.project-list ul, .project-list li {
+  margin-left: 0;
+  padding-left: 5px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  list-style-type: none;
+  font-size: 18px;
+  font-family: Roboto, sans-serif;
+}
+
+.project-list span {
+  margin-left: 0;
+  padding-left: 5px;
+  padding-bottom: 6px;
+  font-size: 14px;
+  font-family: Roboto, sans-serif;
+  font-weight: bold;
+}
+
+.project-list li {
+  cursor: pointer;
+}
 
 /******************** chat app ********************/
 .chatapp {
@@ -96,7 +122,7 @@
 }
 
 /************************ Project header ***************************/
-.project-header-text, .add-milestone-btn {
+.add-milestone-btn {
   float: left;
   display:inline;
 }
@@ -123,6 +149,7 @@ ul.online-users {
 .project-header {
   padding-top: 5px;
   padding-bottom: 15px;
+  margin-top: 50px;
 }
 /******************* General ****************************/
 .header-color {
@@ -131,18 +158,25 @@ ul.online-users {
 }
 
 .project-header-text {
-  margin-left: 50px;
+  margin-left: 40px;
+  float: left;
+  display:inline;
 }
 
 .left-panel {
   position: fixed;
-  width: 20%;
+  background-color: #37474f;
+  color: white;
   height: 100%;
 }
 
+.task-table {
+  margin-left:250px;
+}
+
 .body-wrapper {
-  margin-top: 50px;
-  position: absolute;
+  position: fixed;
+  height: 100%;
 }
 
 /******************* Notification List****************************/
