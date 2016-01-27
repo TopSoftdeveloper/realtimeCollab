@@ -59,8 +59,8 @@ class ProjectHeader extends Component {
         ]
 
         return (
-            <div className='project-header'>
-                <h1 className='project-header-text'>{this.props.projectName} </h1>
+            <div className="project-header header-color">
+                <h3 className='project-header-text header-text'>{this.props.projectName} </h3>
                 <IconButton onClick={this.openModal.bind(this)} tooltip="Add milestone">
                     <Add className="add-milestone-btn"/>
                 </IconButton>

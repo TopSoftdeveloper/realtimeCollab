@@ -5,8 +5,10 @@ import io from 'socket.io-client'
 import { connectHistory } from '../components/connectHistory.jsx'
 import * as Actions from '../actions/ReduxTaskActions'
 import Header from '../components/Header.jsx'
-import {matchesUrl} from '../utils/general'
+import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
+import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
+import ProjectHeader from '../components/ProjectHeader.jsx'
 
 var AppConstants = require('../AppConstants');
 
@@ -90,6 +92,12 @@ class App extends Component {
     render() {
         const {notifications, projects, users, dispatch} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
+        const currentProjectId = getCurrentProject()
+
+        let projectName = '';
+        let basicUsers = [];
+        let projectCreator = '';
+        let currentProject = null
 
         if (users.length === 0) {
             // First initialization of app
@@ -106,6 +114,17 @@ class App extends Component {
 
         let unreadCount = notifications.reduce((total, notif) => notif.read ? total : total+1, 0);
 
+        if (isProjectPresent(projects, currentProjectId)) {
+            currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
+            let basicUserIds = currentProject.basic;
+
+            projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
+            basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
+            projectName = currentProject.content;
+        }
+        let allActiveUsers = basicUsers
+        if (projectCreator) allActiveUsers.push(projectCreator)
+
         return (
             <div>
                 <Header
@@ -114,25 +133,31 @@ class App extends Component {
                     displayName={displayName}
                     onCreateProject={actions.createProject}
                 />
-
-                <div className="row around-xs content-container">
-                    <div className="col-xs-3">
-                        <div className="left-panel" >
-                            <LeftPanel
-                                projects={this.props.projects}
-                                history={this.props.history}
-                                app={this.props.app}
-                                files={this.props.files}
-                                actions={actions}
-                            />
+                <div className="body-wrapper">
+                    <ProjectHeader
+                        projectName={projectName}
+                        members={allActiveUsers}
+                        actions={actions}
+                    />
+                    <div className="row around-xs content-container">
+                        <div className="col-xs-3">
+                            <div className="left-panel" >
+                                <LeftPanel
+                                    projects={this.props.projects}
+                                    history={this.props.history}
+                                    app={this.props.app}
+                                    files={this.props.files}
+                                    actions={actions}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-xs-7">
-                        <div className="box">
-                            {children}
+                        <div className="col-xs-7">
+                            <div className="box">
+                                {children}
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-xs-1">
+                        <div className="col-xs-1">
+                        </div>
                     </div>
                 </div>
             </div>

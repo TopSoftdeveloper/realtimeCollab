@@ -1,6 +1,13 @@
+/********************* task table ************************/
+.task-table-content {
+  margin-top: 50px;
+  margin-left: 30px;
+}
+
+
 /******************** chat app ********************/
 .chatapp {
-  font-family:  helvetica, arial;
+  font-family: helvetica, arial, sans-serif;
   max-width: 760px;
   margin: 20px auto;
   overflow: hidden;
@@ -68,16 +75,12 @@
 }
 
 /***************** Header *****************/
-.nav-bar {
-  background-color: white;
-}
-
 .nav-link {
-  border-top: 4px solid white;
-  transition: border-top .3s;
+  border-bottom: 4px solid #424242;
+  transition: border-bottom .3s;
 }
 .nav-link:hover {
-  border-top: 4px solid dodgerblue;
+  border-bottom: 4px solid darkgray;
 }
 
 /****************** milestone row ***********************/
@@ -96,6 +99,10 @@
 .project-header-text, .add-milestone-btn {
   float: left;
   display:inline;
+}
+
+.header-text {
+  color: #E0E0E0;
 }
 
 .add-milestone-btn {
@@ -118,10 +125,13 @@ ul.online-users {
   padding-bottom: 15px;
 }
 /******************* General ****************************/
+.header-color {
+  background-color: #424242;
+  border-color: #455a64;
+}
 
-.content-container {
-  top: 50px;
-  position: absolute;
+.project-header-text {
+  margin-left: 50px;
 }
 
 .left-panel {
@@ -130,7 +140,12 @@ ul.online-users {
   height: 100%;
 }
 
-/******************* Notification List****************************/ 
+.body-wrapper {
+  margin-top: 50px;
+  position: absolute;
+}
+
+/******************* Notification List****************************/
 .notif-title {
   font-size: 13pt;
   background-color: white;

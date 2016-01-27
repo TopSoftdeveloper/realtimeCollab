@@ -56,10 +56,10 @@ class Header extends Component {
 
         return (
             <div>
-            <Navbar className='nav-bar' fluid={true} fixedTop={true}>
+            <Navbar className='nav-bar header-color' fluid={true} fixedTop={true}>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="/app">Collab</a>
+                        <a href="/app"><span className="header-text">Collab</span></a>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>
@@ -69,25 +69,20 @@ class Header extends Component {
                             className='nav-link'
                             eventKey={1}
                             onClick={this.openModal.bind(this)}>
-                            Add Project
+                            <span className="header-text">Add Project </span>
                         </NavItem>
                         <LinkContainer to='/app/notifications' >
                             <NavItem
                                 className='nav-link'
                                 eventKey={2}>
-                                Notifs {badge}
+                                <span className="header-text">Notifs </span>{badge}
                             </NavItem>
                         </LinkContainer>
-
-                        <NavDropdown
+                        <NavItem
                             className='nav-link'
-                            eventKey={3}
-                            title={this.props.displayName}
-                            id="basic-nav-dropdown">
-                            <MenuItem eventKey={3.1}>Account Settings</MenuItem>
-                            <MenuItem divider />
-                            <MenuItem eventKey={3.2} onClick={logout}>Log Out</MenuItem>
-                        </NavDropdown>
+                            eventKey={3}>
+                            <span className="header-text">{this.props.displayName} </span>
+                        </NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

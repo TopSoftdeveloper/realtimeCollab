@@ -19,3 +19,7 @@ export function getCurrentProject() {
 	const CHARS_IN_PREFIX = 13
 	return window.location.pathname.slice(CHARS_IN_PREFIX)
 }
+
+export function isItemPresent(arr, id) {
+	return arr.indexOf(id) >= 0;
+}
