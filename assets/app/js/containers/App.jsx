@@ -9,6 +9,7 @@ import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
 import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
 import ProjectHeader from '../components/ProjectHeader.jsx'
+import { Grid, Row, Col } from 'react-bootstrap'
 
 var AppConstants = require('../AppConstants');
 
@@ -90,7 +91,7 @@ class App extends Component {
     }
 
     render() {
-        const {notifications, projects, users, dispatch} = this.props;
+        const {notifications, projects, users, dispatch, app, files} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
         const currentProjectId = getCurrentProject()
 
@@ -133,37 +134,36 @@ class App extends Component {
                     displayName={displayName}
                     onCreateProject={actions.createProject}
                 />
+                <ProjectHeader
+                    projectName={projectName}
+                    members={allActiveUsers}
+                    actions={actions}
+                />
                 <div className="body-wrapper">
-                    <ProjectHeader
-                        projectName={projectName}
-                        members={allActiveUsers}
-                        actions={actions}
-                    />
-                    <div className="row around-xs content-container">
-                        <div className="col-xs-3">
-                            <div className="left-panel" >
+                    <Grid fluid={true}>
+                        <Row className="body-row">
+                            <Col xs={2} className="left-panel">
                                 <LeftPanel
-                                    projects={this.props.projects}
+                                    currentProject={currentProject}
+                                    projects={projects}
                                     history={this.props.history}
-                                    app={this.props.app}
-                                    files={this.props.files}
+                                    app={app}
+                                    files={files}
                                     actions={actions}
                                 />
-                            </div>
-                        </div>
-                        <div className="col-xs-7">
-                            <div className="box">
+                            </Col>
+                            <Col xs={9} className='task-table'>
                                 {children}
-                            </div>
-                        </div>
-                        <div className="col-xs-1">
-                        </div>
-                    </div>
+                            </Col>
+                            <Col xs={1}/>
+                        </Row>
+                    </Grid>
                 </div>
             </div>
         );
     }
 }
+
 App.propTypes = {
     dispatch: PropTypes.func.isRequired,
     notifications: PropTypes.array.isRequired,

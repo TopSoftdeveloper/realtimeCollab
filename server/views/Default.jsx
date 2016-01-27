@@ -11,8 +11,8 @@ var Default = React.createClass({
                 <title>Collab</title>
                 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"></link>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"></link>
-                <link rel="stylesheet" type="text/css" href="/assets/app/css/flexboxgrid.css"></link>
                 <link rel="stylesheet" type="text/css" href="/assets/app/css/main.css"></link>
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>
             </head>
 
             <body style={{fontFamily: ['Quattrocento', 'sans-serif']}}>

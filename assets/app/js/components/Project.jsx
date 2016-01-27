@@ -80,7 +80,7 @@ class Project extends Component {
         if (projectCreator) allActiveUsers.push(projectCreator)
 
         return (
-            <div className='task-table'>
+            <div>
                 <div className="task-table-content">
                     <Tabs>
                         <Tab label="Milestones" >
