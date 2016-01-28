@@ -125,6 +125,14 @@
   border-bottom: 4px solid darkgray;
 }
 
+.right-nav {
+  padding-right: 100px;
+}
+
+.nav-brand {
+  padding-left: 40px;
+}
+
 /****************** milestone row ***********************/
 
 .milestone-header, .more-vert-btn {

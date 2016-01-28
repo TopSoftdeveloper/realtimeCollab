@@ -17,13 +17,13 @@ class Header extends Component {
             <div>
             <Navbar className='nav-bar header-color' fluid={true} fixedTop={true}>
                 <Navbar.Header>
-                    <Navbar.Brand>
+                    <Navbar.Brand className="nav-brand">
                         <a href="/app"><span className="header-text">Collab</span></a>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    <Nav pullRight>
+                    <Nav className="right-nav" pullRight>
                         <LinkContainer to='/app/notifications' >
                             <NavItem
                                 className='nav-link'
