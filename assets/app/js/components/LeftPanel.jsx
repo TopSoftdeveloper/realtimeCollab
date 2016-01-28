@@ -44,7 +44,7 @@ class LeftPanel extends Component {
                 label="Submit"
                 primary={true}
                 onTouchTap={this.onDialogSubmit.bind(this)} />
-            ]
+        ]
 
         return (
             <div>

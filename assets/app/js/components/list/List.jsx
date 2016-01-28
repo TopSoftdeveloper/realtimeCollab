@@ -41,7 +41,7 @@ class List extends Component {
                     </li>
                 )
             }
-         )
+        )
 
         return (
             <div className="project-list">
