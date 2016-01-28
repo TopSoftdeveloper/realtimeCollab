@@ -24,7 +24,7 @@ class List extends Component {
 
     render() {
         let listItems = this.props.items.map(project => {
-                if (this.props.currentProject.id === project.id) {
+                if (this.props.currentProject && this.props.currentProject.id === project.id) {
                     return (
                         <li
                             onTouchTap={this.switchProject.bind(this, project.id)}
@@ -50,7 +50,9 @@ class List extends Component {
                         <tbody>
                         <tr>
                             <td><span>Projects</span></td>
-                            <td><i className="material-icons add_circle">add_circle</i></td>
+                            <td><i
+                                className="material-icons add_circle"
+                                onClick={this.props.onAddProject}>add_circle</i></td>
                         </tr>
                         </tbody>
                     </table>

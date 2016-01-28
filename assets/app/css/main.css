@@ -16,7 +16,7 @@
 .project-list-header span {
   font-size: 14px;
   font-family: Roboto, sans-serif;
-  font-weight: bold;
+  padding: 5px;
 }
 
 .project-list li {
@@ -24,6 +24,7 @@
   padding-top: 6px;
   padding-left: 15px;
   padding-bottom: 6px;
+  color: #b0bec5;
 }
 
 .project-list li:hover {
@@ -34,10 +35,16 @@
   color: #ffb74d;
 }
 
+
+.add_circle:hover {
+  cursor: pointer;
+}
+
 .project-list-header {
   margin-top: 15px;
   margin-bottom: 15px;
   padding-left: 20px;
+  color: #b0bec5;
 }
 
 /******************** chat app ********************/
@@ -159,9 +166,9 @@ ul.online-users {
   padding-top: 5px;
   padding-bottom: 15px;
   margin-top: 50px;
-  -webkit-box-shadow: 0px 7px 25px -6px rgba(0,0,0,0.62);
-  -moz-box-shadow: 0px 7px 25px -6px rgba(0,0,0,0.62);
-  box-shadow: 0px 7px 25px -6px rgba(0,0,0,0.62);
+  -webkit-box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
+  -moz-box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
+  box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
 }
 /******************* General ****************************/
 .header-color {
@@ -181,6 +188,7 @@ ul.online-users {
   color: white;
   height: 100%;
   padding: 0;
+  z-index: 1000;
 }
 
 .task-table {

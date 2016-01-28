@@ -163,7 +163,7 @@ class Files extends Component {
         let currentStep = 0
         let steps = [{title: 'Authorize Google Drive'}, {title: 'Select root folder'}]
         let currentDirectory = {name: 'Top level directory', id: 'root'}
-        if (project.directory_structure.length > 0) {
+        if (project.directory_structure && project.directory_structure.length > 0) {
             currentDirectory = project.directory_structure[project.directory_structure.length-1]
         }
 

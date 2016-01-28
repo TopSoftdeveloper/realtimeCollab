@@ -82,7 +82,7 @@ class App extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         const { projects } = this.props;
         if (matchesUrl(window.location.href, AppConstants.APP_ROOT_URL) && projects.length > 0) {
-            // Redirect to default project (current set as project at index 0)            
+            // Redirect to default project (current set as project at index 0)
             let defaultProjectId = projects[0].id;
             this.props.history.replaceState(null, '/app/project/' + defaultProjectId);
             return false;         
@@ -132,7 +132,6 @@ class App extends Component {
                     unreadCount={unreadCount}
                     projects={projects}
                     displayName={displayName}
-                    onCreateProject={actions.createProject}
                 />
                 <ProjectHeader
                     projectName={projectName}
@@ -150,6 +149,7 @@ class App extends Component {
                                     app={app}
                                     files={files}
                                     actions={actions}
+                                    onCreateProject={actions.createProject}
                                 />
                             </Col>
                             <Col xs={9} className='task-table'>
