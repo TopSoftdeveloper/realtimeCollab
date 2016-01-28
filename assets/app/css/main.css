@@ -138,9 +138,12 @@
 }
 
 /************************ Project header ***************************/
-.add-milestone-btn {
-  float: left;
-  display:inline;
+i.material-icons.add-milestone-btn {
+  font-size: 36px;
+}
+
+.add-milestone-btn:hover {
+  cursor: pointer;
 }
 
 .header-text {
@@ -148,6 +151,9 @@
 }
 
 .add-milestone-btn {
+  float: left;
+  display:inline;
+  color: #d7ccc8;
   top: 15px;
   position: relative;
 }

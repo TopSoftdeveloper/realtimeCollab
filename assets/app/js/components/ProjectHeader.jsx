@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import OnlineUsers from '../components/OnlineUsers.jsx'
-import Add from './../icons/Add.jsx'
 import {getCurrentProject} from '../utils/general'
 import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
 
@@ -59,12 +58,10 @@ class ProjectHeader extends Component {
         ]
 
         return (
-            <div className="project-header header-color">
+            <div className="project-header header-color clearfix">
                 <h3 className='project-header-text header-text'>{this.props.projectName} </h3>
-                <IconButton onClick={this.openModal.bind(this)} tooltip="Add milestone">
-                    <Add className="add-milestone-btn"/>
-                </IconButton>
-
+                <i className="material-icons add-milestone-btn"
+                   onClick={this.openModal.bind(this)}>add</i>
                 <Dialog
                     title="Add Milestone"
                     actions={actions}
