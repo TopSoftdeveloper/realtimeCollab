@@ -57,25 +57,34 @@ class ProjectHeader extends Component {
                 onTouchTap={this.onDialogSubmit.bind(this)} />
         ]
 
-        return (
-            <div className="project-header header-color clearfix">
-                <h3 className='project-header-text header-text'>{this.props.projectName} </h3>
-                <i className="material-icons add-milestone-btn"
-                   onClick={this.openModal.bind(this)}>add</i>
-                <Dialog
-                    title="Add Milestone"
-                    actions={actions}
-                    open={this.state.isDialogOpen}
-                    onRequestClose={this.handleRequestClose.bind(this)}>
-                    <TextField
-                        hintText="Milestone name"
-                        onEnterKeyDown={this.onDialogSubmit.bind(this)}
-                        ref="milestoneField"
-                    />
-                </Dialog>
-                <OnlineUsers members={this.props.members} />
-            </div>
-        );
+        if (this.props.projectName) {
+            return (
+                <div className="project-header header-color clearfix">
+                    <h3 className='project-header-text header-text'>{this.props.projectName} </h3>
+                    <i className="material-icons add-milestone-btn"
+                       onClick={this.openModal.bind(this)}>add</i>
+                    <Dialog
+                        title="Add Milestone"
+                        actions={actions}
+                        open={this.state.isDialogOpen}
+                        onRequestClose={this.handleRequestClose.bind(this)}>
+                        <TextField
+                            hintText="Milestone name"
+                            onEnterKeyDown={this.onDialogSubmit.bind(this)}
+                            ref="milestoneField"
+                        />
+                    </Dialog>
+                    <OnlineUsers members={this.props.members} />
+                </div>
+            )
+        } else {
+            return (
+                <div className="project-header header-color clearfix">
+                    <h3 className='project-header-text header-text'>Notifications</h3>
+                </div>
+            )
+        }
+
     }
 }
 
