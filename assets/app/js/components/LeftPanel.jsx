@@ -1,44 +1,74 @@
 import React, { Component } from 'react';
-import List from 'material-ui/lib/lists/list'
-import ListItem from 'material-ui/lib/lists/list-item'
-import {isLoggedIntoGoogle} from '../utils/auth'
+import List from './list/List.jsx'
+import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
 
 class LeftPanel extends Component {
-
-    switchProject(projectId) {
-        let actions = this.props.actions
-        let projectUrl = '/app/project/' + projectId;
-        let project = this.props.projects.filter(project => project.id === projectId)[0]
-        this.props.history.pushState(null, projectUrl)
-        actions.switchToProject(projectId)
-        if (!this.props.app.logged_into_google) {
-            isLoggedIntoGoogle(function(authResult) {
-                if (authResult && !authResult.error) {
-                    actions.loggedIntoGoogle()
-                    actions.initializeFiles(project)
-                } else {
-                    actions.loggedOutGoogle()
-                }
-            })
-        } else {
-            actions.initializeFiles(project)
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            isDialogOpen: false
         }
     }
 
-    render() {
+    handleRequestClose(buttonClicked) {
+        if (!buttonClicked && this.state.openDialogStandardActions) return
+        this.setState({
+            isDialogOpen: false
+        })
+    }
+    onDialogSubmit() {
+        let content = this.refs.projectField.getValue().trim()
+        if (content !== '') {
+            this.props.onCreateProject(content)
+        }
+        this.setState({
+            isDialogOpen: false
+        })
+    }
 
-        let listItems = this.props.projects.map(project =>
-            <ListItem
-                key={'projectlist' + project.id}
-                primaryText={project.content}
-                onTouchTap={this.switchProject.bind(this, project.id)}
-            />
-         );
+    openModal() {
+        this.setState({
+            isDialogOpen: true
+        })
+    }
+
+    render() {
+        let actions = [
+            <FlatButton
+                key={1}
+                label="Cancel"
+                secondary={true}
+                onTouchTap={this.onDialogSubmit.bind(this)} />,
+            <FlatButton
+                key={2}
+                label="Submit"
+                primary={true}
+                onTouchTap={this.onDialogSubmit.bind(this)} />
+        ]
 
         return (
-            <List subheader="Projects" className="left-panel">
-                {listItems}
-            </List>
+            <div>
+                <List
+                    currentProject={this.props.currentProject}
+                    subheader="Projects"
+                    items={this.props.projects}
+                    history={this.props.history}
+                    app={this.props.app}
+                    actions={this.props.actions}
+                    onAddProject={this.openModal.bind(this)}
+                />
+                <Dialog
+                    title="Add Project"
+                    actions={actions}
+                    open={this.state.isDialogOpen}
+                    onRequestClose={this.handleRequestClose.bind(this)}>
+                    <TextField
+                        hintText="Project name"
+                        onEnterKeyDown={this.onDialogSubmit.bind(this)}
+                        ref="projectField"
+                    />
+                </Dialog>
+            </div>
         );
     }
 }

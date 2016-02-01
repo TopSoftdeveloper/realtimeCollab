@@ -198,7 +198,10 @@ export function createProject(content) {
                 creator: localStorage.getItem('user_id'),
                 basic: [],
                 pending: [],
-                milestones: []
+                milestones: [],
+                root_folder: null,
+                directory_structure: [],
+                files_loaded: false
             }))
         }).fail(e => {
             console.log(e);

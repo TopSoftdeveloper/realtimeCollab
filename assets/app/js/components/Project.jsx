@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions/ReduxTaskActions';
-import ProjectHeader from './ProjectHeader.jsx'
 import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
@@ -10,7 +9,7 @@ import Files from './Files.jsx'
 import Chat from './chat/Chat.jsx'
 
 import {isProjectPresent} from '../utils/collection'
-import {getCurrentProject} from '../utils/general'
+import {getCurrentProject, isItemPresent} from '../utils/general'
 import {isLoggedIntoGoogle} from '../utils/auth'
 
 import Tabs from 'material-ui/lib/tabs/tabs'
@@ -26,10 +25,6 @@ class Project extends Component {
         let ids = [];
         milestones.forEach(milestone => ids.push(milestone.id));
         return ids;
-    }
-
-    isItemPresent(arr, id) {
-        return arr.indexOf(id) >= 0;
     }
 
     handleFileViewActive(currentProject) {
@@ -66,8 +61,8 @@ class Project extends Component {
 
 
             projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
-            basicUsers = users.filter(user => this.isItemPresent(basicUserIds, user.id));
-            pendingUsers = users.filter(user => this.isItemPresent(pendingUserIds, user.id));
+            basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
+            pendingUsers = users.filter(user => isItemPresent(pendingUserIds, user.id));
             projectName = currentProject.content;
         } else {
             return (<_404 />);
@@ -79,53 +74,50 @@ class Project extends Component {
         let milestoneIds = this.getMilestoneIds(milestonesInProj);
 
         let tasksInProj = tasks.filter(
-            task => this.isItemPresent(milestoneIds, task.milestone_id));
+            task => isItemPresent(milestoneIds, task.milestone_id));
 
         let allActiveUsers = basicUsers
         if (projectCreator) allActiveUsers.push(projectCreator)
 
         return (
-            <div className='task-table'>
-                <ProjectHeader
-                    projectName={projectName}
-                    members={allActiveUsers}
-                    actions={actions}
-                />
-                <Tabs>
-                    <Tab label="Milestones" >
-                        <MilestoneView
-                            milestones={milestonesInProj}
-                            tasks={tasksInProj}
-                            actions={actions}
-                            projectId={currentProjectId}
-                        />
-                    </Tab>
-                    <Tab label="Files" onActive={this.handleFileViewActive.bind(this, currentProject, files)} >
-                        <Files
-                            project={currentProject}
-                            actions={actions}
-                            files={files}
-                            app={app}
-                        />
-                    </Tab>
-                    <Tab label="Settings" >
-                        <Settings
-                            projectName={projectName}
-                            projectId={currentProjectId}
-                            basicUsers={basicUsers}
-                            pendingUsers={pendingUsers}
-                            projectCreator={projectCreator}
-                            actions={actions}
-                            alerts={alerts}
-                        />
-                    </Tab>
-                    <Tab label="Chat">
-                        <Chat
-                            messages={messages}
-                            actions={actions}
-                        />
-                    </Tab>
-                </Tabs>
+            <div>
+                <div className="task-table-content">
+                    <Tabs>
+                        <Tab label="Milestones" >
+                            <MilestoneView
+                                milestones={milestonesInProj}
+                                tasks={tasksInProj}
+                                actions={actions}
+                                projectId={currentProjectId}
+                            />
+                        </Tab>
+                        <Tab label="Files" onActive={this.handleFileViewActive.bind(this, currentProject, files)} >
+                            <Files
+                                project={currentProject}
+                                actions={actions}
+                                files={files}
+                                app={app}
+                            />
+                        </Tab>
+                        <Tab label="Settings" >
+                            <Settings
+                                projectName={projectName}
+                                projectId={currentProjectId}
+                                basicUsers={basicUsers}
+                                pendingUsers={pendingUsers}
+                                projectCreator={projectCreator}
+                                actions={actions}
+                                alerts={alerts}
+                            />
+                        </Tab>
+                        <Tab label="Chat">
+                            <Chat
+                                messages={messages}
+                                actions={actions}
+                            />
+                        </Tab>
+                    </Tabs>
+                </div>
             </div>
         )
     }

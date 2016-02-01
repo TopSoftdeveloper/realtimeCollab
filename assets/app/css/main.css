@@ -1,6 +1,55 @@
+/********************* task table ************************/
+.task-table-content {
+  margin-top: 50px;
+  margin-left: 30px;
+}
+
+/************************ Project list *******************/
+.project-list ul, .project-list li {
+  margin-left: 0;
+  padding-left: 5px;
+  list-style-type: none;
+  font-size: 18px;
+  font-family: Roboto, sans-serif;
+}
+
+.project-list-header span {
+  font-size: 14px;
+  font-family: Roboto, sans-serif;
+  padding: 5px;
+}
+
+.project-list li {
+  cursor: pointer;
+  padding-top: 6px;
+  padding-left: 15px;
+  padding-bottom: 6px;
+  color: #b0bec5;
+}
+
+.project-list li:hover {
+  background-color: #263238;
+}
+
+.add_circle {
+  color: #ffb74d;
+}
+
+
+.add_circle:hover {
+  cursor: pointer;
+}
+
+.project-list-header {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding-left: 20px;
+  color: #b0bec5;
+}
+
 /******************** chat app ********************/
 .chatapp {
-  font-family:  helvetica, arial;
+  font-family: helvetica, arial, sans-serif;
   max-width: 760px;
   margin: 20px auto;
   overflow: hidden;
@@ -68,16 +117,20 @@
 }
 
 /***************** Header *****************/
-.nav-bar {
-  background-color: white;
-}
-
 .nav-link {
-  border-top: 4px solid white;
-  transition: border-top .3s;
+  border-bottom: 4px solid #424242;
+  transition: border-bottom .3s;
 }
 .nav-link:hover {
-  border-top: 4px solid dodgerblue;
+  border-bottom: 4px solid darkgray;
+}
+
+.right-nav {
+  padding-right: 100px;
+}
+
+.nav-brand {
+  padding-left: 40px;
 }
 
 /****************** milestone row ***********************/
@@ -93,12 +146,22 @@
 }
 
 /************************ Project header ***************************/
-.project-header-text, .add-milestone-btn {
-  float: left;
-  display:inline;
+i.material-icons.add-milestone-btn {
+  font-size: 36px;
+}
+
+.add-milestone-btn:hover {
+  cursor: pointer;
+}
+
+.header-text {
+  color: #E0E0E0;
 }
 
 .add-milestone-btn {
+  float: left;
+  display:inline;
+  color: #d7ccc8;
   top: 15px;
   position: relative;
 }
@@ -116,21 +179,42 @@ ul.online-users {
 .project-header {
   padding-top: 5px;
   padding-bottom: 15px;
+  margin-top: 50px;
+  -webkit-box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
+  -moz-box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
+  box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
 }
 /******************* General ****************************/
+.header-color {
+  background-color: #424242;
+  border-color: #455a64;
+}
 
-.content-container {
-  top: 50px;
-  position: absolute;
+.project-header-text {
+  margin-left: 40px;
+  float: left;
+  display:inline;
 }
 
 .left-panel {
   position: fixed;
-  width: 20%;
+  background-color: #37474f;
+  color: white;
+  height: 100%;
+  padding: 0;
+  z-index: 1000;
+}
+
+.task-table {
+  margin-left:250px;
+}
+
+.body-wrapper {
+  position: fixed;
   height: 100%;
 }
 
-/******************* Notification List****************************/ 
+/******************* Notification List****************************/
 .notif-title {
   font-size: 13pt;
   background-color: white;
