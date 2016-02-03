@@ -1,3 +1,7 @@
+import Avatar from 'material-ui/lib/avatar';
+import React, { Component } from 'react'
+import {Tooltip, OverlayTrigger} from 'react-bootstrap'
+
 function hasTrailingSlash(urlString) {
 	return urlString[urlString.length-1] === '/';
 }
@@ -22,4 +26,25 @@ export function getCurrentProject() {
 
 export function isItemPresent(arr, id) {
 	return arr.indexOf(id) >= 0;
+}
+
+export function getUserAvatar(imgSrc, displayName, enableTooltip) {
+	let image = null
+	if (imgSrc && imgSrc !== 'undefined') {
+		image = <Avatar size={36} src={imgSrc} />
+	} else {
+		image = <Avatar size={36}>{displayName[0]}</Avatar>
+	}
+
+	if (enableTooltip) {
+		const tooltip = (
+				<Tooltip id={displayName}>{displayName}</Tooltip>
+		);
+		image = (
+				<OverlayTrigger placement="bottom" overlay={tooltip}>
+					{image}
+				</OverlayTrigger>
+				)
+	}
+	return image
 }

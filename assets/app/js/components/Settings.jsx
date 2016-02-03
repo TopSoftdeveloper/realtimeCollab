@@ -36,13 +36,6 @@ class Settings extends Component {
     render() {   
         let listGroups = [];
         let alertStatus = this.props.alerts.project_invitation;
-        if (this.props.projectCreator) {
-            listGroups.push(
-                <ListGroupItem key={_.uniqueId('settings_basic')}>
-                    {this.props.projectCreator.display_name} (creator)
-                </ListGroupItem>
-            )
-        }
 
         this.props.basicUsers.forEach(user => listGroups.push(
             <ListGroupItem key={_.uniqueId('settings_basic')}>

@@ -6,13 +6,15 @@ import assign from 'object-assign';
 //         id: 'EynH-wT-l',
 //         email: 'a@a',
 //         display_name: 'Yan Yi',
-//		   online: true
+//         display_image: 'url',
+//		     online: true
 //     },
 //     {
 //         id: 'uid2',
 //         email: 'b@b',
 //         display_name: 'Cristina',
-//		   online: false
+//         display_image: 'url',
+//		     online: false
 //     }        
 // ]
 

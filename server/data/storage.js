@@ -113,7 +113,7 @@ module.exports = {
                 joinTableAttributes: [],
                 include: [{
                     model: User, as:'users',
-                    attributes: ['id', 'email', 'display_name']
+                    attributes: ['id', 'email', 'display_name', 'display_image']
                 }]                                  
             }
             );
@@ -169,6 +169,13 @@ module.exports = {
         return User.find({
             where: {
                 google_id: googleId
+            }
+        });
+    },
+    findUserByEmail: function(email) {
+        return User.find({
+            where: {
+                email: email
             }
         });
     },

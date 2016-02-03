@@ -107,8 +107,7 @@ function inviteToProject(request, reply) {
                 reply(Boom.forbidden(constants.FORBIDDEN));
                 return;
             }
-
-            storage.findUser(request.payload.email).then(function(user) {
+            storage.findUserByEmail(request.payload.email).then(function(user) {
                 if (user === null) {
                     reply(Boom.badRequest(constants.USER_NOT_FOUND))
                     return

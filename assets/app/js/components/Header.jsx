@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import $ from 'jquery'
 import { Navbar, Nav, NavItem, Badge } from 'react-bootstrap'
 import {logout} from '../utils/auth.js'
-import Avatar from 'material-ui/lib/avatar';
+import {getUserAvatar} from '../utils/general'
 
 class Header extends Component {
 
@@ -13,6 +13,8 @@ class Header extends Component {
         if (this.props.unreadCount > 0) {
             badge = (<Badge>{this.props.unreadCount}</Badge>);
         }
+
+        let image = getUserAvatar(localStorage.getItem('display_image'), this.props.displayName)
 
         return (
             <div>
@@ -35,8 +37,8 @@ class Header extends Component {
                         <NavItem
                             className='nav-link'
                             eventKey={3}>
-                            <Avatar src={localStorage.getItem('display_image')} />
-                            <span className="header-text">{this.props.displayName} </span>
+                            {image}
+                            <span className="header-text display-name">{this.props.displayName} </span>
                         </NavItem>
                     </Nav>
                 </Navbar.Collapse>

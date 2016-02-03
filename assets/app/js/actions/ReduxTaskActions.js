@@ -94,6 +94,7 @@ export function initializeApp() {
             id: localStorage.getItem('user_id'),
             email: localStorage.getItem('email'),
             display_name: localStorage.getItem('display_name'),
+            display_image: localStorage.getItem('display_image'),
             online: false
         }]));                
 
