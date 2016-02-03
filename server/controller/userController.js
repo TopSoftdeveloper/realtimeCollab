@@ -49,10 +49,10 @@ function filterPending(projects, userId) {
 function populate(request, reply) {
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
         if (err || (decoded.user_id !== request.params.user_id)) {
-            reply(Boom.forbidden(constants.FORBIDDEN));
-            return;
+            reply(Boom.forbidden(constants.FORBIDDEN))
+            return
         }
-        storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
+        storage.getProjectsOfUser(request.params.user_id).then(function(projects) {
             var filteredProjects = filterPending(projects, decoded.user_id);
             Promise.map(filteredProjects, function(project) {
                 return storage.getMilestonesWithTasks(project.id);
@@ -65,6 +65,5 @@ function populate(request, reply) {
                 reply({projects:_.merge(normalize(projectsData), milestonesData)});
             });
         });
-
-    });
+    })
 }

@@ -11,7 +11,6 @@ module.exports.endpoints = [
     { method: 'GET',  path: '/app/{param*}', config: Static.app },
     { method: 'GET',  path: '/', config: Static.index },
 
-    { method: 'POST',  path: '/create_account', config: Auth.createAccount },
     { method: 'POST',  path: '/login', config: Auth.login },
 
     { method: 'POST',  path: '/tasks', config: Task.createTask },

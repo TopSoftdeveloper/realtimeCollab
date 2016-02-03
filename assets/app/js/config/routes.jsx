@@ -11,15 +11,19 @@ import { connect } from 'react-redux';
 let AppConstants = require('../AppConstants');
 
 function requireLogin(nextState, replaceState) {
-    if (!isLoggedIn()) {
+    isLoggedIn().done(function(res) {
+        if (res.aud !== AppConstants.GOOGLE_CLIENT_ID) {
+            window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+        }
+    }).fail(function(res) {
         window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
-    }
+    })
 }
 
 function redirectToDashboard(nextState, replaceState) {
-    if (isLoggedIn()) {
+    isLoggedIn().done(function(res) {
         replaceState(null, '/app')
-    }
+    })
 }
 
 export default (

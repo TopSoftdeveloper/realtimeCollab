@@ -1,11 +1,8 @@
 import gapi from '../gapi'
+import $ from 'jquery'
 let AppConstants = require('../AppConstants');
 const CLIENT_ID = '300282221041-b0p1s05ukuvuun3b8h2tuevppjkmgdrc.apps.googleusercontent.com'
 const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly']
-
-export function getToken() {
-    return localStorage.token;
-}
 
 export function logout() {
     localStorage.clear();
@@ -13,7 +10,10 @@ export function logout() {
 }
 
 export function isLoggedIn() {
-    return !!localStorage.jwt;
+    return $.ajax({
+        type: 'GET',
+        url: 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + localStorage.google_token
+    })
 }
 
 export function isLoggedIntoGoogle(callback) {

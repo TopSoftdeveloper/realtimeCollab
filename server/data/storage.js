@@ -165,10 +165,10 @@ module.exports = {
             }
         });
     },
-    findUser: function(email) {
+    findUser: function(googleId) {
         return User.find({
             where: {
-                email: email
+                google_id: googleId
             }
         });
     },
@@ -184,15 +184,10 @@ module.exports = {
     doesUserExist: function(email) {
         return User.isExist(email);
     },
-    createUser: function(salt, hashed_password, email, display_name) {
+    createUser: function(user) {
         var id = shortid.generate();
-        return User.create({
-            id: id,
-            password: hashed_password,
-            salt: salt,
-            email: email,
-            display_name: display_name
-        });
+        user.id = id;
+        return User.create(user);
     },
     markDone: function(task_id) {
         return Task.update(

@@ -6,13 +6,10 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             primaryKey: true
         },
-        password: DataTypes.STRING,
-        salt: DataTypes.STRING,
-        email: {
-            type: DataTypes.STRING,
-            unique: true
-        },
-        display_name: DataTypes.STRING
+        google_id: DataTypes.STRING,
+        email: DataTypes.STRING,
+        display_name: DataTypes.STRING,
+        display_image: DataTypes.STRING
     },{
         underscored: true,
         classMethods: {
