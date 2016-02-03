@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import OnlineUsers from '../components/OnlineUsers.jsx'
 import {getCurrentProject} from '../utils/general'
 import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
+var AppConstants = require('../AppConstants');
 
 class ProjectHeader extends Component {
     constructor(props, context) {
@@ -77,10 +78,16 @@ class ProjectHeader extends Component {
                     <OnlineUsers members={this.props.members} />
                 </div>
             )
-        } else {
+        } else if(window.location.href === AppConstants.APP_ROOT_URL + '/notifications') {
             return (
                 <div className="project-header header-color clearfix">
                     <h3 className='project-header-text header-text'>Notifications</h3>
+                </div>
+            )
+        } else {
+            return (
+                <div className="project-header header-color clearfix">
+                    <h3 className='project-header-text header-text'></h3>
                 </div>
             )
         }
