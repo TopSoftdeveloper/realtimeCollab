@@ -104,10 +104,14 @@ class FilesList extends Component {
                         <th>Last modified</th>
                     </tr>
                     </thead>
+                </Table>
+                <div className="files-list">
+                <Table>
                     <tbody>
                     {rows}
                     </tbody>
                 </Table>
+                </div>
             </div>
         )
     }
