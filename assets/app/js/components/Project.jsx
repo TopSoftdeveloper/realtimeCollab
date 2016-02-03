@@ -6,12 +6,9 @@ import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
 import Files from './Files.jsx'
-import Chat from './chat/Chat.jsx'
-
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject, isItemPresent} from '../utils/general'
 import {isLoggedIntoGoogle} from '../utils/auth'
-
 import Tabs from 'material-ui/lib/tabs/tabs'
 import Tab from 'material-ui/lib/tabs/tab'
 
@@ -108,12 +105,6 @@ class Project extends Component {
                                 projectCreator={projectCreator}
                                 actions={actions}
                                 alerts={alerts}
-                            />
-                        </Tab>
-                        <Tab label="Chat">
-                            <Chat
-                                messages={messages}
-                                actions={actions}
                             />
                         </Tab>
                     </Tabs>
