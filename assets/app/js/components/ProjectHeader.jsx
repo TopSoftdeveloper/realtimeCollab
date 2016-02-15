@@ -2,13 +2,25 @@ import React, { Component } from 'react'
 import OnlineUsers from '../components/OnlineUsers.jsx'
 import {getCurrentProject} from '../utils/general'
 import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
-var AppConstants = require('../AppConstants');
+import $ from 'jquery'
+var AppConstants = require('../AppConstants')
+
 
 class ProjectHeader extends Component {
     constructor(props, context) {
         super(props, context)
         this.state = {
-            isDialogOpen: false
+            isDialogOpen: false,
+            isHangoutBtnRendered: false
+        }
+    }
+
+    componentDidUpdate() {
+        if (!this.state.isHangoutBtnRendered && $('#hangouts-btn-placeholder').length) {
+            gapi.hangout.render('hangouts-btn-placeholder', { 'render': 'createhangout' });
+            this.setState({
+                isHangoutBtnRendered: true
+            })
         }
     }
 
@@ -64,6 +76,9 @@ class ProjectHeader extends Component {
                     <h3 className='project-header-text header-text'>{this.props.projectName} </h3>
                     <i className="material-icons add-milestone-btn"
                        onClick={this.openModal.bind(this)}>add</i>
+                    <div id="hangouts-btn-wrapper">
+                        <div id="hangouts-btn-placeholder"></div>
+                    </div>
                     <Dialog
                         title="Add Milestone"
                         actions={actions}
