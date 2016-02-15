@@ -29,7 +29,16 @@ export default function users(state=[], action) {
         case AppConstants.USER_OFFLINE:
         	return state.map(user => 
         		user.id === action.id ? 
-        		assign({}, user, {online: false}): user);        	
+        		assign({}, user, {online: false}): user);
+        case AppConstants.ADD_USERS:
+            let usersToAdd = []
+            for (let i=0; i<action.users.length; ++i) {
+                let matchingUsers = state.filter(user => user.id === action.users[i].id)
+                if (matchingUsers.length === 0) {
+                    usersToAdd.push(action.users[i])
+                }
+            }
+            return [...state, ...usersToAdd]
         default:
             return state;
     }

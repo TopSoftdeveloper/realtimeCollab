@@ -7,7 +7,6 @@ import users from './users'
 import app from './app'
 import alerts from './alerts'
 import files from './files'
-import messages from './messages'
 
 export default combineReducers({
     milestones,
@@ -17,6 +16,5 @@ export default combineReducers({
     users,
     alerts,
     app,
-    files,
-    messages
+    files
 });

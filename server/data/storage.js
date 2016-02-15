@@ -165,6 +165,13 @@ module.exports = {
             }
         });
     },
+    updateUser: function(id, data) {
+        return User.update(data, {
+            where: {
+                id: id
+            }
+        })
+    },
     findUser: function(googleId) {
         return User.find({
             where: {

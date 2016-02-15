@@ -64,6 +64,7 @@ export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message')
 
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
+export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
 
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
@@ -90,7 +91,7 @@ export function acceptProject(projectId, notificationId) {
 
 export function initializeApp() {
     return function(dispatch) {
-        dispatch(initUsers([{
+        dispatch(addUsers([{
             id: localStorage.getItem('user_id'),
             email: localStorage.getItem('email'),
             display_name: localStorage.getItem('display_name'),
@@ -108,13 +109,14 @@ export function initializeApp() {
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
                 dispatch(initTasks(normalizedTables.tasks));
-                dispatch(initUsers(normalizedTables.users));
+                dispatch(addUsers(normalizedTables.users));
             }
         }).fail(e => {
             window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
         });
 
         serverGetNotifications().done(res => {
+            dispatch(addUsers(res.users))
             dispatch(initNotifications(res.notifications));
         }).fail(e => {
             console.log(e)

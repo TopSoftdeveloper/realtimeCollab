@@ -41,7 +41,7 @@ class Project extends Component {
     }
 
     render() {   
-        const {alerts, milestones, projects, tasks, users, dispatch, app, files, messages} = this.props
+        const {alerts, milestones, projects, tasks, users, dispatch, app, files} = this.props
         const actions = bindActionCreators(Actions, dispatch)
         const currentProjectId = getCurrentProject()
 
@@ -77,38 +77,36 @@ class Project extends Component {
         if (projectCreator) allActiveUsers.push(projectCreator)
 
         return (
-            <div>
-                <div className="task-table-content">
-                    <Tabs>
-                        <Tab label="Milestones" >
-                            <MilestoneView
-                                milestones={milestonesInProj}
-                                tasks={tasksInProj}
-                                actions={actions}
-                                projectId={currentProjectId}
-                            />
-                        </Tab>
-                        <Tab label="Files" onActive={this.handleFileViewActive.bind(this, currentProject, files)} >
-                            <Files
-                                project={currentProject}
-                                actions={actions}
-                                files={files}
-                                app={app}
-                            />
-                        </Tab>
-                        <Tab label="Settings" >
-                            <Settings
-                                projectName={projectName}
-                                projectId={currentProjectId}
-                                basicUsers={basicUsers}
-                                pendingUsers={pendingUsers}
-                                projectCreator={projectCreator}
-                                actions={actions}
-                                alerts={alerts}
-                            />
-                        </Tab>
-                    </Tabs>
-                </div>
+            <div className="main-content">
+                <Tabs>
+                    <Tab label="Milestones" >
+                        <MilestoneView
+                            milestones={milestonesInProj}
+                            tasks={tasksInProj}
+                            actions={actions}
+                            projectId={currentProjectId}
+                        />
+                    </Tab>
+                    <Tab label="Files" onActive={this.handleFileViewActive.bind(this, currentProject, files)} >
+                        <Files
+                            project={currentProject}
+                            actions={actions}
+                            files={files}
+                            app={app}
+                        />
+                    </Tab>
+                    <Tab label="Settings" >
+                        <Settings
+                            projectName={projectName}
+                            projectId={currentProjectId}
+                            basicUsers={basicUsers}
+                            pendingUsers={pendingUsers}
+                            projectCreator={projectCreator}
+                            actions={actions}
+                            alerts={alerts}
+                        />
+                    </Tab>
+                </Tabs>
             </div>
         )
     }
@@ -122,8 +120,7 @@ Project.propTypes = {
     projects: PropTypes.array.isRequired,
     tasks: PropTypes.array.isRequired,    
     users: PropTypes.array.isRequired,
-    files: PropTypes.array.isRequired,
-    messages: PropTypes.array.isRequired
+    files: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
@@ -134,8 +131,7 @@ function mapStateToProps(state) {
         projects: state.projects,
         tasks: state.tasks,
         users: state.users,
-        files: state.files,
-        messages: state.messages
+        files: state.files
     };
 }
 

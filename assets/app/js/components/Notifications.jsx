@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
 import vagueTime from 'vague-time'
 import {acceptProject}  from '../actions/ReduxTaskActions'
+import {getUserAvatar} from '../utils/general'
+import {Button} from 'react-bootstrap'
 
 class NotificationItem extends Component {
     acceptProject() {
@@ -14,24 +16,33 @@ class NotificationItem extends Component {
         let buttons = null
         if (this.props.type === 'INVITE_TO_PROJECT') {
             buttons = (
-                <div>
-                    <button className="btn" onClick={this.acceptProject.bind(this)}>Accept</button>
+                <div className="notif-buttons">
+                    <Button onClick={this.acceptProject.bind(this)}>Accept</Button>
                 </div>
             )
         }
-
-        let background = 'paleTurquoise'
+        let notifClassName = 'notif-item'
         if (this.props.read) {
-            background = 'white'
+            notifClassName += ' notif-read'
+        } else {
+            notifClassName += ' notif-unread'
+        }
+
+        let image = null
+        if (this.props.user) {
+            image = getUserAvatar(this.props.user.display_image, this.props.user.display_name)
         }
 
         return (
-            <li className='notif-item' style={{backgroundColor: background}}>
+            <li className={notifClassName}>
+                <div className="notif-photo">
+                    {image}
+                </div>
                 <div>
                     <span className='notif-text'>{this.props.text}</span>
-                    {buttons}
                 </div>
                 <span className='notif-fuzzy-time'>{this.props.fuzzyTime}</span>
+                {buttons}
             </li>
         );
     }
@@ -46,25 +57,35 @@ class NotificationList extends Component {
     }
 
     render() {
-        let notificationItems = this.props.notifs.map(notif => 
-            <NotificationItem
+        let notifsSortedByTime = this.props.notifs.sort(function(a, b) {
+            return a.time < b.time
+        })
+        let notificationItems = notifsSortedByTime.map(notif => {
+            let matchingUsers = this.props.users.filter(user => user.id === notif.meta.user_id)
+            let user = null
+            if (matchingUsers.length >= 1) {
+                user = matchingUsers[0]
+            }
+
+            return <NotificationItem
                 id={notif.id}
-                key={notif.id} 
+                key={notif.id}
                 text={notif.text}
                 type={notif.type}
                 meta={notif.meta}
                 read={notif.read}
+                user={user}
                 dispatch={this.props.dispatch}
                 fuzzyTime={this.toFuzzyTime(notif.time)} />
+
+            }
         );
 
         return (
-            <div className='notification-container'>
-                <div className='notification-list'>
-                    <ul>
-                        {notificationItems}             
-                    </ul>         
-                </div>
+            <div className='notification-list'>
+                <ul>
+                    {notificationItems}
+                </ul>
             </div>
         );
     }
@@ -72,24 +93,29 @@ class NotificationList extends Component {
 
 class Notifications extends Component {    
     render() {
-        const {notifications, dispatch} = this.props;
-
+        const {notifications, dispatch, users} = this.props;
         return (
-            <div>
-                <h3>All Notifications</h3>  
-                <NotificationList notifs={notifications} dispatch={this.props.dispatch} />
+            <div className='main-content notif-container'>
+                <h4>All Notifications</h4>
+                <NotificationList
+                    notifs={notifications}
+                    dispatch={dispatch}
+                    users={users}
+                />
             </div>            
         );
     }
 }
 
 Notifications.propTypes = {
-    notifications: PropTypes.array.isRequired
+    notifications: PropTypes.array.isRequired,
+    users: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        notifications: state.notifications
+        notifications: state.notifications,
+        users: state.users
     };
 }
 

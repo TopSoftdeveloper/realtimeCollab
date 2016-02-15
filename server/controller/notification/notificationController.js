@@ -68,7 +68,7 @@ module.exports = {
     },
 
     broadcastToUser: function(userId, id, text, time, link, template, meta) {
-        var payload = {
+        var notif = {
             id: id,
             text: text,
             time: time,
@@ -77,7 +77,29 @@ module.exports = {
             type: template,
             meta: meta
         }
-        socket.sendMessageToUser(userId, 'new_notification', payload)
+
+        if (meta && meta.user_id) {
+            storage.findUserById(meta.user_id).done(function(user) {
+                var user = {
+                    id: user[0].id,
+                    display_name: user[0].display_name,
+                    display_image: user[0].display_image,
+                    email: user[0].email,
+                    online: false
+                }
+                var payload = {
+                    notification: notif,
+                    user: user
+                }
+                socket.sendMessageToUser(userId, 'new_notification', payload)
+            })
+        } else {
+            var payload = {
+                notification: notif,
+                user: null
+            }
+            socket.sendMessageToUser(userId, 'new_notification', payload)
+        }
     },
 
     broadcastToProject: function(notification) {
@@ -124,24 +146,47 @@ function getNotifications(request, reply) {
                 })
 
                 var mergedNotifs = _.merge(names, JSON.parse(JSON.stringify(notifications)))
-                reply({
-                    notifications: mergedNotifs.map(function(notif) {
-                        var message = templates.getMessage(notif.template, {
-                            displayName: notif.displayName,
-                            projectName: notif.projectName
-                        })
-                        var data = JSON.parse(notif.data)
+                var userIds = []
+                var formattedNotifications = mergedNotifs.map(function(notif) {
+                    var message = templates.getMessage(notif.template, {
+                        displayName: notif.displayName,
+                        projectName: notif.projectName
+                    })
+                    var data = JSON.parse(notif.data)
+                    if (data.user_id) {
+                        userIds.push(data.user_id)
+                    }
+                    return {
+                        id: notif.id,
+                        text: message,
+                        time: notif.created_at,
+                        read: notif.is_read,
+                        link: templates.getLink(notif.id),
+                        type: notif.template,
+                        meta: data
+                    }
+                })
+
+                // Return information about users involved in the notifications
+                var usersPromise = []
+                userIds.forEach(function(userId) {
+                    usersPromise.push(storage.findUserById(userId))
+                })
+
+                Sequelize.Promise.all(promises).done(function(userData) {
+                    var users = userData.map(function(user) {
                         return {
-                            id: notif.id,
-                            text: message,
-                            time: notif.created_at,
-                            read: notif.is_read,
-                            link: templates.getLink(notif.id),
-                            type: notif.template,
-                            meta: {
-                                project_id: data.project_id
-                            }
+                            id: user[0].id,
+                            display_name: user[0].display_name,
+                            display_image: user[0].display_image,
+                            email: user[0].email,
+                            online: false
                         }
+                    })
+
+                    reply({
+                        notifications: formattedNotifications,
+                        users: users
                     })
                 })
             })

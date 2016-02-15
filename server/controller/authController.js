@@ -26,6 +26,11 @@ function get_token(private_key, user_id, expires_in) {
     return Jwt.sign(token_data, private_key);
 }
 
+function isProfileUpdated(last, current) {
+    return last.display_name !== current.display_name ||
+            last.display_image !== current.display_image
+}
+
 function login(request, reply) {
     storage.findUser(request.payload.google_id).then(function(user) {
         if (user === null) {
@@ -42,6 +47,11 @@ function login(request, reply) {
                 user_id: user.id,
                 token: get_token(privateKey, user.id, token_expiry)
             });
+
+            if (isProfileUpdated(user, request.payload)) {
+                storage.updateUser(user.id, request.payload)
+            }
+
         }
     })
 }
