@@ -3,11 +3,9 @@ import {Table} from 'react-bootstrap'
 import vagueTime from 'vague-time'
 import Steps from 'rc-steps'
 import RaisedButton from 'material-ui/lib/raised-button'
-import {loginGoogle} from '../utils/auth'
-import {getChildrenFiles} from '../utils/apiUtil'
+import {loginGoogle, isLoggedIntoGoogle} from '../utils/auth'
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 import _ from 'lodash'
-
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
 
@@ -120,6 +118,23 @@ class FilesList extends Component {
 class Files extends Component {
     constructor(props, context) {
         super(props, context)
+    }
+
+    componentDidMount() {
+        let actions = this.props.actions
+        let currentProject = this.props.project
+        if (!this.props.app.logged_into_google) {
+            isLoggedIntoGoogle(function(authResult) {
+                if (authResult && !authResult.error) {
+                    actions.loggedIntoGoogle()
+                    actions.initializeFiles(currentProject)
+                } else {
+                    actions.loggedOutGoogle()
+                }
+            })
+        } else {
+            actions.initializeFiles(currentProject)
+        }
     }
 
     setAsRoot(id) {

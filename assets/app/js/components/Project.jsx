@@ -6,12 +6,13 @@ import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
 import Files from './Files.jsx'
+import Github from './Github.jsx'
 import {isProjectPresent} from '../utils/collection'
-import {getCurrentProject, isItemPresent} from '../utils/general'
-import {isLoggedIntoGoogle} from '../utils/auth'
+import {getCurrentProject, getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
 import Tabs from 'material-ui/lib/tabs/tabs'
 import Tab from 'material-ui/lib/tabs/tab'
-
+import { connectHistory } from '../components/connectHistory.jsx'
+let AppConstants = require('../AppConstants');
 
 class Project extends Component {
     constructor(props, context) {
@@ -24,20 +25,8 @@ class Project extends Component {
         return ids;
     }
 
-    handleFileViewActive(currentProject) {
-        const actions = bindActionCreators(Actions, this.props.dispatch)
-        if (!this.props.app.logged_into_google) {
-            isLoggedIntoGoogle(function(authResult) {
-                if (authResult && !authResult.error) {
-                    actions.loggedIntoGoogle()
-                    actions.initializeFiles(currentProject)
-                } else {
-                    actions.loggedOutGoogle()
-                }
-            })
-        } else {
-            actions.initializeFiles(currentProject)
-        }
+    changeTab(newTab) {
+        this.props.history.pushState(null, getProjectRoot() + '/' + newTab)
     }
 
     render() {   
@@ -56,7 +45,6 @@ class Project extends Component {
             let basicUserIds = currentProject.basic;
             let pendingUserIds = currentProject.pending;
 
-
             projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
             basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
             pendingUsers = users.filter(user => isItemPresent(pendingUserIds, user.id));
@@ -73,13 +61,19 @@ class Project extends Component {
         let tasksInProj = tasks.filter(
             task => isItemPresent(milestoneIds, task.milestone_id));
 
-        let allActiveUsers = basicUsers
+        let allActiveUsers = basicUsers.slice()
         if (projectCreator) allActiveUsers.push(projectCreator)
+
+        // Set the active tab
+        let currentTab = getCurrentTab()
+        if (currentTab === '') currentTab = AppConstants.PATH.milestones //default tab
 
         return (
             <div className="main-content">
-                <Tabs>
-                    <Tab label="Milestones" >
+                <Tabs value={currentTab}>
+                    <Tab label="Milestones"
+                         value={AppConstants.PATH.milestones}
+                         onActive={this.changeTab.bind(this, AppConstants.PATH.milestones)}>
                         <MilestoneView
                             milestones={milestonesInProj}
                             tasks={tasksInProj}
@@ -87,15 +81,33 @@ class Project extends Component {
                             projectId={currentProjectId}
                         />
                     </Tab>
-                    <Tab label="Files" onActive={this.handleFileViewActive.bind(this, currentProject, files)} >
+                    <Tab label="Files"
+                         value={AppConstants.PATH.files}
+                         onActive={this.changeTab.bind(this, AppConstants.PATH.files)}>
                         <Files
                             project={currentProject}
                             actions={actions}
                             files={files}
                             app={app}
+                            actions={actions}
                         />
                     </Tab>
-                    <Tab label="Settings" >
+                    <Tab label="Github"
+                         value={AppConstants.PATH.github}
+                         onActive={this.changeTab.bind(this, AppConstants.PATH.github)}>
+                        <Github
+                            projectName={projectName}
+                            projectId={currentProjectId}
+                            basicUsers={basicUsers}
+                            pendingUsers={pendingUsers}
+                            projectCreator={projectCreator}
+                            actions={actions}
+                            alerts={alerts}
+                        />
+                    </Tab>
+                    <Tab label="Settings"
+                         value={AppConstants.PATH.settings}
+                         onActive={this.changeTab.bind(this, AppConstants.PATH.settings)}>
                         <Settings
                             projectName={projectName}
                             projectId={currentProjectId}
@@ -135,4 +147,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(Project)
+export default connect(mapStateToProps)(connectHistory(Project))

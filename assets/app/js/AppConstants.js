@@ -1,4 +1,11 @@
 module.exports = {
+    PATH: {
+        milestones: 'milestones',
+        files: 'files',
+        github: 'github',
+        settings: 'settings'
+    },
+    GITHUB_CLIENT_ID: '3046c6aca85085abda12',
     GOOGLE_CLIENT_ID: '300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com',
     UPDATE_APP_STATUS: 'UPDATE_APP_STATUS',
     SET_DIRECTORY_AS_ROOT: 'SET_DIRECTORY_AS_ROOT',

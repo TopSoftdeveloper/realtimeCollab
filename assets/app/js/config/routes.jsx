@@ -27,11 +27,16 @@ function redirectToDashboard(nextState, replaceState) {
 }
 
 export default (
-  <Route path='/app' component={App} onEnter={requireLogin}>
-    <Route>
-      <Route path='project/:id' component={Project}/>
-      <Route path='notifications' component={Notifications}/>
-      <Route path='*' component={_404}/>
+    <Route path='/app' component={App} onEnter={requireLogin}>
+        <Route>
+            <Route path='project/:id' component={Project}>
+                <Route path={AppConstants.PATH.milestones} />
+                <Route path={AppConstants.PATH.files} />
+                <Route path={AppConstants.PATH.github} />
+                <Route path={AppConstants.PATH.settings} />
+            </Route>
+            <Route path='notifications' component={Notifications}/>
+            <Route path='*' component={_404}/>
+        </Route>
     </Route>
-  </Route>
 );

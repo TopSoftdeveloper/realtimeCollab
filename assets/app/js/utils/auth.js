@@ -1,4 +1,3 @@
-import gapi from '../gapi'
 import $ from 'jquery'
 let AppConstants = require('../AppConstants');
 const CLIENT_ID = '300282221041-b0p1s05ukuvuun3b8h2tuevppjkmgdrc.apps.googleusercontent.com'
@@ -17,21 +16,31 @@ export function isLoggedIn() {
 }
 
 export function isLoggedIntoGoogle(callback) {
-    gapi.auth.authorize(
-        {
-            'client_id': CLIENT_ID,
-            'scope': SCOPES,
-            'immediate': true
-        }, callback
-    )
+    var gapiInterval = setInterval(function(){
+        if (gapi.auth){
+            gapi.auth.authorize(
+                {
+                    'client_id': CLIENT_ID,
+                    'scope': SCOPES,
+                    'immediate': true
+                }, callback
+            )
+            clearInterval(gapiInterval)
+        }
+    }, 100)
 }
 
 export function loginGoogle(callback) {
-    gapi.auth.authorize(
-        {
-            'client_id': CLIENT_ID,
-            'scope': SCOPES,
-            'immediate': false
-        }, callback
-    )
+    var gapiInterval = setInterval(function(){
+        if (gapi.auth){
+            gapi.auth.authorize(
+                {
+                    'client_id': CLIENT_ID,
+                    'scope': SCOPES,
+                    'immediate': false
+                }, callback
+            )
+            clearInterval(gapiInterval)
+        }
+    }, 100)
 }

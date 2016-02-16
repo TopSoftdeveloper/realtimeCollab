@@ -19,9 +19,22 @@ export function matchesUrl(a, b) {
 }
 
 export function getCurrentProject() {
-	// prefix: /app/project/
-	const CHARS_IN_PREFIX = 13
-	return window.location.pathname.slice(CHARS_IN_PREFIX)
+	var re = /\/project\/([^\/]+)/i
+	var regexResultArray = re.exec(window.location.pathname)
+	if (regexResultArray) return regexResultArray[1]
+	return ''
+}
+
+export function getCurrentTab() {
+	//Gets the current tab user is on (Milestone, Files, Github, Settings etc.) based on url
+	var re = /\/project\/[^\/]+\/([a-z]+)/i
+	var regexResultArray = re.exec(window.location.pathname)
+	if (regexResultArray) return regexResultArray[1]
+	return ''
+}
+
+export function getProjectRoot() {
+		return '/app/project/' + getCurrentProject()
 }
 
 export function isItemPresent(arr, id) {
