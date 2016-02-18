@@ -5,6 +5,7 @@ var Milestone = require('./controller/milestoneController');
 var Project = require('./controller/projectController');
 var User = require('./controller/userController');
 var Notification = require('./controller/notification/notificationController');
+var Github = require('./controller/githubController')
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
@@ -33,6 +34,8 @@ module.exports.endpoints = [
 
     { method: 'GET',  path: '/notifications', config: Notification.getNotifications },
     { method: 'DELETE',  path: '/notification/{notification_id}', config: Notification.removeNotification },
-    { method: 'PUT',  path: '/notification/{notification_id}', config: Notification.updateNotification }
+    { method: 'PUT',  path: '/notification/{notification_id}', config: Notification.updateNotification },
+
+    { method: 'POST',  path: '/github/oauth/access_token', config: Github.getAccessToken }
 
 ];

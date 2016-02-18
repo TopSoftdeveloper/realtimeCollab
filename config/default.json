@@ -17,5 +17,9 @@
   "authentication": {
     "privateKey": "37LvDSm4XvjYOh9Y",
     "tokenExpirySeconds": 3600000
+  },
+  "github": {
+    "client_secret": "some secret code",
+    "client_id": "3046c6aca85085abda12"
   }
 }

@@ -2,7 +2,7 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
-        getChildrenFiles, getFileInfo, serverUpdateProject} from '../utils/apiUtil'
+        getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -19,6 +19,10 @@ function makeActionCreator(type, ...argNames) {
     }
 }
 
+/**
+ * Reducers listen for action types (the first parameter, referenced through AppConstants)
+ * emitted by dispatched actionCreators
+ */
 export const updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app')
 export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original', 'replacement');
 export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID, 'original', 'replacement');
@@ -47,6 +51,7 @@ export const initTasks = makeActionCreator(AppConstants.INIT_TASKS, 'tasks');
 export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
 export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
 export const initMessages = makeActionCreator(AppConstants.INIT_MESSAGES, 'messages');
+export const _initGithubRepos = makeActionCreator(AppConstants.INIT_GITHUB_REPOS, 'repos');
 
 export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
 export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
@@ -61,13 +66,23 @@ export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_
 
 export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message')
 
-
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
 export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
 
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
+
+
+export function initGithubRepos() {
+    return function(dispatch) {
+        getGithubRepos().done(res => {
+            dispatch(_initGithubRepos(res))
+        }).fail(e => {
+            console.log(e)
+        })
+    }
+}
 
 export function dismissProjectAlert() {
     return function(dispatch) {

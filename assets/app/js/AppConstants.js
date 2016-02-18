@@ -5,6 +5,7 @@ module.exports = {
         github: 'github',
         settings: 'settings'
     },
+    INIT_GITHUB_REPOS: 'INIT_GITHUB_REPOS',
     GITHUB_CLIENT_ID: '3046c6aca85085abda12',
     GOOGLE_CLIENT_ID: '300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com',
     UPDATE_APP_STATUS: 'UPDATE_APP_STATUS',

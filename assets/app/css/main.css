@@ -1,3 +1,25 @@
+/************************ Github **********************/
+.github-repo-list ul, .github-repo-list li {
+  list-style-type: none;
+}
+
+.github-repo-list {
+  overflow-y: scroll;
+  max-height: 50vh;
+}
+
+.github-repo-list li {
+  padding-bottom: 5px;
+  border-bottom: #E2E2E2;
+  border-bottom-style: solid;
+  border-width: thin;
+  min-height: 50px;
+}
+
+.select-repo-btn {
+  float: right;
+}
+
 /********************* task table ************************/
 .main-content {
   margin-top: 50px;
@@ -189,6 +211,10 @@ ul.online-users {
 .body-wrapper {
   position: fixed;
   height: 100%;
+}
+
+.my-step-container {
+  margin-top: 20px;
 }
 
 /******************* Notification List****************************/

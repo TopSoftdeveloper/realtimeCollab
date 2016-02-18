@@ -20,15 +20,22 @@ export function matchesUrl(a, b) {
 
 export function getCurrentProject() {
 	var re = /\/project\/([^\/]+)/i
-	var regexResultArray = re.exec(window.location.pathname)
-	if (regexResultArray) return regexResultArray[1]
-	return ''
+	return extractRegexGroup(re)
 }
 
 export function getCurrentTab() {
 	//Gets the current tab user is on (Milestone, Files, Github, Settings etc.) based on url
 	var re = /\/project\/[^\/]+\/([a-z]+)/i
-	var regexResultArray = re.exec(window.location.pathname)
+	return extractRegexGroup(re)
+}
+
+export function getGithubAuthCode() {
+	var re = /\?code=([^\/&]+)/i
+	return extractRegexGroup(re)
+}
+
+function extractRegexGroup(re) {
+	var regexResultArray = re.exec(window.location.toString())
 	if (regexResultArray) return regexResultArray[1]
 	return ''
 }

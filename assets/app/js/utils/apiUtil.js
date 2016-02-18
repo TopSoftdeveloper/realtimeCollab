@@ -99,6 +99,20 @@ export function serverAcceptProject(projectId) {
     })
 }
 
+export function githubOAuth(code) {
+    return ajaxPost('/github/oauth/access_token', {code: code})
+}
+
+export function getGithubRepos() {
+    return $.ajax({
+        url: 'https://api.github.com/user/repos',
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('github_token')
+        },
+        type: 'GET'
+    })
+}
+
 export function serverDeleteNotification(id) {
     return ajaxDelete('/notification/' + id)
 }

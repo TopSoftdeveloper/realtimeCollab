@@ -6,7 +6,7 @@ import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
 import Files from './Files.jsx'
-import Github from './Github.jsx'
+import Github from './Github/Github.jsx'
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject, getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
 import Tabs from 'material-ui/lib/tabs/tabs'
@@ -30,7 +30,7 @@ class Project extends Component {
     }
 
     render() {   
-        const {alerts, milestones, projects, tasks, users, dispatch, app, files} = this.props
+        const {alerts, milestones, projects, tasks, users, dispatch, app, files, githubRepos} = this.props
         const actions = bindActionCreators(Actions, dispatch)
         const currentProjectId = getCurrentProject()
 
@@ -96,13 +96,9 @@ class Project extends Component {
                          value={AppConstants.PATH.github}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.github)}>
                         <Github
-                            projectName={projectName}
                             projectId={currentProjectId}
-                            basicUsers={basicUsers}
-                            pendingUsers={pendingUsers}
-                            projectCreator={projectCreator}
                             actions={actions}
-                            alerts={alerts}
+                            repos={githubRepos}
                         />
                     </Tab>
                     <Tab label="Settings"
@@ -132,7 +128,8 @@ Project.propTypes = {
     projects: PropTypes.array.isRequired,
     tasks: PropTypes.array.isRequired,    
     users: PropTypes.array.isRequired,
-    files: PropTypes.array.isRequired
+    files: PropTypes.array.isRequired,
+    githubRepos: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
@@ -143,7 +140,8 @@ function mapStateToProps(state) {
         projects: state.projects,
         tasks: state.tasks,
         users: state.users,
-        files: state.files
+        files: state.files,
+        githubRepos: state.githubRepos
     };
 }
 
