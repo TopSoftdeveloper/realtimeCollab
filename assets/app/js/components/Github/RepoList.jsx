@@ -5,7 +5,15 @@ class ListItem extends Component {
     render() {
         return (
             <li>
-                <FlatButton className="select-repo-btn" label="Select" secondary={true}/>
+                <FlatButton
+                    className="select-repo-btn"
+                    label="Select"
+                    secondary={true}
+                    onTouchTap={this.props.setGithubRepo.bind(this,
+                    this.props.projectId,
+                    this.props.name,
+                    this.props.owner)}
+                />
                 <h4><a href={this.props.repoLink} target="_blank">{this.props.primaryText}</a></h4>
                 <p>{this.props.secondaryText}</p>
             </li>
@@ -19,9 +27,13 @@ class List extends Component {
             return (
                 <ListItem
                     key={repo.id}
+                    name={repo.name}
+                    owner={repo.owner.login}
                     primaryText={repo.full_name}
                     secondaryText={repo.description}
                     repoLink={repo.html_url}
+                    setGithubRepo={this.props.setDefaultGithubRepo}
+                    projectId={this.props.projectId}
                 />
             )
         })

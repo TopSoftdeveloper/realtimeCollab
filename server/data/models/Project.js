@@ -7,7 +7,9 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true
         },
         content: DataTypes.TEXT,
-        root_folder: DataTypes.STRING
+        root_folder: DataTypes.STRING,
+        github_repo_name: DataTypes.STRING,
+        github_repo_owner: DataTypes.STRING
     },{
         underscored: true
     });

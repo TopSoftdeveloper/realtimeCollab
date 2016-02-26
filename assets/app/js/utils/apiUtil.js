@@ -113,6 +113,16 @@ export function getGithubRepos() {
     })
 }
 
+export function getGithubEvents(owner, name) {
+    return $.ajax({
+        url: 'https://api.github.com/repos/' + owner + '/' + name + '/events',
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('github_token')
+        },
+        type: 'GET'
+    })
+}
+
 export function serverDeleteNotification(id) {
     return ajaxDelete('/notification/' + id)
 }

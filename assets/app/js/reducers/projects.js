@@ -12,7 +12,9 @@ import assign from 'object-assign';
 //         root_folder: folderId,
 //         directory_structure: [{name: 'upper level directory', id: 123},
 //          {name: 'curr directory', id: 999}],
-//         files_loaded: true
+//         files_loaded: true,
+//         github_repo_name : 'repoName',
+//         github_repo_owner: 'repoOwner'
 //     }             
 // ]
 
@@ -60,6 +62,17 @@ export default function projects(state=[], action) {
                     return assign({}, project, {
                         root_folder : action.dirId,
                         directory_structure: updatedDirStructure
+                    })
+                } else {
+                    return project
+                }
+            })
+        case AppConstants.SET_GITHUB_REPO:
+            return state.map(project => {
+                if (project.id === action.projectId) {
+                    return assign({}, project, {
+                        github_repo_name : action.repoName,
+                        github_repo_owner: action.repoOwner
                     })
                 } else {
                     return project

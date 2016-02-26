@@ -7,13 +7,11 @@ import {GITHUB_CLIENT_ID} from '../../AppConstants'
 import {getGithubAuthCode} from '../../utils/general'
 import {APP_ROOT_URL, PATH} from '../../AppConstants'
 import {githubOAuth} from '../../utils/apiUtil'
-import List from './List.jsx'
+import RepoList from './RepoList.jsx'
+import EventList from './EventList.jsx'
 require('rc-steps/assets/index.css')
 require('rc-steps/assets/iconfont.css')
 import $ from 'jquery'
-
-let repoSet = false
-
 
 class Github extends Component {
     constructor(props, context) {
@@ -33,9 +31,6 @@ class Github extends Component {
                 }
             }).fail(e => console.log(e))
         }
-    }
-
-    componentDidUpdate() {
         if (localStorage.getItem('github_token') &&
             this.props.repos && this.props.repos.length === 0) {
             this.props.actions.initGithubRepos()
@@ -43,17 +38,21 @@ class Github extends Component {
     }
 
     authorize() {
-        let redirectURI = APP_ROOT_URL + '/project/' + this.props.projectId + '/' + PATH.github
+        let redirectURI = APP_ROOT_URL + '/project/' + this.props.project.id + '/' + PATH.github
         window.location.assign('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID +
         '&scope=repo,notifications,user&redirect_uri=' + redirectURI)
     }
 
     render() {
+        let repoName = this.props.project.github_repo_name
+        let repoOwner = this.props.project.github_repo_owner
+        let repoSet = repoName && repoOwner
         if (repoSet) {
             // Case 1: Repository set
             return (
                 <div>
-                    <h1>Repo set</h1>
+                    <h4>{repoOwner}/{repoName} events</h4>
+                    <EventList events={this.props.events} />
                 </div>
             )
         }
@@ -75,7 +74,11 @@ class Github extends Component {
             // Case 3: Authorized but repository not set
             currentStep = 1
             content = (
-                <List repos={this.props.repos} />
+                <RepoList
+                    repos={this.props.repos}
+                    setDefaultGithubRepo={this.props.actions.setDefaultGithubRepo}
+                    projectId={this.props.project.id}
+                />
             )
         }
 

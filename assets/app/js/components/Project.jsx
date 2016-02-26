@@ -30,7 +30,8 @@ class Project extends Component {
     }
 
     render() {   
-        const {alerts, milestones, projects, tasks, users, dispatch, app, files, githubRepos} = this.props
+        const {alerts, milestones, projects, tasks, users, dispatch, app,
+            files, githubRepos, githubEvents} = this.props
         const actions = bindActionCreators(Actions, dispatch)
         const currentProjectId = getCurrentProject()
 
@@ -96,9 +97,10 @@ class Project extends Component {
                          value={AppConstants.PATH.github}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.github)}>
                         <Github
-                            projectId={currentProjectId}
+                            project={currentProject}
                             actions={actions}
                             repos={githubRepos}
+                            events={githubEvents}
                         />
                     </Tab>
                     <Tab label="Settings"
@@ -128,8 +130,7 @@ Project.propTypes = {
     projects: PropTypes.array.isRequired,
     tasks: PropTypes.array.isRequired,    
     users: PropTypes.array.isRequired,
-    files: PropTypes.array.isRequired,
-    githubRepos: PropTypes.array.isRequired
+    files: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
@@ -141,7 +142,8 @@ function mapStateToProps(state) {
         tasks: state.tasks,
         users: state.users,
         files: state.files,
-        githubRepos: state.githubRepos
+        githubRepos: state.githubRepos,
+        githubEvents: state.githubEvents
     };
 }
 

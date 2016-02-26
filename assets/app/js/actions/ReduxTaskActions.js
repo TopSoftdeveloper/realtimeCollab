@@ -2,7 +2,8 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
-        getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos} from '../utils/apiUtil'
+        getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
+        getGithubEvents} from '../utils/apiUtil'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -52,10 +53,10 @@ export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
 export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
 export const initMessages = makeActionCreator(AppConstants.INIT_MESSAGES, 'messages');
 export const _initGithubRepos = makeActionCreator(AppConstants.INIT_GITHUB_REPOS, 'repos');
+export const _addGithubEvents = makeActionCreator(AppConstants.ADD_GITHUB_EVENTS, 'events');
 
 export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
 export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
-
 
 export const addFiles = makeActionCreator(AppConstants.ADD_FILES, 'files');
 export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
@@ -63,6 +64,8 @@ export const _updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'pa
 export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'id', 'directory');
 export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'projectId', 'dirId');
 export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT, 'projectId', 'dirId');
+
+export const _setDefaultGithubRepo = makeActionCreator(AppConstants.SET_GITHUB_REPO, 'projectId', 'repoName', 'repoOwner');
 
 export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message')
 
@@ -82,6 +85,68 @@ export function initGithubRepos() {
             console.log(e)
         })
     }
+}
+
+export function fetchGithubEvents(projectId, owner, name) {
+    return function(dispatch) {
+        getGithubEvents(owner, name).done(res => {
+            console.log(res)
+            let events = res.map(event => {
+                let builtEvent = buildGithubEvent(event)
+                builtEvent.project = projectId
+                return builtEvent
+            })
+            dispatch(_addGithubEvents(events))
+        }).fail(e => {
+            console.log(e)
+        })
+    }
+}
+
+function buildGithubEvent(event) {
+    let ret = {
+        id: event.id,
+        type: event.type,
+        created_at: event.created_at,
+        actor: event.actor,
+    }
+    switch(event.type) {
+        case 'CreateEvent':
+            ret.message = event.actor.login + ' has created the ' + event.payload.ref_type + ' ' + event.payload.ref
+            ret.link_to = event.actor.url
+            break
+        case 'DeleteEvent':
+            ret.message = event.actor.login + ' has deleted the ' + event.payload.ref_type + ' ' + event.payload.ref
+            ret.link_to = event.actor.url
+            break
+        case 'IssueComment':
+            ret.message = event.payload.member.login + ' commented on the issue ' + event.payload.issue.title
+            ret.link_to = event.actor.url
+            break
+        case 'IssuesEvent':
+            ret.message = event.payload.member.login + ' ' + event.payload.action + ' the issue ' + event.payload.issue.title
+            ret.link_to = event.actor.url
+            break
+        case 'MemberEvent':
+            ret.message = event.payload.member.login + ' was ' + event.payload.action + ' to the repository ' +
+                event.repo.name
+            ret.link_to = event.actor.url
+            break
+        case 'PullRequestEvent':
+            ret.message = event.payload.pull_request.user.login + ' has ' + event.payload.action + ' the pull request ' +
+                event.payload.pull_request.title
+            ret.link_to = event.payload.pull_request.url
+            break
+        case 'PushEvent':
+            ret.message = event.actor.login + ' has pushed ' + event.payload.size + ' commits'
+            ret.link_to = event.actor.url
+            break
+        default:
+            ret.message = event.type
+            ret.link_to = event.actor.url
+            break
+    }
+    return ret
 }
 
 export function dismissProjectAlert() {
@@ -125,6 +190,12 @@ export function initializeApp() {
                 dispatch(initProjects(normalizedTables.projects));
                 dispatch(initTasks(normalizedTables.tasks));
                 dispatch(addUsers(normalizedTables.users));
+
+                normalizedTables.projects.forEach(project => {
+                    if (project.github_repo_name && project.github_repo_owner) {
+                        dispatch(fetchGithubEvents(project.id, project.github_repo_owner, project.github_repo_name))
+                    }
+                })
             }
         }).fail(e => {
             window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
@@ -272,6 +343,7 @@ function normalize(projects) {
     let milestoneState = [];
     let taskState = [];
     let userState = [];
+
     projects.forEach(project => {
         // project table
         let currProj = {
@@ -283,7 +355,10 @@ function normalize(projects) {
             pending: [],
             root_folder: project.root_folder,
             directory_structure: [],
-            files_loaded: false
+            files_loaded: false,
+            github_repo_name: project.github_repo_name,
+            github_repo_owner: project.github_repo_owner
+
         };
 
         currProj.milestones = project.milestones.map(milestone => milestone.id);
@@ -389,6 +464,16 @@ export function setDirectoryAsRoot(projectId, folderId) {
     return function(dispatch) {
         serverUpdateProject(projectId, {root_folder: folderId}).done(res => {
             dispatch(_setDirectoryAsRoot(projectId, folderId))
+        }).fail(e => {
+            console.log(e)
+        })
+    }
+}
+
+export function setDefaultGithubRepo(projectId, repoName, repoOwner) {
+    return function(dispatch) {
+        serverUpdateProject(projectId, {github_repo_owner: repoOwner, github_repo_name: repoName}).done(res => {
+            dispatch(_setDefaultGithubRepo(projectId, repoName, repoOwner))
         }).fail(e => {
             console.log(e)
         })

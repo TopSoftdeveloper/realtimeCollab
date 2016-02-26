@@ -20,6 +20,18 @@
   float: right;
 }
 
+.github-event-list {
+  list-style: none;
+  overflow-y: scroll;
+  max-height: 53vh;
+}
+
+.github-event-list  .github-event-item {
+  display: block;
+  padding: 5px;
+  margin-left: -40px;
+}
+
 /********************* task table ************************/
 .main-content {
   margin-top: 50px;
@@ -230,6 +242,7 @@ ul.online-users {
 .notification-list {
   list-style: none;
   max-height: 300px;
+  overflow-y: scroll;
 }
 
 .notification-list .notif-item {

@@ -98,6 +98,12 @@ module.exports = {
         if (payload.root_folder) {
             project.root_folder = payload.root_folder
         }
+        if (payload.github_repo_name) {
+            project.github_repo_name = payload.github_repo_name
+        }
+        if (payload.github_repo_owner) {
+            project.github_repo_owner = payload.github_repo_owner
+        }
         return Project.update(project, {
             where: {
                 id: projectId
@@ -109,7 +115,6 @@ module.exports = {
             return user.getProjects(
             {
                 model: Project,
-                attributes: ['id', 'content', 'root_folder'],
                 joinTableAttributes: [],
                 include: [{
                     model: User, as:'users',
