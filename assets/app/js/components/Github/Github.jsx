@@ -26,13 +26,18 @@ class Github extends Component {
             githubOAuth(code).done(res => {
                 if (!res.error) {
                     localStorage.setItem('github_token', res.access_token)
-                } else {
-
+                    this.props.actions.updateAppStatus({github_token: res.access_token})
                 }
             }).fail(e => console.log(e))
         }
-        if (localStorage.getItem('github_token') &&
-            this.props.repos && this.props.repos.length === 0) {
+        let repoName = this.props.project.github_repo_name
+        let repoOwner = this.props.project.github_repo_owner
+        let repoSet = repoName && repoOwner
+
+        // Default repository not set
+        if (this.props.app.github_token &&
+            this.props.repos && this.props.repos.length === 0 &&
+            !repoSet) {
             this.props.actions.initGithubRepos()
         }
     }
@@ -47,8 +52,8 @@ class Github extends Component {
         let repoName = this.props.project.github_repo_name
         let repoOwner = this.props.project.github_repo_owner
         let repoSet = repoName && repoOwner
-        if (repoSet) {
-            // Case 1: Repository set
+        if (this.props.app.github_token && repoSet) {
+            // Case 1: Authorized and Repository set
             return (
                 <div>
                     <h4>{repoOwner}/{repoName} events</h4>
@@ -61,7 +66,7 @@ class Github extends Component {
         let content = null
         let currentStep = 0
 
-        if (!localStorage.getItem('github_token') && !repoSet) {
+        if (!this.props.app.github_token && !repoSet) {
             // Case 2: Not authorized and repository not set
             content = (
                 <RaisedButton
@@ -79,6 +84,17 @@ class Github extends Component {
                     setDefaultGithubRepo={this.props.actions.setDefaultGithubRepo}
                     projectId={this.props.project.id}
                 />
+            )
+        } else {
+            // Case 4: Repo set but not authorized
+            return (
+                <div className='my-step-container'>
+                    <RaisedButton
+                        label="Authorize"
+                        onTouchTap={this.authorize.bind(this)}
+                        primary={true}
+                    />
+                </div>
             )
         }
 

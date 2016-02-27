@@ -24,7 +24,7 @@ function makeActionCreator(type, ...argNames) {
  * Reducers listen for action types (the first parameter, referenced through AppConstants)
  * emitted by dispatched actionCreators
  */
-export const updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app')
+export const _updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app')
 export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original', 'replacement');
 export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID, 'original', 'replacement');
 export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
@@ -77,29 +77,63 @@ export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
 
 
+function _getGithubRepos(dispatch) {
+    getGithubRepos().done(res => {
+        dispatch(_initGithubRepos(res))
+    }).fail(e => {
+        if (e.statusText === "Unauthorized") {
+            dispatch(_updateAppStatus({github_token: ''}))
+        } else {
+            console.log(e)
+        }
+    })
+}
+
+
+function _getGithubEvents(dispatch, projectId, owner, name) {
+    getGithubEvents(owner, name).done(res => {
+        let events = res.map(event => {
+            let builtEvent = buildGithubEvent(event)
+            builtEvent.project = projectId
+            return builtEvent
+        })
+        dispatch(_addGithubEvents(events))
+    }).fail(e => {
+        if (e.statusText === "Unauthorized") {
+            dispatch(_updateAppStatus({github_token: ''}))
+        } else {
+            console.log(e)
+        }
+    })
+}
+
 export function initGithubRepos() {
     return function(dispatch) {
-        getGithubRepos().done(res => {
-            dispatch(_initGithubRepos(res))
-        }).fail(e => {
-            console.log(e)
-        })
+        if (!localStorage.getItem('github_token')) {
+            setTimeout(function() {
+                _getGithubRepos(dispatch)
+            }, 1000) // delay in case we are still in the midst of getting token
+        } else {
+            _getGithubRepos(dispatch)
+        }
+    }
+}
+
+export function updateAppStatus(obj) {
+    return function(dispatch) {
+        dispatch(_updateAppStatus(obj))
     }
 }
 
 export function fetchGithubEvents(projectId, owner, name) {
     return function(dispatch) {
-        getGithubEvents(owner, name).done(res => {
-            console.log(res)
-            let events = res.map(event => {
-                let builtEvent = buildGithubEvent(event)
-                builtEvent.project = projectId
-                return builtEvent
-            })
-            dispatch(_addGithubEvents(events))
-        }).fail(e => {
-            console.log(e)
-        })
+        if (!localStorage.getItem('github_token')) {
+            setTimeout(function() {
+                _getGithubEvents(dispatch, projectId, owner, name)
+            }, 1000) // delay in case we are still in the midst of getting token
+        } else {
+            _getGithubEvents(dispatch, projectId, owner, name)
+        }
     }
 }
 
@@ -184,7 +218,9 @@ export function initializeApp() {
                 let normalizedTables = normalize(res.projects);
                 dispatch(initApp({
                     current_project: normalizedTables.projects[0].id,
-                    logged_into_google: false
+                    logged_into_google: false,
+                    github_token: localStorage.getItem('github_token'),
+                    refresh_github_token: false
                 }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));

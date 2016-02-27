@@ -65,6 +65,8 @@ class Project extends Component {
         let allActiveUsers = basicUsers.slice()
         if (projectCreator) allActiveUsers.push(projectCreator)
 
+        let events = githubEvents.filter(event => event.project === currentProjectId)
+
         // Set the active tab
         let currentTab = getCurrentTab()
         if (currentTab === '') currentTab = AppConstants.PATH.milestones //default tab
@@ -100,7 +102,8 @@ class Project extends Component {
                             project={currentProject}
                             actions={actions}
                             repos={githubRepos}
-                            events={githubEvents}
+                            events={events}
+                            app={app}
                         />
                     </Tab>
                     <Tab label="Settings"
