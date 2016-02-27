@@ -36,6 +36,7 @@ module.exports.endpoints = [
     { method: 'DELETE',  path: '/notification/{notification_id}', config: Notification.removeNotification },
     { method: 'PUT',  path: '/notification/{notification_id}', config: Notification.updateNotification },
 
-    { method: 'POST',  path: '/github/oauth/access_token', config: Github.getAccessToken }
-
+    { method: 'POST',  path: '/github/oauth/access_token', config: Github.getAccessToken },
+    { method: 'POST',  path: '/github/setup_webhook', config: Github.setupWebhook },
+    { method: 'POST',  path: '/github/webhook', config: Github.webhook }
 ];

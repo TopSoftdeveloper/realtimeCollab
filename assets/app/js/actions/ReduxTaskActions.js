@@ -142,11 +142,13 @@ function buildGithubEvent(event) {
         id: event.id,
         type: event.type,
         created_at: event.created_at,
-        actor: event.actor,
+        actor: event.actor
     }
     switch(event.type) {
         case 'CreateEvent':
-            ret.message = event.actor.login + ' has created the ' + event.payload.ref_type + ' ' + event.payload.ref
+            let ref = event.payload.ref
+            if (!ref) ref = ''
+            ret.message = event.actor.login + ' has created the ' + event.payload.ref_type + ' ' + ref
             ret.link_to = event.actor.url
             break
         case 'DeleteEvent':
@@ -158,7 +160,7 @@ function buildGithubEvent(event) {
             ret.link_to = event.actor.url
             break
         case 'IssuesEvent':
-            ret.message = event.payload.member.login + ' ' + event.payload.action + ' the issue ' + event.payload.issue.title
+            ret.message = event.actor.login + ' ' + event.payload.action + ' the issue ' + event.payload.issue.title
             ret.link_to = event.actor.url
             break
         case 'MemberEvent':
