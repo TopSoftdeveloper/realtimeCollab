@@ -14,15 +14,8 @@ var format = require('string-format');
 function _create(task) {
     return new Promise(function(resolve, reject) {
         var id = shortid.generate();
-        var newTask = {
-            id: id,
-            content: task.content,
-            deadline: task.deadline,
-            is_time_specified: task.is_time_specified,
-            milestone_id: task.milestone_id,
-            completed_on: task.completed_on
-        };
-        Task.create(newTask).catch(function (error) {
+        task.id = id;
+        Task.create(task).catch(function (error) {
             console.log(error);
             var errorList = error.errors;
             if (errorList === undefined || errorList.length !== 1 ||
@@ -32,7 +25,7 @@ function _create(task) {
                 _create(task);
             }
         }).then(function() {
-            resolve(newTask);
+            resolve(task);
         });
     });
 }
@@ -204,8 +197,7 @@ module.exports = {
         return User.isExist(email);
     },
     createUser: function(user) {
-        var id = shortid.generate();
-        user.id = id;
+        user.id = shortid.generate();
         return User.create(user);
     },
     markDone: function(task_id) {
@@ -247,9 +239,14 @@ module.exports = {
                 {
                     model: Task,
                     attributes: ['id', 'content', 'deadline', 'completed_on',
-                        'is_time_specified']
+                        'is_time_specified', 'project_id', 'github_id']
                 }             
             ]
+        })
+    },
+    getMilestonesWithCondition: function(condition) {
+        return Milestone.findAll({
+            where: condition
         })
     },
     getAllTasks: function() {
@@ -257,6 +254,18 @@ module.exports = {
     },
     getTask: function(task_id) {
         return Task.getTask(task_id);
+    },
+    getTasksAndMilestones: function(projectId) {
+        return Task.findAll({
+            where: {
+                project_id: projectId
+            },
+            include: [
+                {
+                    model: Milestone
+                }
+            ]
+        })
     },
     getMilestone: function(milestone_id) {
         return Milestone.getMilestone(milestone_id);
@@ -279,15 +288,37 @@ module.exports = {
         }
         return _create(task);
     },
+    findOrCreateTask: function(task)  {
+        return Task.find({
+            where: {
+                github_id: task.github_id
+            }
+        }).then(function(t) {
+            if (!t) {
+                task.id = shortid.generate()
+                return Task.create(task)
+            }
+            return new Promise(function(resolve, reject) {resolve(t)})
+        })
+    },
+    findOrCreateMilestone: function(milestone) {
+        return Milestone.find({
+            where: {
+                github_id: milestone.github_id
+            }
+        }).then(function(m) {
+            if (!m) {
+                milestone.id = shortid.generate()
+                return Milestone.create(milestone)
+            }
+            return new Promise(function(resolve, reject) {resolve(m)})
+        })
+    },
     createMilestone: function(milestone) {
         return new Promise(function(resolve, reject) {
             var id = shortid.generate();
-            Milestone.create({
-                id: id,
-                content: milestone.content,
-                deadline: milestone.deadline,
-                project_id: milestone.project_id
-            }).catch(function (error) {
+            milestone.id = id
+            Milestone.create(milestone).catch(function (error) {
                 var errorList = error.errors;
                 if (errorList === undefined) {
                     reject(error);

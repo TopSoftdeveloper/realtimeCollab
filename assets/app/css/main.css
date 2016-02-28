@@ -4,7 +4,7 @@
 }
 
 .github-repo-list {
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 50vh;
 }
 
@@ -22,7 +22,7 @@
 
 .github-event-list {
   list-style: none;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 53vh;
 }
 
@@ -39,11 +39,12 @@
 }
 
 .milestone-view, .files-list {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .milestone-view {
   max-height: 60vh;
+  min-height: 50vh;
 }
 
 .files-list {
@@ -218,6 +219,7 @@ ul.online-users {
 
 .task-table {
   margin-left:250px;
+  z-index: 1500;
 }
 
 .body-wrapper {
@@ -242,7 +244,7 @@ ul.online-users {
 .notification-list {
   list-style: none;
   max-height: 300px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .notification-list .notif-item {

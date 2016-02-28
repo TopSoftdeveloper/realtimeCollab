@@ -38,5 +38,6 @@ module.exports.endpoints = [
 
     { method: 'POST',  path: '/github/oauth/access_token', config: Github.getAccessToken },
     { method: 'POST',  path: '/github/setup_webhook', config: Github.setupWebhook },
-    { method: 'POST',  path: '/github/webhook', config: Github.webhook }
+    { method: 'POST',  path: '/github/webhook', config: Github.webhook },
+    { method: 'POST',  path: '/github/sync/{project_id}', config: Github.sync }
 ];

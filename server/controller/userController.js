@@ -54,15 +54,15 @@ function populate(request, reply) {
         }
         storage.getProjectsOfUser(request.params.user_id).then(function(projects) {
             var filteredProjects = filterPending(projects, decoded.user_id);
-            Promise.map(filteredProjects, function(project) {
-                return storage.getMilestonesWithTasks(project.id);
-            }).then(function(milestones) {
+            Promise.map(filteredProjects, function(project) { // only use projects which are not pending
+                return storage.getTasksAndMilestones(project.id);
+            }).then(function(tasks) {
                 var projectsData = JSON.parse(JSON.stringify(filteredProjects));
-                var milestonesData = JSON.parse(JSON.stringify(milestones));
-                milestonesData = milestonesData.map(function(arr) {
-                    return {milestones: arr};
+                var tasksData = JSON.parse(JSON.stringify(tasks));
+                tasksData = tasksData.map(function(arr) {
+                    return {tasks: arr};
                 });
-                reply({projects:_.merge(normalize(projectsData), milestonesData)});
+                reply({projects:_.merge(normalize(projectsData), tasksData)});
             });
         });
     })

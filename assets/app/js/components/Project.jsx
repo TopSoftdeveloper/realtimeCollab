@@ -57,10 +57,8 @@ class Project extends Component {
         let milestonesInProj = milestones.filter(
             milestone => milestone.project_id === currentProjectId);
 
-        let milestoneIds = this.getMilestoneIds(milestonesInProj);
-
         let tasksInProj = tasks.filter(
-            task => isItemPresent(milestoneIds, task.milestone_id));
+            task => task.project_id === currentProjectId);
 
         let allActiveUsers = basicUsers.slice()
         if (projectCreator) allActiveUsers.push(projectCreator)

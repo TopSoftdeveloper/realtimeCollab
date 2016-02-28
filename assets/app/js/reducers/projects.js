@@ -9,6 +9,7 @@ import assign from 'object-assign';
 //         basic: ['uid2'],
 //         pending: ['user_who_was_invited'],
 //         milestones: ['mid1', 'mid2'],
+//         tasks: [],
 //         root_folder: folderId,
 //         directory_structure: [{name: 'upper level directory', id: 123},
 //          {name: 'curr directory', id: 999}],

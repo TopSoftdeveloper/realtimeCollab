@@ -53,16 +53,28 @@ class MilestoneRow extends Component {
                 onTouchTap={this.onDialogSubmit.bind(this)} />
         ]
 
+        let iconMenu = null
+        if (this.props.onDeleteMilestone) {
+            iconMenu = <IconMenu
+                className="more-vert-btn"
+                iconButtonElement={iconButtonElement}
+                openDirection="bottom-right">
+                <MenuItem primaryText="Add Task" onClick={this.openModal.bind(this)}/>
+                <MenuItem primaryText="Delete Milestone" onClick={this.deleteMilestone.bind(this)}/>
+            </IconMenu>
+        } else {
+            iconMenu = <IconMenu
+                className="more-vert-btn"
+                iconButtonElement={iconButtonElement}
+                openDirection="bottom-right">
+                <MenuItem primaryText="Add Task" onClick={this.openModal.bind(this)}/>
+            </IconMenu>
+        }
+
         return (
             <div className="milestone-row">
                 <h3 className="milestone-header">{this.props.milestone}</h3>
-                <IconMenu
-                    className="more-vert-btn"
-                    iconButtonElement={iconButtonElement}
-                    openDirection="bottom-right">
-                    <MenuItem primaryText="Add Task" onClick={this.openModal.bind(this)}/>
-                    <MenuItem primaryText="Delete Milestone" onClick={this.deleteMilestone.bind(this)}/>
-                </IconMenu>
+                    {iconMenu}
                 <div className="clearfix"></div>
 
                 <Dialog

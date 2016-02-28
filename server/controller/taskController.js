@@ -21,9 +21,9 @@ module.exports = {
                 content: Joi.string().required(),
                 deadline: Joi.string().isoDate().default(null),
                 is_time_specified: Joi.boolean().default(false),
-                milestone_id: Joi.string().required(),
                 project_id: Joi.string().required(),
-                completed_on: Joi.string().isoDate().default(null)
+                completed_on: Joi.string().isoDate().default(null),
+                milestone_id: Joi.string().default(null)
             }
         }
     },
@@ -117,7 +117,8 @@ function createTask(request, reply) {
         deadline: request.payload.deadline,
         is_time_specified: request.payload.is_time_specified,
         milestone_id: request.payload.milestone_id,
-        completed_on: null
+        completed_on: null,
+        project_id: request.payload.project_id
     };
     storage.createTask(task).then(function(newTask) {
         Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {

@@ -8,6 +8,7 @@ var config = require('config')
 var helper = require('../utils/helper')
 var notifications = require('./notification/notificationController')
 var templates = require('./notification/templates')
+var accessControl = require('./accessControl');
 
 var _ = require('lodash')
 
@@ -155,10 +156,10 @@ function getProject(request, reply) {
                 reply(Boom.forbidden(constants.FORBIDDEN));
                 return;
             }
-            storage.getMilestonesWithTasks(request.params.project_id).then(function(milestones) {
+            storage.getTasksAndMilestones(request.params.project_id).then(function(tasks) {
                 reply({
                     status: constants.STATUS_OK,
-                    milestones: milestones
+                    tasks: tasks
                 })
             });
         });

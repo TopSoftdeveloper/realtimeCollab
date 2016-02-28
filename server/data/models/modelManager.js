@@ -29,6 +29,7 @@ modelFiles.forEach(function(model) {
 
 (function(m) {
     m.Task.belongsTo(m.Milestone);
+    m.Task.belongsTo(m.Project);
 
     m.Milestone.belongsTo(m.Project);
     m.Milestone.hasMany(m.Task);

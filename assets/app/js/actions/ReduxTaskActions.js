@@ -4,6 +4,7 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
         getGithubEvents} from '../utils/apiUtil'
+import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
 
@@ -155,8 +156,8 @@ function buildGithubEvent(event) {
             ret.message = event.actor.login + ' has deleted the ' + event.payload.ref_type + ' ' + event.payload.ref
             ret.link_to = event.actor.url
             break
-        case 'IssueComment':
-            ret.message = event.payload.member.login + ' commented on the issue ' + event.payload.issue.title
+        case 'IssueCommentEvent':
+            ret.message = event.actor.login + ' commented on the issue ' + event.payload.issue.title
             ret.link_to = event.actor.url
             break
         case 'IssuesEvent':
@@ -387,7 +388,8 @@ function normalize(projects) {
         let currProj = {
             id: project.id, 
             content: project.content, 
-            milestones: [], 
+            milestones: [],
+            tasks: [],
             creator: '', 
             basic: [], 
             pending: [],
@@ -399,19 +401,26 @@ function normalize(projects) {
 
         };
 
-        currProj.milestones = project.milestones.map(milestone => milestone.id);
 
-        // milestone table
-        project.milestones.forEach(milestone => {
-            let currMilestone = assign({}, milestone, {tasks: []});
-            currMilestone.tasks = milestone.tasks.map(task => task.id);
-            currMilestone.project_id = project.id;
-            milestoneState.push(currMilestone);
-
+        project.tasks.forEach(task => {
             // task table
-            taskState = taskState.concat(milestone.tasks.map(task =>
-                assign({}, task, {milestone_id : milestone.id})));
+            let currMilestone = task.milestone
+            delete task['milestone']
+            if (currMilestone) {
+                task.milestone_id = currMilestone.id
+            } else {
+                task.milestone_id = null
+            }
+            taskState.push(task)
+
+            // milestone table
+            if (currMilestone && !isObjectPresent(milestoneState, currMilestone.id)) {
+                milestoneState.push(currMilestone);
+            }
         });
+
+        currProj.milestones = milestoneState.map(milestone => milestone.id);
+        currProj.tasks = taskState.map(task => task.id)
 
         // fill in user table and update project table
         project.users.forEach(user => {

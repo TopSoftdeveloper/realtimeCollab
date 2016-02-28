@@ -48,6 +48,13 @@ export function isItemPresent(arr, id) {
 	return arr.indexOf(id) >= 0;
 }
 
+export function isObjectPresent(arr, id) {
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i].id === id) return true
+	}
+	return false
+}
+
 export function getUserAvatar(imgSrc, displayName, enableTooltip) {
 	let image = null
 	if (imgSrc && imgSrc !== 'undefined') {

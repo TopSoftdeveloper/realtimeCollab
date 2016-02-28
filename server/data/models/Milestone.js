@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true
         },
         content: DataTypes.TEXT,
-        deadline: DataTypes.DATE
+        deadline: DataTypes.DATE,
+        github_id: DataTypes.STRING
     }, {
         underscored: true,
         classMethods: {

@@ -16,15 +16,16 @@ class MilestoneView extends Component {
     /****************************************************************************/
 
     addTask(milestone_id, content) {
-        this.props.actions.addTask({
+        let task = {
             id: _.uniqueId('task'), //temp id
             deadline: null,
             is_time_specified: false,
             content: content,
             completed_on: null,
-            milestone_id: milestone_id,
             project_id: this.props.projectId
-        });      
+        }
+        if (milestone_id) task.milestone_id = milestone_id
+        this.props.actions.addTask(task);
     }
 
     deleteTask(task_id) {
@@ -52,6 +53,44 @@ class MilestoneView extends Component {
 
     render() {
         let rows = [];
+        let tasksWithoutMilestones = this.props.tasks.filter(task => !task.milestone_id)
+        if (tasksWithoutMilestones.length > 0) {
+            rows.push(<MilestoneRow
+                milestone={'Uncategorized'}
+                key={'uncategorized-tasks'}
+                onAddTask={this.addTask.bind(this, null)}
+                onDeleteMilestone={false}
+            />)
+            tasksWithoutMilestones.forEach(task => {
+                if (task.completed_on === null &&
+                    task.dirty !== true) {
+                    rows.push(<ListItem
+                        key={_.uniqueId('task')}
+                        primaryText={task.content}
+                        leftCheckbox={
+                        <Checkbox
+                            onCheck={this.markDone.bind(this, task.id)}
+                        />
+                    }
+                        rightIconButton={
+                        <IconButton onClick={this.deleteTask.bind(this, task.id)}>
+                            <Remove/>
+                        </IconButton>
+                    }
+                    />)
+                }
+            })
+
+            let completedTasks = tasksWithoutMilestones.filter(task => task.completed_on !== null)
+            if (completedTasks.length > 0) {
+                rows.push(<CompletedRow
+                    key={_.uniqueId('completed')}
+                    completedTasks={completedTasks}
+                />)
+            }
+
+            rows.push(<ListDivider key={_.uniqueId('divider')}/>)
+        }
 
         this.props.milestones.forEach(milestone => {
             rows.push(<MilestoneRow
