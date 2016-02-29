@@ -2,7 +2,6 @@ var constants = require('../constants');
 var Joi = require('joi');
 var Boom = require('boom');
 var config = require('config');
-var req = require('request');
 var Jwt = require('jsonwebtoken')
 var storage = require('../data/storage')
 var helper = require('../utils/helper')
@@ -13,6 +12,8 @@ var secret_key = config.get('authentication.privateKey')
 var localtunnel = require('localtunnel');
 var GITHUB_ENDPOINT = 'https://api.github.com'
 var Sequelize = require('sequelize');
+var Promise = require("bluebird");
+var req = require("request")
 
 // localtunnel helps us test webhooks on localhost
 //var tunnel = localtunnel(4000, function(err, tunnel) {
@@ -20,7 +21,15 @@ var Sequelize = require('sequelize');
 //        console.log(err)
 //    }
 //});
-var MILESTONE_MAPPING = {} // maps github milestone id to our own milestone ids
+/**
+ * Maps Collab milestone IDs to github milestone number
+ * Too add a github issue to a github milestone, we need the milestone NUMBER, not milestone ID
+ */
+var MILESTONE_MAPPING = {}
+/**
+ * Maps Github milestone ID to Collab milestone ID
+ */
+var MILESTONE_ID_MAPPING = {}
 
 module.exports = {
     getAccessToken: {
@@ -69,6 +78,116 @@ module.exports = {
     }
 };
 
+function addCollabMilestonesToGithub(owner, name, token, projectId) {
+    return new Promise(function(RESOLVE, REJECT) {
+        storage.getMilestonesWithCondition({github_id: null, project_id: projectId}).done(function(milestones) {
+            var promises = []
+            milestones.forEach(function(milestone) {
+                var options = {
+                    url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/milestones',
+                    headers: {
+                        'User-Agent': 'Collab',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    form: JSON.stringify({title: milestone.content})
+                }
+                promises.push(
+                    POSTMilestoneToGithub(options, milestone.id)
+                )
+            }) // milestones.forEach
+            Promise.all(promises).then(function(p) {
+                RESOLVE(p)
+            }).catch(function(err) {
+                REJECT(err)
+            })
+        }) // getMilestonesWithCondition
+    })
+}
+
+function POSTMilestoneToGithub(options, milestoneId) {
+    return new Promise(function (resolve, reject) {
+        req.post(options, function(err, res, body) {
+            if (err) {
+                console.log(err)
+                return reject(err)
+            }
+            var parsedBody = JSON.parse(body)
+            if (parsedBody.number) {
+                MILESTONE_MAPPING[milestoneId] = parsedBody.number
+                storage.updateMilestone({github_id: parsedBody.id, github_number: parsedBody.number}, milestoneId).done(function() {
+                    resolve(true)
+                })
+            } else {
+                return reject(err)
+            }
+        })
+    })
+}
+
+function POSTIssueToGithub(options, taskId) {
+    return new Promise(function (resolve, reject) {
+        req.post(options, function(err, res, body) {
+            if (err) {
+                return reject(err)
+            }
+            var parsedBody = JSON.parse(body)
+            if (parsedBody.id) {
+                storage.updateTask({github_id: parsedBody.id, github_number: parsedBody.number}, taskId).done(function(res) {
+                    resolve(res)
+                })
+            } else {
+                return reject(err)
+            }
+        })
+    })
+}
+
+function addCollabTasksToGithub(owner, name, token, projectId) {
+    return new Promise(function (RESOLVE, REJECT) {
+        storage.getTasksWithCondition({github_id: null, project_id: projectId}).done(function(tasks) {
+            var promises = []
+            tasks.forEach(function(task) {
+                var options = {
+                    url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/issues',
+                    headers: {
+                        'User-Agent': 'Collab',
+                        'Authorization': 'Bearer ' + token
+                    }
+                }
+
+                var issueToPOST = {
+                    title: task.content
+                }
+
+                if (task.milestone_id) { // we need the corresponding github milestone NUMBER
+                    var idInMemory = MILESTONE_MAPPING[task.milestone_id]
+                    if (idInMemory) {
+                        issueToPOST.milestone = idInMemory
+                        options.form = JSON.stringify(issueToPOST)
+                        promises.push(POSTIssueToGithub(options, task.id))
+                    } else {
+                        storage.getMilestone(task.milestone_id).done(function(milestone) {
+                            milestone = JSON.parse(JSON.stringify(milestone))
+                            MILESTONE_MAPPING[milestone.id] = milestone.github_number
+                            issueToPOST.milestone = milestone.github_number
+                            options.form = JSON.stringify(issueToPOST)
+                            promises.push(POSTIssueToGithub(options, task.id))
+                        })
+                    }
+                } else {
+                    options.form = JSON.stringify(issueToPOST)
+                    promises.push(POSTIssueToGithub(options, task.id))
+                }
+            }) // tasks.forEach
+            Promise.all(promises).then(function(p) {
+                RESOLVE(p)
+            }).catch(function(err) {
+                REJECT(err)
+            })
+        }) // getTasksWithCondition
+    })
+}
+
 function addGithubMilestonesToDB(milestones, projectId) {
     var promises = []
     milestones.forEach(function(githubMilestone) {
@@ -76,7 +195,8 @@ function addGithubMilestonesToDB(milestones, projectId) {
             content: githubMilestone.title,
             deadline: githubMilestone.due_on,
             project_id: projectId,
-            github_id: githubMilestone.id
+            github_id: githubMilestone.id,
+            github_number: githubMilestone.number
         }
         promises.push(storage.findOrCreateMilestone(milestone))
     })
@@ -92,18 +212,19 @@ function addGithubIssuesToDB(issues, projectId) {
             is_time_specified: false,
             completed_on: issue.closed_at,
             github_id: issue.id,
+            github_number: issue.number,
             project_id: projectId
         }
         if (issue.milestone) {
-            if (MILESTONE_MAPPING[issue.milestone.id]) {
-                task.milestone_id = MILESTONE_MAPPING[issue.milestone.id]
+            if (MILESTONE_ID_MAPPING[issue.milestone.id]) {
+                task.milestone_id = MILESTONE_ID_MAPPING[issue.milestone.id]
                 promises.push(storage.findOrCreateTask(task))
             } else {
                 var milestonePromise = storage.getMilestonesWithCondition({github_id: issue.milestone.id})
                 promises.push(milestonePromise)
                 milestonePromise.done(function(milestones) {
-                    MILESTONE_MAPPING[issue.milestone.id] = milestones[0].id
-                    task.milestone_id = MILESTONE_MAPPING[issue.milestone.id]
+                    MILESTONE_ID_MAPPING[issue.milestone.id] = milestones[0].id
+                    task.milestone_id = MILESTONE_ID_MAPPING[issue.milestone.id]
                     promises.push(storage.findOrCreateTask(task))
                 })
             }
@@ -114,7 +235,7 @@ function addGithubIssuesToDB(issues, projectId) {
     return Sequelize.Promise.all(promises)
 }
 
-function githubIssuesToCollab(owner, name, token, reply, projectId) {
+function addGithubIssuesToCollab(owner, name, token, projectId) {
     var issueOptions = {
         url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/issues?state=all',
         headers: {
@@ -122,19 +243,49 @@ function githubIssuesToCollab(owner, name, token, reply, projectId) {
             'Authorization': 'Bearer ' + token
         }
     }
-    req.get(issueOptions , function(err, res, body) {
-        if (err) {
-            reply(err)
-            return
+    return new Promise(function (resolve, reject) {
+        req.get(issueOptions , function(err, res, body) {
+            if (err) {
+                return reject(err)
+            }
+            var githubIssues = JSON.parse(body)
+            if (githubIssues.length === 0) {
+                return resolve(true)
+            } else {
+                addGithubIssuesToDB(githubIssues, projectId).done(function(tasks) {
+                    return resolve(tasks)
+                })
+            }
+        })
+    })
+}
+
+function addGithubMilestonesToCollab(owner, name, token, projectId) {
+    var milestoneOptions = {
+        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/milestones?state=all',
+        headers: {
+            'User-Agent': 'Collab',
+            'Authorization': 'Bearer ' + token
         }
-        var githubIssues = JSON.parse(body)
-        if (githubIssues.length === 0) {
-            reply({message: 'No issues to add'})
-        } else {
-            addGithubIssuesToDB(githubIssues, projectId).done(function() {
-                reply({status: 'OK'})
-            })
-        }
+    }
+    return new Promise(function (resolve, reject) {
+        req.get(milestoneOptions, function(err, res, body) {
+            if (err) {
+                return reject(err)
+            }
+            var githubMilestones = JSON.parse(body)
+            if (githubMilestones.length > 0) {
+                addGithubMilestonesToDB(githubMilestones, projectId).done(function(milestones) {
+                    milestones.forEach(function(m) {
+                        MILESTONE_MAPPING[m.id] = m.github_number
+                        MILESTONE_ID_MAPPING[m.github_id] = m.id
+                    })
+                    return resolve(milestones)
+                })
+            } else {
+                return resolve(true)
+            }
+        })
     })
 }
 
@@ -142,6 +293,7 @@ function syncHandler(request, reply) {
     /**
      * Syncs Github issues, milestones etc. with Collab's
      * Should be used when a project is initially connected to Github
+     * Milestones should always be added first (before issues/tasks)
      */
     var projectId = request.params.project_id
     var owner = request.payload.owner
@@ -155,41 +307,24 @@ function syncHandler(request, reply) {
                 return;
             }
 
-            var milestoneOptions = {
-                url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/milestones?state=all',
-                headers: {
-                    'User-Agent': 'Collab',
-                    'Authorization': 'Bearer ' + token
-                }
-            }
-
-            req.get(milestoneOptions, function(err, res, body) {
-                if (err) {
-                    console.log(err)
-                    reply(err)
-                    return
-                }
-                var githubMilestones = JSON.parse(body)
-                if (githubMilestones.length > 0) {
-                    addGithubMilestonesToDB(githubMilestones, projectId).done(function(milestones) {
-                        milestones.forEach(function(m) {
-                            MILESTONE_MAPPING[m.github_id] = m.id
+            addGithubMilestonesToCollab(owner, name, token, projectId).then(function() {
+                addGithubIssuesToCollab(owner, name, token, projectId).then(function() {
+                    addCollabMilestonesToGithub(owner, name, token, projectId).then(function() {
+                        addCollabTasksToGithub(owner, name, token, projectId).then(function() {
+                            reply({status: 'OK'})
+                        }, function(err) {
+                            reply(err)
                         })
-                        githubIssuesToCollab(owner, name, token, reply, projectId)
+                    }, function(err) {
+                        reply(err)
                     })
-                } else {
-                    githubIssuesToCollab(owner, name, token, reply, projectId)
-                }
+                }, function(err) {
+                    reply(err)
+                })
+            }, function(err) {
+                reply(err)
             })
-
-
-            // Get all collab issues, add to github
-
-            // Save returned IDs
-
-
         })
-
     })
 }
 
@@ -239,9 +374,7 @@ function setupWebhook(request, reply) {
 }
 
 function webhookHandler(request, reply) {
-    console.log('************************ HEADERS *************************')
     var headers = request.headers
-    console.log(headers['x-github-event'])
     switch (headers['x-github-event']) {
         case 'issues':
             break
@@ -250,9 +383,6 @@ function webhookHandler(request, reply) {
         default:
             break
     }
-
-    console.log('************************ PAYLOAD *************************')
-    console.log(request.payload)
     reply({status: 'ok'})
 }
 

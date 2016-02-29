@@ -209,25 +209,19 @@ module.exports = {
                 where: {id: task_id}
             })
     },
-    updateTask: function(task_id, completed_on, is_time_specified, deadline, content) {
-        var task = {}
-        if (completed_on !== null) {
-            task.completed_on = completed_on
-        }
-        if (is_time_specified !== null) {
-            task.is_time_specified = is_time_specified
-        }
-        if (deadline !== null) {
-            task.deadline = deadline
-        }
-        if (content !== null) {
-            task.content = content
-        }
-        return Task.update(
-            task,
-            {
-                where: {id: task_id}
-            })
+    updateTask: function(task, taskId) {
+        return Task.update(task, {
+            where: {
+                id: taskId
+            }
+        })
+    },
+    updateMilestone: function(milestone, milestoneId) {
+        return Milestone.update(milestone, {
+            where: {
+                id: milestoneId
+            }
+        })
     },
     getMilestonesWithTasks: function(project_id) {
         return Milestone.findAll({
@@ -246,6 +240,11 @@ module.exports = {
     },
     getMilestonesWithCondition: function(condition) {
         return Milestone.findAll({
+            where: condition
+        })
+    },
+    getTasksWithCondition: function(condition) {
+        return Task.findAll({
             where: condition
         })
     },
@@ -268,7 +267,7 @@ module.exports = {
         })
     },
     getMilestone: function(milestone_id) {
-        return Milestone.getMilestone(milestone_id);
+        return Milestone.find({where : {id: milestone_id}});
     },
     doesTaskExist: function(task_id) {
         return Task.isExist(task_id);

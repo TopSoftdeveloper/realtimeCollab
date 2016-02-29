@@ -10,7 +10,8 @@ module.exports = function(sequelize, DataTypes) {
         deadline: DataTypes.DATE,
         completed_on: DataTypes.DATE,
         is_time_specified: DataTypes.BOOLEAN,
-        github_id: DataTypes.STRING
+        github_id: DataTypes.BIGINT,
+        github_number: DataTypes.INTEGER
     },{
         underscored: true,
         classMethods: {

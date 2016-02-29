@@ -35,15 +35,6 @@ module.exports = {
         handler: updateTask,
         payload: {
             parse: true
-        },
-        validate: {
-            payload: {
-                project_id: Joi.string().required(),
-                content: Joi.string().default(null),
-                deadline: Joi.string().isoDate().default(null),
-                completed_on: Joi.string().isoDate().default(null),
-                is_time_specified: Joi.boolean().default(null)
-            }
         }
     },
     markComplete: {
@@ -74,8 +65,7 @@ module.exports = {
 function updateTask(request, reply) {
     var task_id = request.params.task_id;
     var payload = request.payload
-    storage.updateTask(task_id,  payload.completed_on, payload.is_time_specified,
-        payload.deadline, payload.content).then(function() {
+    storage.updateTask(payload, task_id).then(function() {
             reply({
                 status: constants.STATUS_OK
             });
