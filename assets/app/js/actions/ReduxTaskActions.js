@@ -3,7 +3,7 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
-        getGithubEvents} from '../utils/apiUtil'
+        getGithubEvents, syncGithubIssues} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -113,7 +113,7 @@ export function initGithubRepos() {
         if (!localStorage.getItem('github_token')) {
             setTimeout(function() {
                 _getGithubRepos(dispatch)
-            }, 1000) // delay in case we are still in the midst of getting token
+            }, 5000) // delay in case we are still in the midst of getting token
         } else {
             _getGithubRepos(dispatch)
         }
@@ -168,6 +168,7 @@ function buildGithubEvent(event) {
             ret.message = event.payload.member.login + ' was ' + event.payload.action + ' to the repository ' +
                 event.repo.name
             ret.link_to = event.actor.url
+            ret.actor = event.payload.member
             break
         case 'PullRequestEvent':
             ret.message = event.payload.pull_request.user.login + ' has ' + event.payload.action + ' the pull request ' +
@@ -223,7 +224,10 @@ export function initializeApp() {
                     current_project: normalizedTables.projects[0].id,
                     logged_into_google: false,
                     github_token: localStorage.getItem('github_token'),
-                    refresh_github_token: false
+                    refresh_github_token: false,
+                    github: {
+                        loading: false
+                    }
                 }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
@@ -517,10 +521,31 @@ export function setDirectoryAsRoot(projectId, folderId) {
     }
 }
 
-export function setDefaultGithubRepo(projectId, repoName, repoOwner) {
+export function syncWithGithub(projectId, repoName, repoOwner) {
     return function(dispatch) {
         serverUpdateProject(projectId, {github_repo_owner: repoOwner, github_repo_name: repoName}).done(res => {
             dispatch(_setDefaultGithubRepo(projectId, repoName, repoOwner))
+            dispatch(_updateAppStatus({
+                github: {
+                    loading: true
+                }
+            }))
+            syncGithubIssues(projectId, repoName, repoOwner).done(res => {
+                serverPopulate().done(res => {
+                    if (res.projects.length > 0) {
+                        let normalizedTables = normalize(res.projects);
+                        dispatch(initMilestones(normalizedTables.milestones));
+                        dispatch(initTasks(normalizedTables.tasks));
+                    }
+                    dispatch(_updateAppStatus({
+                        github: {
+                            loading: false
+                        }
+                    }))
+                }).fail(e => {
+                    window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+                });
+            })
         }).fail(e => {
             console.log(e)
         })

@@ -9,6 +9,7 @@ import {APP_ROOT_URL, PATH} from '../../AppConstants'
 import {githubOAuth} from '../../utils/apiUtil'
 import RepoList from './RepoList.jsx'
 import EventList from './EventList.jsx'
+import LoadingIndicator from '../LoadingIndicator.jsx'
 require('rc-steps/assets/index.css')
 require('rc-steps/assets/iconfont.css')
 import $ from 'jquery'
@@ -16,6 +17,43 @@ import $ from 'jquery'
 class Github extends Component {
     constructor(props, context) {
         super(props, context)
+    }
+
+    setLoadingTrue() {
+        this.props.actions.updateAppStatus({
+            github: {
+                loading: true
+            }
+        })
+    }
+
+    setLoadingFalse() {
+        this.props.actions.updateAppStatus({
+            github: {
+                loading: false
+            }
+        })
+    }
+
+    syncWithGithub(projectId, repoName, repoOwner) {
+        this.setLoadingTrue()
+        this.props.actions.syncWithGithub(projectId, repoName, repoOwner)
+    }
+
+    componentDidUpdate() {
+        let repoName = this.props.project.github_repo_name
+        let repoOwner = this.props.project.github_repo_owner
+        let repoSet = repoName && repoOwner
+        // Default repository not set
+        if (this.props.app.github_token &&
+            this.props.repos && this.props.repos.length === 0 &&
+            !repoSet) {
+            this.props.actions.initGithubRepos()
+        }
+        // Events not initialized
+        if (this.props.app.github_token && this.props.events && this.props.events.length === 0) {
+            this.props.actions.fetchGithubEvents(this.props.project.id, repoOwner, repoName)
+        }
     }
 
     componentDidMount() {
@@ -30,16 +68,6 @@ class Github extends Component {
                 }
             }).fail(e => console.log(e))
         }
-        let repoName = this.props.project.github_repo_name
-        let repoOwner = this.props.project.github_repo_owner
-        let repoSet = repoName && repoOwner
-
-        // Default repository not set
-        if (this.props.app.github_token &&
-            this.props.repos && this.props.repos.length === 0 &&
-            !repoSet) {
-            this.props.actions.initGithubRepos()
-        }
     }
 
     authorize() {
@@ -49,14 +77,20 @@ class Github extends Component {
     }
 
     render() {
+        let app = this.props.app
+        if (app.github.loading) {
+            return <LoadingIndicator/>
+        }
+
         let repoName = this.props.project.github_repo_name
         let repoOwner = this.props.project.github_repo_owner
         let repoSet = repoName && repoOwner
-        if (this.props.app.github_token && repoSet) {
+
+        if (app.github_token && repoSet) {
             // Case 1: Authorized and Repository set
             return (
                 <div>
-                    <h4>{repoOwner}/{repoName} events</h4>
+                    <h4>{repoOwner}/{repoName}</h4>
                     <EventList events={this.props.events} />
                 </div>
             )
@@ -66,7 +100,7 @@ class Github extends Component {
         let content = null
         let currentStep = 0
 
-        if (!this.props.app.github_token && !repoSet) {
+        if (!app.github_token && !repoSet) {
             // Case 2: Not authorized and repository not set
             content = (
                 <RaisedButton
@@ -81,7 +115,7 @@ class Github extends Component {
             content = (
                 <RepoList
                     repos={this.props.repos}
-                    setDefaultGithubRepo={this.props.actions.setDefaultGithubRepo}
+                    syncWithGithub={this.syncWithGithub.bind(this)}
                     projectId={this.props.project.id}
                 />
             )

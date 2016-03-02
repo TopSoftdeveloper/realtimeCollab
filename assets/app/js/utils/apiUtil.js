@@ -123,6 +123,14 @@ export function getGithubEvents(owner, name) {
     })
 }
 
+export function syncGithubIssues(projectId, name, owner) {
+    return ajaxPost('/github/sync/' + projectId, {
+        token: localStorage.getItem('github_token'),
+        name: name,
+        owner: owner
+    })
+}
+
 export function serverDeleteNotification(id) {
     return ajaxDelete('/notification/' + id)
 }

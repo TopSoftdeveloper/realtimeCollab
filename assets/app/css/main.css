@@ -193,6 +193,13 @@ ul.online-users {
   box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
 }
 /******************* General ****************************/
+
+.loading-indicator {
+  margin-top: 20%;
+  left: 45%;
+  position: absolute;
+}
+
 .header-color {
   background-color: #424242;
   border-color: #455a64;

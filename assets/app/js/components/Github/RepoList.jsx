@@ -9,7 +9,7 @@ class ListItem extends Component {
                     className="select-repo-btn"
                     label="Select"
                     secondary={true}
-                    onTouchTap={this.props.setGithubRepo.bind(this,
+                    onTouchTap={this.props.syncWithGithub.bind(this,
                     this.props.projectId,
                     this.props.name,
                     this.props.owner)}
@@ -32,7 +32,7 @@ class List extends Component {
                     primaryText={repo.full_name}
                     secondaryText={repo.description}
                     repoLink={repo.html_url}
-                    setGithubRepo={this.props.setDefaultGithubRepo}
+                    syncWithGithub={this.props.syncWithGithub}
                     projectId={this.props.projectId}
                 />
             )
