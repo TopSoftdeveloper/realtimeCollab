@@ -36,13 +36,14 @@ function createMilestone(request, reply) {
         deadline: request.payload.deadline,
         project_id: request.payload.project_id
     };
-    storage.createMilestone(milestone).then(function(id) {
-        milestone.id = id;
+    storage.createMilestone(milestone).then(function(m) {
+        milestone.id = m.id;
         Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
             socket.sendMessageToProject(request.payload.project_id, 'new_milestone', {
                 milestone: milestone, sender: decoded.user_id
             })
         });
+        console.log(milestone)
         reply(milestone);
     }, function(error) {
         reply(Boom.internal(error));

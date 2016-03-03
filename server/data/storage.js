@@ -11,25 +11,6 @@ var Notification = models.Notification;
 
 var format = require('string-format');
 
-function _create(task) {
-    return new Promise(function(resolve, reject) {
-        var id = shortid.generate();
-        task.id = id;
-        Task.create(task).catch(function (error) {
-            console.log(error);
-            var errorList = error.errors;
-            if (errorList === undefined || errorList.length !== 1 ||
-                errorList[0].message !== constants.DUPLICATE_PRIMARY_KEY ) {
-                reject(error);
-            } else {
-                _create(task);
-            }
-        }).then(function() {
-            resolve(task);
-        });
-    });
-}
-
 module.exports = {
     getNotifications: function(userId) {
         return Notification.findAll({
@@ -281,11 +262,13 @@ module.exports = {
                 if (!exists) {
                     return Promise.reject(format(constants.MILESTONE_NOT_EXIST, task.milestone_id));
                 }
-                return _create(task);
+                task.id = shortid.generate()
+                return Task.create(task)
             });
 
         }
-        return _create(task);
+        task.id = shortid.generate()
+        return Task.create(task)
     },
     findOrCreateTask: function(task)  {
         return Task.find({
@@ -314,24 +297,8 @@ module.exports = {
         })
     },
     createMilestone: function(milestone) {
-        return new Promise(function(resolve, reject) {
-            var id = shortid.generate();
-            milestone.id = id
-            Milestone.create(milestone).catch(function (error) {
-                var errorList = error.errors;
-                if (errorList === undefined) {
-                    reject(error);
-                }
-                if (errorList.length === 1 &&
-                    errorList[0].message === constants.DUPLICATE_PRIMARY_KEY) {
-                    this.createMilestone(milestone);
-                } else {
-                    reject(error);
-                }
-            }.bind(this)).then(function() {
-                resolve(id);
-            });
-        }.bind(this));
+        milestone.id = shortid.generate()
+        return Milestone.create(milestone)
     },
     deleteTask: function(task_id) {
         return Task.destroy({

@@ -8,6 +8,8 @@ var config = require('config');
 var helper = require('../utils/helper');
 var secret_key = config.get('authentication.privateKey');
 var Promise = require('bluebird');
+var Sequelize = require('sequelize');
+
 var _ = require('lodash');
 
 module.exports = {
@@ -55,14 +57,23 @@ function populate(request, reply) {
         storage.getProjectsOfUser(request.params.user_id).then(function(projects) {
             var filteredProjects = filterPending(projects, decoded.user_id);
             Promise.map(filteredProjects, function(project) { // only use projects which are not pending
-                return storage.getTasksAndMilestones(project.id);
-            }).then(function(tasks) {
-                var projectsData = JSON.parse(JSON.stringify(filteredProjects));
-                var tasksData = JSON.parse(JSON.stringify(tasks));
-                tasksData = tasksData.map(function(arr) {
-                    return {tasks: arr};
-                });
-                reply({projects:_.merge(normalize(projectsData), tasksData)});
+                var promises = []
+                // Some tasks do not have milestones and vice versa, so we have to get both separately
+                promises.push(storage.getMilestonesWithCondition({project_id: project.id}))
+                promises.push(storage.getTasksWithCondition({project_id: project.id}))
+                return Sequelize.Promise.all(promises)
+            }).then(function(tasksAndMilestones) {
+                var projectsData = normalize(JSON.parse(JSON.stringify(filteredProjects)))
+                tasksAndMilestones = JSON.parse(JSON.stringify(tasksAndMilestones))
+                projectsData = projectsData.map(function(project, i) {
+                    return _.merge(project, {
+                        milestones: tasksAndMilestones[i][0]
+                    }, {
+                        tasks: tasksAndMilestones[i][1]
+                    })
+                })
+
+                reply({projects: projectsData})
             });
         });
     })

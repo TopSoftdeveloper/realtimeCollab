@@ -23,7 +23,7 @@ module.exports = {
                 is_time_specified: Joi.boolean().default(false),
                 project_id: Joi.string().required(),
                 completed_on: Joi.string().isoDate().default(null),
-                milestone_id: Joi.string().default(null)
+                milestone_id: Joi.default(null)
             }
         }
     },

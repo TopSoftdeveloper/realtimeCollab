@@ -405,23 +405,22 @@ function normalize(projects) {
 
         };
 
+        project.milestones.forEach(milestone => {
+            milestone.tasks = []
+            milestoneState.push(milestone)
+        });
 
         project.tasks.forEach(task => {
-            // task table
-            let currMilestone = task.milestone
-            delete task['milestone']
-            if (currMilestone) {
-                task.milestone_id = currMilestone.id
-            } else {
-                task.milestone_id = null
-            }
             taskState.push(task)
-
-            // milestone table
-            if (currMilestone && !isObjectPresent(milestoneState, currMilestone.id)) {
-                milestoneState.push(currMilestone);
-            }
+            // append taskid to milestoneState
+            milestoneState.map(milestone => {
+                if (milestone.id === task.milestone_id) {
+                    milestone.tasks.push(task.id)
+                }
+                return milestone
+            })
         });
+
 
         currProj.milestones = milestoneState.map(milestone => milestone.id);
         currProj.tasks = taskState.map(task => task.id)
