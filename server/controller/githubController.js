@@ -124,17 +124,52 @@ function POSTMilestoneToGithub(options, milestoneId) {
     })
 }
 
-function POSTIssueToGithub(options, taskId) {
+function updateGithubIssue(owner, name, token, number, payload) {
+    var options = {
+        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/issues/' + number,
+        headers: {
+            'User-Agent': 'Collab',
+            'Authorization': 'Bearer ' + token
+        },
+        form: JSON.stringify(payload)
+    }
+
+    return new Promise(function (resolve, reject) {
+        req.patch(options, function(err, res, body) {
+            if (err) {
+                return reject(err)
+            }
+            var parsedBody = JSON.parse(body)
+            if (parsedBody.id) { // if successful, should return issue id
+                resolve(res)
+            } else {
+                return reject(err)
+            }
+        })
+    })
+}
+
+function POSTIssueToGithub(options, taskId, completedOn, owner, name, token) {
     return new Promise(function (resolve, reject) {
         req.post(options, function(err, res, body) {
             if (err) {
                 return reject(err)
             }
             var parsedBody = JSON.parse(body)
-            if (parsedBody.id) {
-                storage.updateTask({github_id: parsedBody.id, github_number: parsedBody.number}, taskId).done(function(res) {
-                    resolve(res)
-                })
+            if (parsedBody.id) { // if successful, should return issue id
+                if (completedOn) {
+                    updateGithubIssue(owner, name, token, parsedBody.number, {
+                        state: 'closed'
+                    }).done(function() {
+                        storage.updateTask({github_id: parsedBody.id, github_number: parsedBody.number}, taskId).done(function(res) {
+                            resolve(res)
+                        })
+                    })
+                } else {
+                    storage.updateTask({github_id: parsedBody.id, github_number: parsedBody.number}, taskId).done(function(res) {
+                        resolve(res)
+                    })
+                }
             } else {
                 return reject(err)
             }
@@ -164,7 +199,7 @@ function addCollabTasksToGithub(owner, name, token, projectId) {
                     if (idInMemory) {
                         issueToPOST.milestone = idInMemory
                         options.form = JSON.stringify(issueToPOST)
-                        promises.push(POSTIssueToGithub(options, task.id))
+                        promises.push(POSTIssueToGithub(options, task.id, task.completed_on, owner, name, token))
                     } else {
                         storage.getMilestone(task.milestone_id).done(function(milestone) {
                             milestone = JSON.parse(JSON.stringify(milestone))
