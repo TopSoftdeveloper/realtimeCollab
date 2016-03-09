@@ -5,18 +5,14 @@ import assign from 'object-assign';
 //     {
 //         id: 'taskid1',
 //         content: 'Create survey',
-//         deadline: null,
 //         completed_on: null,
-//         is_time_specified: false,
 //         milestone_id: 'mid1'
 //     },
 //     {
 //         id: 'taskid3',
 //         content: 'Prepare report',
-//         deadline: null,
 //         completed_on: null,
-//         is_time_specified: false,
-//         milestone_id: 'mid2'        
+//         milestone_id: 'mid2'
 //     }
 // ]
 

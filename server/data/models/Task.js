@@ -7,9 +7,7 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true
         },
         content: DataTypes.TEXT,
-        deadline: DataTypes.DATE,
         completed_on: DataTypes.DATE,
-        is_time_specified: DataTypes.BOOLEAN,
         github_id: DataTypes.BIGINT,
         github_number: DataTypes.INTEGER
     },{

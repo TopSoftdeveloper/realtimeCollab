@@ -243,8 +243,6 @@ function addGithubIssuesToDB(issues, projectId) {
     issues.forEach(function(issue) {
         var task = {
             content: issue.title,
-            deadline: null,
-            is_time_specified: false,
             completed_on: issue.closed_at,
             github_id: issue.id,
             github_number: issue.number,

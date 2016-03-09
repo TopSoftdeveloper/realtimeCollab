@@ -19,8 +19,6 @@ module.exports = {
         validate: {
             payload: {
                 content: Joi.string().required(),
-                deadline: Joi.string().isoDate().default(null),
-                is_time_specified: Joi.boolean().default(false),
                 project_id: Joi.string().required(),
                 completed_on: Joi.string().isoDate().default(null),
                 milestone_id: Joi.default(null)
@@ -104,8 +102,6 @@ function getTasks(request, reply) {
 function createTask(request, reply) {
     var task = {
         content: request.payload.content,
-        deadline: request.payload.deadline,
-        is_time_specified: request.payload.is_time_specified,
         milestone_id: request.payload.milestone_id,
         completed_on: null,
         project_id: request.payload.project_id

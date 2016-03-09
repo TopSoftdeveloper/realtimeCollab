@@ -204,21 +204,6 @@ module.exports = {
             }
         })
     },
-    getMilestonesWithTasks: function(project_id) {
-        return Milestone.findAll({
-            where: {
-                project_id: project_id
-            },
-            attributes: ['id', 'content', 'deadline'],
-            include: [
-                {
-                    model: Task,
-                    attributes: ['id', 'content', 'deadline', 'completed_on',
-                        'is_time_specified', 'project_id', 'github_id']
-                }             
-            ]
-        })
-    },
     getMilestonesWithCondition: function(condition) {
         return Milestone.findAll({
             where: condition

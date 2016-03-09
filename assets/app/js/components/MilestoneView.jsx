@@ -18,8 +18,6 @@ class MilestoneView extends Component {
     addTask(milestone_id, content) {
         let task = {
             id: _.uniqueId('task'), //temp id
-            deadline: null,
-            is_time_specified: false,
             content: content,
             completed_on: null,
             project_id: this.props.projectId
