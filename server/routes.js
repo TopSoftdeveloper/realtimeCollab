@@ -21,6 +21,7 @@ module.exports.endpoints = [
     { method: 'DELETE',  path: '/task/{task_id}', config: Task.removeTask },
 
     { method: 'POST',  path: '/milestones', config: Milestone.createMilestone },
+    { method: 'PUT',  path: '/milestone/{milestone_id}', config: Milestone.updateMilestone },
     { method: 'DELETE',  path: '/milestone/{milestone_id}', config: Milestone.removeMilestone },
 
     { method: 'POST',  path: '/projects', config: Project.createProject },

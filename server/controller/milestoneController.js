@@ -25,10 +25,28 @@ module.exports = {
             }
         }
     },
+    updateMilestone: {
+        handler: updateMilestone,
+        payload: {
+            parse: true
+        }
+    },
     removeMilestone: {
         handler: deleteMilestone
     }
 };
+
+function updateMilestone(request, reply) {
+    var milestone_id = request.params.milestone_id;
+    var payload = request.payload
+    storage.updateMilestone(payload, milestone_id).then(function(m) {
+        reply({
+            status: constants.STATUS_OK
+        });
+    }, function(error) {
+        reply(Boom.internal(error));
+    });
+}
 
 function createMilestone(request, reply) {
     var milestone = {
@@ -43,7 +61,6 @@ function createMilestone(request, reply) {
                 milestone: milestone, sender: decoded.user_id
             })
         });
-        console.log(milestone)
         reply(milestone);
     }, function(error) {
         reply(Boom.internal(error));
