@@ -9,7 +9,8 @@ module.exports = function(sequelize, DataTypes) {
         content: DataTypes.TEXT,
         completed_on: DataTypes.DATE,
         github_id: DataTypes.BIGINT,
-        github_number: DataTypes.INTEGER
+        github_number: DataTypes.INTEGER,
+        assignee_id: DataTypes.STRING
     },{
         underscored: true,
         classMethods: {
