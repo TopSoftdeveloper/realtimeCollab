@@ -5,6 +5,7 @@ import MilestoneRow from './MilestoneRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
 import TaskRow from './TaskRow.jsx'
 import Remove from './../icons/Remove.jsx'
+import Paper from 'material-ui/lib/paper';
 
 class MilestoneView extends Component {
     constructor(props, context) {
@@ -121,11 +122,13 @@ class MilestoneView extends Component {
         });
 
         return (
+        <Paper zDepth={1}>
             <div className='milestone-view'>
                 <div className='task-list'>
                     {rows}
                 </div>
             </div>
+        </Paper>
         );
     }
 }

@@ -45,6 +45,8 @@
 .milestone-view {
   max-height: 60vh;
   min-height: 50vh;
+  margin-top: 20px;
+  padding: 20px;
 }
 
 .milestone-row p {
