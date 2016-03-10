@@ -63,11 +63,13 @@ class MilestoneView extends Component {
             tasksWithoutMilestones.forEach(task => {
                 if (task.completed_on === null &&
                     task.dirty !== true) {
+                    let assignees = this.props.users.filter(user => user.id === task.assignee_id)
                     rows.push(<TaskRow
                         key={_.uniqueId('task')}
                         task={task}
                         onCheck={this.markDone.bind(this, task.id)}
                         onDelete={this.deleteTask.bind(this, task.id)}
+                        assignees={assignees}
                         />)
                 }
             })
@@ -96,11 +98,13 @@ class MilestoneView extends Component {
                 if (task.completed_on === null &&
                     task.dirty !== true &&
                     task.milestone_id === milestone.id) {
+                    let assignees = this.props.users.filter(user => user.id === task.assignee_id)
                     tasks.push(<TaskRow
                         key={_.uniqueId('task')}
                         task={task}
                         onCheck={this.markDone.bind(this, task.id)}
                         onDelete={this.deleteTask.bind(this, task.id)}
+                        assignees={assignees}
                     />)
                 }
             }) // task.forEach end

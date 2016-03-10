@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import OnlineUsers from '../components/OnlineUsers.jsx'
+import AvatarList from './AvatarList.jsx'
 import {getCurrentProject} from '../utils/general'
 import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
 import $ from 'jquery'
@@ -70,6 +70,10 @@ class ProjectHeader extends Component {
                 onTouchTap={this.onDialogSubmit.bind(this)} />
         ]
 
+        let onlineUsers = this.props.members.filter(member => {
+            return (member.online && member.id !== localStorage.getItem('user_id'))                        
+        });
+
         if (this.props.projectName) {
             return (
                 <div className="project-header header-color clearfix">
@@ -90,7 +94,7 @@ class ProjectHeader extends Component {
                             ref="milestoneField"
                         />
                     </Dialog>
-                    <OnlineUsers members={this.props.members} />
+                    <AvatarList className="online-users" members={onlineUsers} />
                 </div>
             )
         } else if(window.location.href === AppConstants.APP_ROOT_URL + '/notifications') {

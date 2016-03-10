@@ -80,6 +80,7 @@ class Project extends Component {
                             tasks={tasksInProj}
                             actions={actions}
                             projectId={currentProjectId}
+                            users={allActiveUsers}
                         />
                     </Tab>
                     <Tab label="Files"
