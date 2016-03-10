@@ -5,21 +5,20 @@ import { createStore, applyMiddleware} from 'redux'
 import reducer from './reducers/index'
 import thunk from 'redux-thunk'
 import { Router } from 'react-router'
-import createBrowserHistory from 'history/lib/createBrowserHistory'
+import { browserHistory } from 'react-router'
 import routes from './config/routes.jsx'
 let injectTapEventPlugin = require("react-tap-event-plugin")
 injectTapEventPlugin()
 
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 const store = createStoreWithMiddleware(reducer);
-const history = createBrowserHistory()
 
 let rootElement = document.getElementById('task-panel');
 
 function run() {
     ReactDOM.render(
     	<Provider store={store}>
-    		<Router history={history} routes={routes} />
+    		<Router history={browserHistory} routes={routes} />
       </Provider>,
       rootElement
     );

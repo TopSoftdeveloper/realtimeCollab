@@ -5,8 +5,6 @@ import App from '../containers/App.jsx'
 import Project from '../components/Project.jsx'
 import _404 from '../components/_404.jsx'
 import Notifications from '../components/Notifications.jsx'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 
 let AppConstants = require('../AppConstants');
 

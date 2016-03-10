@@ -11,7 +11,7 @@ import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject, getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
 import Tabs from 'material-ui/lib/tabs/tabs'
 import Tab from 'material-ui/lib/tabs/tab'
-import { connectHistory } from '../components/connectHistory.jsx'
+import { browserHistory } from 'react-router'
 let AppConstants = require('../AppConstants');
 
 class Project extends Component {
@@ -26,7 +26,7 @@ class Project extends Component {
     }
 
     changeTab(newTab) {
-        this.props.history.pushState(null, getProjectRoot() + '/' + newTab)
+        browserHistory.push(getProjectRoot() + '/' + newTab)
     }
 
     render() {   
@@ -149,4 +149,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(connectHistory(Project))
+export default connect(mapStateToProps)(Project)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import Checkbox from 'material-ui/lib/checkbox';
+import Checkbox from 'material-ui/lib/checkbox'
 import AvatarList from './AvatarList.jsx'
-import ListDivider from 'material-ui/lib/lists/list-divider';
+import Divider from 'material-ui/lib/divider';
 
 class TaskRow extends Component {
 
@@ -43,7 +43,7 @@ class TaskRow extends Component {
                 <i className="material-icons delete-task" onClick={this.props.onDelete}>delete</i>
             </div>
             <AvatarList className="assignee-avatar" members={this.props.assignees} />
-            <ListDivider />
+            <Divider />
         </li>
         )
     }

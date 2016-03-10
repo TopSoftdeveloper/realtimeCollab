@@ -131,7 +131,7 @@ export function fetchGithubEvents(projectId, owner, name) {
         if (!localStorage.getItem('github_token')) {
             setTimeout(function() {
                 _getGithubEvents(dispatch, projectId, owner, name)
-            }, 1000) // delay in case we are still in the midst of getting token
+            }, 2000) // delay in case we are still in the midst of getting token
         } else {
             _getGithubEvents(dispatch, projectId, owner, name)
         }

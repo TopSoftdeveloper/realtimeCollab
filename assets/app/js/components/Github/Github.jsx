@@ -47,7 +47,7 @@ class Github extends Component {
         // Default repository not set
         if (this.props.app.github_token &&
             this.props.repos && this.props.repos.length === 0 &&
-            !repoSet) {
+            !repoSet) { //todo: have a check whether user indeed has 0 repos
             this.props.actions.initGithubRepos()
         }
         // Events not initialized

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import {isLoggedIntoGoogle} from '../../utils/auth'
+import { browserHistory } from 'react-router'
 
 class List extends Component {
     switchProject(projectId) {
         let actions = this.props.actions
         let projectUrl = '/app/project/' + projectId;
         let project = this.props.items.filter(project => project.id === projectId)[0]
-        this.props.history.pushState(null, projectUrl)
+        browserHistory.push(projectUrl)
         actions.switchToProject(projectId)
         if (!this.props.app.logged_into_google) {
             isLoggedIntoGoogle(function(authResult) {

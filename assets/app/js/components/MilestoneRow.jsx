@@ -1,14 +1,34 @@
 import React, { Component } from 'react'
-import MoreVert from './../icons/MoreVert.jsx'
+import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert';
+
 import { IconButton, IconMenu, Dialog, TextField, FlatButton } from 'material-ui'
-const MenuItem = require('material-ui/lib/menus/menu-item'); // use menu item from this path
+import MenuItem from 'material-ui/lib/menus/menu-item';
+//import AutoComplete from 'material-ui/lib/auto-complete';
+import SelectField from 'material-ui/lib/select-field';
+
+const colors = [
+    'Red',
+    'Orange',
+    'Yellow',
+    'Green',
+    'Blue',
+    'Purple',
+    'Black',
+    'White'
+];
+
+const customContentStyle = {
+    overflowY: 'visible',
+    overflowX: 'visible'
+}
 
 class MilestoneRow extends Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            isDialogOpen: false
+            isDialogOpen: false,
+            value: 2
         }
     }
 
@@ -36,6 +56,9 @@ class MilestoneRow extends Component {
 
     deleteMilestone() {
         this.props.onDeleteMilestone()
+    }
+    handleChange(event, index, value) {
+        this.setState({value});
     }
 
     render() {
@@ -95,6 +118,15 @@ class MilestoneRow extends Component {
                         onEnterKeyDown={this.onDialogSubmit.bind(this)}
                         ref="taskField"
                     />
+                    <br/>
+
+                    <SelectField value={this.state.value} onChange={this.handleChange.bind(this)}>
+                        <MenuItem value={1} primaryText="Never"/>
+                        <MenuItem value={2} primaryText="Every Night"/>
+                        <MenuItem value={3} primaryText="Weeknights"/>
+                        <MenuItem value={4} primaryText="Weekends"/>
+                        <MenuItem value={5} primaryText="Weekly"/>
+                    </SelectField>
                 </Dialog>
             </div>
         )

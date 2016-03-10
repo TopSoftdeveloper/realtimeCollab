@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import io from 'socket.io-client'
-import { connectHistory } from '../components/connectHistory.jsx'
+import { browserHistory } from 'react-router'
 import * as Actions from '../actions/ReduxTaskActions'
 import Header from '../components/Header.jsx'
 import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
@@ -87,7 +87,7 @@ class App extends Component {
         if (matchesUrl(window.location.href, AppConstants.APP_ROOT_URL) && projects.length > 0) {
             // Redirect to default project (current set as project at index 0)
             let defaultProjectId = projects[0].id;
-            this.props.history.replaceState(null, '/app/project/' + defaultProjectId);
+            browserHistory.push('/app/project/' + defaultProjectId);
             return false;         
         }
         return true;
@@ -148,7 +148,6 @@ class App extends Component {
                                 <LeftPanel
                                     currentProject={currentProject}
                                     projects={projects}
-                                    history={this.props.history}
                                     app={app}
                                     files={files}
                                     actions={actions}
@@ -186,4 +185,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(connectHistory(App))
+export default connect(mapStateToProps)(App)

@@ -52,7 +52,6 @@ class LeftPanel extends Component {
                     currentProject={this.props.currentProject}
                     subheader="Projects"
                     items={this.props.projects}
-                    history={this.props.history}
                     app={this.props.app}
                     actions={this.props.actions}
                     onAddProject={this.openModal.bind(this)}
