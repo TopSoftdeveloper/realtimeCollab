@@ -67,6 +67,7 @@
   display: inline-block;
   position: relative;
   bottom: 5px;
+  font-size: large;
 }
 
 .task-checkbox {
@@ -91,6 +92,22 @@
   cursor: pointer;
   display: inline-block;
   opacity: 1.0;
+}
+
+.completed-text:hover {
+  cursor: pointer;
+}
+
+.completed-task-list ul {
+    margin-left: -30px;
+}
+
+.completed-task-list li {
+  text-decoration: line-through;
+}
+
+.completed-task-list {
+    color: #aaaaaa;
 }
 
 /************************ Project list *******************/
