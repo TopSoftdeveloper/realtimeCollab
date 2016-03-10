@@ -55,6 +55,7 @@ class MilestoneView extends Component {
         if (tasksWithoutMilestones.length > 0) {
             rows.push(<MilestoneRow
                 milestone={'Uncategorized'}
+                deadline={null}
                 key={'uncategorized-tasks'}
                 onAddTask={this.addTask.bind(this, null)}
                 onDeleteMilestone={false}
@@ -93,6 +94,7 @@ class MilestoneView extends Component {
         this.props.milestones.forEach(milestone => {
             rows.push(<MilestoneRow
                 milestone={milestone.content}
+                deadline={milestone.deadline}
                 key={milestone.id}
                 onAddTask={this.addTask.bind(this, milestone.id)}
                 onDeleteMilestone={this.deleteMilestone.bind(this, milestone.id)}

@@ -71,11 +71,19 @@ class MilestoneRow extends Component {
             </IconMenu>
         }
 
+        let deadlineText = null
+        if (this.props.deadline) {
+            let eventTime = new Date(this.props.deadline)
+            let options = {year: 'numeric', month: 'long', day: 'numeric' }
+            deadlineText = 'Due by ' + eventTime.toLocaleDateString('en-US', options)
+        }
+
         return (
             <div className="milestone-row">
                 <h3 className="milestone-header">{this.props.milestone}</h3>
                     {iconMenu}
                 <div className="clearfix"></div>
+                <p>{deadlineText}</p>
 
                 <Dialog
                     title="Add Task"

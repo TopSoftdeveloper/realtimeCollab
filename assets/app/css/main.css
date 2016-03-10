@@ -47,6 +47,10 @@
   min-height: 50vh;
 }
 
+.milestone-row p {
+  color: #7a7a7a;
+}
+
 .files-list {
   max-height: 35vh;
 }
