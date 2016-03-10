@@ -55,6 +55,44 @@
   max-height: 35vh;
 }
 
+.task-list ul {
+  list-style: none;
+}
+
+.task-row {
+  margin-left: -40px;
+}
+
+.task-content{
+  display: inline-block;
+  position: relative;
+  bottom: 5px;
+}
+
+.task-checkbox {
+  display: inline-block;
+  float: left;
+}
+
+.task-actions {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.delete-task {
+    margin-left: 10px;
+}
+
+.delete-task, .edit-task {
+  opacity: 0.5;
+}
+
+.delete-task:hover, .edit-task:hover {
+  cursor: pointer;
+  display: inline-block;
+  opacity: 1.0;
+}
+
 /************************ Project list *******************/
 .project-list ul, .project-list li {
   margin-left: 0;
@@ -197,6 +235,9 @@ ul.online-users {
   box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
 }
 /******************* General ****************************/
+.invisible {
+  visibility: hidden;
+}
 
 .loading-indicator {
   margin-top: 20%;

@@ -3,8 +3,8 @@ import _ from 'lodash'
 import $ from 'jquery'
 import MilestoneRow from './MilestoneRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
+import TaskRow from './TaskRow.jsx'
 import Remove from './../icons/Remove.jsx'
-import {List, ListDivider, ListItem, Checkbox, IconButton } from 'material-ui'
 
 class MilestoneView extends Component {
     constructor(props, context) {
@@ -63,20 +63,12 @@ class MilestoneView extends Component {
             tasksWithoutMilestones.forEach(task => {
                 if (task.completed_on === null &&
                     task.dirty !== true) {
-                    rows.push(<ListItem
+                    rows.push(<TaskRow
                         key={_.uniqueId('task')}
-                        primaryText={task.content}
-                        leftCheckbox={
-                        <Checkbox
-                            onCheck={this.markDone.bind(this, task.id)}
-                        />
-                    }
-                        rightIconButton={
-                        <IconButton onClick={this.deleteTask.bind(this, task.id)}>
-                            <Remove/>
-                        </IconButton>
-                    }
-                    />)
+                        task={task}
+                        onCheck={this.markDone.bind(this, task.id)}
+                        onDelete={this.deleteTask.bind(this, task.id)}
+                        />)
                 }
             })
 
@@ -87,8 +79,6 @@ class MilestoneView extends Component {
                     completedTasks={completedTasks}
                 />)
             }
-
-            rows.push(<ListDivider key={_.uniqueId('divider')}/>)
         }
 
         this.props.milestones.forEach(milestone => {
@@ -106,25 +96,16 @@ class MilestoneView extends Component {
                 if (task.completed_on === null &&
                     task.dirty !== true &&
                     task.milestone_id === milestone.id) {
-                    tasks.push(
-                        <ListItem
-                            key={_.uniqueId('task')}
-                            primaryText={task.content}
-                            leftCheckbox={
-                                <Checkbox
-                                    onCheck={this.markDone.bind(this, task.id)}
-                                />
-                            }
-                            rightIconButton={
-                                <IconButton onClick={this.deleteTask.bind(this, task.id)}>
-                                    <Remove/>
-                                </IconButton>
-                            }
-                        />)
+                    tasks.push(<TaskRow
+                        key={_.uniqueId('task')}
+                        task={task}
+                        onCheck={this.markDone.bind(this, task.id)}
+                        onDelete={this.deleteTask.bind(this, task.id)}
+                    />)
                 }
             }) // task.forEach end
 
-            rows.push(<List key={_.uniqueId()}>{tasks}</List>)
+            rows.push(<ul key={_.uniqueId()}>{tasks}</ul>)
 
             let completedTasks = this.getCompletedTasks(milestone.id)
             if (completedTasks.length > 0) {
@@ -133,13 +114,11 @@ class MilestoneView extends Component {
                     completedTasks={completedTasks}
                 />)
             }
-
-            rows.push(<ListDivider key={_.uniqueId('divider')}/>)
         });
 
         return (
             <div className='milestone-view'>
-                <div className='task-items'>
+                <div className='task-list'>
                     {rows}
                 </div>
             </div>
