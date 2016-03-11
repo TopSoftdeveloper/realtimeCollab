@@ -9,6 +9,7 @@ import alerts from './alerts'
 import files from './files'
 import githubRepos from './githubRepos'
 import githubEvents from './githubEvents'
+import search from './search'
 
 export default combineReducers({
     milestones,
@@ -20,5 +21,6 @@ export default combineReducers({
     app,
     files,
     githubRepos,
-    githubEvents
+    githubEvents,
+    search
 });

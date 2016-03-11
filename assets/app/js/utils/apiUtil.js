@@ -11,6 +11,18 @@ import gapi from '../gapi'
 import $ from 'jquery'
 import Promise from 'bluebird'
 
+export function queryGoogleDrive(queryString) {
+    return gapi.client.request({
+        'path': '/drive/v3/files',
+        'method': 'GET',
+        'params': {
+            'pageSize': '1000',
+            'q': "fullText contains '" + queryString + "'",
+            'fields': 'files'
+        }
+    })
+}
+
 export function getGoogleDriveFolders() {
     return gapi.client.request({
         'path': '/drive/v3/files',

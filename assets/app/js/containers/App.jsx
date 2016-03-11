@@ -76,8 +76,6 @@ class App extends Component {
 
     monitorNotifications() {
         this.state.socket.on('new_notification', (data) => {
-            console.log('new notif')
-            console.log(data)
             this.props.dispatch(Actions.addUsers([data.user]))
             this.props.dispatch(Actions.newNotification(data.notification))
         });
@@ -95,11 +93,10 @@ class App extends Component {
     }
 
     render() {
-        const {notifications, projects, users, dispatch, app, files} = this.props;
+        const {notifications, projects, users, dispatch, app, files, search} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
         const currentProjectId = getCurrentProject()
 
-        let projectName = '';
         let basicUsers = [];
         let projectCreator = '';
         let currentProject = null
@@ -125,7 +122,6 @@ class App extends Component {
 
             projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
             basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
-            projectName = currentProject.content;
         }
         let allActiveUsers = basicUsers
         if (projectCreator) allActiveUsers.push(projectCreator)
@@ -150,6 +146,8 @@ class App extends Component {
                         unreadCount={unreadCount}
                         projects={projects}
                         displayName={displayName}
+                        search={search}
+                        actions={actions}
                     />
                     <div className="body-wrapper">
                         <div className='task-table'>
@@ -171,7 +169,8 @@ App.propTypes = {
     projects: PropTypes.array.isRequired,
     users: PropTypes.array.isRequired,
     files: PropTypes.array.isRequired,
-    app: PropTypes.object.isRequired
+    app: PropTypes.object.isRequired,
+    search: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
@@ -180,7 +179,8 @@ function mapStateToProps(state) {
         projects: state.projects,
         users: state.users,
         files: state.files,
-        app: state.app
+        app: state.app,
+        search: state.search
     };
 }
 

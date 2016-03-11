@@ -88,7 +88,7 @@ class FilesList extends Component {
         })
 
         return (
-            <div>
+            <div className="file-area">
                 <BreadcrumbInstance
                     directories={directories}
                     initUpperLevelFolder={this.props.actions.initUpperLevelFolder.bind(this)}

@@ -3,7 +3,8 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
-        getGithubEvents, syncGithubIssues, serverEditTask, serverEditMilestone} from '../utils/apiUtil'
+        getGithubEvents, syncGithubIssues, serverEditTask, serverEditMilestone,
+        queryGoogleDrive} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -46,6 +47,8 @@ export const switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT,
 export const projectAlert = makeActionCreator(AppConstants.PROJECT_INVITATION_ALERT, 'alert');
 export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id', 'payload');
 
+export const initSearchResults = makeActionCreator(AppConstants.INIT_RESULTS, 'results');
+export const addSearchResults = makeActionCreator(AppConstants.ADD_RESULTS, 'results');
 
 export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
 export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
@@ -79,7 +82,6 @@ export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
 
-
 function _getGithubRepos(dispatch) {
     getGithubRepos().done(res => {
         dispatch(_initGithubRepos(res))
@@ -92,6 +94,29 @@ function _getGithubRepos(dispatch) {
     })
 }
 
+
+export function queryIntegrations(queryString) {
+    return function(dispatch) {
+        queryGoogleDrive(queryString).then(res => {
+            let results = normalizeDriveResults(res.result.files)
+            dispatch(initSearchResults(results))
+        }, function (err) {
+            console.log(err)
+        })
+    }
+}
+
+function normalizeDriveResults(files) {
+    return files.map(file => {
+        return {
+            id: file.id,
+            primaryText: file.name,
+            secondaryText: file.lastModifyingUser.displayName,
+            link: file.webViewLink,
+            thumbnail: file.iconLink
+        }
+    })
+}
 
 function _getGithubEvents(dispatch, projectId, owner, name) {
     getGithubEvents(owner, name).done(res => {
@@ -234,6 +259,7 @@ export function initializeApp() {
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
                 dispatch(initTasks(normalizedTables.tasks));
+                dispatch(initSearchResults([]));
                 dispatch(addUsers(normalizedTables.users));
 
                 normalizedTables.projects.forEach(project => {

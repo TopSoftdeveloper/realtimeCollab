@@ -54,7 +54,7 @@
 }
 
 .files-list {
-  max-height: 35vh;
+  max-height: 53vh;
 }
 
 .task-list ul {
@@ -279,6 +279,7 @@
 
 .search-box {
   margin-left: 120px;
+  width: 40%;
 }
 
 .display-pic-li {
@@ -318,12 +319,6 @@
   left: 45%;
   position: absolute;
 }
-
-.header-color {
-  background-color: #424242;
-  border-color: #455a64;
-}
-
 
 .collab-logo h3 {
   margin-left: 60px;

@@ -10,7 +10,7 @@ let MyRawTheme = {
     palette: {
         primary1Color: Colors.cyan500,
         primary2Color: Colors.cyan700,
-        primary3Color: Colors.lightBlack,
+        primary3Color: Colors.white,
         accent1Color: Colors.pinkA200,
         accent2Color: Colors.grey100,
         accent3Color: Colors.grey500,
