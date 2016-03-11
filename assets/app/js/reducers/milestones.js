@@ -32,7 +32,10 @@ export default function milestones(state=[], action) {
             return action.milestones;
         case AppConstants.CREATE_MILESTONE:
             return [action.milestone, ...state];
-
+        case AppConstants.EDIT_MILESTONE:
+            return state.map(milestone =>
+                milestone.id === action.id ?
+                    assign({}, milestone, action.milestone): milestone);
         case AppConstants.DELETE_MILESTONE:
             return state.filter(milestone => milestone.id !== action.id);
             

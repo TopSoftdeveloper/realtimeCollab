@@ -74,6 +74,33 @@ class MilestoneModal extends Component {
                 primary={true}
                 onTouchTap={this.onDialogSubmit.bind(this)} />
         ]
+        //this.props.deadline
+        let picker = (
+            <DatePicker
+                hintText="Select a date"
+                autoOk={true}
+                formatDate={this.formatDate.bind(this)}
+                onChange={this.onDateChange.bind(this)}
+                disabled={!this.state.toggle}
+                minDate={new Date()}
+            />
+        )
+
+        if (this.props.deadline) {
+            let defaultDate = new Date(this.props.deadline)
+            if (new Date().getTime() <= defaultDate.getTime()) {
+                picker = (
+                <DatePicker
+                    hintText="Select a date"
+                    autoOk={true}
+                    formatDate={this.formatDate.bind(this)}
+                    onChange={this.onDateChange.bind(this)}
+                    disabled={!this.state.toggle}
+                    defaultDate={defaultDate}
+                    minDate={new Date()}
+                />)                
+            }
+        }
 
         return (
             <Dialog
@@ -95,13 +122,7 @@ class MilestoneModal extends Component {
                     onToggle={this.toggleDeadline.bind(this)}
                     defaultToggled={this.state.toggle}
                 />
-                <DatePicker
-                    hintText="Select a date"
-                    autoOk={true}
-                    formatDate={this.formatDate.bind(this)}
-                    onChange={this.onDateChange.bind(this)}
-                    disabled={!this.state.toggle}
-                />
+                {picker}
             </Dialog>
         )
     }

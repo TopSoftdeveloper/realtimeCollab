@@ -171,6 +171,10 @@ export function serverUpdateProject(project_id, payload) {
     return ajaxPut('/project/' + project_id, payload);
 }
 
+export function serverEditMilestone(milestone_id, payload) {
+    return ajaxPut('/milestone/' + milestone_id, payload);
+}
+
 export function serverDeleteTask(task_id, project_id) {
     return ajaxDelete('/task/' + task_id, {project_id: project_id})
 }

@@ -39,6 +39,10 @@ class MilestoneView extends Component {
         this.props.actions.editTask(task_id, content, assignee)
     }
 
+    editMilestone(milestone_id, content, deadline) {
+        this.props.actions.editMilestone(milestone_id, content, deadline)
+    }
+
     deleteMilestone(milestone_id) {
         this.props.actions.deleteMilestone(milestone_id, this.props.projectId)
     }
@@ -58,7 +62,7 @@ class MilestoneView extends Component {
     render() {
         let rows = [];
         let milestones = this.props.milestones
-        milestones.unshift({
+        milestones.unshift({  // Just a placeholder milestone for tasks without milestones
             content: 'Uncategorized',
             deadline: null,
             key: 'uncategorized-tasks',
@@ -67,14 +71,18 @@ class MilestoneView extends Component {
 
         this.props.milestones.forEach(milestone => {
             let onDelete = false
+            let onEdit = false
             if (milestone.id) {
                 onDelete = this.deleteMilestone.bind(this, milestone.id)
+                onEdit = this.editMilestone.bind(this, milestone.id)
             }
             rows.push(<MilestoneRow
-                milestone={milestone.content}
+                content={milestone.content}
                 deadline={milestone.deadline}
+                id={milestone.id}
                 key={milestone.id}
                 onAddTask={this.addTask.bind(this, milestone.id)}
+                onEditMilestone={onEdit}
                 onDeleteMilestone={onDelete}
                 users={this.props.users}
             />)

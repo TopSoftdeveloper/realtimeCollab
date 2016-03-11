@@ -4,13 +4,15 @@ import { IconButton, IconMenu, Dialog, TextField, FlatButton } from 'material-ui
 import MenuItem from 'material-ui/lib/menus/menu-item'
 import SelectField from 'material-ui/lib/select-field';
 import TaskModal from './TaskModal.jsx'
+import MilestoneModal from './MilestoneModal.jsx'
 
 class MilestoneRow extends Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            isDialogOpen: false
+            isDialogOpen: false,
+            milestoneDialog: false
         }
     }
 
@@ -30,15 +32,33 @@ class MilestoneRow extends Component {
         this.props.onDeleteMilestone()
     }
 
+    openMilestoneModal() {
+        this.setState({
+            milestoneDialog: true
+        })
+    }
+
+    handleMilestoneClose() {
+        this.setState({
+            milestoneDialog: false
+        })
+    }
+
+    editMilestone(content, deadline) {
+        this.props.onEditMilestone(content, deadline)
+    }
+
+
     render() {
         let iconButtonElement = <IconButton><MoreVert /></IconButton>
         let iconMenu = null
-        if (this.props.onDeleteMilestone) {
+        if (this.props.onDeleteMilestone && this.props.id) { // Not "Uncategorized"
             iconMenu = <IconMenu
                 className="more-vert-btn"
                 iconButtonElement={iconButtonElement}
                 openDirection="bottom-right">
                 <MenuItem primaryText="Add Task" onClick={this.openModal.bind(this)}/>
+                <MenuItem primaryText="Edit Milestone" onClick={this.openMilestoneModal.bind(this)}/>
                 <MenuItem primaryText="Delete Milestone" onClick={this.deleteMilestone.bind(this)}/>
             </IconMenu>
         } else {
@@ -65,7 +85,7 @@ class MilestoneRow extends Component {
 
         return (
             <div className="milestone-row">
-                <h3 className="milestone-header">{this.props.milestone}</h3>
+                <h3 className="milestone-header">{this.props.content}</h3>
                     {iconMenu}
                 <div className="clearfix"></div>
                 <p>{deadlineText}</p>
@@ -75,6 +95,14 @@ class MilestoneRow extends Component {
                     handleClose={this.handleClose.bind(this)}
                     taskMethod={this.props.onAddTask}
                     users={this.props.users}
+                />
+                <MilestoneModal
+                    title="Edit Milestone"
+                    open={this.state.milestoneDialog}
+                    handleClose={this.handleMilestoneClose.bind(this)}
+                    method={this.editMilestone.bind(this)}
+                    deadline={this.props.deadline}
+                    content={this.props.content}
                 />
             </div>
         )

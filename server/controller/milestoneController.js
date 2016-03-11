@@ -29,6 +29,12 @@ module.exports = {
         handler: updateMilestone,
         payload: {
             parse: true
+        },
+        validate: {
+            payload: {
+                content: Joi.string(),
+                deadline: Joi.string().isoDate().allow('')
+            }
         }
     },
     removeMilestone: {
@@ -38,8 +44,15 @@ module.exports = {
 
 function updateMilestone(request, reply) {
     var milestone_id = request.params.milestone_id;
-    var payload = request.payload
-    storage.updateMilestone(payload, milestone_id).then(function(m) {
+    var milestone = {}
+    if (request.payload.content) {
+        milestone.content = request.payload.content
+    }
+    if ('deadline' in request.payload) {
+        milestone.deadline = request.payload.deadline ? request.payload.deadline : null // convert empty string to null
+    }
+
+    storage.updateMilestone(milestone, milestone_id).then(function() {
         reply({
             status: constants.STATUS_OK
         });

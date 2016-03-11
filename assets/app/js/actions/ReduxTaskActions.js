@@ -3,7 +3,7 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
-        getGithubEvents, syncGithubIssues, serverEditTask} from '../utils/apiUtil'
+        getGithubEvents, syncGithubIssues, serverEditTask, serverEditMilestone} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -37,6 +37,7 @@ export const _markDone = makeActionCreator(AppConstants.MARK_DONE, 'id');
 export const _unmarkDone = makeActionCreator(AppConstants.UNMARK_DONE, 'id');
 export const _createMilestone = makeActionCreator(AppConstants.CREATE_MILESTONE, 'milestone');
 export const _deleteMilestone = makeActionCreator(AppConstants.DELETE_MILESTONE, 'id');
+export const _editMilestone = makeActionCreator(AppConstants.EDIT_MILESTONE, 'id', 'milestone');
 
 export const _createProject = makeActionCreator(AppConstants.CREATE_PROJECT, 'project');
 export const _deleteProject = makeActionCreator(AppConstants.DELETE_PROJECT, 'id');
@@ -308,11 +309,24 @@ export function editTask(task_id, content, assignee_id) {
                 dispatch(_editTask(task_id, task));
             }).fail(e => {
             console.log(e);
-            dispatch(_deleteTask(task.id));
         });
     }
 }
 
+export function editMilestone(milestone_id, content, deadline) {
+    let milestone = {
+        content: content,
+        deadline: deadline
+    }
+    return function(dispatch) {
+        serverEditMilestone(milestone_id, milestone)
+            .done(res => {
+                dispatch(_editMilestone(milestone_id, milestone));
+            }).fail(e => {
+            console.log(e);
+        });
+    }
+}
 
 export function createMilestone(milestone) {
     return function(dispatch) {
