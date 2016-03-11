@@ -20,7 +20,7 @@ module.exports = {
         validate: {
             payload: {
                 content: Joi.string().required(),
-                deadline: Joi.string().isoDate().default(null),
+                deadline: Joi.string().isoDate().allow('').default(null),
                 project_id: Joi.string().required()
             }
         }
@@ -51,7 +51,7 @@ function updateMilestone(request, reply) {
 function createMilestone(request, reply) {
     var milestone = {
         content: request.payload.content,
-        deadline: request.payload.deadline,
+        deadline: request.payload.deadline ? request.payload.deadline : null, // convert empty string to null
         project_id: request.payload.project_id
     };
     storage.createMilestone(milestone).then(function(m) {

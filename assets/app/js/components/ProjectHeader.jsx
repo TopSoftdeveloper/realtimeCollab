@@ -37,11 +37,11 @@ class ProjectHeader extends Component {
         })
     }
 
-    addMilestone(content) {
+    addMilestone(content, deadline) {
         this.props.actions.createMilestone({
             id: _.uniqueId('milestone'),
             content: content,
-            deadline: null,
+            deadline: deadline,
             project_id: getCurrentProject(),
             tasks: []
         })

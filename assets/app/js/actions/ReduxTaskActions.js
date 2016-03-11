@@ -317,7 +317,11 @@ export function editTask(task_id, content, assignee_id) {
 export function createMilestone(milestone) {
     return function(dispatch) {
         dispatch(_createMilestone(milestone));
-        serverCreateMilestone({content:milestone.content, project_id: milestone.project_id})
+        serverCreateMilestone({
+            content:milestone.content,
+            project_id: milestone.project_id,
+            deadline: milestone.deadline
+        })
         .done(res => {
             dispatch(replaceMilestoneId(milestone.id, res.id));
         }).fail(e => {
