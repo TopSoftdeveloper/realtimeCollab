@@ -20,7 +20,7 @@ class MilestoneRow extends Component {
         })
     }
 
-    onSubmit() {
+    handleClose() {
         this.setState({
             isDialogOpen: false
         })
@@ -72,8 +72,8 @@ class MilestoneRow extends Component {
                 <TaskModal
                     title="Add Task"
                     open={this.state.isDialogOpen}
-                    onSubmit={this.onSubmit.bind(this)}
-                    onAddTask={this.props.onAddTask}
+                    handleClose={this.handleClose.bind(this)}
+                    taskMethod={this.props.onAddTask}
                     users={this.props.users}
                 />
             </div>

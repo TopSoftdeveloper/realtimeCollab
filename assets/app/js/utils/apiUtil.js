@@ -151,6 +151,10 @@ export function serverCreateTask(payload) {
     return ajaxPost(CREATE_TASK_ENDPOINT, payload);
 }
 
+export function serverEditTask(task_id, payload) {
+    return ajaxPut('/task/' + task_id, payload);
+}
+
 export function serverCreateMilestone(payload) {
     return ajaxPost(CREATE_MILESTONE_ENDPOINT, payload);
 }

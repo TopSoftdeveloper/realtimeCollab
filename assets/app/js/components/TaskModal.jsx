@@ -8,23 +8,23 @@ class TaskModal extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this.state = {
-            assignee: 0
+        if (this.props.assignee) {
+            this.state = {
+                assignee: this.props.assignee
+            }
+        } else {
+            this.state = {
+                assignee: 0
+            }
         }
     }
 
     onDialogSubmit() {
         let content = this.refs.taskField.getValue().trim()
         if (content !== '') {
-            this.props.onAddTask(content, this.state.assignee)
+            this.props.taskMethod(content, this.state.assignee)
         }
-        this.props.onSubmit()
-    }
-
-    openModal() {
-        this.setState({
-            isDialogOpen: true
-        })
+        this.props.handleClose()
     }
 
     handleChange(event, index, value) {
@@ -56,11 +56,13 @@ class TaskModal extends Component {
             <Dialog
                 title={this.props.title}
                 actions={actions}
+                onRequestClose={this.props.handleClose}
                 open={this.props.open}>
                 <TextField
                     hintText="Task name"
                     onEnterKeyDown={this.onDialogSubmit.bind(this)}
                     ref="taskField"
+                    defaultValue={this.props.content}
                 />
                 <br/>
                 <SelectField

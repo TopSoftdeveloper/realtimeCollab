@@ -2,14 +2,28 @@ import React, { Component } from 'react'
 import Checkbox from 'material-ui/lib/checkbox'
 import AvatarList from './AvatarList.jsx'
 import Divider from 'material-ui/lib/divider';
+import TaskModal from './TaskModal.jsx'
 
 class TaskRow extends Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            hidden: true
+            hidden: true,
+            isDialogOpen: false
         }
+    }
+
+    openModal() {
+        this.setState({
+            isDialogOpen: true
+        })
+    }
+
+    handleClose() {
+        this.setState({
+            isDialogOpen: false
+        })
     }
 
     onMouseEnter() {
@@ -22,6 +36,10 @@ class TaskRow extends Component {
         this.setState({
             hidden: true
         })  
+    }
+
+    onEdit(content, assignee_id) {
+        this.props.onEdit(content, assignee_id)
     }
 
     render() {
@@ -39,11 +57,20 @@ class TaskRow extends Component {
                 {this.props.task.content}
             </div>
             <div className={taskActionClass}>
-                <i className="material-icons edit-task">mode_edit</i>
+                <i className="material-icons edit-task" onClick={this.openModal.bind(this)}>mode_edit</i>
                 <i className="material-icons delete-task" onClick={this.props.onDelete}>delete</i>
             </div>
             <AvatarList className="assignee-avatar" members={this.props.assignees} />
             <Divider />
+            <TaskModal
+                title="Edit Task"
+                content={this.props.task.content}
+                assignee={this.props.task.assignee_id}
+                open={this.state.isDialogOpen}
+                handleClose={this.handleClose.bind(this)}
+                taskMethod={this.onEdit.bind(this)}
+                users={this.props.users}
+            />
         </li>
         )
     }

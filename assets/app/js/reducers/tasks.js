@@ -42,6 +42,10 @@ export default function tasks(state=[], action) {
                 task.id === action.id ? 
                 assign({}, task, {completed_on : new Date().toISOString()}): task);
 
+        case AppConstants.EDIT_TASK:
+            return state.map(task =>
+                task.id === action.id ?
+                    assign({}, task, action.task): task);
         case AppConstants.UNMARK_DONE:
             return state.map(task => 
                 task.id === action.id ? 
