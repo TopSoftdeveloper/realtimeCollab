@@ -3,6 +3,7 @@ import AvatarList from './AvatarList.jsx'
 import {getCurrentProject} from '../utils/general'
 import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
 import $ from 'jquery'
+import MilestoneModal from './MilestoneModal.jsx'
 var AppConstants = require('../AppConstants')
 
 
@@ -24,17 +25,7 @@ class ProjectHeader extends Component {
         }
     }
 
-    handleRequestClose(buttonClicked) {
-        if (!buttonClicked && this.state.openDialogStandardActions) return
-        this.setState({
-            isDialogOpen: false
-        })
-    }
-    onDialogSubmit() {
-        let content = this.refs.milestoneField.getValue().trim()
-        if (content !== '') {
-            this.addMilestone(content)
-        }
+    handleClose() {
         this.setState({
             isDialogOpen: false
         })
@@ -57,19 +48,6 @@ class ProjectHeader extends Component {
     }
 
     render() {
-        let actions = [
-            <FlatButton
-                key={1}
-                label="Cancel"
-                secondary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />,
-            <FlatButton
-                key={2}
-                label="Submit"
-                primary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />
-        ]
-
         let onlineUsers = this.props.members.filter(member => {
             return (member.online && member.id !== localStorage.getItem('user_id'))                        
         });
@@ -83,17 +61,12 @@ class ProjectHeader extends Component {
                     <div id="hangouts-btn-wrapper">
                         <div id="hangouts-btn-placeholder"></div>
                     </div>
-                    <Dialog
+                    <MilestoneModal
                         title="Add Milestone"
-                        actions={actions}
                         open={this.state.isDialogOpen}
-                        onRequestClose={this.handleRequestClose.bind(this)}>
-                        <TextField
-                            hintText="Milestone name"
-                            onEnterKeyDown={this.onDialogSubmit.bind(this)}
-                            ref="milestoneField"
-                        />
-                    </Dialog>
+                        handleClose={this.handleClose.bind(this)}
+                        method={this.addMilestone.bind(this)}
+                    />
                     <AvatarList className="online-users" members={onlineUsers} />
                 </div>
             )
