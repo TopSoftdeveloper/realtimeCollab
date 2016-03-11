@@ -34,7 +34,7 @@
 
 /********************* task table ************************/
 .main-content {
-  margin-top: 50px;
+  margin-top: 10px;
   margin-left: 30px;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .milestone-view {
-  max-height: 60vh;
+  max-height: 70vh;
   min-height: 50vh;
   margin-top: 20px;
   padding: 20px;
@@ -128,6 +128,10 @@
   font-family: Roboto, sans-serif;
 }
 
+.project-list {
+  margin-top: 10px;
+}
+
 .project-list-header span {
   font-size: 14px;
   font-family: Roboto, sans-serif;
@@ -174,29 +178,115 @@
 }
 
 /***************** Header *****************/
-.nav-link {
-  transition: opacity .3s;
-}
-.nav-link:hover {
-  opacity: 0.7;
+
+.navbar-right {
+  margin-right: 80px;
 }
 
-.right-nav {
-  padding-right: 100px;
+.navbar-default {
+  background-color: #424242;
+  border-color: #455a64;
+  border-radius:0;
+  -webkit-box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
+  -moz-box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
+  box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
+}
+.navbar-default .navbar-brand {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+  color: #ffffff;
+}
+.navbar-default .navbar-text {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > a {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #ffffff;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu {
+  background-color: #424242;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:hover,
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:focus {
+  color: #ffffff;
+  background-color: #455a64;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li > .divider {
+  background-color: #455a64;
+}
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+  color: #ffffff;
+  background-color: #455a64;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #ffffff;
+  background-color: #455a64;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: #ffffff;
+  background-color: #455a64;
+}
+.navbar-default .navbar-toggle {
+  border-color: #455a64;
+}
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+  background-color: #455a64;
+}
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #ecf0f1;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+  border-color: #ecf0f1;
+}
+.navbar-default .navbar-link {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-link:hover {
+  color: #ffffff;
 }
 
-.nav-brand {
-  padding-left: 40px;
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #ecf0f1;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #ffffff;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #ffffff;
+    background-color: #455a64;
+  }
 }
 
-.navbar-default .navbar-nav>.active>a,
-.navbar-default .navbar-nav>.active>a:focus,
-.navbar-default .navbar-nav>.active>a:hover  {
-  background-color: transparent;
+.search-box {
+  margin-left: 120px;
 }
 
-.padded-nav {
-  margin-top: 9px;
+.display-pic-li {
+  margin-top: 8px;
+}
+
+.notif-li {
+  margin-right: 20px;
 }
 
 /****************** milestone row ***********************/
@@ -212,53 +302,12 @@
 }
 
 /************************ Project header ***************************/
-i.material-icons.add-milestone-btn {
-  font-size: 36px;
-}
-
-.add-milestone-btn:hover {
-  cursor: pointer;
-}
-
-.header-text {
-  color: #E0E0E0;
-}
 
 #hangouts-btn-wrapper {
-  display: inline;
-  top: 15px;
-  float: left;
-  position: relative;
-  margin-left: 20px;
+  margin-top: 10px;
+  margin-right: 20px;
 }
 
-.add-milestone-btn {
-  float: left;
-  display:inline;
-  color: #d7ccc8;
-  top: 15px;
-  position: relative;
-}
-
-ul.avatar-list li {
-  display: inline;
-  padding: 10px 20px;
-  list-style-type: none;
-}
-
-ul.avatar-list {
-  float: right;
-}
-
-.online-users {
-  padding-top: 8px;
-}
-.project-header {
-  margin-top: 65px;
-  -webkit-box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
-  -moz-box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
-  box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.4);
-}
 /******************* General ****************************/
 .invisible {
   visibility: hidden;
@@ -275,33 +324,30 @@ ul.avatar-list {
   border-color: #455a64;
 }
 
-.display-name {
-  padding-left:10px;
-}
 
-.project-header-text {
-  margin-left: 40px;
-  float: left;
-  display:inline;
+.collab-logo h3 {
+  margin-left: 60px;
+  padding-top: 15px;
 }
 
 .left-panel {
-  position: fixed;
   background-color: #37474f;
   color: white;
-  height: 100%;
-  padding: 0;
-  z-index: 1000;
+  min-width: 200px;
+}
+
+.collab-logo {
+  margin-top: -20px;
+  background: #424242;
+  height: 50px;
 }
 
 .task-table {
-  margin-left:250px;
   z-index: 1500;
 }
 
 .body-wrapper {
-  position: fixed;
-  height: 100%;
+  width: 95%;
 }
 
 .my-step-container {

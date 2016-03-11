@@ -10,6 +10,7 @@ import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
 import ProjectHeader from '../components/ProjectHeader.jsx'
 import { Grid, Row, Col } from 'react-bootstrap'
+import Sidebar from 'react-sidebar'
 
 var AppConstants = require('../AppConstants');
 
@@ -18,7 +19,7 @@ class App extends Component {
         super(props, context)
         let host = 'ws://localhost:4001/'
         let socket = io.connect(host)
-        this.state = { socket }
+        this.state = { socket: socket }
         this.initApp()
         this.userIsOnline()
         this.monitorOnlineStatus()
@@ -131,40 +132,38 @@ class App extends Component {
 
         return (
             <div>
-                <Header
-                    unreadCount={unreadCount}
-                    projects={projects}
-                    displayName={displayName}
-                />
-                <ProjectHeader
-                    projectName={projectName}
-                    members={allActiveUsers}
-                    actions={actions}
-                />
-                <div className="body-wrapper">
-                    <Grid fluid={true}>
-                        <Row className="body-row">
-                            <Col xs={2} className="left-panel">
-                                <LeftPanel
-                                    currentProject={currentProject}
-                                    projects={projects}
-                                    app={app}
-                                    files={files}
-                                    actions={actions}
-                                    onCreateProject={actions.createProject}
-                                />
-                            </Col>
-                            <Col xs={9} className='task-table'>
-                                {children}
-                            </Col>
-                            <Col xs={1}/>
-                        </Row>
-                    </Grid>
-                </div>
+                <Sidebar
+                    sidebarClassName="left-panel"
+                    sidebar={
+                     <LeftPanel
+                        currentProject={currentProject}
+                        projects={projects}
+                        app={app}
+                        files={files}
+                        actions={actions}
+                        onCreateProject={actions.createProject}
+                      />
+                    }
+                    open={true}
+                    docked={true}>
+                    <Header
+                        unreadCount={unreadCount}
+                        projects={projects}
+                        displayName={displayName}
+                    />
+                    <div className="body-wrapper">
+                        <div className='task-table'>
+                            {children}
+                        </div>
+                    </div>
+                </Sidebar>
+
             </div>
         );
     }
 }
+
+
 
 App.propTypes = {
     dispatch: PropTypes.func.isRequired,

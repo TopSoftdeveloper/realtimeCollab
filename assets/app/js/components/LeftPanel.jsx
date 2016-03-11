@@ -48,6 +48,9 @@ class LeftPanel extends Component {
 
         return (
             <div>
+                <div className="collab-logo">
+                    <h3>Collab</h3>
+                </div>
                 <List
                     currentProject={this.props.currentProject}
                     subheader="Projects"
