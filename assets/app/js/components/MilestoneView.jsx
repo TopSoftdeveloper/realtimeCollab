@@ -52,45 +52,25 @@ class MilestoneView extends Component {
 
     render() {
         let rows = [];
-        let tasksWithoutMilestones = this.props.tasks.filter(task => !task.milestone_id)
-        if (tasksWithoutMilestones.length > 0) {
-            rows.push(<MilestoneRow
-                milestone={'Uncategorized'}
-                deadline={null}
-                key={'uncategorized-tasks'}
-                onAddTask={this.addTask.bind(this, null)}
-                onDeleteMilestone={false}
-            />)
-            tasksWithoutMilestones.forEach(task => {
-                if (task.completed_on === null &&
-                    task.dirty !== true) {
-                    let assignees = this.props.users.filter(user => user.id === task.assignee_id)
-                    rows.push(<TaskRow
-                        key={_.uniqueId('task')}
-                        task={task}
-                        onCheck={this.markDone.bind(this, task.id)}
-                        onDelete={this.deleteTask.bind(this, task.id)}
-                        assignees={assignees}
-                        />)
-                }
-            })
-
-            let completedTasks = tasksWithoutMilestones.filter(task => task.completed_on !== null)
-            if (completedTasks.length > 0) {
-                rows.push(<CompletedRow
-                    key={_.uniqueId('completed')}
-                    completedTasks={completedTasks}
-                />)
-            }
-        }
+        let milestones = this.props.milestones
+        milestones.unshift({
+            content: 'Uncategorized',
+            deadline: null,
+            key: 'uncategorized-tasks',
+            id: null
+        })
 
         this.props.milestones.forEach(milestone => {
+            let onDelete = false
+            if (milestone.id) {
+                onDelete = this.deleteMilestone.bind(this, milestone.id)
+            }
             rows.push(<MilestoneRow
                 milestone={milestone.content}
                 deadline={milestone.deadline}
                 key={milestone.id}
                 onAddTask={this.addTask.bind(this, milestone.id)}
-                onDeleteMilestone={this.deleteMilestone.bind(this, milestone.id)}
+                onDeleteMilestone={onDelete}
             />)
 
             let tasks = []
