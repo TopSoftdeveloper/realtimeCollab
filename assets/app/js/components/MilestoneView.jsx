@@ -16,14 +16,15 @@ class MilestoneView extends Component {
     /***************************     TASK ACTIONS       *************************/
     /****************************************************************************/
 
-    addTask(milestone_id, content) {
+    addTask(milestone_id, content, assignee_id) {
         let task = {
             id: _.uniqueId('task'), //temp id
             content: content,
             completed_on: null,
-            project_id: this.props.projectId
+            project_id: this.props.projectId,
+            assignee_id: assignee_id,
+            milestone_id: milestone_id
         }
-        if (milestone_id) task.milestone_id = milestone_id
         this.props.actions.addTask(task);
     }
 
@@ -71,6 +72,7 @@ class MilestoneView extends Component {
                 key={milestone.id}
                 onAddTask={this.addTask.bind(this, milestone.id)}
                 onDeleteMilestone={onDelete}
+                users={this.props.users}
             />)
 
             let tasks = []

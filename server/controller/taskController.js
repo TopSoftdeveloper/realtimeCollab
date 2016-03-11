@@ -21,7 +21,8 @@ module.exports = {
                 content: Joi.string().required(),
                 project_id: Joi.string().required(),
                 completed_on: Joi.string().isoDate().default(null),
-                milestone_id: Joi.default(null)
+                milestone_id: Joi.default(null),
+                assignee_id: Joi.default(null)
             }
         }
     },
@@ -100,13 +101,7 @@ function getTasks(request, reply) {
 }
 
 function createTask(request, reply) {
-    var task = {
-        content: request.payload.content,
-        milestone_id: request.payload.milestone_id,
-        completed_on: null,
-        project_id: request.payload.project_id
-    };
-    storage.createTask(task).then(function(newTask) {
+    storage.createTask(request.payload).then(function(newTask) {
         Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
             socket.sendMessageToProject(request.payload.project_id, 'new_task', {
                 task: newTask, sender: decoded.user_id

@@ -242,7 +242,7 @@ module.exports = {
         return Milestone.isExist(milestone_id);
     },
     createTask: function(task) {
-        if ('milestone_id' in task && task.milestone_id !== null) {
+        if (task.milestone_id) {
             return Milestone.isExist(task.milestone_id).then(function(exists) {
                 if (!exists) {
                     return Promise.reject(format(constants.MILESTONE_NOT_EXIST, task.milestone_id));
@@ -251,9 +251,11 @@ module.exports = {
                 return Task.create(task)
             });
 
+        } else {
+            task.milestone_id = null //make sure its null and not empty string
+            task.id = shortid.generate()
+            return Task.create(task)
         }
-        task.id = shortid.generate()
-        return Task.create(task)
     },
     findOrCreateTask: function(task)  {
         return Task.find({

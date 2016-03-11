@@ -1,26 +1,8 @@
 import React, { Component } from 'react'
-import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert';
-
+import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert'
 import { IconButton, IconMenu, Dialog, TextField, FlatButton } from 'material-ui'
-import MenuItem from 'material-ui/lib/menus/menu-item';
-//import AutoComplete from 'material-ui/lib/auto-complete';
+import MenuItem from 'material-ui/lib/menus/menu-item'
 import SelectField from 'material-ui/lib/select-field';
-
-const colors = [
-    'Red',
-    'Orange',
-    'Yellow',
-    'Green',
-    'Blue',
-    'Purple',
-    'Black',
-    'White'
-];
-
-const customContentStyle = {
-    overflowY: 'visible',
-    overflowX: 'visible'
-}
 
 class MilestoneRow extends Component {
 
@@ -28,7 +10,7 @@ class MilestoneRow extends Component {
         super(props, context);
         this.state = {
             isDialogOpen: false,
-            value: 2
+            assignee: 0
         }
     }
 
@@ -41,7 +23,7 @@ class MilestoneRow extends Component {
     onDialogSubmit() {
         let content = this.refs.taskField.getValue().trim()
         if (content !== '') {
-            this.props.onAddTask(content)
+            this.props.onAddTask(content, this.state.assignee)
         }
         this.setState({
             isDialogOpen: false
@@ -58,7 +40,7 @@ class MilestoneRow extends Component {
         this.props.onDeleteMilestone()
     }
     handleChange(event, index, value) {
-        this.setState({value});
+        this.setState({assignee: value});
     }
 
     render() {
@@ -101,6 +83,12 @@ class MilestoneRow extends Component {
             deadlineText = 'Due by ' + eventTime.toLocaleDateString('en-US', options)
         }
 
+        let possibleAssignees = this.props.users.map(user => {
+            return <MenuItem value={user.id} key={user.id} primaryText={user.display_name}/>
+        })
+
+        possibleAssignees.unshift(<MenuItem value={0} key={0} primaryText="None"/>)
+
         return (
             <div className="milestone-row">
                 <h3 className="milestone-header">{this.props.milestone}</h3>
@@ -119,13 +107,11 @@ class MilestoneRow extends Component {
                         ref="taskField"
                     />
                     <br/>
-
-                    <SelectField value={this.state.value} onChange={this.handleChange.bind(this)}>
-                        <MenuItem value={1} primaryText="Never"/>
-                        <MenuItem value={2} primaryText="Every Night"/>
-                        <MenuItem value={3} primaryText="Weeknights"/>
-                        <MenuItem value={4} primaryText="Weekends"/>
-                        <MenuItem value={5} primaryText="Weekly"/>
+                    <SelectField
+                        value={this.state.assignee}
+                        onChange={this.handleChange.bind(this)}
+                        floatingLabelText="Assign to">
+                        {possibleAssignees}
                     </SelectField>
                 </Dialog>
             </div>
