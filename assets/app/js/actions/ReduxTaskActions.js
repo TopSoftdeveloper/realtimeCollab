@@ -314,10 +314,11 @@ export function editTask(task_id, content, assignee_id) {
 }
 
 export function editMilestone(milestone_id, content, deadline) {
-    let milestone = {
-        content: content,
-        deadline: deadline
+    let milestone = {}
+    if (content) {
+        milestone.content = content
     }
+    milestone.deadline = deadline
     return function(dispatch) {
         serverEditMilestone(milestone_id, milestone)
             .done(res => {

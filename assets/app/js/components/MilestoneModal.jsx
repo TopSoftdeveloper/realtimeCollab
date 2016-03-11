@@ -15,7 +15,7 @@ class MilestoneModal extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            deadline: null,
+            deadline: this.props.deadline,
             toggle: true
         }
     }
@@ -31,9 +31,6 @@ class MilestoneModal extends Component {
             this.props.method(content, isoDate)
         }
         this.props.handleClose()
-        this.setState({
-            deadline: null
-        })
     }
 
     formatDate(date) {
@@ -42,11 +39,6 @@ class MilestoneModal extends Component {
     }
 
     toggleDeadline(e, status) {
-        if (!status) {
-            this.setState({
-                deadline: null
-            })
-        }
         this.setState({
             toggle: status
         })
