@@ -3,31 +3,15 @@ import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert'
 import { IconButton, IconMenu, Dialog, TextField, FlatButton } from 'material-ui'
 import MenuItem from 'material-ui/lib/menus/menu-item'
 import SelectField from 'material-ui/lib/select-field';
+import TaskModal from './TaskModal.jsx'
 
 class MilestoneRow extends Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            isDialogOpen: false,
-            assignee: 0
-        }
-    }
-
-    handleRequestClose(buttonClicked) {
-        if (!buttonClicked && this.state.openDialogStandardActions) return;
-        this.setState({
             isDialogOpen: false
-        });
-    }
-    onDialogSubmit() {
-        let content = this.refs.taskField.getValue().trim()
-        if (content !== '') {
-            this.props.onAddTask(content, this.state.assignee)
         }
-        this.setState({
-            isDialogOpen: false
-        })
     }
 
     openModal() {
@@ -36,28 +20,18 @@ class MilestoneRow extends Component {
         })
     }
 
+    onSubmit() {
+        this.setState({
+            isDialogOpen: false
+        })
+    }
+
     deleteMilestone() {
         this.props.onDeleteMilestone()
-    }
-    handleChange(event, index, value) {
-        this.setState({assignee: value});
     }
 
     render() {
         let iconButtonElement = <IconButton><MoreVert /></IconButton>
-        let actions = [
-            <FlatButton
-                key={1}
-                label="Cancel"
-                secondary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />,
-            <FlatButton
-                key={2}
-                label="Submit"
-                primary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />
-        ]
-
         let iconMenu = null
         if (this.props.onDeleteMilestone) {
             iconMenu = <IconMenu
@@ -95,25 +69,13 @@ class MilestoneRow extends Component {
                     {iconMenu}
                 <div className="clearfix"></div>
                 <p>{deadlineText}</p>
-
-                <Dialog
+                <TaskModal
                     title="Add Task"
-                    actions={actions}
                     open={this.state.isDialogOpen}
-                    onRequestClose={this.handleRequestClose.bind(this)}>
-                    <TextField
-                        hintText="Task name"
-                        onEnterKeyDown={this.onDialogSubmit.bind(this)}
-                        ref="taskField"
-                    />
-                    <br/>
-                    <SelectField
-                        value={this.state.assignee}
-                        onChange={this.handleChange.bind(this)}
-                        floatingLabelText="Assign to">
-                        {possibleAssignees}
-                    </SelectField>
-                </Dialog>
+                    onSubmit={this.onSubmit.bind(this)}
+                    onAddTask={this.props.onAddTask}
+                    users={this.props.users}
+                />
             </div>
         )
     }
