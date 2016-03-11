@@ -16,7 +16,7 @@ export function queryGoogleDrive(queryString) {
         'path': '/drive/v3/files',
         'method': 'GET',
         'params': {
-            'pageSize': '1000',
+            'pageSize': '100',
             'q': "fullText contains '" + queryString + "'",
             'fields': 'files'
         }
@@ -28,7 +28,7 @@ export function getGoogleDriveFolders() {
         'path': '/drive/v3/files',
         'method': 'GET',
         'params': {
-            'pageSize': '1000',
+            'pageSize': '100',
             'orderBy': 'modifiedTime desc',
             'spaces': 'drive',
             'q': "mimeType = 'application/vnd.google-apps.folder'",
@@ -42,7 +42,7 @@ export function getChildrenFiles(folderId) {
         'path': '/drive/v3/files',
         'method': 'GET',
         'params': {
-            'pageSize': '1000',
+            'pageSize': '100',
             'orderBy': 'modifiedTime desc',
             'q': "'" + folderId + "' in parents",
             'fields': 'files'

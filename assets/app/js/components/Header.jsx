@@ -11,11 +11,16 @@ import ListItem from 'material-ui/lib/lists/list-item';
 import Avatar from 'material-ui/lib/avatar';
 import _ from 'lodash'
 
+let RATE_LIMIT_MS = 500
+let MIN_SEARCH_CHARS = 2
+
 class Header extends Component {
     constructor() {
         super(...arguments);
         this.state = {
-            isHangoutBtnRendered: false
+            isHangoutBtnRendered: false,
+            lastQuery: new Date().getTime(),
+            queryString: ''
         }
 
         this.constructor.childContextTypes = {
@@ -37,7 +42,19 @@ class Header extends Component {
     }
 
     query(queryString) {
-        if (queryString.length >= 3) this.props.actions.queryIntegrations(queryString)
+        let elapsedTime = new Date().getTime() - this.state.lastQuery
+        if (queryString.length >= MIN_SEARCH_CHARS && elapsedTime >= RATE_LIMIT_MS) {
+            this.props.actions.queryIntegrations(queryString)
+            this.setState({
+                lastQuery: new Date().getTime(),
+                queryString: queryString
+            })
+        }
+    }
+
+    goToResult(link, e) {
+        e.preventDefault();
+        window.open(link, '_newtab')
     }
 
     render() {
@@ -69,20 +86,30 @@ class Header extends Component {
         }
 
         let image = getUserAvatar(localStorage.getItem('display_image'), this.props.displayName)
-        let searchResults = this.props.search.map(result => {
-            return {
-                text: result.primaryText,
+        let searchResults = null
+        if (this.props.search.length === 0 && this.state.queryString.length >= MIN_SEARCH_CHARS) {
+            searchResults = [{
+                text: "",
                 value: (
-                    <ListItem
-                        key={_.uniqueId('search')}
-                        leftAvatar={<Avatar size={24} src={result.thumbnail} />}
-                        primaryText={result.primaryText}
-                        innerDivStyle={itemStyles}
-                    />
+                    <ListItem primaryText="There are no results that match your search" disabled={true} />
                 )
-            }
-        })
-
+            }]
+        } else {
+            searchResults = this.props.search.map(result => {
+                return {
+                    text: result.primaryText,
+                    value: (
+                        <ListItem
+                            key={_.uniqueId('search')}
+                            leftAvatar={<Avatar size={24} src={result.thumbnail} />}
+                            primaryText={result.primaryText}
+                            innerDivStyle={itemStyles}
+                            onTouchTap={this.goToResult.bind(this, result.link)}
+                        />
+                    )
+                }
+            })
+        }
         return (
             <nav className="navbar navbar-default ">
                 <div>
@@ -90,7 +117,7 @@ class Header extends Component {
                         <AutoComplete
                             hintText="Search Collab"
                             disableFocusRipple={false}
-                            filter={AutoComplete.caseInsensitiveFilter}
+                            filter={AutoComplete.noFilter}
                             dataSource={searchResults}
                             onUpdateInput={this.query.bind(this)}
                             listStyle={listStyles}
