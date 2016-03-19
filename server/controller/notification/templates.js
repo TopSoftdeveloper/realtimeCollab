@@ -10,6 +10,9 @@ module.exports = {
             case this.JOINED_PROJECT:
                 message = data.displayName + ' has joined the project ' + data.projectName
                 break
+            case this.DECLINED_PROJECT:
+                message = data.displayName + ' has declined to join the project ' + data.projectName
+                break
             default:
                 message = ''
         }
@@ -21,5 +24,6 @@ module.exports = {
     },
 
     INVITE_TO_PROJECT: 'INVITE_TO_PROJECT',
-    JOINED_PROJECT: 'JOINED_PROJECT'
+    JOINED_PROJECT: 'JOINED_PROJECT',
+    DECLINED_PROJECT: 'DECLINED_PROJECT'
 }

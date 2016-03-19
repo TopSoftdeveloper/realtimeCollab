@@ -4,7 +4,7 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
         getGithubEvents, syncGithubIssues, serverEditTask, serverEditMilestone,
-        queryGoogleDrive} from '../utils/apiUtil'
+        queryGoogleDrive, serverDeclineProject} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -215,6 +215,20 @@ function buildGithubEvent(event) {
 export function dismissProjectAlert() {
     return function(dispatch) {
         dispatch(projectAlert(null))
+    }
+}
+
+export function declineProject(projectId, notificationId) {
+    return function(dispatch) {
+        serverDeclineProject(projectId).done(res => {
+            serverDeleteNotification(notificationId).done(res => {
+                dispatch(_deleteNotification(notificationId))
+            }).fail(e => {
+                console.log(e)
+            })
+        }).fail(e => {
+            console.log(e)
+        })
     }
 }
 

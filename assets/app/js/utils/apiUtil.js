@@ -100,6 +100,15 @@ function ajaxDelete(endpoint, data) {
     });
 }
 
+export function serverDeclineProject(projectId) {
+    return $.ajax({
+        url: API_BASE_URL + '/decline_project/' + projectId,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+        },
+        type: 'PUT'
+    })
+}
 
 export function serverAcceptProject(projectId) {
     return $.ajax({

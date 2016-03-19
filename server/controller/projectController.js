@@ -47,6 +47,10 @@ module.exports = {
     acceptInvitation: {
         handler: acceptInvitation
     },
+
+    declineInvitation: {
+        handler: declineInvitation
+    },
     inviteToProject: {
         handler: inviteToProject,
         validate: {
@@ -93,6 +97,20 @@ function acceptInvitation(request, reply) {
         })
     })
 }
+
+function declineInvitation(request, reply) {
+    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+        storage.removeUserProject(decoded.user_id, request.params.project_id).then(function() {
+            var notifData = {
+                user_id: decoded.user_id,
+                project_id: request.params.project_id
+            }
+            notifications.newProjectNotification(notifData, templates.DECLINED_PROJECT, request.params.project_id, decoded.user_id)
+            reply({status: constants.STATUS_OK})
+        })
+    })
+}
+
 
 function inviteToProject(request, reply) {
     // User needs to be in current project to invite someone else

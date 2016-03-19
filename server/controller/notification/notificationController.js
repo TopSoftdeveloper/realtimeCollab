@@ -45,7 +45,6 @@ module.exports = {
          */
         storage.saveNotification(JSON.stringify(data), template, recipientId).then(function(notification) {
             idToNames(data).done(function(res) {
-                console.log(res)
                 var displayName = res[0].display_name
                 var projectName = res[1].content
                 var message = templates.getMessage(template, {displayName: displayName, projectName: projectName})
