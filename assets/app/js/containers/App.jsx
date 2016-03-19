@@ -8,7 +8,6 @@ import Header from '../components/Header.jsx'
 import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
 import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
-import ProjectHeader from '../components/ProjectHeader.jsx'
 import { Grid, Row, Col } from 'react-bootstrap'
 import Sidebar from 'react-sidebar'
 

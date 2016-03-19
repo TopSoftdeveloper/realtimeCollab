@@ -6,15 +6,38 @@ import CompletedRow from './CompletedRow.jsx'
 import TaskRow from './TaskRow.jsx'
 import Remove from './../icons/Remove.jsx'
 import Paper from 'material-ui/lib/paper';
+import FlatButton from 'material-ui/lib/flat-button';
+import MilestoneModal from './MilestoneModal.jsx'
 
 class MilestoneView extends Component {
     constructor(props, context) {
         super(props, context);
+        this.state = {
+            isDialogOpen: false
+        }
     }
 
-    /****************************************************************************/
-    /***************************     TASK ACTIONS       *************************/
-    /****************************************************************************/
+    handleClose() {
+        this.setState({
+            isDialogOpen: false
+        })
+    }
+
+    openModal() {
+        this.setState({
+            isDialogOpen: true
+        })
+    }
+
+    addMilestone(content, deadline) {
+        this.props.actions.createMilestone({
+            id: _.uniqueId('milestone'),
+            content: content,
+            deadline: deadline,
+            project_id: this.props.projectId,
+            tasks: []
+        })
+    }
 
     addTask(milestone_id, content, assignee_id) {
         let task = {
@@ -62,12 +85,15 @@ class MilestoneView extends Component {
     render() {
         let rows = [];
         let milestones = this.props.milestones
-        milestones.unshift({  // Just a placeholder milestone for tasks without milestones
-            content: 'Uncategorized',
-            deadline: null,
-            key: 'uncategorized-tasks',
-            id: null
-        })
+
+        if (milestones.length > 0 && milestones[0].id !== null) {
+            milestones.unshift({  // Just a placeholder milestone for tasks without milestones
+                content: 'Uncategorized',
+                deadline: null,
+                key: 'uncategorized-tasks',
+                id: null
+            })
+        }
 
         this.props.milestones.forEach(milestone => {
             let onDelete = false
@@ -120,10 +146,23 @@ class MilestoneView extends Component {
         return (
         <Paper zDepth={1}>
             <div className='milestone-view'>
+                <FlatButton
+                    key="add-milestone-btn"
+                    label="Add Milestone"
+                    className="add-milestone-btn"
+                    onTouchTap={this.openModal.bind(this)}
+                    secondary={true}/>
                 <div className='task-list'>
                     {rows}
                 </div>
             </div>
+            <MilestoneModal
+                key="add-milestone-modal"
+                title="Add Milestone"
+                open={this.state.isDialogOpen}
+                handleClose={this.handleClose.bind(this)}
+                method={this.addMilestone.bind(this)}
+            />
         </Paper>
         );
     }
