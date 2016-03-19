@@ -13,10 +13,15 @@ import LoadingIndicator from '../LoadingIndicator.jsx'
 require('rc-steps/assets/index.css')
 require('rc-steps/assets/iconfont.css')
 import $ from 'jquery'
+import FontIcon from 'material-ui/lib/font-icon';
 
 class Github extends Component {
     constructor(props, context) {
         super(props, context)
+        this.state = {
+            step: 0,
+            fetchedRepos: false
+        }
     }
 
     setLoadingTrue() {
@@ -24,6 +29,12 @@ class Github extends Component {
             github: {
                 loading: true
             }
+        })
+    }
+
+    stepForward() {
+        this.setState({
+            step: this.state.step + 1
         })
     }
 
@@ -46,10 +57,14 @@ class Github extends Component {
         let repoSet = repoName && repoOwner
         // Default repository not set
         if (this.props.app.github_token &&
-            this.props.repos && this.props.repos.length === 0 &&
-            !repoSet) { //todo: have a check whether user indeed has 0 repos
+            this.props.repos &&
+            !repoSet && !this.state.fetchedRepos) {
             this.props.actions.initGithubRepos()
+            this.setState({
+                fetchedRepos: true
+            })
         }
+
         // Events not initialized. Todo: Check whether user has no events
         if (repoOwner && repoName && this.props.app.github_token && this.props.events && this.props.events.length === 0) {
             this.props.actions.fetchGithubEvents(this.props.project.id, repoOwner, repoName)
@@ -78,8 +93,9 @@ class Github extends Component {
 
     render() {
         let app = this.props.app
+        let loading = null
         if (app.github && app.github.loading) {
-            return <LoadingIndicator/>
+            loading = <LoadingIndicator/>
         }
 
         let repoName = this.props.project.github_repo_name
@@ -92,34 +108,71 @@ class Github extends Component {
                 <div>
                     <h4>{repoOwner}/{repoName}</h4>
                     <EventList events={this.props.events} />
+                    {loading}
                 </div>
             )
         }
 
-        let steps = [{title: 'Authorize Github'}, {title: 'Select project repository'}]
+        let steps = [{title: 'Welcome'}, {title: 'Authorize Github'}, {title: 'Select project repository'}]
         let content = null
-        let currentStep = 0
+        let currentStep = this.state.step
 
         if (!app.github_token && !repoSet) {
-            // Case 2: Not authorized and repository not set
             content = (
+            <div>
+                <h4>Welcome to Collab!</h4>
+                <br/>
+                <p>Collab helps you keep all your project files, todo lists and team updates in one place. </p>
+                <p>Your todo lists are synced seamlessly with Github issues, and project files in Google Docs can be
+                    accessed right from the Files panel.</p>
+                <br/>
                 <RaisedButton
-                    label="Authorize"
-                    onTouchTap={this.authorize.bind(this)}
+                    className="animated infinite pulse"
+                    label="Lets get started!"
+                    onTouchTap={this.stepForward.bind(this)}
                     primary={true}
                 />
+            </div>
             )
-        } else if (!repoSet) {
-            // Case 3: Authorized but repository not set
-            currentStep = 1
+        }
+
+        if (currentStep == 1) {
+            // Case 2: Not authorized and repository not set
             content = (
-                <RepoList
-                    repos={this.props.repos}
-                    syncWithGithub={this.syncWithGithub.bind(this)}
-                    projectId={this.props.project.id}
-                />
+                <div>
+                    <br/>
+                    <p>First, we need to authorize your Github account so Collab can sync your todo list
+                    with Github issues.</p>
+
+                    <RaisedButton
+                    label="Authorize Github"
+                    onTouchTap={this.authorize.bind(this)}
+                    secondary={true}
+                    icon={<FontIcon className="fa fa-github"/>}
+                    />
+                </div>
             )
-        } else {
+        }
+
+        if (app.github_token && !repoSet) {
+            // Case 3: Authorized but repository not set
+            currentStep = 2
+            content = (
+                <div>
+                    <br/>
+                    <p>Select a default repository and you're all set!</p>
+                    {loading}
+                    <br/>
+                    <RepoList
+                        repos={this.props.repos}
+                        syncWithGithub={this.syncWithGithub.bind(this)}
+                        projectId={this.props.project.id}
+                    />
+                </div>
+            )
+        }
+
+        if (!app.github_token && repoSet) {
             // Case 4: Repo set but not authorized
             return (
                 <div className='my-step-container'>

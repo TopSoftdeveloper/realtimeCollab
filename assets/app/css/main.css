@@ -5,7 +5,7 @@
 
 .github-repo-list {
   overflow-y: auto;
-  max-height: 50vh;
+  max-height: 60vh;
 }
 
 .github-repo-list li {
@@ -314,7 +314,6 @@
 }
 
 /******************* General ****************************/
-
 .no-projects {
   color: #aaaaaa;
   left: 50%;
@@ -327,7 +326,6 @@
 }
 
 .loading-indicator {
-  margin-top: 20%;
   left: 45%;
   position: absolute;
 }

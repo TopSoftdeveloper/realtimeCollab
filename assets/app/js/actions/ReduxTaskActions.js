@@ -83,9 +83,24 @@ export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
 
 function _getGithubRepos(dispatch) {
+    dispatch(_updateAppStatus({
+        github: {
+            loading: true
+        }
+    }))
     getGithubRepos().done(res => {
+        dispatch(_updateAppStatus({
+            github: {
+                loading: false
+            }
+        }))
         dispatch(_initGithubRepos(res))
     }).fail(e => {
+        dispatch(_updateAppStatus({
+            github: {
+                loading: false
+            }
+        }))
         if (e.statusText === "Unauthorized") {
             dispatch(_updateAppStatus({github_token: ''}))
         } else {
