@@ -50,8 +50,8 @@ class Github extends Component {
             !repoSet) { //todo: have a check whether user indeed has 0 repos
             this.props.actions.initGithubRepos()
         }
-        // Events not initialized
-        if (this.props.app.github_token && this.props.events && this.props.events.length === 0) {
+        // Events not initialized. Todo: Check whether user has no events
+        if (repoOwner && repoName && this.props.app.github_token && this.props.events && this.props.events.length === 0) {
             this.props.actions.fetchGithubEvents(this.props.project.id, repoOwner, repoName)
         }
     }
