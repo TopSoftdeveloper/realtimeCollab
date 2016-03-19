@@ -102,12 +102,17 @@ class App extends Component {
 
         if (users.length === 0) {
             // First initialization of app
-            return (<div></div>);
+            return (<div className='main-content'></div>);
         }
 
         let children = this.props.children;
         if (projects.length === 0 && matchesUrl(window.location.href, AppConstants.APP_ROOT_URL)) {
-            children = (<h2>You have no projects yet!</h2>);
+            children = (<div className='main-content'>
+                <div className="no-projects">
+                    <h3>You have no projects yet!</h3>
+                    <p>Add one to get started</p>
+                </div>
+            </div>);
         }
 
         let displayName = users.filter(
@@ -149,9 +154,7 @@ class App extends Component {
                         actions={actions}
                     />
                     <div className="body-wrapper">
-                        <div className='task-table'>
-                            {children}
-                        </div>
+                        {children}
                     </div>
                 </Sidebar>
 

@@ -44,6 +44,11 @@ class List extends Component {
             }
         )
 
+        let iconClassName = "material-icons add_circle "
+        if (this.props.items.length === 0) {
+            iconClassName += "animated infinite wobble"
+        }
+
         return (
             <div className="project-list">
                 <div className="project-list-header">
@@ -52,8 +57,9 @@ class List extends Component {
                         <tr>
                             <td><span>Projects</span></td>
                             <td><i
-                                className="material-icons add_circle"
-                                onClick={this.props.onAddProject}>add_circle</i></td>
+                                className={iconClassName}
+                                onClick={this.props.onAddProject}>add_circle</i>
+                            </td>
                         </tr>
                         </tbody>
                     </table>

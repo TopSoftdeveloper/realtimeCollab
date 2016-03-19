@@ -9,6 +9,7 @@ var Default = React.createClass({
                 <meta charSet="utf-8"></meta>
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta>
                 <title>Collab</title>
+                <link rel="stylesheet" href="/assets/app/css/animate.min.css"></link>
                 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"></link>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"></link>
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>

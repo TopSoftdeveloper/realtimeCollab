@@ -314,6 +314,14 @@
 }
 
 /******************* General ****************************/
+
+.no-projects {
+  color: #aaaaaa;
+  left: 50%;
+  text-align: center;
+  margin-top: 150px;
+}
+
 .invisible {
   visibility: hidden;
 }
@@ -332,17 +340,13 @@
 .left-panel {
   background-color: #37474f;
   color: white;
-  min-width: 200px;
+  min-width: 204px;
 }
 
 .collab-logo {
   margin-top: -20px;
   background: #424242;
   height: 50px;
-}
-
-.task-table {
-  z-index: 1500;
 }
 
 .body-wrapper {
