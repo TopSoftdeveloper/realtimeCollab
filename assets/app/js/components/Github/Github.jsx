@@ -78,7 +78,7 @@ class Github extends Component {
 
     render() {
         let app = this.props.app
-        if (app.github.loading) {
+        if (app.github && app.github.loading) {
             return <LoadingIndicator/>
         }
 
