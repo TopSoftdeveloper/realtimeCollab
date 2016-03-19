@@ -3,7 +3,6 @@ var webpack = require('webpack');
 
 module.exports = {
     entry: {
-        home: './assets/home/js/home.js',
         app: './assets/app/js/index.jsx'
     },
     output: {

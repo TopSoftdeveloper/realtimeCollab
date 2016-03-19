@@ -168,7 +168,7 @@ class Files extends Component {
         if (!app.logged_into_google && project.root_folder) {
             return (
                 <div>
-                    <span>Please authorize Google Drive</span>
+                    <h4>Please re-authorize Google Drive</h4>
                     <RaisedButton
                         label="Authorize"
                         onTouchTap={this.authorizeDrive.bind(this)}

@@ -69,19 +69,35 @@ class Project extends Component {
         let currentTab = getCurrentTab()
         if (currentTab === '') currentTab = AppConstants.PATH.milestones //default tab
 
+        let repoName = currentProject.github_repo_name
+        let repoOwner = currentProject.github_repo_owner
+        let repoSet = repoName && repoOwner
+
+        let milestoneView = <MilestoneView
+            milestones={milestonesInProj}
+            tasks={tasksInProj}
+            actions={actions}
+            projectId={currentProjectId}
+            users={allActiveUsers}
+        />
+
+        if (!(app.github_token && repoSet)) {
+            milestoneView = <Github
+                project={currentProject}
+                actions={actions}
+                repos={githubRepos}
+                events={events}
+                app={app}
+            />
+        }
+
         return (
             <div className="main-content">
                 <Tabs value={currentTab}>
                     <Tab label="Milestones"
                          value={AppConstants.PATH.milestones}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.milestones)}>
-                        <MilestoneView
-                            milestones={milestonesInProj}
-                            tasks={tasksInProj}
-                            actions={actions}
-                            projectId={currentProjectId}
-                            users={allActiveUsers}
-                        />
+                        {milestoneView}
                     </Tab>
                     <Tab label="Files"
                          value={AppConstants.PATH.files}

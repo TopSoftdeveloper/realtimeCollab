@@ -123,6 +123,7 @@ class Github extends Component {
             // Case 4: Repo set but not authorized
             return (
                 <div className='my-step-container'>
+                    <h4>Please re-authorize Github</h4>
                     <RaisedButton
                         label="Authorize"
                         onTouchTap={this.authorize.bind(this)}
