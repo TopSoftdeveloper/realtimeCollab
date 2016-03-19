@@ -12,7 +12,7 @@ import Avatar from 'material-ui/lib/avatar';
 import _ from 'lodash'
 
 let RATE_LIMIT_MS = 500
-let MIN_SEARCH_CHARS = 2
+let MIN_SEARCH_CHARS = 3
 
 class Header extends Component {
     constructor() {
@@ -41,7 +41,7 @@ class Header extends Component {
         }
     }
 
-    query(queryString) {
+    query(queryString, e) {
         let elapsedTime = new Date().getTime() - this.state.lastQuery
         if (queryString.length >= MIN_SEARCH_CHARS && elapsedTime >= RATE_LIMIT_MS) {
             this.props.actions.queryIntegrations(queryString)
@@ -97,10 +97,9 @@ class Header extends Component {
         } else {
             searchResults = this.props.search.map(result => {
                 return {
-                    text: result.primaryText,
+                    text: result.primaryText + _.uniqueId('search'),
                     value: (
                         <ListItem
-                            key={_.uniqueId('search')}
                             leftAvatar={<Avatar size={24} src={result.thumbnail} />}
                             primaryText={result.primaryText}
                             innerDivStyle={itemStyles}

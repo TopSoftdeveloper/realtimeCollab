@@ -16,7 +16,7 @@ export function queryGoogleDrive(queryString) {
         'path': '/drive/v3/files',
         'method': 'GET',
         'params': {
-            'pageSize': '100',
+            'pageSize': '20',
             'q': "fullText contains '" + queryString + "'",
             'fields': 'files'
         }
