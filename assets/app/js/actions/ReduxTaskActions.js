@@ -269,19 +269,22 @@ export function initializeApp() {
             display_name: localStorage.getItem('display_name'),
             display_image: localStorage.getItem('display_image'),
             online: false
-        }]));                
-
+        }]));
+        dispatch(initApp({
+            logged_into_google: false,
+            refresh_github_token: false,
+            github: {
+                loading: false
+            },
+            loading: true
+        }));
         serverPopulate().done(res => {
             if (res.projects.length > 0) {
                 let normalizedTables = normalize(res.projects);
                 dispatch(initApp({
                     current_project: normalizedTables.projects[0].id,
-                    logged_into_google: false,
                     github_token: localStorage.getItem('github_token'),
-                    refresh_github_token: false,
-                    github: {
-                        loading: false
-                    }
+                    loading: false
                 }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));

@@ -10,6 +10,7 @@ import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
 import { Grid, Row, Col } from 'react-bootstrap'
 import Sidebar from 'react-sidebar'
+import LoadingIndicator from '../components/LoadingIndicator.jsx'
 
 var AppConstants = require('../AppConstants');
 
@@ -107,12 +108,22 @@ class App extends Component {
 
         let children = this.props.children;
         if (projects.length === 0 && matchesUrl(window.location.href, AppConstants.APP_ROOT_URL)) {
-            children = (<div className='main-content'>
-                <div className="no-projects">
-                    <h3>You have no projects yet!</h3>
-                    <p>Add one to get started</p>
-                </div>
-            </div>);
+            if (!app.loading) {
+                children = (
+                    <div className='main-content'>
+                        <div className="no-projects">
+                            <h3>You have no projects yet!</h3>
+                            <p>Add one to get started</p>
+                        </div>
+                    </div>
+                )
+            } else {
+                children = (
+                    <div className='main-content'>
+                        <LoadingIndicator/>
+                    </div>
+                )
+            }
         }
 
         let displayName = users.filter(
