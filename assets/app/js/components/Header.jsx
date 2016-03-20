@@ -109,6 +109,12 @@ class Header extends Component {
                 }
             })
         }
+
+        let notifsCount = null
+        if (this.props.unreadCount > 0) {
+            notifsCount = <span className="badge">{this.props.unreadCount}</span>
+        }
+
         return (
             <nav className="navbar navbar-default ">
                 <div>
@@ -131,7 +137,7 @@ class Header extends Component {
                             </div>
                         </li>
                         <li className="notif-li"><Link to="/app/notifications">Notifs  &nbsp;
-                            <span className="badge">{this.props.unreadCount}</span></Link></li>
+                            {notifsCount}</Link></li>
                         <li className="display-pic-li">{image}</li>
                         <li><span className=" navbar-text ">{this.props.displayName} </span></li>
                     </ul>
