@@ -9,6 +9,8 @@ var helper = require('../utils/helper');
 var secret_key = config.get('authentication.privateKey');
 var Promise = require('bluebird');
 var Sequelize = require('sequelize');
+var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
+var req = require("request")
 
 var _ = require('lodash');
 
@@ -20,8 +22,73 @@ module.exports = {
                 user_id: Joi.string().required()
             }
         }
+    },
+    updateInfo: {
+        handler: updateInfo,
+        validate: {
+            params: {
+                user_id: Joi.string().required()
+            }
+        }
+    },
+    updateGithubLogin: {
+        handler: updateGithubLogin,
+        validate: {
+            params: {
+                user_id: Joi.string().required()
+            }
+        }
     }
 };
+
+function updateGithubLogin(request, reply) {
+    var userId = request.params.user_id;
+    var options = {
+        url: GITHUB_ENDPOINT + '/user',
+        headers: {
+            'User-Agent': 'Collab',
+            'Authorization': 'Bearer ' + request.payload.token
+        }
+    }
+    req.get(options , function(err, res, body) {
+        if (err) {
+            reply(Boom.badRequest())
+            return
+        }
+        var user = JSON.parse(body)
+        storage.updateUser(userId, {github_login: user.login}).then(function() {
+            reply({
+                status: constants.STATUS_OK
+            });
+        })
+    })
+}
+
+function updateInfo(request, reply) {
+    var user_id = request.params.user_id;
+    var payload = {}
+    if (request.payload.display_name) {
+        payload.display_name = request.payload.display_name
+    }
+    if (request.payload.display_image) {
+        payload.display_image = request.payload.display_image
+    }
+    if (request.payload.email) {
+        payload.email = request.payload.email
+    }
+    if (request.payload.google_id) {
+        payload.google_id = request.payload.google_id
+    }
+    if (request.payload.github_login) {
+        payload.github_login = request.payload.github_login
+    }
+
+    storage.updateUser(user_id, payload).then(function() {
+        reply({
+            status: constants.STATUS_OK
+        });
+    })
+}
 
 function normalize(projectsData) {
     // removes the nested 'user_project' and just retains 'role' attribute

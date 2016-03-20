@@ -33,6 +33,8 @@ module.exports.endpoints = [
     { method: 'PUT',  path: '/project/{project_id}', config: Project.updateProject },
 
     { method: 'GET',  path: '/user/populate/{user_id}', config: User.getInfo },
+    { method: 'PUT',  path: '/user/{user_id}', config: User.updateInfo },
+    { method: 'PUT',  path: '/user/github/{user_id}', config: User.updateGithubLogin },
 
     { method: 'GET',  path: '/notifications', config: Notification.getNotifications },
     { method: 'DELETE',  path: '/notification/{notification_id}', config: Notification.removeNotification },

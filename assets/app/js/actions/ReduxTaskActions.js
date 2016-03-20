@@ -4,7 +4,7 @@ import {serverCreateTask, serverDeleteTask, serverMarkDone,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
         getGithubEvents, syncGithubIssues, serverEditTask, serverEditMilestone,
-        queryGoogleDrive, serverDeclineProject} from '../utils/apiUtil'
+        queryGoogleDrive, serverDeclineProject, serverUpdateGithubLogin} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -81,6 +81,12 @@ export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
 
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
+
+export function updateGithubLogin(token) {
+    return function(dispatch) {
+        serverUpdateGithubLogin(token)
+    }
+}
 
 function _getGithubRepos(dispatch) {
     dispatch(_updateAppStatus({

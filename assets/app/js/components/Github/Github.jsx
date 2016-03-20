@@ -80,6 +80,7 @@ class Github extends Component {
                 if (!res.error) {
                     localStorage.setItem('github_token', res.access_token)
                     this.props.actions.updateAppStatus({github_token: res.access_token})
+                    this.props.actions.updateGithubLogin(res.access_token)
                 }
             }).fail(e => console.log(e))
         }

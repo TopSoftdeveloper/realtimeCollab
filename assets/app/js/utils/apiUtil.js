@@ -164,6 +164,14 @@ export function serverInviteToProject(payload) {
     return ajaxPost(INVITE_TO_PROJECT_ENDPOINT, payload);
 }
 
+export function serverUpdateUser(payload) {
+    return ajaxPut('/user/' + localStorage.getItem('user_id'), payload)
+}
+
+export function serverUpdateGithubLogin(token) {
+    return ajaxPut('/user/github/' + localStorage.getItem('user_id'), {token:token})
+}
+
 export function serverPopulate() {
     return ajaxGet(POPULATE_ENDPOINT + '/' + localStorage.getItem('user_id'))
 }
