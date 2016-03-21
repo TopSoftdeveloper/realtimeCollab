@@ -345,18 +345,17 @@ export function addTask(task) {
 	// thunk function needs to dispatch some actions to change 
   	// the Store status, so give it the "dispatch function"
   	return function(dispatch) {
-  		dispatch(_addTask(task));
-	    serverCreateTask({
-            content: task.content, 
-            milestone_id: task.milestone_id, 
-            project_id: task.project_id})
+        dispatch(_addTask(task));
+        delete task.id
+        task.github_token = localStorage.getItem('github_token')
+        serverCreateTask(task)
         .done(res => {
-	        // update the stores with the actual id
-	        dispatch(replaceTaskId(task.id, res.id));
-	    }).fail(e => {
-	        console.log(e);
-	       	dispatch(_deleteTask(task.id));
-	    });
+          // update the stores with the actual id
+          dispatch(replaceTaskId(task.id, res.id));
+        }).fail(e => {
+          console.log(e);
+          dispatch(_deleteTask(task.id));
+        });
   	}
 }
 

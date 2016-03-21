@@ -43,7 +43,6 @@ class MilestoneView extends Component {
         let task = {
             id: _.uniqueId('task'), //temp id
             content: content,
-            completed_on: null,
             project_id: this.props.projectId,
             assignee_id: assignee_id,
             milestone_id: milestone_id
@@ -85,8 +84,7 @@ class MilestoneView extends Component {
     render() {
         let rows = [];
         let milestones = this.props.milestones
-
-        if (milestones.length > 0 && milestones[0].id !== null) {
+        if (milestones.length === 0 || (milestones[0].id !== null)) {
             milestones.unshift({  // Just a placeholder milestone for tasks without milestones
                 content: 'Uncategorized',
                 deadline: null,
@@ -116,7 +114,7 @@ class MilestoneView extends Component {
             let tasks = []
             this.props.tasks.forEach(task => {
                 // Only show non-completed tasks and non-dirtied tasks
-                if (task.completed_on === null &&
+                if (!task.completed_on &&
                     task.dirty !== true &&
                     task.milestone_id === milestone.id) {
                     let assignees = this.props.users.filter(user => user.id === task.assignee_id)
@@ -130,7 +128,7 @@ class MilestoneView extends Component {
                         users={this.props.users}
                     />)
                 }
-            }) // task.forEach end
+            }) // task.forEach
 
             rows.push(<ul key={_.uniqueId()}>{tasks}</ul>)
 
@@ -141,7 +139,19 @@ class MilestoneView extends Component {
                     completedTasks={completedTasks}
                 />)
             }
-        });
+        }); // milestones.forEach
+
+        let buttonClassName = "add-milestone-btn "
+
+        if (milestones.length === 1 && this.props.tasks.length === 0) {
+            buttonClassName += "animated infinite pulse"
+            var empty = (
+                <div className="no-items">
+                    <h3>Your to-do list is empty!</h3>
+                    <p>Add something to get started</p>
+                </div>
+            )
+        }
 
         return (
         <Paper zDepth={1}>
@@ -149,11 +159,12 @@ class MilestoneView extends Component {
                 <FlatButton
                     key="add-milestone-btn"
                     label="Add Milestone"
-                    className="add-milestone-btn"
+                    className={buttonClassName}
                     onTouchTap={this.openModal.bind(this)}
                     secondary={true}/>
                 <div className='task-list'>
                     {rows}
+                    {empty}
                 </div>
             </div>
             <MilestoneModal

@@ -14,7 +14,7 @@ class TaskModal extends Component {
             }
         } else {
             this.state = {
-                assignee: 0
+                assignee: ''
             }
         }
     }

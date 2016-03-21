@@ -7,6 +7,9 @@ var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
 var config = require('config');
 var Jwt = require('jsonwebtoken');
+var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
+var Promise = require("bluebird");
+var req = require("request")
 
 var secret_key = config.get('authentication.privateKey');
 
@@ -22,7 +25,8 @@ module.exports = {
                 project_id: Joi.string().required(),
                 completed_on: Joi.string().isoDate().default(null),
                 milestone_id: Joi.default(null),
-                assignee_id: Joi.default(null)
+                assignee_id: Joi.default(null),
+                github_token: Joi.default('')
             }
         }
     },
@@ -65,9 +69,9 @@ function updateTask(request, reply) {
     var task_id = request.params.task_id;
     var payload = request.payload
     storage.updateTask(payload, task_id).then(function() {
-            reply({
-                status: constants.STATUS_OK
-            });
+        reply({
+            status: constants.STATUS_OK
+        });
     })
 }
 
@@ -101,16 +105,110 @@ function getTasks(request, reply) {
 }
 
 function createTask(request, reply) {
-    storage.createTask(request.payload).then(function(newTask) {
-        Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-            socket.sendMessageToProject(request.payload.project_id, 'new_task', {
-                task: newTask, sender: decoded.user_id
+    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
+        storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
+            var currentProject = null
+            var matchingProjects = projects.filter(function(project) {
+                return project.id === request.payload.project_id
             })
+            if (err || matchingProjects.length !== 1) {
+                reply(Boom.forbidden(constants.FORBIDDEN));
+            } else {
+                currentProject = matchingProjects[0]
+            }
+
+            storage.createTask(request.payload).then(function(newTask) {
+                socket.sendMessageToProject(request.payload.project_id, 'new_task', {
+                    task: newTask, sender: decoded.user_id
+                })
+
+                reply(newTask);
+                if (!request.payload.github_token) return
+                // Add the same task to github issues
+                var githubAssignee = null
+                var githubMilestone = null
+                var owner = currentProject.github_repo_owner
+                var repo = currentProject.github_repo_name
+                var promises = []
+
+                if (request.payload.assignee_id) {
+                    promises.push(new Promise(function(resolve, reject) {
+                        storage.findUserById(request.payload.assignee_id).done(function(user) {
+                            if (!user) {
+                                resolve()
+                            }
+                            user = JSON.parse(JSON.stringify(user))
+                            githubAssignee = user.github_login
+                            resolve(user.github_login)
+                        })
+                    }))
+                }
+
+                if (request.payload.milestone_id) {
+                    promises.push(new Promise(function(resolve, reject) {
+                        storage.getMilestone(task.milestone_id).done(function(milestone) {
+                            if (!milestone) {
+                                resolve()
+                            }
+                            milestone = JSON.parse(JSON.stringify(milestone))
+                            githubMilestone = milestone.github_number
+                            resolve(milestone.github_number)
+                        })
+                    }))
+                }
+
+                if (request.payload.milestone_id || request.payload.assignee_id) {
+                    Promise.all(promises).then(function(p) {
+                        var issue = {
+                            title: request.payload.content,
+                            assignee: githubAssignee,
+                            milestone: githubMilestone
+                        }
+                        POSTIssueToGithub(newTask.id, issue, owner, repo, request.payload.github_token)
+                    }).catch(function(err) {
+                        console.log(err)
+                    })
+                } else {
+                    var issue = {
+                        title: request.payload.content,
+                        assignee: githubAssignee,
+                        milestone: githubMilestone
+                    }
+                    POSTIssueToGithub(newTask.id, issue, owner, repo, request.payload.github_token)
+                }
+
+            }, function(error) {
+                reply(Boom.badRequest(error));
+            }); //storage.createTask
+
         });
-        reply(newTask);                
-    }, function(error) {
-        reply(Boom.badRequest(error));
     });
+}
+
+
+function POSTIssueToGithub(taskId, issue, owner, repo, token) {
+    console.log('POSTING')
+    console.log(issue)
+    var options = {
+        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + repo + '/issues',
+        headers: {
+            'User-Agent': 'Collab',
+            'Authorization': 'Bearer ' + token
+        }
+    }
+    options.form = JSON.stringify(issue)
+    req.post(options, function(err, res, body) {
+        if (err) {
+            console.log(err)
+            return
+        }
+        var parsedBody = JSON.parse(body)
+        if (parsedBody.id) { // if successful, should return issue id
+            storage.updateTask({github_id: parsedBody.id, github_number: parsedBody.number}, taskId)
+        } else {
+            console.log(parsedBody)
+        }
+    })
 }
 
 function markTaskAsDone(request, reply) {
