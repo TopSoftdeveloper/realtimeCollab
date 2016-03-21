@@ -110,7 +110,7 @@ class Project extends Component {
                             actions={actions}
                         />
                     </Tab>
-                    <Tab label="Github"
+                    <Tab label="Recent Activity"
                          value={AppConstants.PATH.github}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.github)}>
                         <Github

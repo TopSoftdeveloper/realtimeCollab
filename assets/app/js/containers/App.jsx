@@ -111,7 +111,7 @@ class App extends Component {
             if (!app.loading) {
                 children = (
                     <div className='main-content'>
-                        <div className="no-projects">
+                        <div className="no-items">
                             <h3>You have no projects yet!</h3>
                             <p>Add one to get started</p>
                         </div>
