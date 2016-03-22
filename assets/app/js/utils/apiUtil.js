@@ -189,7 +189,10 @@ export function serverCreateMilestone(payload) {
 }
 
 export function serverDeleteMilestone(milestone_id, project_id) {
-    return ajaxDelete('/milestone/' + milestone_id, {project_id: project_id})
+    return ajaxDelete('/milestone/' + milestone_id, {
+        project_id: project_id,
+        github_token: localStorage.getItem('github_token')
+    })
 }
 
 export function serverCreateProject(payload) {

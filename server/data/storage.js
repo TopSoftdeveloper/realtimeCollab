@@ -121,7 +121,19 @@ module.exports = {
             Task.findById(taskId).then(function (task) {
                 if (!task) reject(taskId)
                 Project.findById(task.project_id).then(function(project) {
-                    resolve(project)
+                    resolve({project: project, task: task})
+                })
+            })
+        })
+    },
+
+    findProjectOfMilestone:function(milestoneId) {
+        return new Promise(function(resolve, reject) {
+            Milestone.findById(milestoneId).then(function (milestone) {
+                if (!milestone) reject(milestoneId)
+                Project.findById(milestone.project_id).then(function(project) {
+                    if (!project) reject('project does not exist')
+                    resolve({project: project, milestone: milestone})
                 })
             })
         })
@@ -278,10 +290,12 @@ module.exports = {
                 user = JSON.parse(JSON.stringify(user))
                 if (!user) {
                     reject(constants.USER_NOT_FOUND)
+                    return
                 }
 
                 if (!user.github_login) {
                     reject(constants.NO_GITHUB_LOGIN)
+                    return
                 }
                 resolve(user.github_login)
             })

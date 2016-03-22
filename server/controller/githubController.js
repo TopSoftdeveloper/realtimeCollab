@@ -70,7 +70,8 @@ module.exports = {
     createGithubIssue: createGithubIssue,
     updateGithubIssue: updateGithubIssue,
     createGithubMilestone: createGithubMilestone,
-    updateGithubMilestone: updateGithubMilestone
+    updateGithubMilestone: updateGithubMilestone,
+    deleteGithubMilestone: deleteGithubMilestone
 };
 
 function addCollabMilestonesToGithub(owner, repo, token, projectId) {
@@ -142,6 +143,26 @@ function createGithubIssue(taskId, issue, owner, repo, token) {
             } else {
                 reject(parsedBody)
             }
+        })
+    })
+}
+
+function deleteGithubMilestone(owner, repo, token, number) {
+    var options = {
+        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + repo + '/milestones/' + number,
+        headers: {
+            'User-Agent': 'Collab',
+            'Authorization': 'Bearer ' + token
+        }
+    }
+
+    return new Promise(function (resolve, reject) {
+        req.del(options, function(err, res, body) {
+            if (err) {
+                reject(err)
+                return
+            }
+            resolve()
         })
     })
 }

@@ -382,9 +382,12 @@ export function editMilestone(milestone_id, content, deadline) {
         milestone.content = content
     }
     milestone.deadline = deadline
+    milestone.github_token = localStorage.getItem('github_token')
+
     return function(dispatch) {
         serverEditMilestone(milestone_id, milestone)
             .done(res => {
+                delete milestone.github_token
                 dispatch(_editMilestone(milestone_id, milestone));
             }).fail(e => {
             console.log(e);
@@ -398,7 +401,8 @@ export function createMilestone(milestone) {
         serverCreateMilestone({
             content:milestone.content,
             project_id: milestone.project_id,
-            deadline: milestone.deadline
+            deadline: milestone.deadline,
+            github_token: localStorage.getItem('github_token')
         })
         .done(res => {
             dispatch(replaceMilestoneId(milestone.id, res.id));
