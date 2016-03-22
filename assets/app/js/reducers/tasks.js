@@ -20,7 +20,10 @@ export default function tasks(state=[], action) {
     switch (action.type) {
         case AppConstants.INIT_TASKS:
             return action.tasks;
-
+        case AppConstants.DELETE_MILESTONE:
+            return state.map(task =>
+                task.milestone_id === action.id?
+                    assign({}, task, {milestone_id: null}): task);
         case AppConstants.MARK_AS_DIRTY:
             return state.map(task => 
                 task.id === action.id? 
