@@ -209,5 +209,9 @@ export function serverDeleteTask(task_id, project_id) {
 }
 
 export function serverMarkDone(task_id, project_id) {
-    return ajaxPost(COMPLETE_TASK_ENDPOINT, {task_id: task_id, project_id: project_id})
+    return ajaxPost(COMPLETE_TASK_ENDPOINT, {
+        task_id: task_id,
+        project_id: project_id,
+        github_token: localStorage.getItem('github_token')
+    })
 }

@@ -362,11 +362,13 @@ export function addTask(task) {
 export function editTask(task_id, content, assignee_id) {
     let task = {
         content: content,
-        assignee_id: assignee_id
+        assignee_id: assignee_id,
+        github_token: localStorage.getItem('github_token')
     }
     return function(dispatch) {
         serverEditTask(task_id, task)
             .done(res => {
+                delete task.github_token
                 dispatch(_editTask(task_id, task));
             }).fail(e => {
             console.log(e);

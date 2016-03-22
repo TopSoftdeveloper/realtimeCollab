@@ -116,6 +116,17 @@ module.exports = {
         return Project.findById(id)
     },
 
+    findProjectOfTask:function(taskId) {
+        return new Promise(function(resolve, reject) {
+            Task.findById(taskId).then(function (task) {
+                if (!task) reject(taskId)
+                Project.findById(task.project_id).then(function(project) {
+                    resolve(project)
+                })
+            })
+        })
+    },
+
     removeProject: function(id) {
         return Project.destroy({
             where: {
@@ -291,6 +302,21 @@ module.exports = {
             })
         })
     },
+    findGithubIssueNumber: function(taskId) {
+        return new Promise(function(resolve, reject) {
+            Task.find({where : {id: taskId}}).then(function(task) {
+                task = JSON.parse(JSON.stringify(task))
+                if (!task) {
+                    reject(constants.TASK_NOT_EXIST)
+                }
+                if (!task.github_number) {
+                    reject(constants.NO_GITHUB_NUMBER)
+                }
+                resolve(task.github_number)
+            })
+        })
+    },
+
     findOrCreateTask: function(task)  {
         return Task.find({
             where: {
