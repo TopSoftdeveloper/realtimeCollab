@@ -257,6 +257,40 @@ module.exports = {
             return Task.create(task)
         }
     },
+    findGithubLogin: function(userId) {
+        /**
+         * Params: user id
+         * Returns a promise containing github login of a user
+         */
+        return new Promise(function(resolve, reject) {
+            User.findById(userId).then(function(user) {
+                user = JSON.parse(JSON.stringify(user))
+                if (!user) {
+                    reject(constants.USER_NOT_FOUND)
+                }
+
+                if (!user.github_login) {
+                    reject(constants.NO_GITHUB_LOGIN)
+                }
+                resolve(user.github_login)
+            })
+        })
+    },
+    findGithubMilestoneNumber: function(milestoneId) {
+        return new Promise(function(resolve, reject) {
+            Milestone.find({where : {id: milestoneId}}).then(function(milestone) {
+                milestone = JSON.parse(JSON.stringify(milestone))
+                if (!milestone) {
+                    reject(constants.MILESTONE_NOT_EXIST)
+                }
+
+                if (!milestone.github_number) {
+                    reject(constants.NO_GITHUB_NUMBER)
+                }
+                resolve(milestone.github_number)
+            })
+        })
+    },
     findOrCreateTask: function(task)  {
         return Task.find({
             where: {

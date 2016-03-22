@@ -21,15 +21,6 @@ var req = require("request")
 //        console.log(err)
 //    }
 //});
-/**
- * Maps Collab milestone IDs to github milestone number
- * Too add a github issue to a github milestone, we need the milestone NUMBER, not milestone ID
- */
-var MILESTONE_MAPPING = {}
-/**
- * Maps Github milestone ID to Collab milestone ID
- */
-var MILESTONE_ID_MAPPING = {}
 
 module.exports = {
     getAccessToken: {
@@ -75,7 +66,8 @@ module.exports = {
                 name: Joi.string().required()
             }
         }
-    }
+    },
+    createGithubIssue: createGithubIssue
 };
 
 function addCollabMilestonesToGithub(owner, name, token, projectId) {
@@ -113,7 +105,6 @@ function POSTMilestoneToGithub(options, milestoneId) {
             }
             var parsedBody = JSON.parse(body)
             if (parsedBody.number) {
-                MILESTONE_MAPPING[milestoneId] = parsedBody.number
                 storage.updateMilestone({github_id: parsedBody.id, github_number: parsedBody.number}, milestoneId).done(function() {
                     resolve(true)
                 })
@@ -124,9 +115,38 @@ function POSTMilestoneToGithub(options, milestoneId) {
     })
 }
 
-function updateGithubIssue(owner, name, token, number, payload) {
+function createGithubIssue(taskId, issue, owner, repo, token) {
     var options = {
-        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/issues/' + number,
+        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + repo + '/issues',
+        headers: {
+            'User-Agent': 'Collab',
+            'Authorization': 'Bearer ' + token
+        },
+        form: JSON.stringify(issue)
+    }
+
+    return new Promise(function (resolve, reject) {
+        req.post(options, function(err, res, body) {
+            if (err) {
+                reject(err)
+                return
+            }
+            var parsedBody = JSON.parse(body)
+            if (parsedBody.number) { // if successful, should return issue id and number
+                storage.updateTask({github_id: parsedBody.id, github_number: parsedBody.number}, taskId).done(function() {
+                    resolve(parsedBody.number)
+                })
+            } else {
+                reject(parsedBody)
+            }
+        })
+    })
+}
+
+
+function updateGithubIssue(owner, repo, token, number, payload) {
+    var options = {
+        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + repo + '/issues/' + number,
         headers: {
             'User-Agent': 'Collab',
             'Authorization': 'Bearer ' + token
@@ -137,13 +157,14 @@ function updateGithubIssue(owner, name, token, number, payload) {
     return new Promise(function (resolve, reject) {
         req.patch(options, function(err, res, body) {
             if (err) {
-                return reject(err)
+                reject(err)
+                return
             }
             var parsedBody = JSON.parse(body)
-            if (parsedBody.id) { // if successful, should return issue id
-                resolve(res)
+            if (parsedBody.number) { // if successful, should return issue id and number
+                resolve(parsedBody.number)
             } else {
-                return reject(err)
+                reject(parsedBody)
             }
         })
     })
@@ -195,20 +216,13 @@ function addCollabTasksToGithub(owner, name, token, projectId) {
                 }
 
                 if (task.milestone_id) { // we need the corresponding github milestone NUMBER
-                    var idInMemory = MILESTONE_MAPPING[task.milestone_id]
-                    if (idInMemory) {
-                        issueToPOST.milestone = idInMemory
+                    storage.getMilestone(task.milestone_id).done(function(milestone) {
+                        milestone = JSON.parse(JSON.stringify(milestone))
+                        issueToPOST.milestone = milestone.github_number
                         options.form = JSON.stringify(issueToPOST)
-                        promises.push(POSTIssueToGithub(options, task.id, task.completed_on, owner, name, token))
-                    } else {
-                        storage.getMilestone(task.milestone_id).done(function(milestone) {
-                            milestone = JSON.parse(JSON.stringify(milestone))
-                            MILESTONE_MAPPING[milestone.id] = milestone.github_number
-                            issueToPOST.milestone = milestone.github_number
-                            options.form = JSON.stringify(issueToPOST)
-                            promises.push(POSTIssueToGithub(options, task.id))
-                        })
-                    }
+                        promises.push(POSTIssueToGithub(options, task.id))
+                    })
+
                 } else {
                     options.form = JSON.stringify(issueToPOST)
                     promises.push(POSTIssueToGithub(options, task.id))
@@ -249,18 +263,13 @@ function addGithubIssuesToDB(issues, projectId) {
             project_id: projectId
         }
         if (issue.milestone) {
-            if (MILESTONE_ID_MAPPING[issue.milestone.id]) {
-                task.milestone_id = MILESTONE_ID_MAPPING[issue.milestone.id]
+            var milestonePromise = storage.getMilestonesWithCondition({github_id: issue.milestone.id})
+            promises.push(milestonePromise)
+            milestonePromise.done(function(milestones) {
+                task.milestone_id = milestones[0].id
                 promises.push(storage.findOrCreateTask(task))
-            } else {
-                var milestonePromise = storage.getMilestonesWithCondition({github_id: issue.milestone.id})
-                promises.push(milestonePromise)
-                milestonePromise.done(function(milestones) {
-                    MILESTONE_ID_MAPPING[issue.milestone.id] = milestones[0].id
-                    task.milestone_id = MILESTONE_ID_MAPPING[issue.milestone.id]
-                    promises.push(storage.findOrCreateTask(task))
-                })
-            }
+            })
+
         } else {
             promises.push(storage.findOrCreateTask(task))
         }
@@ -309,10 +318,6 @@ function addGithubMilestonesToCollab(owner, name, token, projectId) {
             var githubMilestones = JSON.parse(body)
             if (githubMilestones.length > 0) {
                 addGithubMilestonesToDB(githubMilestones, projectId).done(function(milestones) {
-                    milestones.forEach(function(m) {
-                        MILESTONE_MAPPING[m.id] = m.github_number
-                        MILESTONE_ID_MAPPING[m.github_id] = m.id
-                    })
                     return resolve(milestones)
                 })
             } else {
