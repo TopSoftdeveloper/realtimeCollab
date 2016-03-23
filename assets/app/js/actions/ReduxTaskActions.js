@@ -1,10 +1,10 @@
-import {serverCreateTask, serverDeleteTask, serverMarkDone, 
+import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
         getGithubEvents, syncGithubIssues, serverEditTask, serverEditMilestone,
-        queryGoogleDrive, serverDeclineProject, serverUpdateGithubLogin} from '../utils/apiUtil'
+        queryGoogleDrive, serverDeclineProject } from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -347,7 +347,6 @@ export function addTask(task) {
   	return function(dispatch) {
         dispatch(_addTask(task));
         delete task.id
-        task.github_token = localStorage.getItem('github_token')
         serverCreateTask(task)
         .done(res => {
           // update the stores with the actual id
@@ -362,13 +361,11 @@ export function addTask(task) {
 export function editTask(task_id, content, assignee_id) {
     let task = {
         content: content,
-        assignee_id: assignee_id,
-        github_token: localStorage.getItem('github_token')
+        assignee_id: assignee_id
     }
     return function(dispatch) {
         serverEditTask(task_id, task)
             .done(res => {
-                delete task.github_token
                 dispatch(_editTask(task_id, task));
             }).fail(e => {
             console.log(e);
@@ -382,12 +379,10 @@ export function editMilestone(milestone_id, content, deadline) {
         milestone.content = content
     }
     milestone.deadline = deadline
-    milestone.github_token = localStorage.getItem('github_token')
 
     return function(dispatch) {
         serverEditMilestone(milestone_id, milestone)
             .done(res => {
-                delete milestone.github_token
                 dispatch(_editMilestone(milestone_id, milestone));
             }).fail(e => {
             console.log(e);
@@ -402,7 +397,6 @@ export function createMilestone(milestone) {
             content:milestone.content,
             project_id: milestone.project_id,
             deadline: milestone.deadline,
-            github_token: localStorage.getItem('github_token')
         })
         .done(res => {
             dispatch(replaceMilestoneId(milestone.id, res.id));
@@ -462,15 +456,13 @@ export function inviteToProject(projectId, email) {
     }
 }
 
-export function deleteTask(taskId, projectId) {
+export function reopenTask(taskId) {
 	return function(dispatch) {
-		dispatch(markAsDirty(taskId));
-		serverDeleteTask(taskId, projectId).done(res => {
-	        // update the stores with the actual id
-	        dispatch(_deleteTask(taskId));
+		dispatch(_unmarkDone(taskId));
+		serverEditTask(taskId, {completed_on: null}).done(res => {
 	    }).fail(e => {
 	        console.log(e);
-	       	dispatch(unmarkDirty(taskId));
+	       	dispatch(_markDone(taskId));
 	    });
 	}
 }

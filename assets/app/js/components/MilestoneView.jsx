@@ -50,13 +50,6 @@ class MilestoneView extends Component {
         this.props.actions.addTask(task);
     }
 
-    deleteTask(task_id) {
-        // slight timeout for animation to take effect
-        setTimeout(function() {
-            this.props.actions.deleteTask(task_id, this.props.projectId)
-        }.bind(this), 300)
-    }
-
     editTask(task_id, content, assignee) {
         this.props.actions.editTask(task_id, content, assignee)
     }
@@ -78,7 +71,7 @@ class MilestoneView extends Component {
 
     getCompletedTasks(milestone_id) {
         return this.props.tasks.filter(task => 
-            task.milestone_id === milestone_id && task.completed_on !== null);
+            task.milestone_id === milestone_id && task.completed_on);
     }
 
     render() {
@@ -123,7 +116,6 @@ class MilestoneView extends Component {
                         task={task}
                         onCheck={this.markDone.bind(this, task.id)}
                         onEdit={this.editTask.bind(this, task.id)}
-                        onDelete={this.deleteTask.bind(this, task.id)}
                         assignees={assignees}
                         users={this.props.users}
                     />)
@@ -137,6 +129,7 @@ class MilestoneView extends Component {
                 rows.push(<CompletedRow
                     key={_.uniqueId('completed')}
                     completedTasks={completedTasks}
+                    actions={this.props.actions}
                 />)
             }
         }); // milestones.forEach

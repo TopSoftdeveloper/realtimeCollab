@@ -177,14 +177,17 @@ export function serverPopulate() {
 }
 
 export function serverCreateTask(payload) {
+    payload.github_token = localStorage.getItem('github_token')
     return ajaxPost(CREATE_TASK_ENDPOINT, payload);
 }
 
 export function serverEditTask(task_id, payload) {
+    payload.github_token = localStorage.getItem('github_token')
     return ajaxPut('/task/' + task_id, payload);
 }
 
 export function serverCreateMilestone(payload) {
+    payload.github_token = localStorage.getItem('github_token')
     return ajaxPost(CREATE_MILESTONE_ENDPOINT, payload);
 }
 
@@ -204,11 +207,8 @@ export function serverUpdateProject(project_id, payload) {
 }
 
 export function serverEditMilestone(milestone_id, payload) {
+    payload.github_token = localStorage.getItem('github_token')
     return ajaxPut('/milestone/' + milestone_id, payload);
-}
-
-export function serverDeleteTask(task_id, project_id) {
-    return ajaxDelete('/task/' + task_id, {project_id: project_id})
 }
 
 export function serverMarkDone(task_id, project_id) {

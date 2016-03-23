@@ -61,7 +61,7 @@ module.exports = {
 function updateTask(request, reply) {
     var task_id = request.params.task_id;
     var token = request.payload.github_token
-
+    request.payload.completed_on = request.payload.completed_on ? request.payload.completed_on : null // convert empty string to null
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
         storage.findProjectOfTask(task_id).then(function(result) {
             if (!result) {
@@ -71,23 +71,27 @@ function updateTask(request, reply) {
             var project = result.project
             var github_num = result.task.github_number
 
-            storage.updateTask(request.payload, task_id).then(function() {
+            storage.updateTask(request.payload, task_id).then(function(updatedTask) {
                 reply({status: constants.STATUS_OK});
                 socket.sendMessageToProject(project.id, 'update_task', {
-                    task_id: task_id, sender: decoded.user_id
+                    task: updatedTask, sender: decoded.user_id
                 })
                 if (!token) return
                 // Add the same task to github issues
                 var owner = project.github_repo_owner
                 var repo = project.github_repo_name
+                var payload = {title: request.payload.content}
+
+                if (request.payload.completed_on === null) {
+                    payload.state = 'open'
+                }
 
                 if (request.payload.assignee_id) {
                     storage.findGithubLogin(request.payload.assignee_id).then(function(login) {
-                        var payload = {title: request.payload.content, assignee: login}
+                        payload.assignee = login
                         github.updateGithubIssue(owner, repo, token, github_num, payload)
                     })
                 } else {
-                    var payload = {title: request.payload.content}
                     github.updateGithubIssue(owner, repo, token, github_num, payload)
                 }
             })

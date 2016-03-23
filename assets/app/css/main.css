@@ -89,15 +89,16 @@
   margin-left: 20px;
 }
 
-.delete-task {
-    margin-left: 10px;
+.completed-content {
+  display: inline-block;
+  position: relative;
 }
 
-.delete-task, .edit-task {
+.reopen-task, .edit-task {
   opacity: 0.5;
 }
 
-.delete-task:hover, .edit-task:hover {
+.reopen-task:hover, .edit-task:hover {
   cursor: pointer;
   display: inline-block;
   opacity: 1.0;
@@ -111,12 +112,12 @@
     margin-left: -30px;
 }
 
-.completed-task-list li {
+.completed-content {
   text-decoration: line-through;
 }
 
 .completed-task-list {
-    color: #aaaaaa;
+    color: #757575;
 }
 
 .assignee-avatar {
