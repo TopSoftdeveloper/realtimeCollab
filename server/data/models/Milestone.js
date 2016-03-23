@@ -11,6 +11,12 @@ module.exports = function(sequelize, DataTypes) {
         github_id: DataTypes.BIGINT,
         github_number: DataTypes.INTEGER
     }, {
+        indexes: [
+            {
+                fields: ['content'],
+                type: 'FULLTEXT'
+            }
+        ],
         underscored: true,
         classMethods: {
             isExist: function(id) {

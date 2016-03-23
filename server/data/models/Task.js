@@ -12,6 +12,12 @@ module.exports = function(sequelize, DataTypes) {
         github_number: DataTypes.INTEGER,
         assignee_id: DataTypes.STRING
     },{
+        indexes: [
+            {
+                fields: ['content'],
+                type: 'FULLTEXT'
+            }
+        ],
         underscored: true,
         classMethods: {
             isExist: function(id) {
@@ -21,6 +27,11 @@ module.exports = function(sequelize, DataTypes) {
             },
             getTask: function(id) {
                 return this.findById(id);
+            },
+            fullTextQuery: function(query) {
+                return this.findAll({
+                    where: ['MATCH(content) AGAINST(?)', query]
+                })
             }
         }
     });

@@ -261,6 +261,9 @@ module.exports = {
     doesTaskExist: function(task_id) {
         return Task.isExist(task_id);
     },
+    search: function(query) {
+        return Task.fullTextQuery(query);
+    },
     doesMilestoneExist: function(milestone_id) {
         return Milestone.isExist(milestone_id);
     },
