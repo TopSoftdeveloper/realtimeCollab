@@ -11,7 +11,7 @@ import ListItem from 'material-ui/lib/lists/list-item';
 import Avatar from 'material-ui/lib/avatar';
 import _ from 'lodash'
 
-let RATE_LIMIT_MS = 500
+let RATE_LIMIT_MS = 200
 let MIN_SEARCH_CHARS = 3
 
 class Header extends Component {
@@ -19,7 +19,8 @@ class Header extends Component {
         super(...arguments);
         this.state = {
             isHangoutBtnRendered: false,
-            lastQuery: new Date().getTime(),
+            lastQueryTime: new Date().getTime(),
+            lastQueryString: '',
             queryString: ''
         }
 
@@ -41,15 +42,28 @@ class Header extends Component {
         }
     }
 
+    executeQuery(queryString) {
+        this.props.actions.queryIntegrations(queryString)
+        this.setState({lastQueryTime: new Date().getTime(), lastQueryString: queryString})
+    }
+
     query(queryString, e) {
+        this.setState({queryString: queryString})
+        if (queryString.length < MIN_SEARCH_CHARS) return
         let elapsedTime = new Date().getTime() - this.state.lastQuery
-        if (queryString.length >= MIN_SEARCH_CHARS && elapsedTime >= RATE_LIMIT_MS) {
-            this.props.actions.queryIntegrations(queryString)
-            this.setState({
-                lastQuery: new Date().getTime(),
-                queryString: queryString
-            })
+        if (elapsedTime < RATE_LIMIT_MS) {
+            setTimeout(() => {
+                if (this.state.queryString !== this.state.lastQueryString) {
+                    this.executeQuery(this.state.queryString)
+                }
+            }, RATE_LIMIT_MS)
+        } else {
+            this.executeQuery(queryString)
         }
+    }
+
+    newRequest() {
+        this.setState({queryString: ''})
     }
 
     goToResult(link, e) {
@@ -125,8 +139,10 @@ class Header extends Component {
                             filter={AutoComplete.noFilter}
                             dataSource={searchResults}
                             onUpdateInput={this.query.bind(this)}
+                            onNewRequest={this.newRequest.bind(this)}
                             listStyle={listStyles}
                             style={styles}
+                            searchText={this.state.queryString}
                         />
                     </div>
 
