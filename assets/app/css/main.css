@@ -32,6 +32,18 @@
   margin-left: -40px;
 }
 
+/*************************** files area *******************/
+.drive-drop-zone {
+  border: dashed #7a7a7a;
+  min-height: 100px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.drive-drop-zone p {
+  color: #7a7a7a;
+  margin-top: 35px;
+}
 /********************* task table ************************/
 .main-content {
   margin-top: 10px;

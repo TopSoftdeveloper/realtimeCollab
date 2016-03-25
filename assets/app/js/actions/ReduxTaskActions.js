@@ -4,7 +4,7 @@ import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
         getGithubEvents, syncGithubIssues, serverEditTask, serverEditMilestone,
-        queryGoogleDrive, serverDeclineProject } from '../utils/apiUtil'
+        queryGoogleDrive, serverDeclineProject, uploadFile } from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -81,6 +81,16 @@ export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
 
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
+
+export function uploadFileToDrive(file) {
+    console.log('called')
+    return function(dispatch) {
+        uploadFile(file).then(res => {
+            console.log('uploaded')
+            console.log(res)
+        })
+    }
+}
 
 export function updateGithubLogin(token) {
     return function(dispatch) {
@@ -551,10 +561,11 @@ function normalize(projects) {
 }
 
 
-function getTopLevelFolders(files) {
+function getTopLevelFolders(files, rootId) {
     let topLevelFolders = []
     files.forEach(file => {
-        if (!file.parents) {
+        if (!file.parents || file.parents[0] === rootId) {
+            file.parents = ['root']
             topLevelFolders.push(file)
         }
     })
@@ -563,12 +574,15 @@ function getTopLevelFolders(files) {
 
 export function initTopLevelFolders(projectId) {
     return function(dispatch) {
-        getGoogleDriveFolders().then(res => {
-            let topLevelFolders = getTopLevelFolders(res.result.files)
-            dispatch(addFiles(topLevelFolders))
-            dispatch(_updateProject(projectId, {directory_structure: [{name: 'Top level directory', id: 'root'}]}))
-        }, function (err) {
-            console.log(err)
+        getFileInfo('root').then(res => {
+            let rootId = res.result.id
+            getGoogleDriveFolders().then(res => {
+                let topLevelFolders = getTopLevelFolders(res.result.files, rootId)
+                dispatch(addFiles(topLevelFolders))
+                dispatch(_updateProject(projectId, {directory_structure: [{name: 'Top level directory', id: 'root'}]}))
+            }, function (err) {
+                console.log(err)
+            })
         })
     }
 }

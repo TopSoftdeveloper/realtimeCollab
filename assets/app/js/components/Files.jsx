@@ -5,6 +5,7 @@ import Steps from 'rc-steps'
 import RaisedButton from 'material-ui/lib/raised-button'
 import {loginGoogle, isLoggedIntoGoogle} from '../utils/auth'
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
+import Dropzone from 'react-dropzone'
 import _ from 'lodash'
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
@@ -65,11 +66,7 @@ class FilesList extends Component {
         let directories = this.props.directoryStructure
         // only display files under the current directory
         let filesToDisplay = []
-        if (directories.length === 1 && directories[0].id === 'root') {
-            filesToDisplay = this.props.files.filter(file => {
-                return !(!!file.parents)
-            })
-        } else if (directories.length > 0) {
+        if (directories.length > 0) {
             filesToDisplay = this.props.files.filter(file => {
                 let currDirectory = directories[directories.length-1].id
                 return file.parents && file.parents[0] === currDirectory
@@ -114,10 +111,80 @@ class FilesList extends Component {
         )
     }
 }
+import gapi from '../gapi'
+/**
+ * Insert new file.
+ *
+ * @param {File} fileData File object to read data from.
+ * @param {Function} callback Callback function to call when the request is complete.
+ */
+
 
 class Files extends Component {
     constructor(props, context) {
         super(props, context)
+        this.state = {
+            preview: ''
+        }
+    }
+    insertFileData(fileData, callback) {
+        const boundary = '-------314159265358979323846';
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
+
+        var reader = new FileReader();
+        reader.readAsBinaryString(fileData);
+        reader.onload = function(e) {
+            var contentType = fileData.type || 'application/octect-stream';
+            var metadata = {
+                'name': fileData.name,
+                'mimeType': contentType
+            };
+            let directoryStructure = this.props.project.directory_structure
+            let currDirectory = directoryStructure[directoryStructure.length-1].id
+            metadata.parents = [currDirectory]
+
+
+                var base64Data = btoa(reader.result);
+            var multipartRequestBody =
+                delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+
+            var request = gapi.client.request({
+                'path': '/upload/drive/v3/files',
+                'method': 'POST',
+                'params': {'uploadType': 'multipart'},
+                'headers': {
+                    'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+                },
+                'body': multipartRequestBody});
+            if (!callback) {
+                callback = function(file) {
+                    console.log(file)
+                };
+            }
+            request.execute(callback);
+        }.bind(this)
+    }
+
+    callmemaybe(res) {
+        console.log('doneee')
+        console.log(res)
+    }
+
+    onDrop(files) {
+        let file = files[0]
+        console.log(file)
+        this.setState({preview: file.preview})
+        this.insertFileData(file, this.callmemaybe)
+        //this.props.actions.uploadFileToDrive(newFile)
     }
 
     componentDidMount() {
@@ -157,12 +224,22 @@ class Files extends Component {
 
         if (app.logged_into_google && project.root_folder) {
             return (
-                <FilesList
-                    directoryStructure={project.directory_structure}
-                    files={this.props.files}
-                    actions={this.props.actions}
-                    projectId={project.id}
-                />)
+                <div>
+                    <FilesList
+                        directoryStructure={project.directory_structure}
+                        files={this.props.files}
+                        actions={this.props.actions}
+                        projectId={project.id}
+                    />
+                    <br/>
+                    <div>
+                        <img src={this.state.preview} />
+                    </div>
+                    <Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)} multiple={false} className="drive-drop-zone">
+                        <p>Drop a file here, or click to select a file to upload.</p>
+                    </Dropzone>
+                </div>
+            )
         }
 
         if (!app.logged_into_google && project.root_folder) {

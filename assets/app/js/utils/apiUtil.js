@@ -11,6 +11,14 @@ import gapi from '../gapi'
 import $ from 'jquery'
 import Promise from 'bluebird'
 
+export function uploadFile(file) {
+    return gapi.client.request({
+        'path': '/upload/drive/v3/files?uploadType=multipart',
+        'method': 'POST',
+        'body': file
+    })
+}
+
 export function queryGoogleDrive(queryString) {
     return gapi.client.request({
         'path': '/drive/v3/files',
