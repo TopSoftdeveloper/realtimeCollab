@@ -1,26 +1,13 @@
 var templates = require('./templates')
-var storage = require('../../data/storage')
-var socket = require('../socket/handlers')
-var helper = require('../../utils/helper')
+var storage = require('../data/storage')
+var socket = require('./socket/handlers')
+var helper = require('../utils/helper')
 var Jwt = require('jsonwebtoken')
 var config = require('config')
 var secret_key = config.get('authentication.privateKey')
 var Sequelize = require('sequelize');
 var Boom = require('boom');
 var _ = require('lodash')
-
-function idToNames(data) {
-    var promises = []
-    // convert ID to names only when needed, as names might change
-    if (data.user_id) {
-        promises.push(storage.findUserById(data.user_id))
-    }
-
-    if (data.project_id) {
-        promises.push(storage.getProject(data.project_id))
-    }
-    return Sequelize.Promise.all(promises)
-}
 
 module.exports = {
     getNotifications: {
@@ -44,7 +31,7 @@ module.exports = {
          *  names and inserted into the respective template if needed
          */
         storage.saveNotification(JSON.stringify(data), template, recipientId).then(function(notification) {
-            idToNames(data).done(function(res) {
+            helper.idToNames(data).done(function(res) {
                 var displayName = res[0].display_name
                 var projectName = res[1].content
                 var message = templates.getMessage(template, {displayName: displayName, projectName: projectName})
@@ -134,7 +121,7 @@ function getNotifications(request, reply) {
         storage.getNotifications(decoded.user_id).then(function(notifications) {
             var promises = []
             notifications.forEach(function(notification) {
-                promises.push(idToNames(JSON.parse(notification.data)))
+                promises.push(helper.idToNames(JSON.parse(notification.data)))
             })
             Sequelize.Promise.all(promises).done(function(res) {
                 var names = res.map(function(obj) {

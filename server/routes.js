@@ -4,8 +4,9 @@ var Task = require('./controller/taskController');
 var Milestone = require('./controller/milestoneController');
 var Project = require('./controller/projectController');
 var User = require('./controller/userController');
-var Notification = require('./controller/notification/notificationController');
+var Notification = require('./controller/notificationController');
 var Github = require('./controller/githubController')
+var WebHook = require('./controller/webhookController')
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
@@ -41,7 +42,8 @@ module.exports.endpoints = [
     { method: 'PUT',  path: '/notification/{notification_id}', config: Notification.updateNotification },
 
     { method: 'POST',  path: '/github/oauth/access_token', config: Github.getAccessToken },
-    { method: 'POST',  path: '/github/setup_webhook', config: Github.setupWebhook },
-    { method: 'POST',  path: '/github/webhook', config: Github.webhook },
-    { method: 'POST',  path: '/github/sync/{project_id}', config: Github.sync }
+    { method: 'POST',  path: '/github/sync/{project_id}', config: Github.sync },
+
+    { method: 'POST',  path: '/webhook/github/setup', config: WebHook.setupGithubWebhook },
+    { method: 'POST',  path: '/webhook/github', config: WebHook.githubWebhook }
 ];

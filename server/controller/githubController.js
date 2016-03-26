@@ -9,18 +9,10 @@ var accessControl = require('./accessControl');
 var clientSecret = config.get('github.client_secret');
 var clientId = config.get('github.client_id');
 var secret_key = config.get('authentication.privateKey')
-var localtunnel = require('localtunnel');
 var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Sequelize = require('sequelize');
 var Promise = require("bluebird");
 var req = require("request")
-
-// localtunnel helps us test webhooks on localhost
-//var tunnel = localtunnel(4000, function(err, tunnel) {
-//    if (err) {
-//        console.log(err)
-//    }
-//});
 
 module.exports = {
     getAccessToken: {
@@ -31,26 +23,6 @@ module.exports = {
         validate: {
             payload: {
                 code: Joi.string().required()
-            }
-        }
-    },
-    webhook: {
-        auth: false,
-        handler: webhookHandler,
-        payload: {
-            parse: true
-        }
-    },
-    setupWebhook: {
-        handler: setupWebhook,
-        payload: {
-            parse: true
-        },
-        validate: {
-            payload: {
-                owner: Joi.string().required(),
-                name: Joi.string().required(),
-                token: Joi.string().required()
             }
         }
     },
@@ -395,64 +367,6 @@ function syncHandler(request, reply) {
             })
         })
     })
-}
-
-function setupWebhook(request, reply) {
-    var owner = request.payload.owner;
-    var name = request.payload.name;
-    var token = request.payload.token; // user's github token
-    var options = {
-        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/hooks',
-        headers: {
-            'User-Agent': 'Collab',
-            'Authorization': 'Bearer ' + token
-        }
-    }
-
-    var payload = {
-        "name": "web",
-        "active": true,
-        "events": [
-            "commit_comment",
-            "create",
-            "delete",
-            "fork",
-            "issue_comment",
-            "issues",
-            "member",
-            "pull_request",
-            "push",
-            "release"
-        ],
-        "config": {
-            "url": tunnel.url + "/github/webhook",
-            "content_type": "json"
-        }
-    }
-
-    req.post(options)
-        .form(
-            JSON.stringify(payload)
-        )
-        .on('error', function(err) {
-            reply(Boom.internal(err));
-        })
-        .on('response', function(res) {
-            reply(res)
-        })
-}
-
-function webhookHandler(request, reply) {
-    var headers = request.headers
-    switch (headers['x-github-event']) {
-        case 'issues':
-            break
-        case 'issue_comment':
-            break
-        default:
-            break
-    }
-    reply({status: 'ok'})
 }
 
 function getAccessToken(request, reply) {

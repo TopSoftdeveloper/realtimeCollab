@@ -6,8 +6,8 @@ var Boom = require('boom')
 var Jwt = require('jsonwebtoken')
 var config = require('config')
 var helper = require('../utils/helper')
-var notifications = require('./notification/notificationController')
-var templates = require('./notification/templates')
+var notifications = require('./notificationController')
+var templates = require('./templates')
 var accessControl = require('./accessControl');
 
 var _ = require('lodash')
