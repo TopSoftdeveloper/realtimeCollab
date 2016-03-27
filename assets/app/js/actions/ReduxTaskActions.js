@@ -59,7 +59,7 @@ export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
 export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
 export const initMessages = makeActionCreator(AppConstants.INIT_MESSAGES, 'messages');
 export const _initGithubRepos = makeActionCreator(AppConstants.INIT_GITHUB_REPOS, 'repos');
-export const _addGithubEvents = makeActionCreator(AppConstants.ADD_GITHUB_EVENTS, 'events');
+export const _addGithubEvents = makeActionCreator(AppConstants.ADD_EVENT, 'events');
 
 export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
 export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);

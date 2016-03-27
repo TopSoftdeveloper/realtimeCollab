@@ -2,7 +2,7 @@ module.exports = {
     PATH: {
         milestones: 'milestones',
         files: 'files',
-        github: 'github',
+        newsfeed: 'newsfeed',
         settings: 'settings'
     },
     ADD_RESULTS: 'ADD_RESULTS',
@@ -13,7 +13,7 @@ module.exports = {
     UPDATE_APP_STATUS: 'UPDATE_APP_STATUS',
     SET_DIRECTORY_AS_ROOT: 'SET_DIRECTORY_AS_ROOT',
     SET_GITHUB_REPO: 'SET_GITHUB_REPO',
-    ADD_GITHUB_EVENTS: 'ADD_GITHUB_EVENTS',
+    ADD_EVENT: 'ADD_EVENT',
     UPDATE_PROJECT:'UPDATE_PROJECT',
     ADD_DIRECTORY: 'ADD_DIRECTORY',
     GO_TO_DIRECTORY: 'GO_TO_DIRECTORY',

@@ -6,7 +6,7 @@ import MilestoneView from './MilestoneView.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
 import Files from './Files.jsx'
-import Github from './Github/Github.jsx'
+import Newsfeed from './Newsfeed/Newsfeed.jsx'
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject, getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
 import Tabs from 'material-ui/lib/tabs/tabs'
@@ -82,7 +82,7 @@ class Project extends Component {
         />
 
         if (!(app.github_token && repoSet)) {
-            milestoneView = <Github
+            milestoneView = <Newsfeed
                 project={currentProject}
                 actions={actions}
                 repos={githubRepos}
@@ -110,10 +110,10 @@ class Project extends Component {
                             actions={actions}
                         />
                     </Tab>
-                    <Tab label="Recent Activity"
-                         value={AppConstants.PATH.github}
-                         onActive={this.changeTab.bind(this, AppConstants.PATH.github)}>
-                        <Github
+                    <Tab label="Newsfeed"
+                         value={AppConstants.PATH.newsfeed}
+                         onActive={this.changeTab.bind(this, AppConstants.PATH.newsfeed)}>
+                        <Newsfeed
                             project={currentProject}
                             actions={actions}
                             repos={githubRepos}

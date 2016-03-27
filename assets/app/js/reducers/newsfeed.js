@@ -13,7 +13,7 @@ import AppConstants from '../AppConstants';
 // ]
 export default function alerts(state=[], action) {
     switch (action.type) {
-        case AppConstants.ADD_GITHUB_EVENTS:
+        case AppConstants.ADD_EVENT:
             let eventsToAdd = []
             // check for duplicates
             for (let i=0; i<action.events.length; ++i) {

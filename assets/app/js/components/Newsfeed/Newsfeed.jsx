@@ -15,7 +15,7 @@ require('rc-steps/assets/iconfont.css')
 import $ from 'jquery'
 import FontIcon from 'material-ui/lib/font-icon';
 
-class Github extends Component {
+class Newsfeed extends Component {
     constructor(props, context) {
         super(props, context)
         this.state = {
@@ -87,7 +87,7 @@ class Github extends Component {
     }
 
     authorize() {
-        let redirectURI = APP_ROOT_URL + '/project/' + this.props.project.id + '/' + PATH.github
+        let redirectURI = APP_ROOT_URL + '/project/' + this.props.project.id + '/' + PATH.newsfeed
         window.location.assign('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID +
         '&scope=repo,notifications,user&redirect_uri=' + redirectURI)
     }
@@ -203,4 +203,4 @@ class Github extends Component {
     }
 }
 
-export default Github
+export default Newsfeed

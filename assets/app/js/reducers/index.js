@@ -8,7 +8,7 @@ import app from './app'
 import alerts from './alerts'
 import files from './files'
 import githubRepos from './githubRepos'
-import githubEvents from './githubEvents'
+import githubEvents from './newsfeed'
 import search from './search'
 
 export default combineReducers({
