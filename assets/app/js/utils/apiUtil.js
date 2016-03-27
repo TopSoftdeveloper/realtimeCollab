@@ -142,16 +142,6 @@ export function getGithubRepos() {
     })
 }
 
-export function getGithubEvents(owner, name) {
-    return $.ajax({
-        url: 'https://api.github.com/repos/' + owner + '/' + name + '/events',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('github_token')
-        },
-        type: 'GET'
-    })
-}
-
 export function syncGithubIssues(projectId, name, owner) {
     return ajaxPost('/github/sync/' + projectId, {
         token: localStorage.getItem('github_token'),
@@ -166,6 +156,10 @@ export function serverDeleteNotification(id) {
 
 export function serverGetNotifications() {
     return ajaxGet(GET_NOTIFICATION_ENDPOINT)
+}
+
+export function serverGetNewesfeed() {
+    return ajaxGet('/newsfeed')
 }
 
 export function serverInviteToProject(payload) {

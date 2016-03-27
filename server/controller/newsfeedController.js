@@ -1,17 +1,9 @@
 var constants = require('../constants');
-var Joi = require('joi');
-var Boom = require('boom');
-var config = require('config');
-var Jwt = require('jsonwebtoken')
 var storage = require('../data/storage')
 var helper = require('../utils/helper')
 var accessControl = require('./accessControl');
-var clientSecret = config.get('github.client_secret');
-var clientId = config.get('github.client_id');
-var secret_key = config.get('authentication.privateKey')
 var Sequelize = require('sequelize');
 var Promise = require("bluebird");
-var req = require("request")
 var socket = require('./socket/handlers')
 var templates = require('./../templates')
 
@@ -43,7 +35,11 @@ function getNewsfeed(request, reply) {
             promises.push(storage.getNewsfeed(project.id, 20))
         })
         Sequelize.Promise.all(promises).done(function(res) {
-            reply({newsfeeds: res})
+            var concatArray = []
+            res.forEach(function(posts) {
+                concatArray = concatArray.concat(posts)
+            })
+            reply({newsfeed: concatArray})
         })
     }, function(err) {
         reply({error: err})

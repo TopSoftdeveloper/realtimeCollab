@@ -327,6 +327,10 @@
 }
 
 /******************* General ****************************/
+.todo-empty {
+  margin-top: 100px;
+}
+
 .no-items {
   color: #aaaaaa;
   left: 50%;

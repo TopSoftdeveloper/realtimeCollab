@@ -139,7 +139,7 @@ class MilestoneView extends Component {
         if (milestones.length === 1 && this.props.tasks.length === 0) {
             buttonClassName += "animated infinite pulse"
             var empty = (
-                <div className="no-items">
+                <div className="no-items todo-empty">
                     <h3>Your to-do list is empty!</h3>
                     <p>Add something to get started</p>
                 </div>

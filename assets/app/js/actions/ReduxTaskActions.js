@@ -3,8 +3,8 @@ import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
-        getGithubEvents, syncGithubIssues, serverEditTask, serverEditMilestone,
-        queryGoogleDrive, serverDeclineProject, uploadFile } from '../utils/apiUtil'
+        syncGithubIssues, serverEditTask, serverEditMilestone,
+        queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -59,7 +59,7 @@ export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
 export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
 export const initMessages = makeActionCreator(AppConstants.INIT_MESSAGES, 'messages');
 export const _initGithubRepos = makeActionCreator(AppConstants.INIT_GITHUB_REPOS, 'repos');
-export const _addGithubEvents = makeActionCreator(AppConstants.ADD_EVENT, 'events');
+export const addNewsfeedEvents = makeActionCreator(AppConstants.ADD_EVENT, 'events');
 
 export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
 export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
@@ -149,23 +149,6 @@ function normalizeDriveResults(files) {
     })
 }
 
-function _getGithubEvents(dispatch, projectId, owner, name) {
-    getGithubEvents(owner, name).done(res => {
-        let events = res.map(event => {
-            let builtEvent = buildGithubEvent(event)
-            builtEvent.project = projectId
-            return builtEvent
-        })
-        dispatch(_addGithubEvents(events))
-    }).fail(e => {
-        if (e.statusText === "Unauthorized") {
-            dispatch(_updateAppStatus({github_token: ''}))
-        } else {
-            console.log(e)
-        }
-    })
-}
-
 export function initGithubRepos() {
     return function(dispatch) {
         if (!localStorage.getItem('github_token')) {
@@ -182,65 +165,6 @@ export function updateAppStatus(obj) {
     return function(dispatch) {
         dispatch(_updateAppStatus(obj))
     }
-}
-
-export function fetchGithubEvents(projectId, owner, name) {
-    return function(dispatch) {
-        if (!localStorage.getItem('github_token')) {
-            _getGithubEvents(dispatch, projectId, owner, name)
-        } else {
-            _getGithubEvents(dispatch, projectId, owner, name)
-        }
-    }
-}
-
-function buildGithubEvent(event) {
-    let ret = {
-        id: event.id,
-        type: event.type,
-        created_at: event.created_at,
-        actor: event.actor
-    }
-    switch(event.type) {
-        case 'CreateEvent':
-            let ref = event.payload.ref
-            if (!ref) ref = ''
-            ret.message = event.actor.login + ' has created the ' + event.payload.ref_type + ' ' + ref
-            ret.link_to = event.actor.url
-            break
-        case 'DeleteEvent':
-            ret.message = event.actor.login + ' has deleted the ' + event.payload.ref_type + ' ' + event.payload.ref
-            ret.link_to = event.actor.url
-            break
-        case 'IssueCommentEvent':
-            ret.message = event.actor.login + ' commented on the issue ' + event.payload.issue.title
-            ret.link_to = event.actor.url
-            break
-        case 'IssuesEvent':
-            ret.message = event.actor.login + ' ' + event.payload.action + ' the issue ' + event.payload.issue.title
-            ret.link_to = event.actor.url
-            break
-        case 'MemberEvent':
-            ret.message = event.payload.member.login + ' was ' + event.payload.action + ' to the repository ' +
-                event.repo.name
-            ret.link_to = event.actor.url
-            ret.actor = event.payload.member
-            break
-        case 'PullRequestEvent':
-            ret.message = event.payload.pull_request.user.login + ' has ' + event.payload.action + ' the pull request ' +
-                event.payload.pull_request.title
-            ret.link_to = event.payload.pull_request.url
-            break
-        case 'PushEvent':
-            ret.message = event.actor.login + ' has pushed ' + event.payload.size + ' commits'
-            ret.link_to = event.actor.url
-            break
-        default:
-            ret.message = event.type
-            ret.link_to = event.actor.url
-            break
-    }
-    return ret
 }
 
 export function dismissProjectAlert() {
@@ -307,20 +231,21 @@ export function initializeApp() {
                 dispatch(initTasks(normalizedTables.tasks));
                 dispatch(initSearchResults([]));
                 dispatch(addUsers(normalizedTables.users));
-
-                normalizedTables.projects.forEach(project => {
-                    if (project.github_repo_name && project.github_repo_owner) {
-                        dispatch(fetchGithubEvents(project.id, project.github_repo_owner, project.github_repo_name))
-                    }
-                })
             }
         }).fail(e => {
+            console.log(e)
             window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
         });
 
         serverGetNotifications().done(res => {
             dispatch(addUsers(res.users))
             dispatch(initNotifications(res.notifications));
+        }).fail(e => {
+            console.log(e)
+        })
+
+        serverGetNewesfeed().done(res => {
+            dispatch(addNewsfeedEvents(res.newsfeed))
         }).fail(e => {
             console.log(e)
         })

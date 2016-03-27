@@ -64,11 +64,6 @@ class Newsfeed extends Component {
                 fetchedRepos: true
             })
         }
-
-        // Events not initialized. Todo: Check whether user has no events
-        if (repoOwner && repoName && this.props.app.github_token && this.props.events && this.props.events.length === 0) {
-            this.props.actions.fetchGithubEvents(this.props.project.id, repoOwner, repoName)
-        }
     }
 
     componentDidMount() {
@@ -107,8 +102,11 @@ class Newsfeed extends Component {
             // Case 1: Authorized and Repository set
             return (
                 <div>
-                    <h4>{repoOwner}/{repoName}</h4>
-                    <EventList events={this.props.events} />
+                    <br/>
+                    <EventList
+                        events={this.props.events}
+                        users={this.props.users}
+                    />
                     {loading}
                 </div>
             )

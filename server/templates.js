@@ -1,4 +1,4 @@
-var constants = require('constants')
+var constants = require('./constants')
 
 module.exports = {
     getMessage: function(template, data) {
