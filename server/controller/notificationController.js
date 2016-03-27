@@ -1,4 +1,4 @@
-var templates = require('./templates')
+var templates = require('./../templates')
 var storage = require('../data/storage')
 var socket = require('./socket/handlers')
 var helper = require('../utils/helper')

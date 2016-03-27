@@ -20,13 +20,13 @@
   float: right;
 }
 
-.github-event-list {
+.event-list {
   list-style: none;
   overflow-y: auto;
   max-height: 53vh;
 }
 
-.github-event-list  .github-event-item {
+.event-list  .event-item {
   display: block;
   padding: 5px;
   margin-left: -40px;

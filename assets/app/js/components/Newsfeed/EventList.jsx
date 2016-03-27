@@ -26,7 +26,7 @@ class EventItem extends Component {
         }
 
         return (
-            <li className="github-event-item">
+            <li className="event-item">
                 <div className="notif-photo">
                     {image}
                 </div>
@@ -50,7 +50,7 @@ class EventList extends Component {
         );
 
         return (
-            <div className='github-event-list'>
+            <div className='event-list'>
                 <ul>
                     {eventItems}
                 </ul>

@@ -13,7 +13,7 @@ var Sequelize = require('sequelize');
 var Promise = require("bluebird");
 var req = require("request")
 var socket = require('./socket/handlers')
-var templates = require('./templates')
+var templates = require('./../templates')
 
 module.exports = {
     getNewsfeed: {

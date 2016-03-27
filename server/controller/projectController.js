@@ -7,7 +7,7 @@ var Jwt = require('jsonwebtoken')
 var config = require('config')
 var helper = require('../utils/helper')
 var notifications = require('./notificationController')
-var templates = require('./templates')
+var templates = require('./../templates')
 var accessControl = require('./accessControl');
 
 var _ = require('lodash')
