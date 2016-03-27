@@ -7,6 +7,7 @@ var User = require('./controller/userController');
 var Notification = require('./controller/notificationController');
 var Github = require('./controller/githubController')
 var WebHook = require('./controller/webhookController')
+var Newsfeed = require('./controller/newsfeedController')
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
@@ -45,5 +46,7 @@ module.exports.endpoints = [
     { method: 'POST',  path: '/github/sync/{project_id}', config: Github.sync },
 
     { method: 'POST',  path: '/webhook/github/setup', config: WebHook.setupGithubWebhook },
-    { method: 'POST',  path: '/webhook/github', config: WebHook.githubWebhook }
+    { method: 'POST',  path: '/webhook/github', config: WebHook.githubWebhook },
+
+    { method: 'GET',  path: '/newsfeed', config: Newsfeed.getNewsfeed }
 ];

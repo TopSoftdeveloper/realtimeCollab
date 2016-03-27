@@ -13,6 +13,12 @@ module.exports = {
             case this.DECLINED_PROJECT:
                 message = data.displayName + ' has declined to join the project ' + data.projectName
                 break
+            case this.GITHUB_CREATE:
+                message = data.displayName + ' has created the ' + data.ref_type + ' ' + data.ref
+                break
+            case this.GITHUB_PUSH:
+                message = data.displayName + ' has pushed ' + data.commitSize + ' commits'
+                break
             default:
                 message = ''
         }
@@ -25,5 +31,7 @@ module.exports = {
 
     INVITE_TO_PROJECT: 'INVITE_TO_PROJECT',
     JOINED_PROJECT: 'JOINED_PROJECT',
-    DECLINED_PROJECT: 'DECLINED_PROJECT'
+    DECLINED_PROJECT: 'DECLINED_PROJECT',
+    GITHUB_CREATE: 'GITHUB_CREATE',
+    GITHUB_PUSH: 'GITHUB_PUSH'
 }

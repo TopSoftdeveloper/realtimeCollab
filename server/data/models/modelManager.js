@@ -20,7 +20,8 @@ var modelFiles = [
     'User',
     'Project',
     'UserProject',
-    'Notification'
+    'Notification',
+    'Newsfeed'
 ];
 
 modelFiles.forEach(function(model) {
@@ -41,9 +42,12 @@ modelFiles.forEach(function(model) {
     m.User.hasMany(m.Notification);
 
     m.Notification.belongsTo(m.User);
+
+    m.Newsfeed.belongsTo(m.Project);
+
 })(module.exports);
 
-sequelize.sync().then(function() {
+sequelize.sync().then(function(res) {
 },function(error) {
     console.log(error);
 });

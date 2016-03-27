@@ -5,7 +5,7 @@
     "start": "node server/server.js",
     "build": "webpack -p --progress",
     "dev": "webpack --progress --color --watch & nodemon",
-    "test": "istanbul cover _mocha"
+    "test": "mocha"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
@@ -66,6 +66,7 @@
     "mocha": "^2.3.4",
     "nodemon": "^1.8.1",
     "request-debug": "^0.2.0",
+    "sinon": "^1.17.3",
     "style-loader": "^0.13.0",
     "supertest": "^1.1.0",
     "webpack": "^1.12.9"

@@ -8,10 +8,30 @@ var User = models.User;
 var Project = models.Project;
 var UserProject = models.UserProject;
 var Notification = models.Notification;
+var Newsfeed = models.Newsfeed;
 
 var format = require('string-format');
 
 module.exports = {
+    saveNewsfeed: function(data, template, projectId) {
+        return Newsfeed.create({
+            id: shortid.generate(),
+            data: data,
+            template: template,
+            project_id: projectId
+        });
+    },
+
+    getNewsfeed: function(projectId, limit) {
+        return Newsfeed.findAll({
+            limit: limit,
+            order: 'updated_at DESC',
+            where: {
+                project_id: projectId
+            }
+        })
+    },
+
     getNotifications: function(userId) {
         return Notification.findAll({
             where: {
@@ -86,6 +106,7 @@ module.exports = {
     },
     getProjectsOfUser: function(user_id) {
         return User.findById(user_id).then(function(user) {
+            if (!user) return Promise.reject(constants.USER_NOT_FOUND)
             return user.getProjects(
             {
                 model: Project,
