@@ -31,7 +31,7 @@ class Project extends Component {
 
     render() {   
         const {alerts, milestones, projects, tasks, users, dispatch, app,
-            files, githubRepos, newsfeed} = this.props
+            files, githubRepos, newsfeed, location} = this.props
         const actions = bindActionCreators(Actions, dispatch)
         const currentProjectId = getCurrentProject()
 
@@ -79,6 +79,7 @@ class Project extends Component {
             actions={actions}
             projectId={currentProjectId}
             users={allActiveUsers}
+            location={location}
         />
 
         if (!(app.github_token && repoSet)) {

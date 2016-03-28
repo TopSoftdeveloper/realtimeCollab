@@ -8,6 +8,7 @@ import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
+import Fuse from 'fuse.js'
 
 let AppConstants = require('../AppConstants');
 let ServerConstants = require('../../../../server/constants');
@@ -83,10 +84,8 @@ export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
 
 export function uploadFileToDrive(file) {
-    console.log('called')
     return function(dispatch) {
         uploadFile(file).then(res => {
-            console.log('uploaded')
             console.log(res)
         })
     }
@@ -127,10 +126,18 @@ function _getGithubRepos(dispatch) {
 
 
 export function queryIntegrations(queryString) {
-    return function(dispatch) {
+    return function(dispatch, getState) {
+        let tasks = getState().tasks
+        let projects = getState().projects
+        let users = getState().users
+        dispatch(_updateAppStatus({
+            queryString: queryString
+        }))
+
         queryGoogleDrive(queryString).then(res => {
-            let results = normalizeDriveResults(res.result.files)
-            dispatch(initSearchResults(results))
+            let driveResults = normalizeDriveResults(res.result.files)
+            let taskResults = searchTasksByAssignee(queryString, users, tasks, projects)
+            dispatch(initSearchResults(driveResults.concat(taskResults)))
         }, function (err) {
             console.log(err)
         })
@@ -144,8 +151,50 @@ function normalizeDriveResults(files) {
             primaryText: file.name,
             secondaryText: file.lastModifyingUser.displayName,
             link: file.webViewLink,
-            thumbnail: file.iconLink
+            thumbnail: file.iconLink,
+            modifiedTime: file.modifiedTime,
+            type: 'drive'
         }
+    })
+}
+
+function searchTasksByAssignee(queryString, users, tasks, projects) {
+    let options = {
+        caseSensitive: false,
+        includeScore: false,
+        shouldSort: true,
+        tokenize: false,
+        threshold: 0.4,
+        location: 0,
+        distance: 100,
+        maxPatternLength: 32,
+        keys: ["display_name"]
+    }
+    let fuse = new Fuse(users, options)
+    let matchingUsers = fuse.search(queryString)
+    let matchingTasks = tasks.filter(task => {
+        let found = false
+        matchingUsers.forEach(user=> {if (user.id === task.assignee_id) found = true})
+        return found
+    })
+
+    return matchingTasks.map(task => {
+        let assignee = null
+        let project = null
+        matchingUsers.forEach(user=> {if (user.id === task.assignee_id) assignee = user})
+        projects.forEach(p=> {if (p.id === task.project_id) project = p})
+
+        return (
+            {
+                id: task.id,
+                primaryText: task.content,
+                secondaryText: assignee.display_name,
+                thumbnail: assignee.display_image,
+                project_id: project.id,
+                project_content: project.content,
+                type: 'task'
+            }
+        )
     })
 }
 
@@ -216,7 +265,8 @@ export function initializeApp() {
             github: {
                 loading: false
             },
-            loading: true
+            loading: true,
+            queryString: ''
         }));
         serverPopulate().done(res => {
             if (res.projects.length > 0) {

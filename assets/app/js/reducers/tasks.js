@@ -6,13 +6,19 @@ import assign from 'object-assign';
 //         id: 'taskid1',
 //         content: 'Create survey',
 //         completed_on: null,
-//         milestone_id: 'mid1'
+//         milestone_id: 'mid1',
+//         assignee_id: '',
+//         project_id: 'ja0sfd'
+//         ...
 //     },
 //     {
 //         id: 'taskid3',
 //         content: 'Prepare report',
 //         completed_on: null,
-//         milestone_id: 'mid2'
+//         milestone_id: 'mid2',
+//         assignee_id: '123abc',
+//         project_id: 'ja0sasfasdffd'
+//         ...
 //     }
 // ]
 

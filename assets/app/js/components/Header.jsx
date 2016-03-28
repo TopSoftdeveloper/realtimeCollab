@@ -10,8 +10,9 @@ import MyRawTheme from '../myTheme';
 import ListItem from 'material-ui/lib/lists/list-item';
 import Avatar from 'material-ui/lib/avatar';
 import _ from 'lodash'
+import { browserHistory } from 'react-router'
 
-let RATE_LIMIT_MS = 700
+let RATE_LIMIT_MS = 900
 let MIN_SEARCH_CHARS = 3
 
 class Header extends Component {
@@ -43,8 +44,10 @@ class Header extends Component {
     }
 
     executeQuery(queryString) {
-        this.props.actions.queryIntegrations(queryString)
-        this.setState({lastQueryTime: new Date().getTime(), lastQueryString: queryString})
+        if (queryString.trim()) {
+            this.props.actions.queryIntegrations(queryString)
+            this.setState({lastQueryTime: new Date().getTime(), lastQueryString: queryString})
+        }
     }
 
     query(queryString) {
@@ -64,6 +67,7 @@ class Header extends Component {
 
     newRequest() {
         this.setState({queryString: ''})
+        browserHistory.push('/app/search')
     }
 
     goToResult(link, e) {

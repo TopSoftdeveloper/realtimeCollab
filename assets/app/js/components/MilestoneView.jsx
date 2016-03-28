@@ -111,6 +111,12 @@ class MilestoneView extends Component {
                     task.dirty !== true &&
                     task.milestone_id === milestone.id) {
                     let assignees = this.props.users.filter(user => user.id === task.assignee_id)
+                    let highlightId = this.props.location.query.highlight
+                    let highlight = false
+                    if (highlightId === task.id) {
+                        highlight = true
+                    }
+
                     tasks.push(<TaskRow
                         key={_.uniqueId('task')}
                         task={task}
@@ -118,6 +124,7 @@ class MilestoneView extends Component {
                         onEdit={this.editTask.bind(this, task.id)}
                         assignees={assignees}
                         users={this.props.users}
+                        highlight={highlight}
                     />)
                 }
             }) // task.forEach

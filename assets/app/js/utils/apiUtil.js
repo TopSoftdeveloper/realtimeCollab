@@ -6,7 +6,6 @@ let CREATE_PROJECT_ENDPOINT = '/projects';
 let INVITE_TO_PROJECT_ENDPOINT = '/invite_to_project';
 let POPULATE_ENDPOINT = '/user/populate';
 let GET_NOTIFICATION_ENDPOINT = '/notifications'
-import gapi from '../gapi'
 
 import $ from 'jquery'
 import Promise from 'bluebird'

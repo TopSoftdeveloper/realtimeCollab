@@ -342,6 +342,10 @@
   visibility: hidden;
 }
 
+.highlight-yellow {
+  background-color: yellow;
+}
+
 .loading-indicator {
   left: 45%;
   position: absolute;
