@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
 import vagueTime from 'vague-time'
 import {acceptProject, declineProject}  from '../actions/ReduxTaskActions'
-import {getUserAvatar} from '../utils/general'
+import {getUserAvatar, toFuzzyTime} from '../utils/general'
 import {Button} from 'react-bootstrap'
 
 class NotificationItem extends Component {
@@ -56,13 +56,6 @@ class NotificationItem extends Component {
 }
 
 class NotificationList extends Component {
-    toFuzzyTime(time) {
-        return vagueTime.get({
-            to: new Date(time).getTime()/1000, // convert ISO UTC to seconds from epoch
-            units: 's'
-        })
-    }
-
     render() {
         let notifsSortedByTime = this.props.notifs.sort(function(a, b) {
             return a.time < b.time
@@ -83,7 +76,7 @@ class NotificationList extends Component {
                 read={notif.read}
                 user={user}
                 dispatch={this.props.dispatch}
-                fuzzyTime={this.toFuzzyTime(notif.time)} />
+                fuzzyTime={toFuzzyTime(notif.time)} />
 
             }
         );

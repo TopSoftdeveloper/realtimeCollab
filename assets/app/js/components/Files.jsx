@@ -7,6 +7,7 @@ import {loginGoogle, isLoggedIntoGoogle} from '../utils/auth'
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
 import _ from 'lodash'
+import {toFuzzyTime} from '../utils/general'
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
 
@@ -46,13 +47,6 @@ class BreadcrumbInstance extends Component {
 
 class FilesList extends Component {
 
-    toFuzzyTime(time) {
-        return vagueTime.get({
-            to: new Date(time).getTime()/1000, // convert ISO UTC to seconds from epoch
-            units: 's'
-        })
-    }
-
     navigate(fileId) {
         let selectedFile = this.props.files.filter(file => file.id === fileId)[0]
         if (selectedFile.mimeType === 'application/vnd.google-apps.folder') {
@@ -75,7 +69,7 @@ class FilesList extends Component {
 
         let rows = filesToDisplay.map(file => {
             let lastModifyingUser = file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
-            let lastModified = this.toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
+            let lastModified = toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
             return (
                 <tr className="table-row-file" onClick={this.navigate.bind(this, file.id)} key={file.id}>
                     <td><img src={file.iconLink}/><span className="table-filename">{file.name}</span></td>
