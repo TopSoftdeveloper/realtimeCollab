@@ -11,7 +11,7 @@ import ListItem from 'material-ui/lib/lists/list-item';
 import Avatar from 'material-ui/lib/avatar';
 import _ from 'lodash'
 
-let RATE_LIMIT_MS = 200
+let RATE_LIMIT_MS = 700
 let MIN_SEARCH_CHARS = 3
 
 class Header extends Component {
@@ -47,10 +47,10 @@ class Header extends Component {
         this.setState({lastQueryTime: new Date().getTime(), lastQueryString: queryString})
     }
 
-    query(queryString, e) {
+    query(queryString) {
         this.setState({queryString: queryString})
         if (queryString.length < MIN_SEARCH_CHARS) return
-        let elapsedTime = new Date().getTime() - this.state.lastQuery
+        let elapsedTime = new Date().getTime() - this.state.lastQueryTime
         if (elapsedTime < RATE_LIMIT_MS) {
             setTimeout(() => {
                 if (this.state.queryString !== this.state.lastQueryString) {
