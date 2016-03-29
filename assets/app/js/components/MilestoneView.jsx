@@ -79,7 +79,7 @@ class MilestoneView extends Component {
         let milestones = this.props.milestones
         if (milestones.length === 0 || (milestones[0].id !== null)) {
             milestones.unshift({  // Just a placeholder milestone for tasks without milestones
-                content: 'Uncategorized',
+                content: '',
                 deadline: null,
                 key: 'uncategorized-tasks',
                 id: null

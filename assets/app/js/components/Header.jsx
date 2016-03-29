@@ -134,8 +134,11 @@ class Header extends Component {
         }
 
         return (
-            <nav className="navbar navbar-default ">
+            <nav className="navbar navbar-default navbar-fixed-top container-fluid">
                 <div>
+                    <div className="navbar-left collab-logo">
+                        <h3>Collab</h3>
+                    </div>
                     <div className="navbar-left search-box" id="search">
                         <AutoComplete
                             hintText="Search Collab"

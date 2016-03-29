@@ -46,7 +46,59 @@ class BreadcrumbInstance extends Component {
 }
 
 class FilesList extends Component {
+    onDrop(files) {
+        let file = files[0]
+        console.log(file)
+        this.setState({preview: file.preview})
+        this.insertFileData(file, this.callmemaybe)
+        //this.props.actions.uploadFileToDrive(newFile)
+    }
+    insertFileData(fileData, callback) {
+        const boundary = '-------314159265358979323846';
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
 
+        var reader = new FileReader();
+        reader.readAsBinaryString(fileData);
+        reader.onload = function(e) {
+            var contentType = fileData.type || 'application/octect-stream';
+            var metadata = {
+                'name': fileData.name,
+                'mimeType': contentType
+            };
+            let directoryStructure = this.props.directoryStructure
+            let currDirectory = directoryStructure[directoryStructure.length-1].id
+            metadata.parents = [currDirectory]
+
+
+            var base64Data = btoa(reader.result);
+            var multipartRequestBody =
+                delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+
+            var request = gapi.client.request({
+                'path': '/upload/drive/v3/files',
+                'method': 'POST',
+                'params': {'uploadType': 'multipart'},
+                'headers': {
+                    'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+                },
+                'body': multipartRequestBody});
+            if (!callback) {
+                callback = function(file) {
+                    console.log(file)
+                };
+            }
+            request.execute(callback);
+        }.bind(this)
+    }
     navigate(fileId) {
         let selectedFile = this.props.files.filter(file => file.id === fileId)[0]
         if (selectedFile.mimeType === 'application/vnd.google-apps.folder') {
@@ -86,6 +138,9 @@ class FilesList extends Component {
                     projectId={this.props.projectId}
                     key={'breadcrumb_' + this.props.projectId}
                 />
+                <Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)} multiple={false} className="drive-drop-zone">
+                    <p>Drop a file here, or click to select a file to upload.</p>
+                </Dropzone>
                 <Table striped bordered condensed hover responsive>
                     <thead>
                     <tr>
@@ -120,65 +175,6 @@ class Files extends Component {
         this.state = {
             preview: ''
         }
-    }
-    insertFileData(fileData, callback) {
-        const boundary = '-------314159265358979323846';
-        const delimiter = "\r\n--" + boundary + "\r\n";
-        const close_delim = "\r\n--" + boundary + "--";
-
-        var reader = new FileReader();
-        reader.readAsBinaryString(fileData);
-        reader.onload = function(e) {
-            var contentType = fileData.type || 'application/octect-stream';
-            var metadata = {
-                'name': fileData.name,
-                'mimeType': contentType
-            };
-            let directoryStructure = this.props.project.directory_structure
-            let currDirectory = directoryStructure[directoryStructure.length-1].id
-            metadata.parents = [currDirectory]
-
-
-                var base64Data = btoa(reader.result);
-            var multipartRequestBody =
-                delimiter +
-                'Content-Type: application/json\r\n\r\n' +
-                JSON.stringify(metadata) +
-                delimiter +
-                'Content-Type: ' + contentType + '\r\n' +
-                'Content-Transfer-Encoding: base64\r\n' +
-                '\r\n' +
-                base64Data +
-                close_delim;
-
-            var request = gapi.client.request({
-                'path': '/upload/drive/v3/files',
-                'method': 'POST',
-                'params': {'uploadType': 'multipart'},
-                'headers': {
-                    'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-                },
-                'body': multipartRequestBody});
-            if (!callback) {
-                callback = function(file) {
-                    console.log(file)
-                };
-            }
-            request.execute(callback);
-        }.bind(this)
-    }
-
-    callmemaybe(res) {
-        console.log('doneee')
-        console.log(res)
-    }
-
-    onDrop(files) {
-        let file = files[0]
-        console.log(file)
-        this.setState({preview: file.preview})
-        this.insertFileData(file, this.callmemaybe)
-        //this.props.actions.uploadFileToDrive(newFile)
     }
 
     componentDidMount() {
@@ -229,9 +225,6 @@ class Files extends Component {
                     <div>
                         <img src={this.state.preview} />
                     </div>
-                    <Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)} multiple={false} className="drive-drop-zone">
-                        <p>Drop a file here, or click to select a file to upload.</p>
-                    </Dropzone>
                 </div>
             )
         }
