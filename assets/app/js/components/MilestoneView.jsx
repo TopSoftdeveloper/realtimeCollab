@@ -8,6 +8,7 @@ import Remove from './../icons/Remove.jsx'
 import Paper from 'material-ui/lib/paper';
 import FlatButton from 'material-ui/lib/flat-button';
 import MilestoneModal from './MilestoneModal.jsx'
+import AvatarList from './AvatarList.jsx'
 
 class MilestoneView extends Component {
     constructor(props, context) {
@@ -162,6 +163,12 @@ class MilestoneView extends Component {
                     className={buttonClassName}
                     onTouchTap={this.openModal.bind(this)}
                     secondary={true}/>
+                <AvatarList
+                    className="online-users"
+                    members={this.props.users.filter(user => user.online && !user.me)}
+                    isSquare={true}
+                    colour={true}
+                />
                 <div className='task-list'>
                     {rows}
                     {empty}

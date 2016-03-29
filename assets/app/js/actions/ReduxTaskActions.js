@@ -9,6 +9,7 @@ import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
 import Fuse from 'fuse.js'
+import UserColours from '../UserColours';
 
 let AppConstants = require('../AppConstants');
 let ServerConstants = require('../../../../server/constants');
@@ -250,6 +251,22 @@ export function acceptProject(projectId, notificationId) {
     }
 }
 
+function getNewColour(usedColours) {
+    // Returns an unused colour from the predefined colour palette.
+    // If all colours are used, returns a random colour
+    let coloursLeft = UserColours.filter(colour => usedColours.indexOf(colour) <= -1)
+    if (coloursLeft.length > 0) {
+        return coloursLeft[getRandomInt(0, coloursLeft.length-1)]
+    } else {
+        return UserColours[getRandomInt(0, UserColours.length-1)]
+    }
+}
+
+function getRandomInt(min, max) {
+    // Returns a random integer between min (inclusive) and max (inclusive)
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export function initializeApp() {
     return function(dispatch) {
         dispatch(addUsers([{
@@ -257,7 +274,9 @@ export function initializeApp() {
             email: localStorage.getItem('email'),
             display_name: localStorage.getItem('display_name'),
             display_image: localStorage.getItem('display_image'),
-            online: false
+            online: true,
+            colour: getNewColour([]),
+            me: true
         }]));
         dispatch(initApp({
             logged_into_google: false,
@@ -280,7 +299,11 @@ export function initializeApp() {
                 dispatch(initProjects(normalizedTables.projects));
                 dispatch(initTasks(normalizedTables.tasks));
                 dispatch(initSearchResults([]));
-                dispatch(addUsers(normalizedTables.users));
+                let u = normalizedTables.users.map(user => {
+                    user.colour = getNewColour(normalizedTables.users.map(k => k.colour))
+                    return user
+                })
+                dispatch(addUsers(u));
             }
         }).fail(e => {
             console.log(e)
@@ -288,7 +311,11 @@ export function initializeApp() {
         });
 
         serverGetNotifications().done(res => {
-            dispatch(addUsers(res.users))
+            let u = res.users.map(user => {
+                user.colour = getNewColour(res.users.map(k => k.colour))
+                return user
+            })
+            dispatch(addUsers(u));
             dispatch(initNotifications(res.notifications));
         }).fail(e => {
             console.log(e)

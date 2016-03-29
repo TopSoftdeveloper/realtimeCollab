@@ -70,12 +70,24 @@ export function isObjectPresent(arr, id) {
 	return false
 }
 
-export function getUserAvatar(imgSrc, displayName, enableTooltip) {
+export function getUserAvatar(imgSrc, displayName, enableTooltip, isSquare, memberColour) {
 	let image = null
+	let className = ""
+	if (isSquare) className = "square-avatar"
+	let styles = {}
+
+	if (memberColour) {
+		styles = {
+			borderBottomStyle: 'solid',
+			borderBottomColor: memberColour,
+			borderBottomWidth: '7px'
+		}
+	}
+
 	if (imgSrc && imgSrc !== 'undefined') {
-		image = <Avatar size={36} src={imgSrc} />
+		image = <Avatar size={36} src={imgSrc} className={className} style={styles}/>
 	} else {
-		image = <Avatar size={36}>{displayName[0]}</Avatar>
+		image = <Avatar size={36} style={styles}>{displayName[0]}</Avatar>
 	}
 
 	if (enableTooltip) {
