@@ -44,8 +44,12 @@ class TaskRow extends Component {
 
     render() {
         let taskActionClass = "task-actions"
+        let taskContentClass = "task-content"
         if (this.state.hidden) {
             taskActionClass = taskActionClass + " invisible"
+        }
+        if (this.props.highlight) {
+            taskContentClass = taskContentClass + " highlight-yellow"
         }
 
         return (
@@ -53,7 +57,7 @@ class TaskRow extends Component {
             <div className="task-checkbox" onClick={this.props.onCheck}>
                 <Checkbox/>
             </div>
-            <div className="task-content">
+            <div className={taskContentClass}>
                 {this.props.task.content}
             </div>
             <div className={taskActionClass}>

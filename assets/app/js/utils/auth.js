@@ -1,6 +1,6 @@
 import $ from 'jquery'
 let AppConstants = require('../AppConstants');
-const CLIENT_ID = '300282221041-b0p1s05ukuvuun3b8h2tuevppjkmgdrc.apps.googleusercontent.com'
+const CLIENT_ID = '300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com'
 const SCOPES = ['https://www.googleapis.com/auth/drive']
 
 export function logout() {

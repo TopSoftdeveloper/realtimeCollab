@@ -8,6 +8,7 @@ import Remove from './../icons/Remove.jsx'
 import Paper from 'material-ui/lib/paper';
 import FlatButton from 'material-ui/lib/flat-button';
 import MilestoneModal from './MilestoneModal.jsx'
+import AvatarList from './AvatarList.jsx'
 
 class MilestoneView extends Component {
     constructor(props, context) {
@@ -79,7 +80,7 @@ class MilestoneView extends Component {
         let milestones = this.props.milestones
         if (milestones.length === 0 || (milestones[0].id !== null)) {
             milestones.unshift({  // Just a placeholder milestone for tasks without milestones
-                content: 'Uncategorized',
+                content: '',
                 deadline: null,
                 key: 'uncategorized-tasks',
                 id: null
@@ -111,6 +112,12 @@ class MilestoneView extends Component {
                     task.dirty !== true &&
                     task.milestone_id === milestone.id) {
                     let assignees = this.props.users.filter(user => user.id === task.assignee_id)
+                    let highlightId = this.props.location.query.highlight
+                    let highlight = false
+                    if (highlightId === task.id) {
+                        highlight = true
+                    }
+
                     tasks.push(<TaskRow
                         key={_.uniqueId('task')}
                         task={task}
@@ -118,6 +125,7 @@ class MilestoneView extends Component {
                         onEdit={this.editTask.bind(this, task.id)}
                         assignees={assignees}
                         users={this.props.users}
+                        highlight={highlight}
                     />)
                 }
             }) // task.forEach
@@ -155,6 +163,12 @@ class MilestoneView extends Component {
                     className={buttonClassName}
                     onTouchTap={this.openModal.bind(this)}
                     secondary={true}/>
+                <AvatarList
+                    className="online-users"
+                    members={this.props.users.filter(user => user.online && !user.me)}
+                    isSquare={true}
+                    colour={true}
+                />
                 <div className='task-list'>
                     {rows}
                     {empty}

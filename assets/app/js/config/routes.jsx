@@ -5,6 +5,7 @@ import App from '../containers/App.jsx'
 import Project from '../components/Project.jsx'
 import _404 from '../components/_404.jsx'
 import Notifications from '../components/Notifications.jsx'
+import SearchResults from '../components/SearchResults.jsx'
 
 let AppConstants = require('../AppConstants');
 
@@ -14,6 +15,7 @@ function requireLogin(nextState, replaceState) {
             window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
         }
     }).fail(function(res) {
+        console.log(res)
         window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
     })
 }
@@ -34,6 +36,7 @@ export default (
                 <Route path={AppConstants.PATH.settings} />
             </Route>
             <Route path='notifications' component={Notifications}/>
+            <Route path='search' component={SearchResults}/>
             <Route path='*' component={_404}/>
         </Route>
     </Route>

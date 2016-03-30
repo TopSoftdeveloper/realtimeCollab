@@ -1,6 +1,21 @@
 import Avatar from 'material-ui/lib/avatar';
 import React, { Component } from 'react'
 import {Tooltip, OverlayTrigger} from 'react-bootstrap'
+import vagueTime from 'vague-time'
+
+export function toFuzzyTime(time) {
+	// Display exact date if older than 1 day
+	let eventTime = new Date(time)
+	let MS_IN_A_DAY = 24*60*60*1000
+	if (new Date().getTime() -  eventTime.getTime() > MS_IN_A_DAY) {
+		let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+		return eventTime.toLocaleDateString('en-US', options)
+	}
+	return vagueTime.get({
+		to: eventTime.getTime()/1000, // convert ISO UTC to seconds from epoch
+		units: 's'
+	})
+}
 
 function hasTrailingSlash(urlString) {
 	return urlString[urlString.length-1] === '/';
@@ -55,12 +70,24 @@ export function isObjectPresent(arr, id) {
 	return false
 }
 
-export function getUserAvatar(imgSrc, displayName, enableTooltip) {
+export function getUserAvatar(imgSrc, displayName, enableTooltip, isSquare, memberColour) {
 	let image = null
+	let className = ""
+	if (isSquare) className = "square-avatar"
+	let styles = {}
+
+	if (memberColour) {
+		styles = {
+			borderBottomStyle: 'solid',
+			borderBottomColor: memberColour,
+			borderBottomWidth: '7px'
+		}
+	}
+
 	if (imgSrc && imgSrc !== 'undefined') {
-		image = <Avatar size={36} src={imgSrc} />
+		image = <Avatar size={36} src={imgSrc} className={className} style={styles}/>
 	} else {
-		image = <Avatar size={36}>{displayName[0]}</Avatar>
+		image = <Avatar size={36} style={styles}>{displayName[0]}</Avatar>
 	}
 
 	if (enableTooltip) {

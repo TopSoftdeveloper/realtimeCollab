@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import List from './list/List.jsx'
+import List from './List.jsx'
 import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
 
 class LeftPanel extends Component {

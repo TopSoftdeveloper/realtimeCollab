@@ -9,14 +9,17 @@ class AvatarList extends Component {
 
     render() {
         let avatars = this.props.members.map(member => {
-            let image = getUserAvatar(member.display_image, member.display_name, true)
+            let colour = this.props.colour ? member.colour : false
+            let image = getUserAvatar(member.display_image, member.display_name, true, this.props.isSquare, colour)
             return (
-                <li key={_.uniqueId('online')}>
+                <li key={_.uniqueId()}>
                     {image}
                 </li>)
         });
+
+        let className = this.props.className + " avatar-list-wrapper"
         return (
-            <div className={this.props.className}>
+            <div className={className}>
                 <ul className='avatar-list'>{avatars}</ul>
             </div>
         );

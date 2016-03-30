@@ -1,24 +1,9 @@
 import React, { Component } from 'react';
-import vagueTime from 'vague-time'
-import {getUserAvatar} from '../../utils/general'
+import {getUserAvatar, toFuzzyTime} from '../../utils/general'
 import {Button} from 'react-bootstrap'
 var templates = require('../../../../../server/templates.js')
 
 class EventItem extends Component {
-    toFuzzyTime(time) {
-        // Display exact date if older than 1 day
-        let eventTime = new Date(time)
-        let MS_IN_A_DAY = 24*60*60*1000
-        if (new Date().getTime() -  eventTime.getTime() > MS_IN_A_DAY) {
-            let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-            return eventTime.toLocaleDateString('en-US', options)
-        }
-        return vagueTime.get({
-            to: eventTime.getTime()/1000, // convert ISO UTC to seconds from epoch
-            units: 's'
-        })
-    }
-
     render() {
         let event = this.props.event
         let image = getUserAvatar(event.avatarUrl, event.displayName)
@@ -31,7 +16,7 @@ class EventItem extends Component {
                 <div>
                     <span className='notif-text'>{event.message}</span>
                 </div>
-                <span className='notif-fuzzy-time'>{this.toFuzzyTime(event.created_at)}</span>
+                <span className='notif-fuzzy-time'>{toFuzzyTime(event.created_at)}</span>
             </li>
         );
     }

@@ -35,9 +35,9 @@
 /*************************** files area *******************/
 .drive-drop-zone {
   border: dashed #7a7a7a;
-  min-height: 100px;
+  min-height: 90px;
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 
 .drive-drop-zone p {
@@ -54,12 +54,7 @@
   float:right;
 }
 
-.milestone-view, .files-list {
-  overflow-y: auto;
-}
-
 .milestone-view {
-  max-height: 70vh;
   min-height: 50vh;
   margin-top: 20px;
   padding: 20px;
@@ -131,10 +126,6 @@
 .completed-task-list {
     color: #757575;
 }
-
-.assignee-avatar {
-  display: inline-block;
-  float: right;}
 
 /************************ Project list *******************/
 .project-list ul, .project-list li {
@@ -327,6 +318,24 @@
 }
 
 /******************* General ****************************/
+.avatar-list {
+  list-style: none;
+  float: right;
+  display: flex;
+}
+
+.avatar-list li {
+  padding-left: 3px;
+}
+
+.assignee-avatar {
+  float: right;
+}
+
+.square-avatar {
+  border-radius: 0 !important;
+}
+
 .no-items.todo-empty {
   margin-top: 100px;
 }
@@ -342,6 +351,10 @@
   visibility: hidden;
 }
 
+.highlight-yellow {
+  background-color: yellow;
+}
+
 .loading-indicator {
   left: 45%;
   position: absolute;
@@ -350,6 +363,7 @@
 .collab-logo h3 {
   margin-left: 60px;
   padding-top: 15px;
+  color: white;
 }
 
 .left-panel {
@@ -360,12 +374,12 @@
 
 .collab-logo {
   margin-top: -20px;
-  background: #424242;
   height: 50px;
 }
 
 .body-wrapper {
   width: 95%;
+  margin-top: 70px;
 }
 
 .my-step-container {
