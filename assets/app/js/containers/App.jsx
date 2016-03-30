@@ -17,7 +17,7 @@ var AppConstants = require('../AppConstants');
 class App extends Component {
     constructor(props, context) {
         super(props, context)
-        let host = 'ws://localhost:4001/'
+        let host = 'ws://devserver.com:4001/'
         let socket = io.connect(host)
         this.state = { socket: socket }
         this.initApp()

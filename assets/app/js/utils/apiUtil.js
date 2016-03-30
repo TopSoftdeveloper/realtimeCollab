@@ -1,4 +1,4 @@
-let API_BASE_URL = 'http://localhost:4000';
+let API_BASE_URL = 'http://devserver.com:4000';
 let CREATE_TASK_ENDPOINT = '/tasks';
 let COMPLETE_TASK_ENDPOINT = '/mark_completed';
 let CREATE_MILESTONE_ENDPOINT = '/milestones';

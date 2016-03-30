@@ -6,3 +6,4 @@ tmp
 coverage
 *.log
 *.dat
+config/local.json

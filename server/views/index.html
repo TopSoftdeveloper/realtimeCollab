@@ -45,12 +45,12 @@
         }
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:4000/login',
+            url: 'http://devserver.com:4000/login',
             data: payload
         }).done(function(res) {
             localStorage.setItem('jwt', res.token);
             localStorage.setItem('user_id', res.user_id);
-            window.location.assign('http://localhost:4000/app');
+            window.location.assign('http://devserver.com:4000/app');
         }).fail(function(res) {
         })
     }

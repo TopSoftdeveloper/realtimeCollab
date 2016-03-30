@@ -12,11 +12,11 @@ var secret_key = config.get('authentication.privateKey')
 var Sequelize = require('sequelize');
 var Promise = require("bluebird");
 var req = require("request")
-var localtunnel = require('localtunnel');
+//var localtunnel = require('localtunnel');
 var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Newsfeed = require('./newsfeedController')
 
-// localtunnel helps us test webhooks on localhost
+// localtunnel helps us test webhooks on devserver.com
 //var tunnel = localtunnel(4000, function(err, tunnel) {
 //    if (err) {
 //        console.log(err)
