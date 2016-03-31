@@ -66,6 +66,7 @@ export const addNewsfeedEvents = makeActionCreator(AppConstants.ADD_EVENT, 'even
 export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
 export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
 
+export const insertFile = makeActionCreator(AppConstants.INSERT_FILE, 'file');
 export const addFiles = makeActionCreator(AppConstants.ADD_FILES, 'files');
 export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
 export const _updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'payload');

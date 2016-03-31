@@ -44,6 +44,10 @@
   color: #7a7a7a;
   margin-top: 35px;
 }
+
+.set-root-dir {
+  margin-bottom: 20px;
+}
 /********************* task table ************************/
 .main-content {
   margin-top: 10px;
@@ -62,10 +66,6 @@
 
 .milestone-row p {
   color: #7a7a7a;
-}
-
-.files-list {
-  max-height: 53vh;
 }
 
 .task-list ul {

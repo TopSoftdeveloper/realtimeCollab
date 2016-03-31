@@ -110,6 +110,7 @@ class Project extends Component {
                             files={files}
                             app={app}
                             actions={actions}
+                            dispatch={dispatch}
                         />
                     </Tab>
                     <Tab label="Newsfeed"

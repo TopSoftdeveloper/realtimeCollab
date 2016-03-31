@@ -20,6 +20,7 @@ export default function files(state=[], action) {
                 file.id === action.id ?
                     assign({}, file, action.payload): file)
         case AppConstants.ADD_FILES:
+            // appends files to back of list
             let filesToAdd = []
             // check for duplicates
             for (let i=0; i<action.files.length; ++i) {
@@ -29,6 +30,9 @@ export default function files(state=[], action) {
                 }
             }
             return [...state, ...filesToAdd]
+        case AppConstants.INSERT_FILE:
+            // inserts file at front of list
+            return [action.file, ...state]
 
         case AppConstants.DELETE_FILE:
             return state.filter(file => file.id !== action.id)

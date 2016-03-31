@@ -8,8 +8,12 @@ import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
 import _ from 'lodash'
 import {toFuzzyTime} from '../utils/general'
+import FlatButton from 'material-ui/lib/flat-button'
+import {insertFile}  from '../actions/ReduxTaskActions'
+
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
+const IMG_ROOT = '../../../images/'
 
 class BreadcrumbInstance extends Component {
     changeCurrentDirectory(directoryId) {
@@ -49,10 +53,46 @@ class FilesList extends Component {
     onDrop(files) {
         let file = files[0]
         console.log(file)
-        this.setState({preview: file.preview})
-        this.insertFileData(file, this.callmemaybe)
+        this.renderFilePreview(file.name, file.type)
+        // render preview
+
+        //this.insertFileData(file, this.callmemaybe)
         //this.props.actions.uploadFileToDrive(newFile)
     }
+
+    getImage(type) {
+        if (type.includes('image/')) {
+            return IMG_ROOT + 'icon_11_image_list.png'
+        } else if (type.includes('spreadsheet')) {
+            return IMG_ROOT + 'icon_11_spreadsheet_list.png'
+        } else if (type.includes('presentation')) {
+            return IMG_ROOT + 'icon_11_presentation_list.png'
+        } else if (type.includes('pdf')) {
+            return IMG_ROOT + 'icon_12_pdf_list.png'
+        } else if (type.includes('zip') || type.includes('compressed')) {
+            return IMG_ROOT + 'icon_9_archive_list.png'
+        } else if (type.includes('word')) {
+            return IMG_ROOT + 'icon_11_document_list.png'
+        } else if (type.includes('text/')) {
+            return IMG_ROOT + 'icon_10_text_list.png'
+        } else {
+            return IMG_ROOT + 'generic_app_icon_16.png'
+        }
+    }
+
+    renderFilePreview(name, type) {
+        let imgSrc = this.getImage(type)
+        let directoryStructure = this.props.directoryStructure
+        let currDirectory = directoryStructure[directoryStructure.length-1].id
+        this.props.dispatch(insertFile({
+            iconLink: imgSrc,
+            id: _.uniqueId(),
+            name: name,
+            parents: [currDirectory],
+            isPreview: true
+        }))
+    }
+
     insertFileData(fileData, callback) {
         const boundary = '-------314159265358979323846';
         const delimiter = "\r\n--" + boundary + "\r\n";
@@ -120,6 +160,19 @@ class FilesList extends Component {
         }
 
         let rows = filesToDisplay.map(file => {
+            if (file.isPreview) {
+                return (
+                    <tr className="table-row-file" onClick={this.navigate.bind(this, file.id)} key={file.id}>
+                        <td><img src={file.iconLink}/><span className="table-filename">{file.name}</span></td>
+                        <td>
+                            <FlatButton
+                            label="Upload"
+                            secondary={true}
+                            />
+                        </td>
+                    </tr>
+                )
+            }
             let lastModifyingUser = file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
             let lastModified = toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
             return (
@@ -161,12 +214,6 @@ class FilesList extends Component {
     }
 }
 import gapi from '../gapi'
-/**
- * Insert new file.
- *
- * @param {File} fileData File object to read data from.
- * @param {Function} callback Callback function to call when the request is complete.
- */
 
 
 class Files extends Component {
@@ -220,6 +267,7 @@ class Files extends Component {
                         files={this.props.files}
                         actions={this.props.actions}
                         projectId={project.id}
+                        dispatch={this.props.dispatch}
                     />
                     <br/>
                     <div>
@@ -269,6 +317,7 @@ class Files extends Component {
                         projectId={project.id}
                     />
                     <RaisedButton
+                        className="set-root-dir"
                         label="Set current directory as root"
                         onTouchTap={this.setAsRoot.bind(this, currentDirectory.id)}
                         secondary={true}
