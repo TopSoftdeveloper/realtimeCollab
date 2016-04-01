@@ -10,6 +10,7 @@ let AppConstants = require('../AppConstants');
 
 import $ from 'jquery'
 import Promise from 'bluebird'
+import gapi from '../gapi'
 
 export function uploadFile(multipartRequestBody) {
     return gapi.client.request({

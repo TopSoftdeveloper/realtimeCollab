@@ -6,6 +6,7 @@ import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
         syncGithubIssues, serverEditTask, serverEditMilestone,
         queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
+import {loginGoogle} from '../utils/auth'
 import assign from 'object-assign';
 import _ from 'lodash'
 import Fuse from 'fuse.js'
@@ -51,6 +52,9 @@ export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id
 
 export const initSearchResults = makeActionCreator(AppConstants.INIT_RESULTS, 'results');
 export const addSearchResults = makeActionCreator(AppConstants.ADD_RESULTS, 'results');
+export const queryProcessing = makeActionCreator(AppConstants.QUERY_PROCESSING);
+export const queryDone = makeActionCreator(AppConstants.QUERY_DONE);
+
 
 export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
 export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
@@ -84,7 +88,6 @@ export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
 
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
-
 
 export function uploadFileToDrive(file, directory) {
     return function(dispatch) {
@@ -162,22 +165,47 @@ function _getGithubRepos(dispatch) {
     })
 }
 
+var queryRetries = 0
 
 export function queryIntegrations(queryString) {
     return function(dispatch, getState) {
         let tasks = getState().tasks
         let projects = getState().projects
         let users = getState().users
+        let previousQuery = getState().app.queryString
+        if (previousQuery !== queryString) {
+            queryRetries = 0
+        }
+
         dispatch(_updateAppStatus({
             queryString: queryString
         }))
-
+        dispatch(queryProcessing())
         queryGoogleDrive(queryString).then(res => {
             let driveResults = normalizeDriveResults(res.result.files)
             let taskResults = searchTasksByAssignee(queryString, users, tasks, projects)
             dispatch(initSearchResults(driveResults.concat(taskResults)))
+            dispatch(queryDone())
         }, function (err) {
             console.log(err)
+            if (err.status === 403) {
+                loginGoogle(function(authResult) {
+                    if (authResult && !authResult.error) {
+                        dispatch(loggedIntoGoogle())
+                        if (queryRetries === 0) {
+                            console.log('retrying...')
+                            queryIntegrations(queryString)
+                            queryRetries++
+                        }
+                    } else {
+                        dispatch(loggedOutGoogle())
+                    }
+                }.bind(this))
+            }
+
+            let taskResults = searchTasksByAssignee(queryString, users, tasks, projects)
+            dispatch(initSearchResults(taskResults))
+            dispatch(queryDone())
         })
     }
 }
@@ -324,6 +352,7 @@ export function initializeApp() {
             files: {
                 loading: false
             },
+            queriesInProgress: 0,
             loading: true,
             queryString: '',
             snackbar: {
@@ -456,7 +485,7 @@ export function createMilestone(milestone) {
         serverCreateMilestone({
             content:milestone.content,
             project_id: milestone.project_id,
-            deadline: milestone.deadline,
+            deadline: milestone.deadline
         })
         .done(res => {
             dispatch(replaceMilestoneId(milestone.id, res.id));

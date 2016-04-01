@@ -66,6 +66,9 @@ class Header extends Component {
     }
 
     newRequest() {
+        if (this.state.queryString !== this.state.lastQueryString) {
+            this.executeQuery(this.state.queryString)
+        }
         this.setState({queryString: ''})
         browserHistory.push('/app/search')
     }

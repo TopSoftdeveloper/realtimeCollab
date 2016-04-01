@@ -7,6 +7,7 @@ import Avatar from 'material-ui/lib/avatar';
 import Colors from 'material-ui/lib/styles/colors';
 import {toFuzzyTime} from '../utils/general'
 import { browserHistory } from 'react-router'
+import LoadingIndicator from '../components/LoadingIndicator.jsx'
 
 class SearchResults extends Component {
     constructor() {
@@ -27,6 +28,17 @@ class SearchResults extends Component {
     }
 
     render() {
+        if (this.props.app.queriesInProgress > 0) {
+            return (
+                <div className="main-content">
+                    <div className="no-items">
+                        <h4>Searching for <b>{this.props.app.queryString}</b>...</h4>
+                        <LoadingIndicator />
+                    </div>
+                </div>
+            )
+        }
+
         let driveResults = this.props.search.filter(result => result.type === 'drive')
         let taskResults = this.props.search.filter(result => result.type === 'task')
         let driveListItems = driveResults.map(result => {
@@ -109,7 +121,7 @@ class SearchResults extends Component {
 
 SearchResults.propTypes = {
     search: PropTypes.array.isRequired,
-    app: PropTypes.object.isRequired,
+    app: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
