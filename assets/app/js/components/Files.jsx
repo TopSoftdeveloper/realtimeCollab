@@ -10,7 +10,8 @@ import _ from 'lodash'
 import {toFuzzyTime} from '../utils/general'
 import FlatButton from 'material-ui/lib/flat-button'
 import {insertFile, deleteFile, updateFile}  from '../actions/ReduxTaskActions'
-import LinearProgress from 'material-ui/lib/linear-progress';
+import LinearProgress from 'material-ui/lib/linear-progress'
+import LoadingIndicator from './LoadingIndicator.jsx'
 
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
@@ -112,7 +113,7 @@ class FilesList extends Component {
 
     render() {
         let directories = this.props.directoryStructure
-        // only display files under the current directorym
+        // only display files under the current directory
         let filesToDisplay = []
         if (directories.length > 0) {
             filesToDisplay = this.props.files.filter(file => {
@@ -121,50 +122,62 @@ class FilesList extends Component {
             })
         }
 
-        let rows = filesToDisplay.map(file => {
-            if (file.isPreview) {
-                let tableData = (
-                    <td>
-                        <FlatButton
-                            label="Upload"
-                            secondary={true}
-                            onTouchTap={this.uploadFile.bind(this, file)}
-                        />
-                        <FlatButton
-                        label="Cancel"
-                        primary={true}
-                        onTouchTap={this.removePreview.bind(this, file.id)}
-                        />
-                    </td>
-                )
-                if (file.uploading) {
-                    tableData = (
+        let table = <LoadingIndicator />
+
+        if (!this.props.app.files.loading) {
+            var rows = filesToDisplay.map(file => {
+                if (file.isPreview) {
+                    let tableData = (
                         <td>
-                            <div className="upload-progress">
-                                <LinearProgress mode="indeterminate"/>
-                            </div>
+                            <FlatButton
+                                label="Upload"
+                                secondary={true}
+                                onTouchTap={this.uploadFile.bind(this, file)}
+                            />
+                            <FlatButton
+                                label="Cancel"
+                                primary={true}
+                                onTouchTap={this.removePreview.bind(this, file.id)}
+                            />
                         </td>
                     )
-                }
+                    if (file.uploading) {
+                        tableData = (
+                            <td>
+                                <div className="upload-progress">
+                                    <LinearProgress mode="indeterminate"/>
+                                </div>
+                            </td>
+                        )
+                    }
+                    return (
+                        <tr className="table-row-file" key={file.id}>
+                            <td>
+                                <img src={file.iconLink}/><span className="table-filename">{file.name}</span>
+                            </td>
+                            {tableData}
+                        </tr>
+                    )
+                } //file.isPreview
+
+                let lastModifyingUser = file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
+                let lastModified = toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
                 return (
-                    <tr className="table-row-file" key={file.id}>
-                        <td>
-                            <img src={file.iconLink}/><span className="table-filename">{file.name}</span>
-                        </td>
-                        {tableData}
+                    <tr className="table-row-file" onClick={this.navigate.bind(this, file.id)} key={file.id}>
+                        <td><img src={file.iconLink}/><span className="table-filename">{file.name}</span></td>
+                        <td>{lastModified}</td>
                     </tr>
                 )
-            } //file.isPreview
+            })
 
-            let lastModifyingUser = file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
-            let lastModified = toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
-            return (
-                <tr className="table-row-file" onClick={this.navigate.bind(this, file.id)} key={file.id}>
-                    <td><img src={file.iconLink}/><span className="table-filename">{file.name}</span></td>
-                    <td>{lastModified}</td>
-                </tr>
+            table = (
+                <Table>
+                    <tbody>
+                    {rows}
+                    </tbody>
+                </Table>
             )
-        })
+        } // not loading
 
         return (
             <div className="file-area">
@@ -186,11 +199,7 @@ class FilesList extends Component {
                     </thead>
                 </Table>
                 <div className="files-list">
-                <Table>
-                    <tbody>
-                    {rows}
-                    </tbody>
-                </Table>
+                    {table}
                 </div>
             </div>
         )
@@ -210,18 +219,14 @@ class Files extends Component {
     componentDidMount() {
         let actions = this.props.actions
         let currentProject = this.props.project
-        if (!this.props.app.logged_into_google) {
-            isLoggedIntoGoogle(function(authResult) {
-                if (authResult && !authResult.error) {
-                    actions.loggedIntoGoogle()
-                    actions.initializeFiles(currentProject)
-                } else {
-                    actions.loggedOutGoogle()
-                }
-            })
-        } else {
-            actions.initializeFiles(currentProject)
-        }
+        isLoggedIntoGoogle(function(authResult) {
+            if (authResult && !authResult.error) {
+                actions.loggedIntoGoogle()
+                actions.initializeFiles(currentProject)
+            } else {
+                actions.loggedOutGoogle()
+            }
+        })
     }
 
     setAsRoot(id) {
@@ -241,7 +246,6 @@ class Files extends Component {
     render() {
         let app = this.props.app
         let project = this.props.project
-
         if (app.logged_into_google && project.root_folder) {
             return (
                 <div>
@@ -251,6 +255,7 @@ class Files extends Component {
                         actions={this.props.actions}
                         projectId={project.id}
                         dispatch={this.props.dispatch}
+                        app={app}
                     />
                     <br/>
                     <div>
@@ -298,6 +303,7 @@ class Files extends Component {
                         files={this.props.files}
                         actions={this.props.actions}
                         projectId={project.id}
+                        app={app}
                     />
                     <RaisedButton
                         className="set-root-dir"

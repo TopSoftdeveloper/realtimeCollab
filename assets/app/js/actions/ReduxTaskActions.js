@@ -316,9 +316,12 @@ export function initializeApp() {
             me: true
         }]));
         dispatch(initApp({
-            logged_into_google: false,
+            logged_into_google: true,
             refresh_github_token: false,
             github: {
+                loading: false
+            },
+            files: {
                 loading: false
             },
             loading: true,
@@ -333,8 +336,7 @@ export function initializeApp() {
                 let normalizedTables = normalize(res.projects);
                 dispatch(_updateAppStatus({
                     current_project: normalizedTables.projects[0].id,
-                    github_token: localStorage.getItem('github_token'),
-                    loading: false
+                    github_token: localStorage.getItem('github_token')
                 }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
@@ -345,6 +347,11 @@ export function initializeApp() {
                     return user
                 })
                 dispatch(addUsers(u));
+                setTimeout(function() {
+                    dispatch(_updateAppStatus({
+                        loading: false
+                    }));
+                }, 500)
             }
         }).fail(e => {
             console.log(e)
@@ -617,12 +624,22 @@ function getTopLevelFolders(files, rootId) {
 
 export function initTopLevelFolders(projectId) {
     return function(dispatch) {
+        dispatch(_updateAppStatus({
+            files: {
+                loading: true
+            }
+        }))
         getFileInfo('root').then(res => {
             let rootId = res.result.id
             getGoogleDriveFolders().then(res => {
                 let topLevelFolders = getTopLevelFolders(res.result.files, rootId)
                 dispatch(addFiles(topLevelFolders))
                 dispatch(_updateProject(projectId, {directory_structure: [{name: 'Top level directory', id: 'root'}]}))
+                dispatch(_updateAppStatus({
+                    files: {
+                        loading: false
+                    }
+                }))
             }, function (err) {
                 console.log(err)
             })
@@ -635,13 +652,28 @@ export function initTopLevelFolders(projectId) {
  */
 export function initChildrenFiles(projectId, folderId, folderName) {
     return function(dispatch) {
+        dispatch(_updateAppStatus({
+            files: {
+                loading: true
+            }
+        }))
         getChildrenFiles(folderId).then(res => {
             dispatch(addFiles(res.result.files))
             if (folderName) {
                 dispatch(addDirectory(projectId, {id: folderId, name: folderName}))
+                dispatch(_updateAppStatus({
+                    files: {
+                        loading: false
+                    }
+                }))
             } else {
                 getFileInfo(folderId).then(res => {
                     dispatch(addDirectory(projectId, {id: folderId, name: res.result.name}))
+                    dispatch(_updateAppStatus({
+                        files: {
+                            loading: false
+                        }
+                    }))
                 })
             }
         }, function (err) {
@@ -701,19 +733,5 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
         }).fail(e => {
             console.log(e)
         })
-    }
-}
-
-export function sendMessage(text) {
-    return function(dispatch) {
-        let message =     {
-            id: _.uniqueId(),
-            threadID: 't_3',
-            threadName: 'Bill and Brian',
-            authorName: 'Brian',
-            text: text,
-            timestamp: Date.now() - 39999
-        }
-        dispatch(addMessage(message))
     }
 }

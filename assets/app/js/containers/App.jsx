@@ -115,23 +115,23 @@ class App extends Component {
         }
 
         let children = this.props.children;
-        if (projects.length === 0 && matchesUrl(window.location.href, AppConstants.APP_ROOT_URL)) {
-            if (!app.loading) {
-                children = (
-                    <div className='main-content'>
-                        <div className="no-items">
-                            <h3>You have no projects yet!</h3>
-                            <p>Add one to get started</p>
-                        </div>
+        if (projects.length === 0 && matchesUrl(window.location.href, AppConstants.APP_ROOT_URL) && !app.loading) {
+            children = (
+                <div className='main-content'>
+                    <div className="no-items">
+                        <h3>You have no projects yet!</h3>
+                        <p>Add one to get started</p>
                     </div>
-                )
-            } else {
-                children = (
-                    <div className='main-content'>
-                        <LoadingIndicator/>
-                    </div>
-                )
-            }
+                </div>
+            )
+        }
+
+        if (app.loading) {
+            children = (
+                <div className='main-content'>
+                    <LoadingIndicator/>
+                </div>
+            )
         }
 
         let displayName = users.filter(

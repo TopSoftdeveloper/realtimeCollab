@@ -5,7 +5,7 @@ class LoadingIndicator extends Component {
     render() {
         return (
         <div className="loading-indicator">
-            <CircularProgress size={0.5}/>
+            <CircularProgress size={0.6}/>
         </div>);
     }
 }
