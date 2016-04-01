@@ -179,6 +179,15 @@ class FilesList extends Component {
             )
         } // not loading
 
+        let dropzone = null
+        if (this.props.app.logged_into_google && this.props.rootFolder) {
+            // If user is logged in and already configured root folder
+            dropzone =
+            <Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)} multiple={false} className="drive-drop-zone">
+                <p>Drop a file here, or click to select a file to upload.</p>
+            </Dropzone>
+        }
+
         return (
             <div className="file-area">
                 <BreadcrumbInstance
@@ -187,9 +196,7 @@ class FilesList extends Component {
                     projectId={this.props.projectId}
                     key={'breadcrumb_' + this.props.projectId}
                 />
-                <Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)} multiple={false} className="drive-drop-zone">
-                    <p>Drop a file here, or click to select a file to upload.</p>
-                </Dropzone>
+                {dropzone}
                 <Table striped bordered condensed hover responsive>
                     <thead>
                     <tr>
@@ -205,8 +212,6 @@ class FilesList extends Component {
         )
     }
 }
-import gapi from '../gapi'
-
 
 class Files extends Component {
     constructor(props, context) {
@@ -246,21 +251,21 @@ class Files extends Component {
     render() {
         let app = this.props.app
         let project = this.props.project
+        let filesList = <FilesList
+            directoryStructure={project.directory_structure}
+            files={this.props.files}
+            actions={this.props.actions}
+            projectId={project.id}
+            dispatch={this.props.dispatch}
+            app={app}
+            rootFolder={project.root_folder}
+        />
+
+
         if (app.logged_into_google && project.root_folder) {
             return (
                 <div>
-                    <FilesList
-                        directoryStructure={project.directory_structure}
-                        files={this.props.files}
-                        actions={this.props.actions}
-                        projectId={project.id}
-                        dispatch={this.props.dispatch}
-                        app={app}
-                    />
-                    <br/>
-                    <div>
-                        <img src={this.state.preview} />
-                    </div>
+                    {filesList}
                 </div>
             )
         }
@@ -298,13 +303,7 @@ class Files extends Component {
             currentStep = 1
             content = (
                 <div>
-                    <FilesList
-                        directoryStructure={project.directory_structure}
-                        files={this.props.files}
-                        actions={this.props.actions}
-                        projectId={project.id}
-                        app={app}
-                    />
+                    {filesList}
                     <RaisedButton
                         className="set-root-dir"
                         label="Set current directory as root"
