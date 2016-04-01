@@ -11,6 +11,8 @@ import LeftPanel from '../components/LeftPanel.jsx'
 import { Grid, Row, Col } from 'react-bootstrap'
 import Sidebar from 'react-sidebar'
 import LoadingIndicator from '../components/LoadingIndicator.jsx'
+import Snackbar from 'material-ui/lib/snackbar';
+import {_updateAppStatus}  from '../actions/ReduxTaskActions'
 
 var AppConstants = require('../AppConstants');
 
@@ -25,6 +27,7 @@ class App extends Component {
         this.monitorOnlineStatus()
         this.monitorProjectChanges()
         this.monitorNotifications()
+        window.scrollback = {"room":"collab","form":"toast","minimize":true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));
     }
 
     initApp() {
@@ -90,6 +93,11 @@ class App extends Component {
             return false;         
         }
         return true;
+    }
+
+    handleSnackbarClose() {
+        let dispatch = this.props.dispatch
+        dispatch(_updateAppStatus({snackbar: {isOpen: false, message: ''}}))
     }
 
     render() {
@@ -168,7 +176,12 @@ class App extends Component {
                         {children}
                     </div>
                 </Sidebar>
-
+                <Snackbar
+                    open={app.snackbar.isOpen}
+                    message={app.snackbar.message}
+                    autoHideDuration={4000}
+                    onRequestClose={this.handleSnackbarClose.bind(this)}
+                />
             </div>
         );
     }

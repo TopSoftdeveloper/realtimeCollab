@@ -6,16 +6,21 @@ let CREATE_PROJECT_ENDPOINT = '/projects';
 let INVITE_TO_PROJECT_ENDPOINT = '/invite_to_project';
 let POPULATE_ENDPOINT = '/user/populate';
 let GET_NOTIFICATION_ENDPOINT = '/notifications'
+let AppConstants = require('../AppConstants');
 
 import $ from 'jquery'
 import Promise from 'bluebird'
 
-export function uploadFile(file) {
+export function uploadFile(multipartRequestBody) {
     return gapi.client.request({
-        'path': '/upload/drive/v3/files?uploadType=multipart',
+        'path': '/upload/drive/v3/files',
         'method': 'POST',
-        'body': file
-    })
+        'params': {'uploadType': 'multipart'},
+        'headers': {
+            'Content-Type': 'multipart/mixed; boundary="' + AppConstants.MULTIPART_BOUNDARY + '"'
+        },
+        'body': multipartRequestBody
+    });
 }
 
 export function queryGoogleDrive(queryString) {

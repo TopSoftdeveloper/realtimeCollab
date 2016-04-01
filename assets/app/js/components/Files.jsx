@@ -9,7 +9,8 @@ import Dropzone from 'react-dropzone'
 import _ from 'lodash'
 import {toFuzzyTime} from '../utils/general'
 import FlatButton from 'material-ui/lib/flat-button'
-import {insertFile}  from '../actions/ReduxTaskActions'
+import {insertFile, deleteFile, updateFile}  from '../actions/ReduxTaskActions'
+import LinearProgress from 'material-ui/lib/linear-progress';
 
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
@@ -52,12 +53,14 @@ class BreadcrumbInstance extends Component {
 class FilesList extends Component {
     onDrop(files) {
         let file = files[0]
-        console.log(file)
-        this.renderFilePreview(file.name, file.type)
-        // render preview
+        this.renderFilePreview(file)
+    }
 
-        //this.insertFileData(file, this.callmemaybe)
-        //this.props.actions.uploadFileToDrive(newFile)
+    uploadFile(file, e) {
+        this.props.dispatch(updateFile(file.id, {uploading: true}))
+        let directoryStructure = this.props.directoryStructure
+        let currDirectory = directoryStructure[directoryStructure.length-1].id
+        this.props.actions.uploadFileToDrive(file, currDirectory)
     }
 
     getImage(type) {
@@ -80,65 +83,20 @@ class FilesList extends Component {
         }
     }
 
-    renderFilePreview(name, type) {
-        let imgSrc = this.getImage(type)
+    renderFilePreview(fileData) {
+        let imgSrc = this.getImage(fileData.type)
         let directoryStructure = this.props.directoryStructure
         let currDirectory = directoryStructure[directoryStructure.length-1].id
         this.props.dispatch(insertFile({
             iconLink: imgSrc,
             id: _.uniqueId(),
-            name: name,
+            name: fileData.name,
             parents: [currDirectory],
-            isPreview: true
+            isPreview: true,
+            data: fileData
         }))
     }
 
-    insertFileData(fileData, callback) {
-        const boundary = '-------314159265358979323846';
-        const delimiter = "\r\n--" + boundary + "\r\n";
-        const close_delim = "\r\n--" + boundary + "--";
-
-        var reader = new FileReader();
-        reader.readAsBinaryString(fileData);
-        reader.onload = function(e) {
-            var contentType = fileData.type || 'application/octect-stream';
-            var metadata = {
-                'name': fileData.name,
-                'mimeType': contentType
-            };
-            let directoryStructure = this.props.directoryStructure
-            let currDirectory = directoryStructure[directoryStructure.length-1].id
-            metadata.parents = [currDirectory]
-
-
-            var base64Data = btoa(reader.result);
-            var multipartRequestBody =
-                delimiter +
-                'Content-Type: application/json\r\n\r\n' +
-                JSON.stringify(metadata) +
-                delimiter +
-                'Content-Type: ' + contentType + '\r\n' +
-                'Content-Transfer-Encoding: base64\r\n' +
-                '\r\n' +
-                base64Data +
-                close_delim;
-
-            var request = gapi.client.request({
-                'path': '/upload/drive/v3/files',
-                'method': 'POST',
-                'params': {'uploadType': 'multipart'},
-                'headers': {
-                    'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-                },
-                'body': multipartRequestBody});
-            if (!callback) {
-                callback = function(file) {
-                    console.log(file)
-                };
-            }
-            request.execute(callback);
-        }.bind(this)
-    }
     navigate(fileId) {
         let selectedFile = this.props.files.filter(file => file.id === fileId)[0]
         if (selectedFile.mimeType === 'application/vnd.google-apps.folder') {
@@ -148,31 +106,56 @@ class FilesList extends Component {
         }
     }
 
+    removePreview(id) {
+        this.props.dispatch(deleteFile(id))
+    }
+
     render() {
         let directories = this.props.directoryStructure
-        // only display files under the current directory
+        // only display files under the current directorym
         let filesToDisplay = []
         if (directories.length > 0) {
             filesToDisplay = this.props.files.filter(file => {
                 let currDirectory = directories[directories.length-1].id
-                return file.parents && file.parents[0] === currDirectory
+                return file.parents && file.parents[0] === currDirectory && !file.trashed
             })
         }
 
         let rows = filesToDisplay.map(file => {
             if (file.isPreview) {
-                return (
-                    <tr className="table-row-file" onClick={this.navigate.bind(this, file.id)} key={file.id}>
-                        <td><img src={file.iconLink}/><span className="table-filename">{file.name}</span></td>
-                        <td>
-                            <FlatButton
+                let tableData = (
+                    <td>
+                        <FlatButton
                             label="Upload"
                             secondary={true}
-                            />
+                            onTouchTap={this.uploadFile.bind(this, file)}
+                        />
+                        <FlatButton
+                        label="Cancel"
+                        primary={true}
+                        onTouchTap={this.removePreview.bind(this, file.id)}
+                        />
+                    </td>
+                )
+                if (file.uploading) {
+                    tableData = (
+                        <td>
+                            <div className="upload-progress">
+                                <LinearProgress mode="indeterminate"/>
+                            </div>
                         </td>
+                    )
+                }
+                return (
+                    <tr className="table-row-file" key={file.id}>
+                        <td>
+                            <img src={file.iconLink}/><span className="table-filename">{file.name}</span>
+                        </td>
+                        {tableData}
                     </tr>
                 )
-            }
+            } //file.isPreview
+
             let lastModifyingUser = file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
             let lastModified = toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
             return (

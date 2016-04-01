@@ -69,7 +69,7 @@ export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGL
 export const insertFile = makeActionCreator(AppConstants.INSERT_FILE, 'file');
 export const addFiles = makeActionCreator(AppConstants.ADD_FILES, 'files');
 export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
-export const _updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'payload');
+export const updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'payload');
 export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'id', 'directory');
 export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'projectId', 'dirId');
 export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT, 'projectId', 'dirId');
@@ -85,11 +85,47 @@ export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
 
-export function uploadFileToDrive(file) {
+
+export function uploadFileToDrive(file, directory) {
     return function(dispatch) {
-        uploadFile(file).then(res => {
-            console.log(res)
-        })
+        let fileData = file.data
+        const boundary = AppConstants.MULTIPART_BOUNDARY
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
+
+        var reader = new FileReader();
+        reader.readAsBinaryString(fileData);
+        reader.onload = function(e) {
+            var contentType = fileData.type || 'application/octect-stream';
+            var metadata = {
+                'name': fileData.name,
+                'mimeType': contentType
+            };
+            metadata.parents = [directory]
+
+            var base64Data = btoa(reader.result);
+            var multipartRequestBody =
+                delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+
+            uploadFile(multipartRequestBody).then(res => {
+                dispatch(deleteFile(file.id))
+                let newFile = res.result
+                newFile.parents = [directory]
+                newFile.lastModifyingUser = {me: true, displayName: localStorage.display_name}
+                newFile.modifiedTime = new Date().toISOString()
+                newFile.iconLink = file.iconLink
+                dispatch(insertFile(newFile))
+                dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Uploaded ' + fileData.name}}))
+            })
+        }
     }
 }
 
@@ -286,12 +322,16 @@ export function initializeApp() {
                 loading: false
             },
             loading: true,
-            queryString: ''
+            queryString: '',
+            snackbar: {
+                isOpen: false,
+                message: ''
+            }
         }));
         serverPopulate().done(res => {
             if (res.projects.length > 0) {
                 let normalizedTables = normalize(res.projects);
-                dispatch(initApp({
+                dispatch(_updateAppStatus({
                     current_project: normalizedTables.projects[0].id,
                     github_token: localStorage.getItem('github_token'),
                     loading: false

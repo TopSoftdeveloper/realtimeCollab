@@ -5,6 +5,7 @@ module.exports = {
         newsfeed: 'newsfeed',
         settings: 'settings'
     },
+    MULTIPART_BOUNDARY: '-------314159265358979323846',
     ADD_RESULTS: 'ADD_RESULTS',
     INIT_RESULTS: 'INIT_RESULTS',
     INIT_GITHUB_REPOS: 'INIT_GITHUB_REPOS',

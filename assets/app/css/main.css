@@ -33,6 +33,10 @@
 }
 
 /*************************** files area *******************/
+.upload-progress {
+  margin-top: 10px;
+}
+
 .drive-drop-zone {
   border: dashed #7a7a7a;
   min-height: 90px;
