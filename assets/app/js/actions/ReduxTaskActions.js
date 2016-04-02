@@ -3,7 +3,7 @@ import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
-        syncGithubIssues, serverEditTask, serverEditMilestone,
+        syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub,
         queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
 import {loginGoogle} from '../utils/auth'
@@ -11,6 +11,7 @@ import assign from 'object-assign';
 import _ from 'lodash'
 import Fuse from 'fuse.js'
 import UserColours from '../UserColours';
+import Promise from "bluebird"
 
 let AppConstants = require('../AppConstants');
 let ServerConstants = require('../../../../server/constants');
@@ -166,49 +167,66 @@ function _getGithubRepos(dispatch) {
     })
 }
 
-var queryRetries = 0
+function getOwnerRepos(projects) {
+    // Iterates through all projects and returns the below string for GitHub querying.
+    // +repo:collab/cs3245+repo:collab/IndoorNavigation
+    let ownerRepos = ''
+    projects.forEach(project => {
+        if (project.github_repo_owner && project.github_repo_name) {
+            ownerRepos = ownerRepos + '+repo:' + project.github_repo_owner + '/' + project.github_repo_name
+        }
+    })
+    return ownerRepos
+}
 
 export function queryIntegrations(queryString) {
     return function(dispatch, getState) {
         let tasks = getState().tasks
         let projects = getState().projects
         let users = getState().users
-        let previousQuery = getState().app.queryString
-        if (previousQuery !== queryString) {
-            queryRetries = 0
-        }
-
+        let ownerRepos = getOwnerRepos(projects)
         dispatch(_updateAppStatus({
             queryString: queryString
         }))
-        dispatch(queryProcessing())
-        queryGoogleDrive(queryString).then(res => {
-            let driveResults = normalizeDriveResults(res.result.files)
-            let taskResults = searchTasksByAssignee(queryString, users, tasks, projects)
-            dispatch(initSearchResults(driveResults.concat(taskResults)))
-            dispatch(queryDone())
-        }, function (err) {
-            console.log(err)
-            if (err.status === 403) {
-                loginGoogle(function(authResult) {
-                    if (authResult && !authResult.error) {
-                        dispatch(loggedIntoGoogle())
-                        if (queryRetries === 0) {
-                            console.log('retrying...')
-                            queryIntegrations(queryString)
-                            queryRetries++
-                        }
-                    } else {
-                        dispatch(loggedOutGoogle())
-                    }
-                }.bind(this))
-            }
+        dispatch(initSearchResults([])) // clear the previous results
+        let promises = []
+        let taskResults = searchTasksByAssignee(queryString, users, tasks, projects)
+        dispatch(addSearchResults(taskResults))
 
-            let taskResults = searchTasksByAssignee(queryString, users, tasks, projects)
-            dispatch(initSearchResults(taskResults))
+        promises.push(Promise.resolve(queryGoogleDrive(queryString)))
+        if (ownerRepos) promises.push(Promise.resolve(queryGithub(queryString, ownerRepos)))
+
+        Promise.all(promises.map(function(promise) {
+            dispatch(queryProcessing())
+            return promise.reflect();
+        })).each(function(inspection, i) {
+            if (inspection.isFulfilled()) {
+                let value = inspection.value()
+                if (i === 0) {
+                    let driveResults = normalizeDriveResults(value.result.files)
+                    dispatch(addSearchResults(driveResults))
+                } else if (i === 1) {
+                    let githubResults = normalizeGithubResults(value.items)
+                    dispatch(addSearchResults(githubResults))
+                }
+            } else {
+                console.error(inspection.reason());
+            }
             dispatch(queryDone())
-        })
+        });
     }
+}
+
+function normalizeGithubResults(items) {
+    return items.map(item => {
+        return {
+            id: item.sha,
+            primaryText: item.path,
+            repo: item.repository.full_name,
+            link: item.html_url,
+            type: 'github'
+        }
+    })
 }
 
 function normalizeDriveResults(files) {

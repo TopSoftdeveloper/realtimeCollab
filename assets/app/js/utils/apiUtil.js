@@ -36,6 +36,16 @@ export function queryGoogleDrive(queryString) {
     })
 }
 
+export function queryGithub(queryString, ownerRepos) {
+    return $.ajax({
+        url: 'https://api.github.com/search/code?q=' + queryString + '+in:file,path' + ownerRepos,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('github_token')
+        },
+        type: 'GET'
+    })
+}
+
 export function getGoogleDriveFolders() {
     return gapi.client.request({
         'path': '/drive/v3/files',

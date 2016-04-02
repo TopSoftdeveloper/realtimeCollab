@@ -4,11 +4,13 @@ import { Link } from 'react-router'
 import $ from 'jquery'
 import {logout} from '../utils/auth.js'
 import {getUserAvatar} from '../utils/general'
-import AutoComplete from 'material-ui/lib/auto-complete';
-import ThemeManager from 'material-ui/lib/styles/theme-manager';
-import MyRawTheme from '../myTheme';
-import ListItem from 'material-ui/lib/lists/list-item';
-import Avatar from 'material-ui/lib/avatar';
+import AutoComplete from 'material-ui/lib/auto-complete'
+import ThemeManager from 'material-ui/lib/styles/theme-manager'
+import MyRawTheme from '../myTheme'
+import ListItem from 'material-ui/lib/lists/list-item'
+import Avatar from 'material-ui/lib/avatar'
+import FontIcon from 'material-ui/lib/font-icon'
+import Code from '../icons/Code.jsx'
 import _ from 'lodash'
 import { browserHistory } from 'react-router'
 
@@ -117,11 +119,15 @@ class Header extends Component {
             }]
         } else {
             searchResults = this.props.search.map(result => {
+                let avatar = <Avatar size={24} src={result.thumbnail} />
+                if (result.type === 'github') {
+                    avatar = <Avatar size={24} icon={<Code  style={{margin: '0px'}}/>} />
+                }
                 return {
                     text: result.primaryText + _.uniqueId('search'),
                     value: (
                         <ListItem
-                            leftAvatar={<Avatar size={24} src={result.thumbnail} />}
+                            leftAvatar={avatar}
                             primaryText={result.primaryText}
                             innerDivStyle={itemStyles}
                             onTouchTap={this.goToResult.bind(this, result.link)}

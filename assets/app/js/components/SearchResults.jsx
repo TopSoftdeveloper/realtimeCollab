@@ -8,6 +8,8 @@ import Colors from 'material-ui/lib/styles/colors';
 import {toFuzzyTime} from '../utils/general'
 import { browserHistory } from 'react-router'
 import LoadingIndicator from '../components/LoadingIndicator.jsx'
+import FontIcon from 'material-ui/lib/font-icon'
+import Code from '../icons/Code.jsx'
 
 class SearchResults extends Component {
     constructor() {
@@ -41,6 +43,18 @@ class SearchResults extends Component {
 
         let driveResults = this.props.search.filter(result => result.type === 'drive')
         let taskResults = this.props.search.filter(result => result.type === 'task')
+        let githubResults = this.props.search.filter(result => result.type === 'github')
+
+        if (driveResults.length === 0 && taskResults.length === 0 && githubResults.length === 0) {
+            return (
+                <div className="main-content">
+                    <div className="no-items">
+                        <h4>No search results for <b>{this.props.app.queryString}</b></h4>
+                    </div>
+                </div>
+            )
+        }
+
         let driveListItems = driveResults.map(result => {
             return (
                 <div key={result.id}>
@@ -80,22 +94,42 @@ class SearchResults extends Component {
             )
         })
 
-        if (driveResults.length === 0 && taskResults.length === 0) {
+        let githubListItems = githubResults.map(result => {
             return (
-                <div className="main-content">
-                    <div className="no-items">
-                        <h4>No search results for <b>{this.props.app.queryString}</b></h4>
-                    </div>
+                <div key={result.id}>
+                    <ListItem
+                        leftAvatar={<Avatar icon={<Code />} />}
+                        onTouchTap={this.goToResult.bind(this, result.link)}
+                        primaryText={result.primaryText}
+                        secondaryText={
+                            <p>
+                                {result.repo}
+                            </p>
+                         }
+                        secondaryTextLines={1}
+                    />
+                    <Divider inset={true} />
                 </div>
             )
-        }
+        })
 
         let taskList = null
         let driveList = null
+        let githubList = null
+
         if (taskResults.length > 0) {
             taskList = (
                 <List subheader="Assigned Tasks">
                     {taskListItems}
+                </List>
+            )
+        }
+
+
+        if (githubResults.length > 0) {
+            githubList = (
+                <List subheader="Code">
+                    {githubListItems}
                 </List>
             )
         }
@@ -112,6 +146,7 @@ class SearchResults extends Component {
             <div className="main-content">
                 <h4>Search results for <b>{this.props.app.queryString}</b></h4>
                 {taskList}
+                {githubList}
                 {driveList}
             </div>
         )
