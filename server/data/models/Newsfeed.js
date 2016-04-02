@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true
         },
         data: DataTypes.STRING,
-        template: DataTypes.STRING
+        template: DataTypes.STRING,
+        source: DataTypes.STRING
     },{
         underscored: true
     });

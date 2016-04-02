@@ -22,5 +22,9 @@ module.exports = {
     ROLE_PENDING: 'pending',
     FORBIDDEN: 'The token given does not have access to this resource',
     NO_GITHUB_LOGIN: 'NO_GITHUB_LOGIN',
-    NO_GITHUB_NUMBER: 'NO_GITHUB_NUMBER'
+    NO_GITHUB_NUMBER: 'NO_GITHUB_NUMBER',
+    GITHUB: 'GITHUB',
+    GOOGLE_DRIVE: 'GOOGLE_DRIVE',
+    COLLAB_TASK: 'COLLAB_TASK',
+    COLLAB_MILESTONE: 'COLLAB_MILESTONE'
 };

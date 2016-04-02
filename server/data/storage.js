@@ -13,13 +13,19 @@ var Newsfeed = models.Newsfeed;
 var format = require('string-format');
 
 module.exports = {
-    saveNewsfeed: function(data, template, projectId) {
-        return Newsfeed.create({
+    saveNewsfeed: function(data, template, projectId, source, timestamp) {
+        var payload = {
             id: shortid.generate(),
             data: data,
             template: template,
-            project_id: projectId
-        });
+            project_id: projectId,
+            source: source
+        }
+        if (timestamp) {
+            payload.created_at = timestamp
+            payload.updated_at = timestamp
+        }
+        return Newsfeed.create();
     },
 
     getNewsfeed: function(projectId, limit) {

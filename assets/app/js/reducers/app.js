@@ -18,6 +18,10 @@ export default function app(state={}, action) {
             return assign({}, state, {logged_into_google : true})
         case AppConstants.LOGGED_OUT_GOOGLE:
             return assign({}, state, {logged_into_google : false})
+        case AppConstants.QUERY_PROCESSING:
+            return assign({}, state, {queriesInProgress: state.queriesInProgress + 1})
+        case AppConstants.QUERY_DONE:
+            return assign({}, state, {queriesInProgress: state.queriesInProgress - 1})
         default:
             return state
     }

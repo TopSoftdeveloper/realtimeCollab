@@ -15,6 +15,7 @@ var req = require("request")
 var localtunnel = require('localtunnel');
 var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Newsfeed = require('./newsfeedController')
+var templates = require('./../templates')
 
 // localtunnel helps us test webhooks on localhost
 //var tunnel = localtunnel(4000, function(err, tunnel) {
@@ -27,6 +28,13 @@ module.exports = {
     githubWebhook: {
         auth: false,
         handler: githubWebhookHandler,
+        payload: {
+            parse: true
+        }
+    },
+    googleDriveWebhook: {
+        auth: false,
+        handler: driveWebhookHandler,
         payload: {
             parse: true
         }
@@ -116,4 +124,23 @@ function githubWebhookHandler(request, reply) {
     }
 
     reply({status: 'ok'})
+}
+
+function driveWebhookHandler(request, reply) {
+    var changes = request.payload.changes
+    changes.forEach(function(change) {
+        var file = change.file
+        var lastModifiedBy = file.lastModifyingUser.emailAddress
+        var data = {
+            fileId: file.id,
+            fileName: file.name,
+            email: lastModifiedBy
+        }
+
+        var template = templates.DRIVE_UPDATE
+        if (change.removed || file.trashed) {
+            template = templates.DRIVE_REMOVE
+        }
+        Newsfeed.updateNewsfeed(data, template, projectId, constants.GOOGLE_DRIVE, file.modifiedTime)
+    })
 }

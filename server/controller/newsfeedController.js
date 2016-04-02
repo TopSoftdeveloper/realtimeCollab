@@ -14,9 +14,9 @@ module.exports = {
     updateNewsfeed: updateNewsfeed
 }
 
-function updateNewsfeed(data, template, projectId) {
+function updateNewsfeed(data, template, projectId, source, timestamp) {
     return new Promise(function(resolve, reject) {
-        storage.saveNewsfeed(JSON.stringify(data), template, projectId).then(function(newsfeed) {
+        storage.saveNewsfeed(JSON.stringify(data), template, projectId, source, timestamp).then(function(newsfeed) {
             socket.sendMessageToProject(projectId, 'newsfeed_post', newsfeed)
             resolve(newsfeed)
         }.bind(this), function(err) {
