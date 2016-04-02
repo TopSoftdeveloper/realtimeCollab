@@ -131,9 +131,8 @@ class Project extends Component {
                         <Settings
                             projectName={projectName}
                             projectId={currentProjectId}
-                            basicUsers={basicUsers}
                             pendingUsers={pendingUsers}
-                            projectCreator={projectCreator}
+                            allActiveUsers={allActiveUsers}
                             actions={actions}
                             alerts={alerts}
                         />
