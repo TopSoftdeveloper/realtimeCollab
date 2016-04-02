@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import io from 'socket.io-client'
 import { browserHistory } from 'react-router'
 import * as Actions from '../actions/ReduxTaskActions'
+import * as SocketActions from '../actions/SocketActions'
 import Header from '../components/Header.jsx'
 import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
 import {isProjectPresent} from '../utils/collection'
@@ -19,69 +19,18 @@ var AppConstants = require('../AppConstants');
 class App extends Component {
     constructor(props, context) {
         super(props, context)
-        let host = 'ws://localhost:4001/'
-        let socket = io.connect(host)
-        this.state = { socket: socket }
         this.initApp()
-        this.userIsOnline()
-        this.monitorOnlineStatus()
-        this.monitorProjectChanges()
-        this.monitorNotifications()
+        const {dispatch} = this.props;
+        const socketActions = bindActionCreators(SocketActions, dispatch);
+        socketActions.userIsOnline()
+        socketActions.monitorOnlineStatus()
+        socketActions.monitorProjectChanges()
+        socketActions.monitorNotifications()
         window.scrollback = {"room":"collab","form":"toast","minimize":true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));
     }
 
     initApp() {
         this.props.dispatch(Actions.initializeApp())
-    }
-
-    userIsOnline() {
-        this.state.socket.emit('is_online', {user_id: localStorage.getItem('user_id')})
-        this.props.dispatch(Actions.userOnline(localStorage.getItem('user_id')))
-    }
-
-    monitorOnlineStatus() {
-        this.state.socket.on('teammate_online', (data) => {
-            this.props.dispatch(Actions.userOnline(data.user_id));
-        });        
-        this.state.socket.on('teammate_offline', (data) => {
-            this.props.dispatch(Actions.userOffline(data.user_id));
-        });   
-    }    
-
-    monitorProjectChanges() {
-        this.state.socket.on('new_task', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._addTask(data.task));
-            }
-        });        
-        this.state.socket.on('mark_done', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._markDone(data.task_id));                
-            }
-        });     
-        this.state.socket.on('delete_task', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._deleteTask(data.task_id));                
-            }
-        });
-        this.state.socket.on('new_milestone', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._createMilestone(data.milestone));
-            }
-        });
-        this.state.socket.on('delete_milestone', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._deleteMilestone(data.milestone_id));
-            }
-        });
-
-    }
-
-    monitorNotifications() {
-        this.state.socket.on('new_notification', (data) => {
-            this.props.dispatch(Actions.addUsers([data.user]))
-            this.props.dispatch(Actions.newNotification(data.notification))
-        });
     }
 
     shouldComponentUpdate(nextProps, nextState) {
