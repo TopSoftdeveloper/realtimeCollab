@@ -3,6 +3,9 @@ import Checkbox from 'material-ui/lib/checkbox'
 import AvatarList from './AvatarList.jsx'
 import Divider from 'material-ui/lib/divider';
 import TaskModal from './TaskModal.jsx'
+import { bindActionCreators } from 'redux'
+import * as SocketActions from '../actions/SocketActions'
+import { connect } from 'react-redux'
 
 class TaskRow extends Component {
 
@@ -14,16 +17,20 @@ class TaskRow extends Component {
         }
     }
 
-    openModal() {
+    openModal(id) {
         this.setState({
             isDialogOpen: true
         })
+        const socketActions = bindActionCreators(SocketActions, this.props.dispatch);
+        socketActions.userIsEditing('task', id)
     }
 
-    handleClose() {
+    handleClose(id) {
         this.setState({
             isDialogOpen: false
         })
+        const socketActions = bindActionCreators(SocketActions, this.props.dispatch);
+        socketActions.userStopsEditing('task', id)
     }
 
     onMouseEnter() {
@@ -52,8 +59,35 @@ class TaskRow extends Component {
             taskContentClass = taskContentClass + " highlight-yellow"
         }
 
+        // EDITING INDICATOR
+        let editIndicator = null
+        let listStyle = {}
+
+        if (this.props.task.editing) {
+            let editor = this.props.users.filter(user => user.id === this.props.task.edited_by)[0]
+            if (editor && editor.online) {
+                let divStyle = {
+                    float: 'right',
+                    fontSize: 'smaller',
+                    color: 'white',
+                    background: editor.colour,
+                    fontWeight: 'bold'
+                }
+
+                editIndicator =
+                    <div style={divStyle}>{editor.display_name} is editing</div>
+                listStyle = {
+                    borderStyle: 'solid',
+                    borderColor: editor.colour
+                }
+            }
+        }
+
         return (
-        <li className="task-row" onMouseEnter={this.onMouseEnter.bind(this)} onMouseLeave={this.onMouseLeave.bind(this)}>
+        <li className="task-row"
+            onMouseEnter={this.onMouseEnter.bind(this)}
+            onMouseLeave={this.onMouseLeave.bind(this)}
+            style={listStyle}>
             <div className="task-checkbox" onClick={this.props.onCheck}>
                 <Checkbox/>
             </div>
@@ -61,16 +95,17 @@ class TaskRow extends Component {
                 {this.props.task.content}
             </div>
             <div className={taskActionClass}>
-                <i className="material-icons edit-task" onClick={this.openModal.bind(this)}>mode_edit</i>
+                <i className="material-icons edit-task" onClick={this.openModal.bind(this, this.props.task.id)}>mode_edit</i>
             </div>
             <AvatarList className="assignee-avatar" members={this.props.assignees} />
+            {editIndicator}
             <Divider />
             <TaskModal
                 title="Edit Task"
                 content={this.props.task.content}
                 assignee={this.props.task.assignee_id}
                 open={this.state.isDialogOpen}
-                handleClose={this.handleClose.bind(this)}
+                handleClose={this.handleClose.bind(this, this.props.task.id)}
                 taskMethod={this.onEdit.bind(this)}
                 users={this.props.users}
             />
@@ -78,5 +113,4 @@ class TaskRow extends Component {
         )
     }
 }
-
-export default TaskRow
+export default connect()(TaskRow)

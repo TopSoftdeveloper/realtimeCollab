@@ -4,9 +4,37 @@ let socket = io.connect(host)
 import * as Actions from '../actions/ReduxTaskActions'
 
 export function userIsOnline() {
+    // informs server that the current logged in user is online
     return function(dispatch) {
         socket.emit('is_online', {user_id: localStorage.getItem('user_id')})
-        dispatch(Actions.userOnline(localStorage.getItem('user_id')))
+    }
+}
+
+export function userIsEditing(type, targetId) {
+    // targetId is the id of the task/milestone the user is editing
+    return function(dispatch) {
+        socket.emit('is_editing', {type: type, id: targetId, user_id: localStorage.getItem('user_id')})
+    }
+}
+
+export function userStopsEditing(type, targetId) {
+    // targetId is the id of the task/milestone the user is editing
+    return function(dispatch) {
+        socket.emit('stop_editing', {type: type, id: targetId, user_id: localStorage.getItem('user_id')})
+    }
+}
+
+export function monitorEditStatus() {
+    return function(dispatch) {
+        socket.on('is_editing', (data) => {
+            dispatch(Actions.userEditing(data.type, data.id, data.user_id))
+            setTimeout(function() {
+                dispatch(Actions.userStopEditing(data.type, data.id, data.user_id))
+            }, 20000)
+        })
+        socket.on('stop_editing', (data) => {
+            dispatch(Actions.userStopEditing(data.type, data.id, data.user_id))
+        })
     }
 }
 

@@ -146,7 +146,10 @@ module.exports = {
     findProjectOfTask:function(taskId) {
         return new Promise(function(resolve, reject) {
             Task.findById(taskId).then(function (task) {
-                if (!task) reject(taskId)
+                if (!task) {
+                    reject(taskId)
+                    return
+                }
                 Project.findById(task.project_id).then(function(project) {
                     resolve({project: project, task: task})
                 })
@@ -157,7 +160,10 @@ module.exports = {
     findProjectOfMilestone:function(milestoneId) {
         return new Promise(function(resolve, reject) {
             Milestone.findById(milestoneId).then(function (milestone) {
-                if (!milestone) reject(milestoneId)
+                if (!milestone) {
+                    reject(milestoneId)
+                    return
+                }
                 Project.findById(milestone.project_id).then(function(project) {
                     if (!project) reject('project does not exist')
                     resolve({project: project, milestone: milestone})

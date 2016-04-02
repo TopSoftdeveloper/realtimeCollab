@@ -55,7 +55,6 @@ export const addSearchResults = makeActionCreator(AppConstants.ADD_RESULTS, 'res
 export const queryProcessing = makeActionCreator(AppConstants.QUERY_PROCESSING);
 export const queryDone = makeActionCreator(AppConstants.QUERY_DONE);
 
-
 export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
 export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
 export const initNotifications = makeActionCreator(AppConstants.INIT_NOTIFICATIONS, 'notifications');
@@ -85,6 +84,8 @@ export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message')
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
 export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
+export const userEditing = makeActionCreator(AppConstants.USER_EDITING, 'kind', 'id', 'user_id');
+export const userStopEditing = makeActionCreator(AppConstants.USER_STOP_EDITING, 'kind', 'id', 'user_id');
 
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');

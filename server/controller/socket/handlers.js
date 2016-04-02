@@ -71,3 +71,19 @@ exports.is_offline = function(socket) {
 		delete sockets[socket.id]
     })
 }
+
+exports.editing_status = function(socket, eventName, payload) {
+	if (payload.type === 'task') {
+		storage.findProjectOfTask(payload.id).then(function(result) {
+			if (result) {
+				socket.to(result.project.id).emit(eventName, payload);
+			}
+		})
+	} else if (payload.type === 'milestone') {
+		storage.findProjectOfMilestone(payload.id).then(function(result) {
+			if (result) {
+				socket.to(result.project.id).emit(eventName, payload);
+			}
+		})
+	}
+}

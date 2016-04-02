@@ -95,9 +95,7 @@ class MilestoneView extends Component {
                 onEdit = this.editMilestone.bind(this, milestone.id)
             }
             rows.push(<MilestoneRow
-                content={milestone.content}
-                deadline={milestone.deadline}
-                id={milestone.id}
+                milestone={milestone}
                 key={milestone.id}
                 onAddTask={this.addTask.bind(this, milestone.id)}
                 onEditMilestone={onEdit}
