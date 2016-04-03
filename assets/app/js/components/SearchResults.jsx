@@ -12,13 +12,13 @@ import FontIcon from 'material-ui/lib/font-icon'
 import Code from '../icons/Code.jsx'
 import CodeFragment from './CodeFragment.jsx'
 import _ from 'lodash'
+import DropDownMenu from 'material-ui/lib/DropDownMenu';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import * as Actions from '../actions/ReduxTaskActions'
 
 class SearchResults extends Component {
     constructor() {
         super(...arguments);
-        this.state = {
-        }
-
     }
 
     goToResult(link, e) {
@@ -29,6 +29,10 @@ class SearchResults extends Component {
     goToTask(result, e) {
         e.preventDefault()
         browserHistory.push('/app/project/' + result.project_id + '/milestones?highlight=' + result.id)
+    }
+
+    handleChange(event, index, value) {
+        this.props.dispatch(Actions.updateAppStatus({searchFilter: value}))
     }
 
     render() {
@@ -122,15 +126,16 @@ class SearchResults extends Component {
         let taskList = null
         let driveList = null
         let githubList = null
-
+        let filterMenu = null
+        let filterBy = []
         if (taskResults.length > 0) {
             taskList = (
                 <List subheader="Assigned Tasks">
                     {taskListItems}
                 </List>
             )
+            filterBy.push(<MenuItem value={"tasks"} primaryText="Assigned Tasks" key="tasks"/>)
         }
-
 
         if (githubResults.length > 0) {
             githubList = (
@@ -138,6 +143,7 @@ class SearchResults extends Component {
                     {githubListItems}
                 </List>
             )
+            filterBy.push(<MenuItem value={"code"} primaryText="Code" key="code"/>)
         }
 
         if (driveResults.length > 0) {
@@ -146,11 +152,36 @@ class SearchResults extends Component {
                     {driveListItems}
                 </List>
             )
+            filterBy.push(<MenuItem value={"files"} primaryText="Files" key="files"/>)
+        }
+
+        if (filterBy.length > 1) {
+            filterBy = [<MenuItem value={"all"} primaryText="All" key="all"/>, ...filterBy]
+            filterMenu =
+                <div className="filter-by">
+                    <span>Filter </span>
+                    <DropDownMenu
+                        value={this.props.app.searchFilter}
+                        onChange={this.handleChange.bind(this)}>
+                        {filterBy}
+                    </DropDownMenu>
+                </div>
+            if (this.props.app.searchFilter === 'tasks') {
+                githubList = null
+                driveList = null
+            } else if (this.props.app.searchFilter === 'files') {
+                githubList = null
+                taskList = null
+            } else if (this.props.app.searchFilter === 'code') {
+                taskList = null
+                driveList = null
+            }
         }
 
         return (
             <div className="main-content">
                 <h4>Search results for <b>{this.props.app.queryString}</b></h4>
+                {filterMenu}
                 {taskList}
                 {githubList}
                 {driveList}

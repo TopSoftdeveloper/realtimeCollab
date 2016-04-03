@@ -40,7 +40,6 @@ class App extends Component {
     checkTokenExpiry() {
         const threshold_ms = 600000 // 10 mins
         if (localStorage.expiry_date - new Date().getTime() < threshold_ms){
-            console.log('refreshing token')
             refreshTokens().done(res => {
                 localStorage.setItem('google_token', res.access_token);
                 localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());

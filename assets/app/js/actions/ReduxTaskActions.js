@@ -182,7 +182,8 @@ export function queryIntegrations(queryString) {
         let users = getState().users
         let ownerRepos = getOwnerRepos(projects)
         dispatch(_updateAppStatus({
-            queryString: queryString
+            queryString: queryString,
+            searchFilter: 'all'
         }))
         dispatch(initSearchResults([])) // clear the previous results
         let promises = []
@@ -371,6 +372,7 @@ export function initializeApp() {
             queriesInProgress: 0,
             loading: true,
             queryString: '',
+            searchFilter: 'all',
             snackbar: {
                 isOpen: false,
                 message: ''

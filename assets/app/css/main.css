@@ -322,6 +322,10 @@
 }
 
 /******************* General ****************************/
+.filter-by {
+  float: right;
+}
+
 .avatar-list {
   list-style: none;
   float: right;
