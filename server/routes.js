@@ -16,6 +16,7 @@ module.exports.endpoints = [
     { method: 'GET',  path: '/', config: Static.index },
 
     { method: 'POST',  path: '/login', config: Auth.login },
+    { method: 'POST',  path: '/refresh_google_token', config: Auth.refreshGoogleToken },
 
     { method: 'POST',  path: '/tasks', config: Task.createTask },
     { method: 'GET',  path: '/task/{task_id}', config: Task.getTask },

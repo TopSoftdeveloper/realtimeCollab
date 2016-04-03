@@ -10,7 +10,8 @@ module.exports = function(sequelize, DataTypes) {
         email: DataTypes.STRING,
         github_login: DataTypes.STRING,
         display_name: DataTypes.STRING,
-        display_image: DataTypes.STRING
+        display_image: DataTypes.STRING,
+        refresh_token: DataTypes.STRING
     },{
         underscored: true,
         classMethods: {

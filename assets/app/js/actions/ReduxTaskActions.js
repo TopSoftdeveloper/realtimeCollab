@@ -6,7 +6,6 @@ import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
         syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub,
         queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed} from '../utils/apiUtil'
 import {isObjectPresent} from '../utils/general'
-import {loginGoogle} from '../utils/auth'
 import assign from 'object-assign';
 import _ from 'lodash'
 import Fuse from 'fuse.js'
@@ -120,13 +119,8 @@ export function uploadFileToDrive(file, directory) {
                 base64Data +
                 close_delim;
 
-            uploadFile(multipartRequestBody).then(res => {
+            uploadFile(multipartRequestBody).then(newFile => {
                 dispatch(deleteFile(file.id))
-                let newFile = res.result
-                newFile.parents = [directory]
-                newFile.lastModifyingUser = {me: true, displayName: localStorage.display_name}
-                newFile.modifiedTime = new Date().toISOString()
-                newFile.iconLink = file.iconLink
                 dispatch(insertFile(newFile))
                 dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Uploaded ' + fileData.name}}))
             })
@@ -203,7 +197,7 @@ export function queryIntegrations(queryString) {
             if (inspection.isFulfilled()) {
                 let value = inspection.value()
                 if (i === 0) {
-                    let driveResults = normalizeDriveResults(value.result.files)
+                    let driveResults = normalizeDriveResults(value.files)
                     dispatch(addSearchResults(driveResults))
                 } else if (i === 1) {
                     let githubResults = normalizeGithubResults(value.items)
@@ -363,7 +357,7 @@ export function initializeApp() {
             me: true
         }]));
         dispatch(initApp({
-            logged_into_google: true,
+            is_linked_to_drive: true,
             refresh_github_token: false,
             github: {
                 loading: false
@@ -403,7 +397,7 @@ export function initializeApp() {
             }
         }).fail(e => {
             console.log(e)
-            window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+            //window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
         });
 
         serverGetNotifications().done(res => {
@@ -678,9 +672,9 @@ export function initTopLevelFolders(projectId) {
             }
         }))
         getFileInfo('root').then(res => {
-            let rootId = res.result.id
+            let rootId = res.id
             getGoogleDriveFolders().then(res => {
-                let topLevelFolders = getTopLevelFolders(res.result.files, rootId)
+                let topLevelFolders = getTopLevelFolders(res.files, rootId)
                 dispatch(addFiles(topLevelFolders))
                 dispatch(_updateProject(projectId, {directory_structure: [{name: 'Top level directory', id: 'root'}]}))
                 dispatch(_updateAppStatus({
@@ -706,7 +700,7 @@ export function initChildrenFiles(projectId, folderId, folderName) {
             }
         }))
         getChildrenFiles(folderId).then(res => {
-            dispatch(addFiles(res.result.files))
+            dispatch(addFiles(res.files))
             if (folderName) {
                 dispatch(addDirectory(projectId, {id: folderId, name: folderName}))
                 dispatch(_updateAppStatus({
@@ -716,7 +710,7 @@ export function initChildrenFiles(projectId, folderId, folderName) {
                 }))
             } else {
                 getFileInfo(folderId).then(res => {
-                    dispatch(addDirectory(projectId, {id: folderId, name: res.result.name}))
+                    dispatch(addDirectory(projectId, {id: folderId, name: res.name}))
                     dispatch(_updateAppStatus({
                         files: {
                             loading: false
@@ -775,7 +769,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                         }
                     }))
                 }).fail(e => {
-                    window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+                    //window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
                 });
             })
         }).fail(e => {

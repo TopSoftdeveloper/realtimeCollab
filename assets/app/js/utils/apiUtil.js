@@ -7,32 +7,26 @@ let INVITE_TO_PROJECT_ENDPOINT = '/invite_to_project';
 let POPULATE_ENDPOINT = '/user/populate';
 let GET_NOTIFICATION_ENDPOINT = '/notifications'
 let AppConstants = require('../AppConstants');
-
 import $ from 'jquery'
 import Promise from 'bluebird'
-import gapi from '../gapi'
 
 export function uploadFile(multipartRequestBody) {
-    return gapi.client.request({
-        'path': '/upload/drive/v3/files',
-        'method': 'POST',
-        'params': {'uploadType': 'multipart'},
+    return $.ajax('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=lastModifyingUser%2CmodifiedTime%2CiconLink%2CwebViewLink%2Cparents%2Cname%2Cid',{
+        'data': multipartRequestBody,
+        'type': 'POST',
+        'processData': false,
         'headers': {
+            'Authorization': 'Bearer ' + localStorage.getItem('google_token'),
             'Content-Type': 'multipart/mixed; boundary="' + AppConstants.MULTIPART_BOUNDARY + '"'
-        },
-        'body': multipartRequestBody
-    });
+        }
+    })
 }
 
 export function queryGoogleDrive(queryString) {
-    return gapi.client.request({
-        'path': '/drive/v3/files',
-        'method': 'GET',
-        'params': {
-            'pageSize': '20',
-            'q': "fullText contains '" + queryString + "'",
-            'fields': 'files'
-        }
+    return googleGet('/drive/v3/files', {
+        'pageSize': '20',
+        'q': "fullText contains '" + queryString + "'",
+        'fields': 'files'
     })
 }
 
@@ -47,37 +41,37 @@ export function queryGithub(queryString, ownerRepos) {
 }
 
 export function getGoogleDriveFolders() {
-    return gapi.client.request({
-        'path': '/drive/v3/files',
-        'method': 'GET',
-        'params': {
-            'pageSize': '100',
-            'orderBy': 'modifiedTime desc',
-            'spaces': 'drive',
-            'q': "mimeType = 'application/vnd.google-apps.folder'",
-            'fields': 'files'
-        }
+    return googleGet('/drive/v3/files', {
+        'pageSize': '100',
+        'orderBy': 'modifiedTime desc',
+        'spaces': 'drive',
+        'q': "mimeType = 'application/vnd.google-apps.folder'",
+        'fields': 'files'
     })
 }
 
 export function getChildrenFiles(folderId) {
-    return gapi.client.request({
-        'path': '/drive/v3/files',
-        'method': 'GET',
-        'params': {
-            'pageSize': '100',
-            'orderBy': 'modifiedTime desc',
-            'q': "'" + folderId + "' in parents",
-            'fields': 'files'
-        }
+    return googleGet('/drive/v3/files', {
+        'pageSize': '100',
+        'orderBy': 'modifiedTime desc',
+        'q': "'" + folderId + "' in parents",
+        'fields': 'files'
     })
 }
 
 export function getFileInfo(fileId) {
-    return gapi.client.request({
-        'path': '/drive/v3/files/' + fileId,
-        'method': 'GET'
-    })
+    return googleGet('/drive/v3/files/' + fileId)
+}
+
+function googleGet(endpoint, params) {
+    return $.ajax({
+        url: 'https://www.googleapis.com' + endpoint,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('google_token')
+        },
+        type: 'GET',
+        data: params
+    });
 }
 
 function ajaxPost(endpoint, payload) {

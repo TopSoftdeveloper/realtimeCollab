@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {isLoggedIntoGoogle} from '../utils/auth'
 import { browserHistory } from 'react-router'
 
 class List extends Component {

@@ -3,7 +3,7 @@ import assign from 'object-assign';
 // Example state tree: 
 // {
 //     current_project: 'NJ-5My0Jg',
-//     logged_into_google: true,
+//     is_linked_to_drive: true,
 // }
 
 export default function app(state={}, action) {
@@ -15,9 +15,9 @@ export default function app(state={}, action) {
         case AppConstants.SWITCH_TO_PROJECT:
             return assign({}, state, {current_project : action.project_id})
         case AppConstants.LOGGED_INTO_GOOGLE:
-            return assign({}, state, {logged_into_google : true})
+            return assign({}, state, {is_linked_to_drive : true})
         case AppConstants.LOGGED_OUT_GOOGLE:
-            return assign({}, state, {logged_into_google : false})
+            return assign({}, state, {is_linked_to_drive : false})
         case AppConstants.QUERY_PROCESSING:
             return assign({}, state, {queriesInProgress: state.queriesInProgress + 1})
         case AppConstants.QUERY_DONE:

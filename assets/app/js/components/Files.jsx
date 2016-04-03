@@ -3,7 +3,6 @@ import {Table} from 'react-bootstrap'
 import vagueTime from 'vague-time'
 import Steps from 'rc-steps'
 import RaisedButton from 'material-ui/lib/raised-button'
-import {loginGoogle, isLoggedIntoGoogle} from '../utils/auth'
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
 import _ from 'lodash'
@@ -180,7 +179,7 @@ class FilesList extends Component {
         } // not loading
 
         let dropzone = null
-        if (this.props.app.logged_into_google && this.props.rootFolder) {
+        if (this.props.app.is_linked_to_drive && this.props.rootFolder) {
             // If user is logged in and already configured root folder
             dropzone =
             <Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)} multiple={false} className="drive-drop-zone">
@@ -224,14 +223,7 @@ class Files extends Component {
     componentDidMount() {
         let actions = this.props.actions
         let currentProject = this.props.project
-        isLoggedIntoGoogle(function(authResult) {
-            if (authResult && !authResult.error) {
-                actions.loggedIntoGoogle()
-                actions.initializeFiles(currentProject)
-            } else {
-                actions.loggedOutGoogle()
-            }
-        })
+        actions.initializeFiles(currentProject)
     }
 
     setAsRoot(id) {
@@ -239,13 +231,7 @@ class Files extends Component {
     }
 
     authorizeDrive() {
-        loginGoogle(function(authResult) {
-            if (authResult && !authResult.error) {
-                this.props.actions.loggedIntoGoogle()
-            } else {
-                this.props.actions.loggedOutGoogle()
-            }
-        }.bind(this))
+        console.log('get drive permission here')
     }
 
     render() {
@@ -262,7 +248,7 @@ class Files extends Component {
         />
 
 
-        if (app.logged_into_google && project.root_folder) {
+        if (app.is_linked_to_drive && project.root_folder) {
             return (
                 <div>
                     {filesList}
@@ -270,7 +256,7 @@ class Files extends Component {
             )
         }
 
-        if (!app.logged_into_google && project.root_folder) {
+        if (!app.is_linked_to_drive && project.root_folder) {
             return (
                 <div>
                     <h4>Please re-authorize Google Drive</h4>
@@ -291,7 +277,7 @@ class Files extends Component {
             currentDirectory = project.directory_structure[project.directory_structure.length-1]
         }
 
-        if (!app.logged_into_google && !project.root_folder) {
+        if (!app.is_linked_to_drive && !project.root_folder) {
             content = (
                 <RaisedButton
                     label="Authorize"
@@ -299,7 +285,7 @@ class Files extends Component {
                     primary={true}
                 />
             )
-        } else if (app.logged_into_google && !project.root_folder) {
+        } else if (app.is_linked_to_drive && !project.root_folder) {
             currentStep = 1
             content = (
                 <div>
