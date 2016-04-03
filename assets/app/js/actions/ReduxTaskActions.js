@@ -123,6 +123,8 @@ export function uploadFileToDrive(file, directory) {
                 dispatch(deleteFile(file.id))
                 dispatch(insertFile(newFile))
                 dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Uploaded ' + fileData.name}}))
+            }, function (err) {
+                console.log(err)
             })
         }
     }
@@ -685,6 +687,8 @@ export function initTopLevelFolders(projectId) {
             }, function (err) {
                 console.log(err)
             })
+        }, function (err) {
+            console.log(err)
         })
     }
 }
@@ -716,6 +720,8 @@ export function initChildrenFiles(projectId, folderId, folderName) {
                             loading: false
                         }
                     }))
+                }, function (err) {
+                    console.log(err)
                 })
             }
         }, function (err) {

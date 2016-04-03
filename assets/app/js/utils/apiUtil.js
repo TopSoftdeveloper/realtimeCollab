@@ -229,3 +229,7 @@ export function serverMarkDone(task_id, project_id) {
         github_token: localStorage.getItem('github_token')
     })
 }
+
+export function refreshTokens() {
+    return ajaxPost('/refresh_google_token');
+}

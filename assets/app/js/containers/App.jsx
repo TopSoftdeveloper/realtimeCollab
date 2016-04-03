@@ -13,6 +13,7 @@ import Sidebar from 'react-sidebar'
 import LoadingIndicator from '../components/LoadingIndicator.jsx'
 import Snackbar from 'material-ui/lib/snackbar';
 import {_updateAppStatus}  from '../actions/ReduxTaskActions'
+import {refreshTokens} from '../utils/apiUtil'
 
 var AppConstants = require('../AppConstants');
 
@@ -33,6 +34,26 @@ class App extends Component {
 
     initApp() {
         this.props.dispatch(Actions.initializeApp())
+        this.autoRefreshTokens()
+    }
+
+    checkTokenExpiry() {
+        const threshold_ms = 600000 // 10 mins
+        if (localStorage.expiry_date - new Date().getTime() < threshold_ms){
+            console.log('refreshing token')
+            refreshTokens().done(res => {
+                localStorage.setItem('google_token', res.access_token);
+                localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
+            }).fail(e => {
+                console.log(e);
+            });
+        }
+    }
+
+    autoRefreshTokens() {
+        const checkingInterval_ms = 300000 // 5 mins
+        this.checkTokenExpiry()
+        setInterval(this.checkTokenExpiry, checkingInterval_ms)
     }
 
     shouldComponentUpdate(nextProps, nextState) {

@@ -83,6 +83,7 @@ function login(request, reply) {
         if(!err) {
             var access_token = tokens.access_token
             var refresh_token = tokens.refresh_token
+            var expiry_date = tokens.expiry_date
             var options = {
                 url: 'https://www.googleapis.com/plus/v1/people/me',
                 headers: {
@@ -90,10 +91,8 @@ function login(request, reply) {
                     'Authorization': 'Bearer ' + access_token
                 }
             }
-
             req.get(options , function(err, res, body) {
                 if (err) {
-                    console.error(err)
                     reply(Boom.badRequest(err))
                     return
                 }
@@ -123,6 +122,7 @@ function login(request, reply) {
                         user = JSON.parse(JSON.stringify(user))
                         user.google_token = access_token
                         user.collab_token = get_token(privateKey, user.id, token_expiry)
+                        user.expiry_date = expiry_date
                         delete user.refresh_token // don't return this for security
                         reply(user);
                     }
