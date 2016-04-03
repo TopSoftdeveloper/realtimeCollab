@@ -10,6 +10,8 @@ import { browserHistory } from 'react-router'
 import LoadingIndicator from '../components/LoadingIndicator.jsx'
 import FontIcon from 'material-ui/lib/font-icon'
 import Code from '../icons/Code.jsx'
+import CodeFragment from './CodeFragment.jsx'
+import _ from 'lodash'
 
 class SearchResults extends Component {
     constructor() {
@@ -95,6 +97,9 @@ class SearchResults extends Component {
         })
 
         let githubListItems = githubResults.map(result => {
+            let codePreview = result.text_matches.map(match =>
+                <CodeFragment fragment={match.fragment} matches={match.matches} key={_.uniqueId('code')}/>
+            )
             return (
                 <div key={result.id}>
                     <ListItem
@@ -108,6 +113,7 @@ class SearchResults extends Component {
                          }
                         secondaryTextLines={1}
                     />
+                    {codePreview}
                     <Divider inset={true} />
                 </div>
             )

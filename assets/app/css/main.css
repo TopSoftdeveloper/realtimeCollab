@@ -356,7 +356,7 @@
 }
 
 .highlight-yellow {
-  background-color: yellow;
+  background-color: rgba(242, 255, 86, 0.83);
 }
 
 .loading-indicator {

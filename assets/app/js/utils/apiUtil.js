@@ -34,7 +34,8 @@ export function queryGithub(queryString, ownerRepos) {
     return $.ajax({
         url: 'https://api.github.com/search/code?q=' + queryString + '+in:file,path' + ownerRepos,
         headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('github_token')
+            'Authorization': 'Bearer ' + localStorage.getItem('github_token'),
+            'Accept': 'application/vnd.github.v3.text-match+json'
         },
         type: 'GET'
     })

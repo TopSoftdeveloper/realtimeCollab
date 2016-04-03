@@ -220,7 +220,8 @@ function normalizeGithubResults(items) {
             primaryText: item.path,
             repo: item.repository.full_name,
             link: item.html_url,
-            type: 'github'
+            type: 'github',
+            text_matches: item.text_matches
         }
     })
 }
