@@ -220,12 +220,6 @@ class Files extends Component {
         }
     }
 
-    componentDidMount() {
-        let actions = this.props.actions
-        let currentProject = this.props.project
-        actions.initializeFiles(currentProject)
-    }
-
     setAsRoot(id) {
         this.props.actions.setDirectoryAsRoot(this.props.project.id, id)
     }

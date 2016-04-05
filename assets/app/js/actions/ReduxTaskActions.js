@@ -4,7 +4,8 @@ import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
         syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub,
-        queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed} from '../utils/apiUtil'
+        queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed, refreshTokens} from '../utils/apiUtil'
+import {getCurrentProject} from '../utils/general'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
@@ -378,6 +379,7 @@ export function initializeApp() {
                 message: ''
             }
         }));
+
         serverPopulate().done(res => {
             if (res.projects.length > 0) {
                 let normalizedTables = normalize(res.projects);
@@ -394,11 +396,21 @@ export function initializeApp() {
                     return user
                 })
                 dispatch(addUsers(u));
+
+                refreshTokens().done(res => {
+                    localStorage.setItem('google_token', res.access_token);
+                    localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
+                    let projectId = getCurrentProject()
+                    dispatch(initializeFiles(normalizedTables.projects.filter(project => project.id === projectId)[0]))
+                }).fail(e => {
+                    console.log(e);
+                });
+
                 setTimeout(function() {
                     dispatch(_updateAppStatus({
                         loading: false
                     }));
-                }, 500)
+                }, 1000)
             }
         }).fail(e => {
             console.log(e)

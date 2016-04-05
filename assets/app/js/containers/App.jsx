@@ -28,7 +28,6 @@ class App extends Component {
         socketActions.monitorProjectChanges()
         socketActions.monitorNotifications()
         socketActions.monitorEditStatus()
-
         window.scrollback = {"room":"collab","form":"toast","minimize":true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));
     }
 
@@ -51,7 +50,6 @@ class App extends Component {
 
     autoRefreshTokens() {
         const checkingInterval_ms = 300000 // 5 mins
-        this.checkTokenExpiry()
         setInterval(this.checkTokenExpiry, checkingInterval_ms)
     }
 
