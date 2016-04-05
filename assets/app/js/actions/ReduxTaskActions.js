@@ -402,15 +402,15 @@ export function initializeApp() {
                     localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
                     let projectId = getCurrentProject()
                     dispatch(initializeFiles(normalizedTables.projects.filter(project => project.id === projectId)[0]))
+                    setTimeout(function() {
+                        dispatch(_updateAppStatus({
+                            loading: false
+                        }));
+                    }, 1000)
+
                 }).fail(e => {
                     console.log(e);
                 });
-
-                setTimeout(function() {
-                    dispatch(_updateAppStatus({
-                        loading: false
-                    }));
-                }, 1000)
             }
         }).fail(e => {
             console.log(e)
