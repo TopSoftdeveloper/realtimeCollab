@@ -137,33 +137,6 @@ export function updateGithubLogin(token) {
     }
 }
 
-function _getGithubRepos(dispatch) {
-    dispatch(_updateAppStatus({
-        github: {
-            loading: true
-        }
-    }))
-    getGithubRepos().done(res => {
-        dispatch(_updateAppStatus({
-            github: {
-                loading: false
-            }
-        }))
-        dispatch(_initGithubRepos(res))
-    }).fail(e => {
-        dispatch(_updateAppStatus({
-            github: {
-                loading: false
-            }
-        }))
-        if (e.statusText === "Unauthorized") {
-            dispatch(_updateAppStatus({github_token: ''}))
-        } else {
-            console.log(e)
-        }
-    })
-}
-
 function getOwnerRepos(projects) {
     // Iterates through all projects and returns the below string for GitHub querying.
     // +repo:collab/cs3245+repo:collab/IndoorNavigation
@@ -284,13 +257,31 @@ function searchTasksByAssignee(queryString, users, tasks, projects) {
 
 export function initGithubRepos() {
     return function(dispatch) {
-        if (!localStorage.getItem('github_token')) {
-            setTimeout(function() {
-                _getGithubRepos(dispatch)
-            }, 5000) // delay in case we are still in the midst of getting token
-        } else {
-            _getGithubRepos(dispatch)
-        }
+        dispatch(_updateAppStatus({
+            github: {
+                loading: true
+            }
+        }))
+        getGithubRepos().done(res => {
+            dispatch(_updateAppStatus({
+                github: {
+                    loading: false,
+                    repo_fetched: false
+                }
+            }))
+            dispatch(_initGithubRepos(res))
+        }).fail(e => {
+            dispatch(_updateAppStatus({
+                github: {
+                    loading: false
+                }
+            }))
+            if (e.statusText === "Unauthorized") {
+                dispatch(_updateAppStatus({github_token: ''}))
+            } else {
+                console.log(e)
+            }
+        })
     }
 }
 
@@ -350,6 +341,14 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function hasProjectWithoutGithub(projects) {
+    for (let i=0; i<projects.length; ++i) {
+        let project = projects[i]
+        if (!project.github_repo_name || !project.github_repo_owner) return true
+    }
+    return false
+}
+
 export function initializeApp() {
     return function(dispatch) {
         dispatch(addUsers([{
@@ -366,7 +365,8 @@ export function initializeApp() {
             is_top_level_folder_loaded: false,
             refresh_github_token: false,
             github: {
-                loading: false
+                loading: false,
+                repo_fetched: false
             },
             files: {
                 loading: false
@@ -403,6 +403,10 @@ export function initializeApp() {
                     localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
                     let projectId = getCurrentProject()
                     dispatch(initializeFiles(normalizedTables.projects.filter(project => project.id === projectId)[0]))
+
+                    if (hasProjectWithoutGithub(normalizedTables.projects)) {
+                        dispatch(initGithubRepos())
+                    }
                     setTimeout(function() {
                         dispatch(_updateAppStatus({
                             loading: false
@@ -793,7 +797,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                         }
                     }))
                 }).fail(e => {
-                    //window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+                    window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
                 });
             })
         }).fail(e => {

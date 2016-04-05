@@ -71,33 +71,20 @@ class Project extends Component {
         let repoOwner = currentProject.github_repo_owner
         let repoSet = repoName && repoOwner
 
-        let milestoneView = <MilestoneView
-            milestones={milestonesInProj}
-            tasks={tasksInProj}
-            actions={actions}
-            projectId={currentProjectId}
-            users={allActiveUsers}
-            location={location}
-        />
-
-        if (!(app.github_token && repoSet)) {
-            milestoneView = <Newsfeed
-                project={currentProject}
-                actions={actions}
-                repos={githubRepos}
-                events={events}
-                app={app}
-                users={allActiveUsers}
-            />
-        }
-
         return (
             <div className="main-content">
                 <Tabs value={currentTab}>
                     <Tab label="Milestones"
                          value={AppConstants.PATH.milestones}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.milestones)}>
-                        {milestoneView}
+                        <MilestoneView
+                            milestones={milestonesInProj}
+                            tasks={tasksInProj}
+                            actions={actions}
+                            projectId={currentProjectId}
+                            users={allActiveUsers}
+                            location={location}
+                        />
                     </Tab>
                     <Tab label="Files"
                          value={AppConstants.PATH.files}
@@ -117,7 +104,6 @@ class Project extends Component {
                         <Newsfeed
                             project={currentProject}
                             actions={actions}
-                            repos={githubRepos}
                             events={events}
                             app={app}
                             users={allActiveUsers}
@@ -133,6 +119,7 @@ class Project extends Component {
                             actions={actions}
                             alerts={alerts}
                             app={app}
+                            repos={githubRepos}
                         />
                     </Tab>
                 </Tabs>

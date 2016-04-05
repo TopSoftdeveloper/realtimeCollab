@@ -5,15 +5,31 @@ let AppConstants = require('../AppConstants');
 import {getCurrentProject} from '../utils/general'
 import LoadingIndicator from './LoadingIndicator.jsx'
 import { browserHistory } from 'react-router'
+import Github from './Github/Github.jsx'
+import Card from 'material-ui/lib/card/card';
+import CardHeader from 'material-ui/lib/card/card-header';
+import CardText from 'material-ui/lib/card/card-text';
 
 class Settings extends Component {
     constructor(props, context) {
         super(props, context); 
         this.state = {
             inputEmail: '',
-            inputProjectName: ''
+            inputProjectName: '',
+            fetchedRepos: false
         }            
     }
+
+    selectNewRepo() {
+        if (!this.props.app.github.repo_fetched) {
+            this.props.actions.initGithubRepos()
+        }
+        this.props.actions.updateProject(this.props.project.id, {
+            github_repo_name: null,
+            github_repo_owner: null
+        })
+    }
+
     selectRootFolder() {
         let projectId = this.props.project.id
         this.props.actions.updateProject(projectId, {
@@ -123,8 +139,32 @@ class Settings extends Component {
         }
 
         let githubRepo = 'Not yet selected'
-        if (project.github_repo_owner && project.github_repo_name) {
+        let repoName = project.github_repo_name
+        let repoOwner = project.github_repo_owner
+        let repoSet = repoName && repoOwner
+        let githubCard = null
+        let selectNewRepoBtn = null
+
+        if (repoSet) {
             githubRepo = project.github_repo_owner + '/' + project.github_repo_name
+            selectNewRepoBtn = <Button onClick={this.selectNewRepo.bind(this)}>Select new repository</Button>
+        } else {
+            githubCard =
+                <Card>
+                    <CardHeader
+                        title="Enhance Collab's power with GitHub!"
+                        actAsExpander={true}
+                        showExpandableButton={true}
+                    />
+                    <CardText expandable={true}>
+                        <Github
+                            project={this.props.project}
+                            actions={this.props.actions}
+                            app={this.props.app}
+                            repos={this.props.repos}
+                        />
+                    </CardText>
+                </Card>
         }
 
         return (
@@ -148,15 +188,14 @@ class Settings extends Component {
                 </ListGroup>
 
                 <Panel header='Google Integration' bsStyle="info">
-                    <div><b>Root folder: {rootFolderName}</b></div>
-                    <br/>
+                    <span><b>Root folder: {rootFolderName}</b></span>
                     <Button onClick={this.selectRootFolder.bind(this)}>Select new root folder</Button>
                 </Panel>
 
                 <Panel header='GitHub Integration' bsStyle="info">
-                    <div><b>Default repository: {githubRepo}</b></div>
-                    <br/>
-                    <Button>Select new repository</Button>
+                    <span><b>Default repository: {githubRepo}</b></span>
+                    {selectNewRepoBtn}
+                    {githubCard}
                 </Panel>
 
                 <Panel header='Options' bsStyle="info">
