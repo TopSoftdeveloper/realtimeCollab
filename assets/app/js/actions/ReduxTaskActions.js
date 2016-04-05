@@ -414,7 +414,7 @@ export function initializeApp() {
             }
         }).fail(e => {
             console.log(e)
-            //window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+            window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
         });
 
         serverGetNotifications().done(res => {
