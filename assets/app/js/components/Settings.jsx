@@ -147,7 +147,10 @@ class Settings extends Component {
 
         if (repoSet) {
             githubRepo = project.github_repo_owner + '/' + project.github_repo_name
-            selectNewRepoBtn = <Button onClick={this.selectNewRepo.bind(this)}>Select new repository</Button>
+            selectNewRepoBtn = <Button
+                onClick={this.selectNewRepo.bind(this)}
+                className="settings-btn">
+                Select new repository</Button>
         } else {
             githubCard =
                 <Card>
@@ -189,12 +192,13 @@ class Settings extends Component {
 
                 <Panel header='Google Integration' bsStyle="info">
                     <span><b>Root folder: {rootFolderName}</b></span>
-                    <Button onClick={this.selectRootFolder.bind(this)}>Select new root folder</Button>
+                    <Button onClick={this.selectRootFolder.bind(this)} className="settings-btn">Select new root folder</Button>
                 </Panel>
 
                 <Panel header='GitHub Integration' bsStyle="info">
                     <span><b>Default repository: {githubRepo}</b></span>
                     {selectNewRepoBtn}
+                    <br/>
                     {githubCard}
                 </Panel>
 

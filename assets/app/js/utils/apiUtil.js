@@ -144,7 +144,7 @@ export function githubOAuth(code) {
 
 export function getGithubRepos() {
     return $.ajax({
-        url: 'https://api.github.com/user/repos',
+        url: 'https://api.github.com/user/repos?per_page=100',
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem('github_token')
         },
