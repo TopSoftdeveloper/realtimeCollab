@@ -33,6 +33,17 @@ export function matchesUrl(a, b) {
 	return trimUrlString(a) === trimUrlString(b);
 }
 
+function getCurrentTab() {
+	// Returns the current tab (milestones, files, newsfeed or settings) that the user is currently on
+	var re = /\/project\/[a-z0-9_-]+\/([^\/]+)/i
+	var extracted = extractRegexGroup(re)
+	if (extracted === 'files' || extracted === 'newsfeed' || extracted === 'settings') {
+		return extracted
+	} else {
+		return 'milestones' // default
+	}
+}
+
 export function getCurrentProject() {
 	var re = /\/project\/([^\/]+)/i
 	return extractRegexGroup(re)

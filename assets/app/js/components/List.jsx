@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router'
+import {getCurrentTab} from '../utils/general'
 
 class List extends Component {
     switchProject(projectId) {
         let actions = this.props.actions
-        let projectUrl = '/app/project/' + projectId;
+        let projectUrl = '/app/project/' + projectId + '/' + getCurrentTab();
         let project = this.props.items.filter(project => project.id === projectId)[0]
         browserHistory.push(projectUrl)
         actions.switchToProject(projectId)
