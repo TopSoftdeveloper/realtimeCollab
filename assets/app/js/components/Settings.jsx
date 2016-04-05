@@ -9,6 +9,12 @@ import Github from './Github/Github.jsx'
 import Card from 'material-ui/lib/card/card';
 import CardHeader from 'material-ui/lib/card/card-header';
 import CardText from 'material-ui/lib/card/card-text';
+import FontIcon from 'material-ui/lib/font-icon';
+import {APP_ROOT_URL, PATH} from '../AppConstants'
+import RaisedButton from 'material-ui/lib/raised-button'
+import {GITHUB_CLIENT_ID} from '../AppConstants'
+import {getGithubAuthCode} from '../utils/general'
+import {githubOAuth} from '../utils/apiUtil'
 
 class Settings extends Component {
     constructor(props, context) {
@@ -17,7 +23,13 @@ class Settings extends Component {
             inputEmail: '',
             inputProjectName: '',
             fetchedRepos: false
-        }            
+        }
+    }
+
+    authorize() {
+        let redirectURI = APP_ROOT_URL + '/project/' + this.props.project.id + '/' + PATH.settings
+        window.location.assign('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID +
+            '&scope=repo,notifications,user&redirect_uri=' + redirectURI)
     }
 
     selectNewRepo() {
@@ -78,16 +90,25 @@ class Settings extends Component {
         }
     }
 
-    render() {
-
-        if (this.props.app.github.loading || this.props.app.files.loading) {
-            return (
-                <div className='settings'>
-                    <LoadingIndicator/>
-                </div>
-            )
+    componentDidMount() {
+        // We check whether this is a redirect from github OAuth by checking
+        // if there is a "code" query param
+        let code = getGithubAuthCode()
+        if (code) {
+            githubOAuth(code).done(res => {
+                if (!res.error) {
+                    localStorage.setItem('github_token', res.access_token)
+                    this.props.actions.updateAppStatus({github_token: res.access_token})
+                    this.props.actions.updateGithubLogin(res.access_token)
+                    if (!this.props.app.github.repo_fetched) {
+                        this.props.actions.initGithubRepos()
+                    }
+                }
+            }).fail(e => console.log(e))
         }
+    }
 
+    render() {
         let listGroups = [];
         let alertStatus = this.props.alerts.project_invitation;
 
@@ -132,6 +153,7 @@ class Settings extends Component {
                 </Alert>
             );              
         }
+
         let project = this.props.project
         let rootFolderName = 'Not yet selected'
         if (project.root_folder && project.directory_structure[0]) {
@@ -141,11 +163,11 @@ class Settings extends Component {
         let githubRepo = 'Not yet selected'
         let repoName = project.github_repo_name
         let repoOwner = project.github_repo_owner
-        let repoSet = repoName && repoOwner
+        let repoSet = !!(repoName && repoOwner)
         let githubCard = null
         let selectNewRepoBtn = null
 
-        if (repoSet) {
+        if (repoSet && !this.props.app.github.loading) {
             githubRepo = project.github_repo_owner + '/' + project.github_repo_name
             selectNewRepoBtn = <Button
                 onClick={this.selectNewRepo.bind(this)}
@@ -153,7 +175,7 @@ class Settings extends Component {
                 Select new repository</Button>
         } else {
             githubCard =
-                <Card>
+                <Card initiallyExpanded={true}>
                     <CardHeader
                         title="Enhance Collab's power with GitHub!"
                         actAsExpander={true}
@@ -165,9 +187,50 @@ class Settings extends Component {
                             actions={this.props.actions}
                             app={this.props.app}
                             repos={this.props.repos}
+                            authorize={this.authorize.bind(this)}
                         />
                     </CardText>
                 </Card>
+        }
+
+
+        let googlePanel = <LoadingIndicator className="loading-indicator-left" size={0.4}/>
+        let githubPanel = <LoadingIndicator className="loading-indicator-left" size={0.4}/>
+
+        if (!this.props.app.files.loading) {
+            googlePanel = (
+                <div>
+                    <span><b>Root folder: {rootFolderName}</b></span>
+                    <Button onClick={this.selectRootFolder.bind(this)} className="settings-btn">Select new root folder</Button>
+                </div>
+            )
+        }
+
+        if (!this.props.app.github.loading) {
+            githubPanel = (
+                <div>
+                    <span><b>Default repository: {githubRepo}</b></span>
+                    {selectNewRepoBtn}
+                    <br/>
+                    <br/>
+                    {githubCard}
+                </div>
+            )
+        }
+
+        if (!localStorage.github_token && repoSet) {
+            // Repo set but not authorized
+            githubPanel = (
+                <div>
+                    <h4>Please re-authorize Github</h4>
+                    <RaisedButton
+                        label="Authorize Github"
+                        onTouchTap={this.authorize.bind(this)}
+                        secondary={true}
+                        icon={<FontIcon className="fa fa-github"/>}
+                    />
+                </div>
+            )
         }
 
         return (
@@ -191,16 +254,11 @@ class Settings extends Component {
                 </ListGroup>
 
                 <Panel header='Google Integration' bsStyle="info">
-                    <span><b>Root folder: {rootFolderName}</b></span>
-                    <Button onClick={this.selectRootFolder.bind(this)} className="settings-btn">Select new root folder</Button>
+                    {googlePanel}
                 </Panel>
 
                 <Panel header='GitHub Integration' bsStyle="info">
-                    <span><b>Default repository: {githubRepo}</b></span>
-                    {selectNewRepoBtn}
-                    <br/>
-                    <br/>
-                    {githubCard}
+                    {githubPanel}
                 </Panel>
 
                 <Panel header='Options' bsStyle="info">
@@ -215,8 +273,7 @@ class Settings extends Component {
                             buttonAfter={<ButtonInput value="Rename" type="submit"/>}
                         />
                     </form>
-                    <Button bsStyle="danger">Leave Project</Button>
-                </Panel>                
+                </Panel>
             </div>
         );
     }

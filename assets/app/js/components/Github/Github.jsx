@@ -3,10 +3,6 @@ import {Table} from 'react-bootstrap'
 import vagueTime from 'vague-time'
 import Steps from 'rc-steps'
 import RaisedButton from 'material-ui/lib/raised-button'
-import {GITHUB_CLIENT_ID} from '../../AppConstants'
-import {getGithubAuthCode} from '../../utils/general'
-import {APP_ROOT_URL, PATH} from '../../AppConstants'
-import {githubOAuth} from '../../utils/apiUtil'
 import RepoList from './../Github/RepoList.jsx'
 import LoadingIndicator from '../LoadingIndicator.jsx'
 require('rc-steps/assets/index.css')
@@ -49,32 +45,11 @@ class Github extends Component {
         this.props.actions.syncWithGithub(projectId, repoName, repoOwner)
     }
 
-    componentDidMount() {
-        // We check whether this is a redirect from github OAuth by checking
-        // if there is a "code" query param
-        let code = getGithubAuthCode()
-        if (code) {
-            githubOAuth(code).done(res => {
-                if (!res.error) {
-                    localStorage.setItem('github_token', res.access_token)
-                    this.props.actions.updateAppStatus({github_token: res.access_token})
-                    this.props.actions.updateGithubLogin(res.access_token)
-                }
-            }).fail(e => console.log(e))
-        }
-    }
-
-    authorize() {
-        let redirectURI = APP_ROOT_URL + '/project/' + this.props.project.id + '/' + PATH.settings
-        window.location.assign('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID +
-        '&scope=repo,notifications,user&redirect_uri=' + redirectURI)
-    }
-
     render() {
         let app = this.props.app
         let loading = null
         if (app.github && app.github.loading) {
-            loading = <LoadingIndicator/>
+            loading = <LoadingIndicator className="loading-indicator-left"/>
         }
 
         let repoName = this.props.project.github_repo_name
@@ -89,9 +64,13 @@ class Github extends Component {
             <div>
                 <h4>Welcome to Collab!</h4>
                 <br/>
-                <p>Collab helps you keep all your project files, todo lists and team updates in one place. </p>
-                <p>Your todo lists are synced seamlessly with Github issues, and project files in Google Docs can be
-                    accessed right from the Files panel.</p>
+                <p>Collab helps you aggregate all your project files, todo lists and code in one place. </p>
+                <p>By enabling GitHub integration, you can</p>
+                    <ul>
+                        <li>Sync your Collab todo list with GitHub issues</li>
+                        <li>Receive updates about your project repository</li>
+                        <li>Search through your project source code</li>
+                    </ul>
                 <br/>
                 <RaisedButton
                     className="animated infinite pulse"
@@ -108,12 +87,12 @@ class Github extends Component {
             content = (
                 <div>
                     <br/>
-                    <p>First, we need to authorize your Github account so Collab can sync your todo list
-                    with Github issues.</p>
+                    <p>First, we need to authorize your Github account. Collab will not store any of your source code
+                    on our servers.</p>
 
                     <RaisedButton
                     label="Authorize Github"
-                    onTouchTap={this.authorize.bind(this)}
+                    onTouchTap={this.props.authorize}
                     secondary={true}
                     icon={<FontIcon className="fa fa-github"/>}
                     />
@@ -134,20 +113,6 @@ class Github extends Component {
                         repos={this.props.repos}
                         syncWithGithub={this.syncWithGithub.bind(this)}
                         projectId={this.props.project.id}
-                    />
-                </div>
-            )
-        }
-
-        if (!app.github_token && repoSet) {
-            // Case 4: Repo set but not authorized
-            return (
-                <div className='my-step-container'>
-                    <h4>Please re-authorize Github</h4>
-                    <RaisedButton
-                        label="Authorize"
-                        onTouchTap={this.authorize.bind(this)}
-                        primary={true}
                     />
                 </div>
             )

@@ -121,7 +121,7 @@ class FilesList extends Component {
             })
         }
 
-        let table = <LoadingIndicator />
+        let table = <LoadingIndicator className="loading-indicator"/>
 
         if (!this.props.app.files.loading) {
             var rows = filesToDisplay.map(file => {

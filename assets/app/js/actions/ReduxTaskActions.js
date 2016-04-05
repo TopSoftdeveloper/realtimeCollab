@@ -351,6 +351,15 @@ function hasProjectWithoutGithub(projects) {
     return false
 }
 
+function hasProjectWithGithub(projects) {
+    for (let i=0; i<projects.length; ++i) {
+        let project = projects[i]
+        if (project.github_repo_name && project.github_repo_owner) return true
+    }
+    return false
+}
+
+
 export function initializeApp() {
     return function(dispatch) {
         dispatch(addUsers([{
@@ -365,7 +374,6 @@ export function initializeApp() {
         dispatch(initApp({
             is_linked_to_drive: true,
             is_top_level_folder_loaded: false,
-            refresh_github_token: false,
             github: {
                 loading: false,
                 repo_fetched: false

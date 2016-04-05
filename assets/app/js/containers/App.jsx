@@ -98,7 +98,7 @@ class App extends Component {
         if (app.loading) {
             children = (
                 <div className='main-content'>
-                    <LoadingIndicator/>
+                    <LoadingIndicator className="loading-indicator"/>
                 </div>
             )
         }

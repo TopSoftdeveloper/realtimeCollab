@@ -6,7 +6,7 @@ class LoadingIndicator extends Component {
         let size = 0.6
         if (this.props.size) size = this.props.size
         return (
-        <div className="loading-indicator">
+        <div className={this.props.className}>
             <CircularProgress size={size}/>
         </div>);
     }

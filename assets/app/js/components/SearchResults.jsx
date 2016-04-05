@@ -41,7 +41,7 @@ class SearchResults extends Component {
                 <div className="main-content">
                     <div className="no-items">
                         <h4>Searching for <b>{this.props.app.queryString}</b>...</h4>
-                        <LoadingIndicator />
+                        <LoadingIndicator className="loading-indicator" />
                     </div>
                 </div>
             )

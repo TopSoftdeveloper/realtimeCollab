@@ -369,6 +369,10 @@
   margin-top: 15px;
 }
 
+.loading-indicator-left {
+  left: 45%;
+}
+
 .collab-logo h3 {
   margin-left: 60px;
   padding-top: 15px;
