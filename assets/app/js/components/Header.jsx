@@ -111,12 +111,18 @@ class Header extends Component {
         let image = getUserAvatar(localStorage.getItem('display_image'), this.props.displayName)
         let searchResults = null
         if (this.props.search.length === 0 && this.state.queryString.length >= MIN_SEARCH_CHARS) {
+            let text = "There are no results that match your search"
+            if (this.props.app.queriesInProgress > 0) text = "Searching..."
             searchResults = [{
                 text: "",
                 value: (
-                    <ListItem primaryText="There are no results that match your search" disabled={true} />
+                    <ListItem
+                        primaryText={text}
+                        disabled={true}
+                    />
                 )
             }]
+
         } else {
             searchResults = this.props.search.map(result => {
                 let avatar = <Avatar size={24} src={result.thumbnail} />

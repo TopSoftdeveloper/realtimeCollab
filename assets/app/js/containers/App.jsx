@@ -140,6 +140,7 @@ class App extends Component {
                         displayName={displayName}
                         search={search}
                         actions={actions}
+                        app={app}
                     />
                     <div className="body-wrapper">
                         {children}

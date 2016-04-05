@@ -199,6 +199,7 @@ class Settings extends Component {
                     <span><b>Default repository: {githubRepo}</b></span>
                     {selectNewRepoBtn}
                     <br/>
+                    <br/>
                     {githubCard}
                 </Panel>
 
