@@ -177,7 +177,18 @@ class Header extends Component {
                         <li className="notif-li"><Link to="/app/notifications">Notifs  &nbsp;
                             {notifsCount}</Link></li>
                         <li className="display-pic-li">{image}</li>
-                        <li><span className=" navbar-text ">{this.props.displayName} </span></li>
+                        <li className="dropdown">
+                            <a href="#" className="dropdown-toggle"
+                               data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">{this.props.displayName} <span className="caret"></span></a>
+                            <ul className="dropdown-menu">
+                                <li><a href="#" onClick={logout}>Log Out</a></li>
+                            </ul>
+                        </li>
+
+                        <li><span className=" navbar-text "> </span></li>
                     </ul>
                 </div>
             </nav>
