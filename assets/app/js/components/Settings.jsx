@@ -129,7 +129,8 @@ class Settings extends Component {
             alertPanel = (
                 <Alert 
                     bsStyle="success" 
-                    onDismiss={this.handleAlertDismiss.bind(this)}  
+                    onDismiss={this.handleAlertDismiss.bind(this)}
+                    dismissAfter={4000}
                     >
                     Successfully invited!
                 </Alert>
@@ -138,8 +139,9 @@ class Settings extends Component {
             alertPanel = (
                 <Alert 
                     bsStyle="warning" 
-                    onDismiss={this.handleAlertDismiss.bind(this)} 
-                    >
+                    onDismiss={this.handleAlertDismiss.bind(this)}
+                    dismissAfter={4000}
+                >
                     User already invited!
                 </Alert>
             );            
@@ -147,8 +149,9 @@ class Settings extends Component {
             alertPanel = (
                 <Alert 
                     bsStyle="danger" 
-                    onDismiss={this.handleAlertDismiss.bind(this)} 
-                    >
+                    onDismiss={this.handleAlertDismiss.bind(this)}
+                    dismissAfter={4000}
+                >
                     User not found!
                 </Alert>
             );              
@@ -222,11 +225,12 @@ class Settings extends Component {
             // Repo set but not authorized
             githubPanel = (
                 <div>
-                    <h4>Please re-authorize Github</h4>
+                    <div style={{color: 'red'}}><b>Please re-authorize Github</b></div>
+                    <br/>
                     <RaisedButton
                         label="Authorize Github"
                         onTouchTap={this.authorize.bind(this)}
-                        secondary={true}
+                        primary={true}
                         icon={<FontIcon className="fa fa-github"/>}
                     />
                 </div>
