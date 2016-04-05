@@ -193,6 +193,11 @@ export function serverCreateTask(payload) {
     return ajaxPost(CREATE_TASK_ENDPOINT, payload);
 }
 
+
+export function serverDeleteTask(task_id, project_id) {
+    return ajaxDelete('/task/' + task_id, {project_id: project_id})
+}
+
 export function serverEditTask(task_id, payload) {
     payload.github_token = localStorage.getItem('github_token')
     return ajaxPut('/task/' + task_id, payload);

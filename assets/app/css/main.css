@@ -105,11 +105,11 @@
   position: relative;
 }
 
-.reopen-task, .edit-task {
+.reopen-task, .edit-task, .delete-task {
   opacity: 0.5;
 }
 
-.reopen-task:hover, .edit-task:hover {
+.reopen-task:hover, .edit-task:hover, .delete-task:hover {
   cursor: pointer;
   display: inline-block;
   opacity: 1.0;

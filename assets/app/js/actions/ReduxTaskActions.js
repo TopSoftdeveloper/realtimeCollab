@@ -1,4 +1,4 @@
-import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
+import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkDone,
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
@@ -300,6 +300,7 @@ export function dismissProjectAlert() {
 export function declineProject(projectId, notificationId) {
     return function(dispatch) {
         serverDeclineProject(projectId).done(res => {
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Project declined'}}))
             serverDeleteNotification(notificationId).done(res => {
                 dispatch(_deleteNotification(notificationId))
             }).fail(e => {
@@ -314,6 +315,7 @@ export function declineProject(projectId, notificationId) {
 export function acceptProject(projectId, notificationId) {
     return function(dispatch) {
         serverAcceptProject(projectId).done(res => {
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Project accepted'}}))
             serverDeleteNotification(notificationId).done(res => {
                 dispatch(_deleteNotification(notificationId))
             }).fail(e => {
@@ -457,7 +459,9 @@ export function initializeFiles(project) {
 export function markDone(id, projectId) {
     return function(dispatch) {
         dispatch(_markDone(id));
-        serverMarkDone(id, projectId).done(res => {}).fail(e => {
+        serverMarkDone(id, projectId).done(res => {
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task completed!'}}))
+        }).fail(e => {
             console.log(e);
             dispatch(_unmarkDone(id));
         });
@@ -471,15 +475,28 @@ export function addTask(task) {
   	return function(dispatch) {
         dispatch(_addTask(task));
         delete task.id
-        serverCreateTask(task)
-        .done(res => {
+        serverCreateTask(task).done(res => {
           // update the stores with the actual id
-          dispatch(replaceTaskId(task.id, res.id));
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task added'}}))
+            dispatch(replaceTaskId(task.id, res.id));
         }).fail(e => {
           console.log(e);
           dispatch(_deleteTask(task.id));
         });
   	}
+}
+
+export function deleteTask(taskId, projectId) {
+    return function(dispatch) {
+        dispatch(markAsDirty(taskId))
+        serverDeleteTask(taskId, projectId).done(res => {
+            dispatch(_deleteTask(taskId));
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task deleted'}}))
+        }).fail(e => {
+            dispatch(unmarkDirty(taskId))
+            console.log(e);
+        });
+    }
 }
 
 export function editTask(task_id, content, assignee_id) {
@@ -491,6 +508,7 @@ export function editTask(task_id, content, assignee_id) {
         serverEditTask(task_id, task)
             .done(res => {
                 dispatch(_editTask(task_id, task));
+                dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task updated'}}))
             }).fail(e => {
             console.log(e);
         });
@@ -508,6 +526,7 @@ export function editMilestone(milestone_id, content, deadline) {
         serverEditMilestone(milestone_id, milestone)
             .done(res => {
                 dispatch(_editMilestone(milestone_id, milestone));
+                dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Milestone updated'}}))
             }).fail(e => {
             console.log(e);
         });
@@ -524,6 +543,7 @@ export function createMilestone(milestone) {
         })
         .done(res => {
             dispatch(replaceMilestoneId(milestone.id, res.id));
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Milestone created'}}))
         }).fail(e => {
             console.log(e);
             dispatch(_deleteMilestone(milestone.id));
@@ -535,6 +555,7 @@ export function deleteMilestone(milestoneId, projectId) {
     return function(dispatch) {
         serverDeleteMilestone(milestoneId, projectId).done(res => {
             dispatch(_deleteMilestone(milestoneId))
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Milestone deleted'}}))
         }).fail(e => {
             console.log(e)
         });
@@ -557,6 +578,7 @@ export function createProject(content) {
                 directory_structure: [],
                 files_loaded: false
             }))
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Project created'}}))
         }).fail(e => {
             console.log(e);
         });
@@ -584,7 +606,8 @@ export function reopenTask(taskId) {
 	return function(dispatch) {
 		dispatch(_unmarkDone(taskId));
 		serverEditTask(taskId, {completed_on: null}).done(res => {
-	    }).fail(e => {
+        dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task reopened'}}))
+    }).fail(e => {
 	        console.log(e);
 	       	dispatch(_markDone(taskId));
 	    });
@@ -796,6 +819,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                             loading: false
                         }
                     }))
+                    dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Synced with GitHub'}}))
                 }).fail(e => {
                     window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
                 });

@@ -96,6 +96,7 @@ class TaskRow extends Component {
             </div>
             <div className={taskActionClass}>
                 <i className="material-icons edit-task" onClick={this.openModal.bind(this, this.props.task.id)}>mode_edit</i>
+                <i className="material-icons delete-task" onClick={this.props.onDelete}>delete</i>
             </div>
             <AvatarList className="assignee-avatar" members={this.props.assignees} />
             {editIndicator}

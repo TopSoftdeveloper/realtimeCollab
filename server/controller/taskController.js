@@ -218,7 +218,7 @@ function markTaskAsDone(request, reply) {
     })
 }
 
-function deleteTask(request, reply) { //todo: don't support deleteTask since github does not allow it too
+function deleteTask(request, reply) {
     var task_id = request.params.task_id;
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
         storage.doesTaskExist(task_id).then(function(exists) {
