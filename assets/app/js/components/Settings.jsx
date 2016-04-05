@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert } from 'react-bootstrap'
+import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert, Button } from 'react-bootstrap'
 import _ from 'lodash'
 let AppConstants = require('../AppConstants');
 import {getCurrentProject} from '../utils/general'
@@ -8,13 +8,20 @@ class Settings extends Component {
     constructor(props, context) {
         super(props, context); 
         this.state = {
-            inputEmail: ''
+            inputEmail: '',
+            inputProjectName: ''
         }            
     }
 
     handleChange() {
         this.setState({
             inputEmail: this.refs.addMemberInput.getValue()
+        });
+    }
+
+    projectNameChange() {
+        this.setState({
+            inputProjectName: this.refs.projectNameInput.getValue()
         });
     }
 
@@ -26,11 +33,18 @@ class Settings extends Component {
         e.preventDefault();
         let email = this.state.inputEmail.trim();
         if (email !== '') {
-            this.props.actions.inviteToProject(this.props.projectId, email);
+            this.props.actions.inviteToProject(this.props.project.id, email);
         }     
         this.setState({
             inputEmail: ''
         });        
+    }
+
+    renameProject(e) {
+        e.preventDefault()
+        if (this.state.inputProjectName.trim()) {
+            
+        }
     }
 
     render() {   
@@ -78,6 +92,17 @@ class Settings extends Component {
                 </Alert>
             );              
         }
+        let project = this.props.project
+        let projectName = project.content
+        let rootFolderName = 'Not yet selected'
+        if (project.root_folder && project.directory_structure[0]) {
+            rootFolderName = project.directory_structure[0].name
+        }
+
+        let githubRepo = 'Not yet selected'
+        if (project.github_repo_owner && project.github_repo_name) {
+            githubRepo = project.github_repo_owner + '/' + project.github_repo_name
+        }
 
         return (
             <div className='settings'>
@@ -87,26 +112,42 @@ class Settings extends Component {
                     <ListGroupItem>
                         {alertPanel}
                         <form onSubmit={this.inviteMember.bind(this)}>
-                            <Input 
-                                type="email" 
-                                label="Search by email" 
+                            <Input
+                                type="email"
+                                label="Search by email"
                                 ref='addMemberInput'
                                 buttonAfter={<ButtonInput value="Invite member" type="submit"/>}
                                 value={this.state.inputEmail}
-                                onChange={this.handleChange.bind(this)} 
+                                onChange={this.handleChange.bind(this)}
                             />
                         </form>
                     </ListGroupItem>
                 </ListGroup>
 
-                <Panel header='Options'>
-                    <form>
-                        <Input 
-                            type="text" 
-                            label="Project name" 
-                            buttonAfter={<ButtonInput value="Rename"/>}
+                <Panel header='Google Integration' bsStyle="info">
+                    <div>Root Folder: <b>{rootFolderName}</b></div>
+                    <br/>
+                    <Button>Select New Root Folder</Button>
+                </Panel>
+
+                <Panel header='GitHub Integration' bsStyle="info">
+                    <div>Default Repository: <b>{githubRepo}</b></div>
+                    <br/>
+                    <Button>Select New Repository</Button>
+                </Panel>
+
+                <Panel header='Options' bsStyle="info">
+                    <form onSubmit={this.renameProject.bind(this)}>
+                        <Input
+                            type="text"
+                            label="Project name"
+                            ref='projectNameInput'
+                            value={projectName}
+                            onChange={this.projectNameChange.bind(this)}
+                            buttonAfter={<ButtonInput value="Rename" type="submit"/>}
                         />
-                    </form>                
+                    </form>
+                    <Button bsStyle="danger">Leave Project</Button>
                 </Panel>                
             </div>
         );

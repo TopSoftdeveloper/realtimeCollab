@@ -59,10 +59,10 @@ class Newsfeed extends Component {
         if (this.props.app.github_token &&
             this.props.repos &&
             !repoSet && !this.state.fetchedRepos) {
-            this.props.actions.initGithubRepos()
             this.setState({
                 fetchedRepos: true
             })
+            this.props.actions.initGithubRepos()
         }
     }
 

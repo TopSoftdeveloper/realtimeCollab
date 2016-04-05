@@ -35,7 +35,6 @@ class Project extends Component {
         const actions = bindActionCreators(Actions, dispatch)
         const currentProjectId = getCurrentProject()
 
-        let projectName = '';
         let basicUsers = [];
         let pendingUsers = [];
         let projectCreator = '';
@@ -49,7 +48,6 @@ class Project extends Component {
             projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
             basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
             pendingUsers = users.filter(user => isItemPresent(pendingUserIds, user.id));
-            projectName = currentProject.content;
         } else {
             return (<_404 />);
         }
@@ -129,8 +127,7 @@ class Project extends Component {
                          value={AppConstants.PATH.settings}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.settings)}>
                         <Settings
-                            projectName={projectName}
-                            projectId={currentProjectId}
+                            project={currentProject}
                             pendingUsers={pendingUsers}
                             allActiveUsers={allActiveUsers}
                             actions={actions}
