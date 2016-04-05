@@ -366,6 +366,7 @@
 .loading-indicator {
   left: 45%;
   position: absolute;
+  margin-top: 15px;
 }
 
 .collab-logo h3 {

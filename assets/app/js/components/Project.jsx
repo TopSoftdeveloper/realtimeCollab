@@ -132,6 +132,7 @@ class Project extends Component {
                             allActiveUsers={allActiveUsers}
                             actions={actions}
                             alerts={alerts}
+                            app={app}
                         />
                     </Tab>
                 </Tabs>

@@ -281,15 +281,19 @@ class Files extends Component {
             )
         } else if (app.is_linked_to_drive && !project.root_folder) {
             currentStep = 1
+            let setDirectoryBtn = null
+            if (!app.files.loading) {
+                setDirectoryBtn = <RaisedButton
+                    className="set-root-dir"
+                    label="Set current directory as root"
+                    onTouchTap={this.setAsRoot.bind(this, currentDirectory.id)}
+                    secondary={true}
+                />
+            }
             content = (
                 <div>
                     {filesList}
-                    <RaisedButton
-                        className="set-root-dir"
-                        label="Set current directory as root"
-                        onTouchTap={this.setAsRoot.bind(this, currentDirectory.id)}
-                        secondary={true}
-                    />
+                    {setDirectoryBtn}
                 </div>
             )
         }

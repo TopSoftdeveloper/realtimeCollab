@@ -148,7 +148,7 @@ class App extends Component {
                 <Snackbar
                     open={app.snackbar.isOpen}
                     message={app.snackbar.message}
-                    autoHideDuration={4000}
+                    autoHideDuration={5000}
                     onRequestClose={this.handleSnackbarClose.bind(this)}
                 />
             </div>

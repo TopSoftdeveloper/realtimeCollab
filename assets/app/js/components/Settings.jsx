@@ -3,6 +3,8 @@ import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert, Button } fr
 import _ from 'lodash'
 let AppConstants = require('../AppConstants');
 import {getCurrentProject} from '../utils/general'
+import LoadingIndicator from './LoadingIndicator.jsx'
+import { browserHistory } from 'react-router'
 
 class Settings extends Component {
     constructor(props, context) {
@@ -11,6 +13,19 @@ class Settings extends Component {
             inputEmail: '',
             inputProjectName: ''
         }            
+    }
+    selectRootFolder() {
+        let projectId = this.props.project.id
+        this.props.actions.updateProject(projectId, {
+            root_folder: null,
+            directory_structure: [{name: 'Top level directory', id: 'root'}]
+        })
+        if (!this.props.app.is_top_level_folder_loaded) {
+            this.props.actions.initTopLevelFolders()
+        }
+
+        let projectUrl = '/app/project/' + projectId + '/files'
+        browserHistory.push(projectUrl)
     }
 
     handleChange() {
@@ -43,11 +58,20 @@ class Settings extends Component {
     renameProject(e) {
         e.preventDefault()
         if (this.state.inputProjectName.trim()) {
-            
+            this.props.actions.renameProject(this.props.project.id, this.state.inputProjectName)
         }
     }
 
-    render() {   
+    render() {
+
+        if (this.props.app.github.loading || this.props.app.files.loading) {
+            return (
+                <div className='settings'>
+                    <LoadingIndicator/>
+                </div>
+            )
+        }
+
         let listGroups = [];
         let alertStatus = this.props.alerts.project_invitation;
 
@@ -93,7 +117,6 @@ class Settings extends Component {
             );              
         }
         let project = this.props.project
-        let projectName = project.content
         let rootFolderName = 'Not yet selected'
         if (project.root_folder && project.directory_structure[0]) {
             rootFolderName = project.directory_structure[0].name
@@ -125,24 +148,25 @@ class Settings extends Component {
                 </ListGroup>
 
                 <Panel header='Google Integration' bsStyle="info">
-                    <div>Root Folder: <b>{rootFolderName}</b></div>
+                    <div><b>Root folder: {rootFolderName}</b></div>
                     <br/>
-                    <Button>Select New Root Folder</Button>
+                    <Button onClick={this.selectRootFolder.bind(this)}>Select new root folder</Button>
                 </Panel>
 
                 <Panel header='GitHub Integration' bsStyle="info">
-                    <div>Default Repository: <b>{githubRepo}</b></div>
+                    <div><b>Default repository: {githubRepo}</b></div>
                     <br/>
-                    <Button>Select New Repository</Button>
+                    <Button>Select new repository</Button>
                 </Panel>
 
                 <Panel header='Options' bsStyle="info">
                     <form onSubmit={this.renameProject.bind(this)}>
                         <Input
                             type="text"
-                            label="Project name"
+                            label={"Project name: " + this.props.project.content}
                             ref='projectNameInput'
-                            value={projectName}
+                            value={this.state.inputProjectName}
+                            placeholder="New project name"
                             onChange={this.projectNameChange.bind(this)}
                             buttonAfter={<ButtonInput value="Rename" type="submit"/>}
                         />

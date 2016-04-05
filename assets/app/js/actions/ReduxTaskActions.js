@@ -363,6 +363,7 @@ export function initializeApp() {
         }]));
         dispatch(initApp({
             is_linked_to_drive: true,
+            is_top_level_folder_loaded: false,
             refresh_github_token: false,
             github: {
                 loading: false
@@ -697,7 +698,8 @@ export function initTopLevelFolders(projectId) {
                 dispatch(_updateAppStatus({
                     files: {
                         loading: false
-                    }
+                    },
+                    is_top_level_folder_loaded: true
                 }))
             }, function (err) {
                 console.log(err)
@@ -762,6 +764,7 @@ export function setDirectoryAsRoot(projectId, folderId) {
     return function(dispatch) {
         serverUpdateProject(projectId, {root_folder: folderId}).done(res => {
             dispatch(_setDirectoryAsRoot(projectId, folderId))
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Directory set as root'}}))
         }).fail(e => {
             console.log(e)
         })
@@ -793,6 +796,23 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                     //window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
                 });
             })
+        }).fail(e => {
+            console.log(e)
+        })
+    }
+}
+
+export function updateProject(projectId, payload) {
+    return function(dispatch) {
+        dispatch(_updateProject(projectId, payload))
+    }
+}
+
+export function renameProject(projectId, name) {
+    return function(dispatch) {
+        serverUpdateProject(projectId, {content: name}).done(res => {
+            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Project renamed to ' + name}}))
+            dispatch(_updateProject(projectId, {content: name}))
         }).fail(e => {
             console.log(e)
         })
