@@ -28,9 +28,11 @@ function makeActionCreator(type, ...argNames) {
 
 /**
  * Reducers listen for action types (the first parameter, referenced through AppConstants)
- * emitted by dispatched actionCreators
+ * emitted by dispatched actionCreators. Note: the first parameter of the action creator is already
+ * named "type". So DO NOT name other parameters as "type".
  */
 export const _updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app')
+export const snackbarMessage = makeActionCreator(AppConstants.SNACKBAR_MESSAGE, 'message', 'kind');
 export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original', 'replacement');
 export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID, 'original', 'replacement');
 export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
@@ -123,7 +125,7 @@ export function uploadFileToDrive(file, directory) {
             uploadFile(multipartRequestBody).then(newFile => {
                 dispatch(deleteFile(file.id))
                 dispatch(insertFile(newFile))
-                dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Uploaded ' + fileData.name}}))
+                dispatch(snackbarMessage('Uploaded ' + fileData.name, 'default'))
             }, function (err) {
                 console.log(err)
             })
@@ -300,7 +302,7 @@ export function dismissProjectAlert() {
 export function declineProject(projectId, notificationId) {
     return function(dispatch) {
         serverDeclineProject(projectId).done(res => {
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Project declined'}}))
+            dispatch(snackbarMessage('Project declined', 'default'))
             serverDeleteNotification(notificationId).done(res => {
                 dispatch(_deleteNotification(notificationId))
             }).fail(e => {
@@ -315,7 +317,7 @@ export function declineProject(projectId, notificationId) {
 export function acceptProject(projectId, notificationId) {
     return function(dispatch) {
         serverAcceptProject(projectId).done(res => {
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Project accepted'}}))
+            dispatch(snackbarMessage('Project accepted', 'default'))
             serverDeleteNotification(notificationId).done(res => {
                 dispatch(_deleteNotification(notificationId))
             }).fail(e => {
@@ -387,7 +389,8 @@ export function initializeApp() {
             searchFilter: 'all',
             snackbar: {
                 isOpen: false,
-                message: ''
+                message: '',
+                background: ''
             }
         }));
 
@@ -468,7 +471,7 @@ export function markDone(id, projectId) {
     return function(dispatch) {
         dispatch(_markDone(id));
         serverMarkDone(id, projectId).done(res => {
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task completed!'}}))
+            dispatch(snackbarMessage('Task completed', 'default'))
         }).fail(e => {
             console.log(e);
             dispatch(_unmarkDone(id));
@@ -485,7 +488,7 @@ export function addTask(task) {
         delete task.id
         serverCreateTask(task).done(res => {
           // update the stores with the actual id
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task added'}}))
+            dispatch(snackbarMessage('Task added', 'info'))
             dispatch(replaceTaskId(task.id, res.id));
         }).fail(e => {
           console.log(e);
@@ -499,7 +502,7 @@ export function deleteTask(taskId, projectId) {
         dispatch(markAsDirty(taskId))
         serverDeleteTask(taskId, projectId).done(res => {
             dispatch(_deleteTask(taskId));
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task deleted'}}))
+            dispatch(snackbarMessage('Task deleted', 'warning'))
         }).fail(e => {
             dispatch(unmarkDirty(taskId))
             console.log(e);
@@ -516,7 +519,7 @@ export function editTask(task_id, content, assignee_id) {
         serverEditTask(task_id, task)
             .done(res => {
                 dispatch(_editTask(task_id, task));
-                dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task updated'}}))
+                dispatch(snackbarMessage('Task updated', 'default'))
             }).fail(e => {
             console.log(e);
         });
@@ -534,7 +537,7 @@ export function editMilestone(milestone_id, content, deadline) {
         serverEditMilestone(milestone_id, milestone)
             .done(res => {
                 dispatch(_editMilestone(milestone_id, milestone));
-                dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Milestone updated'}}))
+                dispatch(snackbarMessage('Milestone updated', 'default'))
             }).fail(e => {
             console.log(e);
         });
@@ -551,7 +554,7 @@ export function createMilestone(milestone) {
         })
         .done(res => {
             dispatch(replaceMilestoneId(milestone.id, res.id));
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Milestone created'}}))
+            dispatch(snackbarMessage('Milestone created', 'default'))
         }).fail(e => {
             console.log(e);
             dispatch(_deleteMilestone(milestone.id));
@@ -563,7 +566,7 @@ export function deleteMilestone(milestoneId, projectId) {
     return function(dispatch) {
         serverDeleteMilestone(milestoneId, projectId).done(res => {
             dispatch(_deleteMilestone(milestoneId))
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Milestone deleted'}}))
+            dispatch(snackbarMessage('Milestone deleted', 'default'))
         }).fail(e => {
             console.log(e)
         });
@@ -586,7 +589,7 @@ export function createProject(content) {
                 directory_structure: [],
                 files_loaded: false
             }))
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Project created'}}))
+            dispatch(snackbarMessage('Project created', 'default'))
         }).fail(e => {
             console.log(e);
         });
@@ -614,7 +617,7 @@ export function reopenTask(taskId) {
 	return function(dispatch) {
 		dispatch(_unmarkDone(taskId));
 		serverEditTask(taskId, {completed_on: null}).done(res => {
-        dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Task reopened'}}))
+        dispatch(snackbarMessage('Task reopened', 'default'))
     }).fail(e => {
 	        console.log(e);
 	       	dispatch(_markDone(taskId));
@@ -810,7 +813,7 @@ export function setDirectoryAsRoot(projectId, folderId) {
     return function(dispatch) {
         serverUpdateProject(projectId, {root_folder: folderId}).done(res => {
             dispatch(_setDirectoryAsRoot(projectId, folderId))
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Directory set as root'}}))
+            dispatch(snackbarMessage('Directory set as root', 'default'))
         }).fail(e => {
             console.log(e)
         })
@@ -838,7 +841,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                             loading: false
                         }
                     }))
-                    dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Synced with GitHub'}}))
+                    dispatch(snackbarMessage('Synced with GitHub', 'default'))
                 }).fail(e => {
                     window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
                 });
@@ -858,7 +861,7 @@ export function updateProject(projectId, payload) {
 export function renameProject(projectId, name) {
     return function(dispatch) {
         serverUpdateProject(projectId, {content: name}).done(res => {
-            dispatch(_updateAppStatus({snackbar: {isOpen: true, message: 'Project renamed to ' + name}}))
+            dispatch(snackbarMessage('Project renamed to ' + name, 'default'))
             dispatch(_updateProject(projectId, {content: name}))
         }).fail(e => {
             console.log(e)

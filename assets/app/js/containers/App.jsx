@@ -150,6 +150,7 @@ class App extends Component {
                     open={app.snackbar.isOpen}
                     message={app.snackbar.message}
                     autoHideDuration={5000}
+                    bodyStyle={{background: app.snackbar.background}}
                     onRequestClose={this.handleSnackbarClose.bind(this)}
                 />
             </div>
