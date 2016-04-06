@@ -215,9 +215,14 @@ class Settings extends Component {
         }
 
         if (!this.props.app.github.loading) {
+            let style = {}
+            if (project.github_error) {
+                githubRepo = project.github_error
+                style={color: 'red'}
+            }
             githubPanel = (
                 <div>
-                    <span><b>Default repository: {githubRepo}</b></span>
+                    <span style={style}><b>Default repository: {githubRepo}</b></span>
                     {selectNewRepoBtn}
                     <br/>
                     <br/>

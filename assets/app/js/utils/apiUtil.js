@@ -30,6 +30,16 @@ export function queryGoogleDrive(queryString) {
     })
 }
 
+export function listRepoEvents(owner, repo) {
+    return $.ajax({
+        url: 'https://api.github.com/repos/' + owner + '/' + repo + '/events',
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('github_token')
+        },
+        type: 'GET'
+    })
+}
+
 export function queryGithub(queryString, ownerRepos) {
     return $.ajax({
         url: 'https://api.github.com/search/code?q=' + queryString + '+in:file,path' + ownerRepos,

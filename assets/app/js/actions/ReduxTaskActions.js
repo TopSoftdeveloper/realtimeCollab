@@ -4,7 +4,8 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
         syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub,
-        queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed, refreshTokens} from '../utils/apiUtil'
+        queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed, refreshTokens,
+        listRepoEvents} from '../utils/apiUtil'
 import {getCurrentProject} from '../utils/general'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
@@ -136,6 +137,25 @@ export function uploadFileToDrive(file, directory) {
 export function updateGithubLogin(token) {
     return function(dispatch) {
         serverUpdateGithubLogin(token)
+    }
+}
+
+function testGithubRepos(projects) {
+    // Tests whether user can successfully call a repo's API
+    // So we can tell whether a repo has been removed, or there's
+    // something wrong with the authentication
+    return function(dispatch) {
+        projects.forEach(project => {
+            listRepoEvents(project.github_repo_owner, project.github_repo_name).done(res => {
+            }).fail(e => {
+                console.error(e)
+                let errorMsg = project.github_repo_owner + '/' + project.github_repo_name + ' is ' + e.responseJSON.message
+                dispatch(snackbarMessage(errorMsg, 'warning'))
+                dispatch(_updateProject(project.id, {
+                    github_error: errorMsg
+                }))
+            })
+        })
     }
 }
 
@@ -411,6 +431,7 @@ export function initializeApp() {
                 })
                 dispatch(addUsers(u));
 
+                dispatch(testGithubRepos(normalizedTables.projects))
                 refreshTokens().done(res => {
                     localStorage.setItem('google_token', res.access_token);
                     localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
