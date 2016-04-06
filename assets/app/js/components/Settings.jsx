@@ -201,9 +201,14 @@ class Settings extends Component {
         let githubPanel = <LoadingIndicator className="loading-indicator-left" size={0.4}/>
 
         if (!this.props.app.files.loading) {
+            let style = {}
+            if (project.folder_error) {
+                rootFolderName = project.folder_error
+                style={color: 'red'}
+            }
             googlePanel = (
                 <div>
-                    <span><b>Root folder: {rootFolderName}</b></span>
+                    <span style={style}><b>Root folder: {rootFolderName}</b></span>
                     <Button onClick={this.selectRootFolder.bind(this)} className="settings-btn">Select new root folder</Button>
                 </div>
             )

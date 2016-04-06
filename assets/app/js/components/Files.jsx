@@ -169,13 +169,18 @@ class FilesList extends Component {
                 )
             })
 
-            table = (
-                <Table>
-                    <tbody>
-                    {rows}
-                    </tbody>
-                </Table>
-            )
+            if (rows.length === 0) {
+                table = <div className="no-items"><h3>No files here</h3></div>
+            } else {
+                table = (
+                    <Table>
+                        <tbody>
+                        {rows}
+                        </tbody>
+                    </Table>
+                )
+            }
+
         } // not loading
 
         let dropzone = null

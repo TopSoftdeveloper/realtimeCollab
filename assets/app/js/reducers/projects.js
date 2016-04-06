@@ -62,7 +62,8 @@ export default function projects(state=[], action) {
                     let updatedDirStructure = project.directory_structure.filter(dir => dir.id === action.dirId)
                     return assign({}, project, {
                         root_folder : action.dirId,
-                        directory_structure: updatedDirStructure
+                        directory_structure: updatedDirStructure,
+                        folder_error: ''
                     })
                 } else {
                     return project

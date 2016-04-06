@@ -415,7 +415,10 @@ export function initializeApp() {
                     localStorage.setItem('google_token', res.access_token);
                     localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
                     let projectId = getCurrentProject()
-                    dispatch(initializeFiles(normalizedTables.projects.filter(project => project.id === projectId)[0]))
+                    var currentProject = normalizedTables.projects.filter(project => project.id === projectId)[0]
+                    if (currentProject) {
+                        dispatch(initializeFiles(currentProject))
+                    }
 
                     if (hasProjectWithoutGithub(normalizedTables.projects)) {
                         dispatch(initGithubRepos())
@@ -488,7 +491,7 @@ export function addTask(task) {
         delete task.id
         serverCreateTask(task).done(res => {
           // update the stores with the actual id
-            dispatch(snackbarMessage('Task added', 'info'))
+            dispatch(snackbarMessage('Task added', 'default'))
             dispatch(replaceTaskId(task.id, res.id));
         }).fail(e => {
           console.log(e);
@@ -502,7 +505,7 @@ export function deleteTask(taskId, projectId) {
         dispatch(markAsDirty(taskId))
         serverDeleteTask(taskId, projectId).done(res => {
             dispatch(_deleteTask(taskId));
-            dispatch(snackbarMessage('Task deleted', 'warning'))
+            dispatch(snackbarMessage('Task deleted', 'default'))
         }).fail(e => {
             dispatch(unmarkDirty(taskId))
             console.log(e);
@@ -777,7 +780,10 @@ export function initChildrenFiles(projectId, folderId, folderName) {
                     }))
                 }, function (err) {
                     if (err.responseJSON.error.errors[0].reason === 'notFound') {
-                        console.log("Either the folder is deleted or you don't have permission to view this folder")
+                        dispatch(snackbarMessage("Either the root folder is deleted, or you don't have permission to view this folder", 'warning'))
+                        dispatch(_updateProject(projectId, {
+                            folder_error: "Either the root folder is deleted, or you don't have permission to view this folder"
+                        }))
                     }
                     dispatch(_updateAppStatus({
                         files: {
