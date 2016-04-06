@@ -36,12 +36,18 @@ class Header extends Component {
         return { muiTheme: ThemeManager.getMuiTheme(MyRawTheme) }
     }
 
-    componentDidUpdate() {
+    componentDidMount() {
         if (!this.state.isHangoutBtnRendered && $('#hangouts-btn-placeholder').length) {
-            gapi.hangout.render('hangouts-btn-placeholder', { 'render': 'createhangout' });
-            this.setState({
-                isHangoutBtnRendered: true
-            })
+            var interval = setInterval(function() {
+                if (gapi && gapi.hangout) {
+                    clearInterval(interval)
+                    gapi.hangout.render('hangouts-btn-placeholder', { 'render': 'createhangout' });
+                    this.setState({
+                        isHangoutBtnRendered: true
+                    })
+                } else {
+                }
+            }.bind(this), 1000)
         }
     }
 

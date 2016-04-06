@@ -773,11 +773,22 @@ export function initChildrenFiles(projectId, folderId, folderName) {
                         }
                     }))
                 }, function (err) {
-                    console.log(err)
+                    if (err.responseJSON.error.errors[0].reason === 'notFound') {
+                        console.log("Either the folder is deleted or you don't have permission to view this folder")
+                    }
+                    dispatch(_updateAppStatus({
+                        files: {
+                            loading: false
+                        }
+                    }))
                 })
             }
         }, function (err) {
-            console.log(err)
+            dispatch(_updateAppStatus({
+                files: {
+                    loading: false
+                }
+            }))
         })
     }
 }
