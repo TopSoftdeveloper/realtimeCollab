@@ -25,7 +25,7 @@ module.exports = {
             payload.created_at = timestamp
             payload.updated_at = timestamp
         }
-        return Newsfeed.create();
+        return Newsfeed.create(payload);
     },
 
     getNewsfeed: function(projectId, limit) {
@@ -141,7 +141,17 @@ module.exports = {
             }
         });
     },
+    getProjectsWithCondition: function(condition) {
+        return Project.findAll({
+            where: condition
+        })
+    },
 
+    getUsersWithCondition: function(condition) {
+        return User.findAll({
+            where: condition
+        })
+    },
     getProject: function(id) {
         return Project.findById(id)
     },

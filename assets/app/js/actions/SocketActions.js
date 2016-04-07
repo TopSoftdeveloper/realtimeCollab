@@ -2,6 +2,7 @@ import io from 'socket.io-client'
 let host = 'ws://localhost:4001/'
 let socket = io.connect(host)
 import * as Actions from '../actions/ReduxTaskActions'
+var templates = require('../../../../server/templates.js')
 
 export function userIsOnline() {
     // informs server that the current logged in user is online
@@ -107,7 +108,6 @@ export function monitorProjectChanges() {
                 dispatch(Actions._editMilestone(data.milestone_id, data.milestone));
             }
         })
-
         socket.on('delete_milestone', (data) => {
             let name = getName(data.sender, getState().users)
             if (name) {
@@ -116,7 +116,6 @@ export function monitorProjectChanges() {
                 dispatch(Actions._deleteMilestone(data.milestone_id));
             }
         })
-
         socket.on('update_project', (data) => {
             let name = getName(data.sender, getState().users)
             if (name) {
@@ -125,7 +124,16 @@ export function monitorProjectChanges() {
                 dispatch(Actions._editMilestone(data.project_id, data.project));
             }
         })
-
+        socket.on('newsfeed_post', (event) => {
+            let data = JSON.parse(event.data)
+            let targetUser = getState().users.filter(user => user.id === data.user_id)
+            if (targetUser.length === 1) {
+                targetUser = targetUser[0]
+                data.displayName = targetUser.display_name
+                dispatch(Actions.snackbarMessage(templates.getMessage(event.template, data)), 'info')
+            }
+            dispatch(Actions.addNewsfeedEvents([event]));
+        })
     }
 }
 

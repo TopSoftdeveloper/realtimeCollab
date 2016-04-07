@@ -1,5 +1,7 @@
 import AppConstants from '../AppConstants';
 import assign from 'object-assign';
+import {filterUnique} from '../utils/general'
+
 // Example state tree:
 // [
 //     {
@@ -23,7 +25,7 @@ import assign from 'object-assign';
 export default function users(state=[], action) {
     switch (action.type) {
         case AppConstants.INIT_USERS:
-            return action.users;        
+            return filterUnique(action.users);
         case AppConstants.USER_ONLINE:
         	return state.map(user => 
         		user.id === action.id ? 
@@ -33,11 +35,12 @@ export default function users(state=[], action) {
         		user.id === action.id ? 
         		assign({}, user, {online: false}): user);
         case AppConstants.ADD_USERS:
+            let users = filterUnique(action.users)
             let usersToAdd = []
-            for (let i=0; i<action.users.length; ++i) {
-                let matchingUsers = state.filter(user => user.id === action.users[i].id)
+            for (let i=0; i<users.length; ++i) {
+                let matchingUsers = state.filter(user => user.id === users[i].id)
                 if (matchingUsers.length === 0) {
-                    usersToAdd.push(action.users[i])
+                    usersToAdd.push(users[i])
                 }
             }
             return [...state, ...usersToAdd]

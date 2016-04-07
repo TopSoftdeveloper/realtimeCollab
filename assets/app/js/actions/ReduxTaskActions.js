@@ -3,7 +3,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
-        syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub,
+        syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
         queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed, refreshTokens,
         listRepoEvents} from '../utils/apiUtil'
 import {getCurrentProject} from '../utils/general'
@@ -890,6 +890,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                     loading: true
                 }
             }))
+            setupGithubWebhook(repoName, repoOwner)
             syncGithubIssues(projectId, repoName, repoOwner).done(res => {
                 serverPopulate().done(res => {
                     if (res.projects.length > 0) {

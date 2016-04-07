@@ -29,7 +29,7 @@ export default function newsfeed(state=[], action) {
                     eventsToAdd.push(action.events[i])
                 }
             }
-            return [...state, ...eventsToAdd]
+            return [...eventsToAdd, ...state]
         default:
             return state;
     }
