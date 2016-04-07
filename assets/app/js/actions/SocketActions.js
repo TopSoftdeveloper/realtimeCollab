@@ -116,6 +116,16 @@ export function monitorProjectChanges() {
                 dispatch(Actions._deleteMilestone(data.milestone_id));
             }
         })
+
+        socket.on('update_project', (data) => {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let projectName = getState().projects.filter(p => p.id === data.project_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' updated the project ' + projectName, 'info'))
+                dispatch(Actions._editMilestone(data.project_id, data.project));
+            }
+        })
+
     }
 }
 
@@ -124,6 +134,7 @@ export function monitorNotifications() {
         socket.on('new_notification', (data) => {
             dispatch(Actions.addUsers([data.user]))
             dispatch(Actions.newNotification(data.notification))
+            dispatch(Actions.snackbarMessage(data.notification.text, 'info'))
         })
     }
 }

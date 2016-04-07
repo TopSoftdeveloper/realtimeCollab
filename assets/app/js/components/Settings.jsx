@@ -321,6 +321,7 @@ class Settings extends Component {
                             buttonAfter={<ButtonInput value="Rename" type="submit"/>}
                         />
                     </form>
+                    <br/>
                 </Panel>
             </div>
         );

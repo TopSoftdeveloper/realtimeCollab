@@ -8,6 +8,7 @@ var notifications = require('./notificationController')
 var templates = require('./../templates')
 var accessControl = require('./accessControl');
 var _ = require('lodash')
+var socket = require('./socket/handlers');
 
 
 module.exports = {
@@ -68,6 +69,10 @@ function updateProject(request, reply) {
         }
         storage.updateProject(request.payload, projectId).then(function() {
             reply({status: constants.STATUS_OK})
+            socket.sendMessageToProject(projectId, 'update_project', {
+                project_id: projectId, sender: user_id, project: request.payload
+            })
+
         }, function(error) {
             reply(Boom.internal(error));
         })
@@ -122,7 +127,7 @@ function inviteToProject(request, reply) {
             return project.id === request.payload.project_id
         })
 
-        if (err || matchingProjects.length !== 1) {
+        if (matchingProjects.length !== 1) {
             reply(Boom.forbidden(constants.FORBIDDEN));
             return;
         }

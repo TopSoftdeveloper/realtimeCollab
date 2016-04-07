@@ -7,7 +7,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed, refreshTokens,
         listRepoEvents} from '../utils/apiUtil'
 import {getCurrentProject} from '../utils/general'
-import {isObjectPresent} from '../utils/general'
+import {isObjectPresent, filterUnique} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
 import Fuse from 'fuse.js'
@@ -149,7 +149,6 @@ function testGithubRepos(projects) {
             if (project.github_repo_owner && project.github_repo_name) {
                 listRepoEvents(project.github_repo_owner, project.github_repo_name).done(res => {
                 }).fail(e => {
-                    console.error(e)
                     let errorMsg = project.github_repo_owner + '/' + project.github_repo_name + ' is ' + e.responseJSON.message
                     dispatch(snackbarMessage(errorMsg, 'warning'))
                     dispatch(_updateProject(project.id, {
@@ -340,6 +339,32 @@ export function acceptProject(projectId, notificationId) {
     return function(dispatch) {
         serverAcceptProject(projectId).done(res => {
             dispatch(snackbarMessage('Project accepted', 'default'))
+            dispatch(_updateAppStatus({
+                loading: true
+            }));
+            serverPopulate().done(res => {
+                if (res.projects.length > 0) {
+                    let normalizedTables = normalize(res.projects);
+                    dispatch(initMilestones(normalizedTables.milestones));
+                    dispatch(initProjects(normalizedTables.projects));
+                    dispatch(initTasks(normalizedTables.tasks));
+                    dispatch(initSearchResults([]));
+                    let u = normalizedTables.users.map(user => {
+                        user.colour = getNewColour(normalizedTables.users.map(k => k.colour))
+                        return user
+                    })
+                    dispatch(addUsers(u));
+                    let projectId = getCurrentProject()
+                    let currentProject = normalizedTables.projects.filter(project => project.id === projectId)[0]
+                    if (currentProject) {
+                        dispatch(initializeFiles(currentProject))
+                    }
+                }
+                dispatch(_updateAppStatus({
+                    loading: false
+                }));
+            })
+
             serverDeleteNotification(notificationId).done(res => {
                 dispatch(_deleteNotification(notificationId))
             }).fail(e => {
@@ -431,6 +456,7 @@ export function initializeApp() {
                     user.colour = getNewColour(normalizedTables.users.map(k => k.colour))
                     return user
                 })
+                console.log(u)
                 dispatch(addUsers(u));
 
                 dispatch(testGithubRepos(normalizedTables.projects))
@@ -463,10 +489,12 @@ export function initializeApp() {
         });
 
         serverGetNotifications().done(res => {
+            let users = filterUnique(res.users)
             let u = res.users.map(user => {
-                user.colour = getNewColour(res.users.map(k => k.colour))
+                user.colour = getNewColour(users.map(k => k.colour))
                 return user
             })
+
             dispatch(addUsers(u));
             dispatch(initNotifications(res.notifications));
         }).fail(e => {
@@ -480,6 +508,7 @@ export function initializeApp() {
         })
     }
 }
+
 
 export function initializeFiles(project) {
     return function(dispatch) {

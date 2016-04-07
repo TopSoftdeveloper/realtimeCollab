@@ -36,7 +36,7 @@ module.exports = {
                 var projectName = res[1].content
                 var message = templates.getMessage(template, {displayName: displayName, projectName: projectName})
                 var link = templates.getLink(notification.id)
-                this.broadcastToUser(recipientId, notification.id, message, notification.created_at, link, data)
+                this.broadcastToUser(recipientId, notification.id, message, notification.created_at, link, template, data)
             }.bind(this))
         }.bind(this), function(err) {
             console.error(err)
@@ -66,12 +66,13 @@ module.exports = {
 
         if (meta && meta.user_id) {
             storage.findUserById(meta.user_id).done(function(user) {
-                var user = {
-                    id: user[0].id,
-                    display_name: user[0].display_name,
-                    display_image: user[0].display_image,
-                    email: user[0].email,
-                    online: false
+                user = JSON.parse(JSON.stringify(user))
+                user = {
+                    id: user.id,
+                    display_name: user.display_name,
+                    display_image: user.display_image,
+                    email: user.email,
+                    online: true
                 }
                 var payload = {
                     notification: notif,
