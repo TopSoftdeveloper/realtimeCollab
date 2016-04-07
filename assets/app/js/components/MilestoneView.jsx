@@ -68,10 +68,7 @@ class MilestoneView extends Component {
     }
 
     markDone(task_id) {
-        // slight timeout for animation to take effect
-        setTimeout(function() {
-            this.props.actions.markDone(task_id, this.props.projectId)
-        }.bind(this), 300)
+        this.props.actions.markDone(task_id, this.props.projectId)
     }
 
     getCompletedTasks(milestone_id) {
