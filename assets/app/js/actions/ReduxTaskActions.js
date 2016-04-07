@@ -146,15 +146,17 @@ function testGithubRepos(projects) {
     // something wrong with the authentication
     return function(dispatch) {
         projects.forEach(project => {
-            listRepoEvents(project.github_repo_owner, project.github_repo_name).done(res => {
-            }).fail(e => {
-                console.error(e)
-                let errorMsg = project.github_repo_owner + '/' + project.github_repo_name + ' is ' + e.responseJSON.message
-                dispatch(snackbarMessage(errorMsg, 'warning'))
-                dispatch(_updateProject(project.id, {
-                    github_error: errorMsg
-                }))
-            })
+            if (project.github_repo_owner && project.github_repo_name) {
+                listRepoEvents(project.github_repo_owner, project.github_repo_name).done(res => {
+                }).fail(e => {
+                    console.error(e)
+                    let errorMsg = project.github_repo_owner + '/' + project.github_repo_name + ' is ' + e.responseJSON.message
+                    dispatch(snackbarMessage(errorMsg, 'warning'))
+                    dispatch(_updateProject(project.id, {
+                        github_error: errorMsg
+                    }))
+                })
+            }
         })
     }
 }
@@ -288,7 +290,7 @@ export function initGithubRepos() {
             dispatch(_updateAppStatus({
                 github: {
                     loading: false,
-                    repo_fetched: false
+                    repo_fetched: true
                 }
             }))
             dispatch(_initGithubRepos(res))
@@ -897,9 +899,14 @@ export function renameProject(projectId, name) {
 }
 
 export function switchToProject(project) {
-    return function(dispatch) {
+    return function(dispatch, getState) {
         dispatch(initializeFiles(project))
         dispatch(switchChatRoom(project.chatroom))
+        let app = getState().app
+
+        if (!app.github.repo_fetched && !project.github_repo_name) {
+            dispatch(initGithubRepos())
+        }
         dispatch(_switchToProject(project.id))
     }
 }

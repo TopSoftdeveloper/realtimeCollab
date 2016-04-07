@@ -7,10 +7,7 @@ var accessControl = require('./accessControl');
 var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
 var config = require('config');
-var Jwt = require('jsonwebtoken');
-var Promise = require("bluebird");
 var github = require('./githubController')
-var secret_key = config.get('authentication.privateKey');
 
 module.exports = {
     createMilestone: {

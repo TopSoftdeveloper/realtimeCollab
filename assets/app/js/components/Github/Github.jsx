@@ -113,6 +113,7 @@ class Github extends Component {
                         repos={this.props.repos}
                         syncWithGithub={this.syncWithGithub.bind(this)}
                         projectId={this.props.project.id}
+                        reposFetched={app.github.repo_fetched}
                     />
                 </div>
             )

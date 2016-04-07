@@ -38,6 +38,16 @@ class List extends Component {
             )
         })
 
+        if (repos.length === 0 && this.props.reposFetched) {
+            return (
+                <div className="github-repo-list">
+                    <div className="no-items">
+                        <h3>You don't have any GitHub repositories!</h3>
+                    </div>
+                </div>
+            )
+        }
+
         return (
             <div className="github-repo-list">
                 <ul>
