@@ -17,27 +17,12 @@ module.exports = {
         handler: createMilestone,
         payload: {
             parse: true
-        },
-        validate: {
-            payload: {
-                content: Joi.string().required(),
-                deadline: Joi.string().isoDate().allow('').default(null),
-                project_id: Joi.string().required(),
-                github_token: Joi.string()
-            }
         }
     },
     updateMilestone: {
         handler: updateMilestone,
         payload: {
             parse: true
-        },
-        validate: {
-            payload: {
-                content: Joi.string(),
-                deadline: Joi.string().isoDate().allow(''),
-                github_token: Joi.string()
-            }
         }
     },
     removeMilestone: {
@@ -74,8 +59,8 @@ function updateMilestone(request, reply) {
                 return;
             }
             storage.updateMilestone(milestone, milestone_id).then(function() {
-                socket.sendMessageToProject(request.payload.project_id, 'update_milestone', {
-                    milestone: milestone, sender: user_id
+                socket.sendMessageToProject(project.id, 'update_milestone', {
+                    milestone: milestone, sender: user_id, milestone_id: milestone_id
                 })
                 reply(milestone);
 
@@ -165,15 +150,16 @@ function deleteMilestone(request, reply) {
                 reply(Boom.forbidden(constants.FORBIDDEN));
                 return;
             }
-        })
 
-        storage.deleteMilestone(milestone_id).then(function() {
-            reply({status: constants.STATUS_OK});
-            socket.sendMessageToProject(project.id, 'delete_milestone', {
-                milestone_id: milestone_id, sender: user_id
-            })
-            if (!token) return
-            github.deleteGithubMilestone(project.github_repo_owner, project.github_repo_name, token, milestone.github_number)
-        });
+            storage.deleteMilestone(milestone_id).then(function() {
+                reply({status: constants.STATUS_OK});
+                socket.sendMessageToProject(project.id, 'delete_milestone', {
+                    milestone_id: milestone_id, sender: user_id
+                })
+                if (!token) return
+                github.deleteGithubMilestone(project.github_repo_owner, project.github_repo_name, token, milestone.github_number)
+            });
+
+        })
     })
 }

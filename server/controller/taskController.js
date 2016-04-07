@@ -78,8 +78,9 @@ function updateTask(request, reply) {
 
             storage.updateTask(request.payload, task_id).then(function() {
                 reply({status: constants.STATUS_OK});
+
                 socket.sendMessageToProject(project.id, 'update_task', {
-                    task: request.payload, sender: user_id
+                    task: request.payload, sender: user_id, task_id: task_id
                 })
                 if (!token) return
                 // Add the same task to github issues

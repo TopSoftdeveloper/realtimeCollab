@@ -49,30 +49,70 @@ export function monitorOnlineStatus() {
     }
 }
 
+function getName(sender, users) {
+    // returns sender name if sender exists but is not current user
+    if (sender === localStorage.getItem('user_id')) return false
+    let name = users.filter(user => user.id === sender)[0]
+    if (name) {
+        return name.display_name
+    }
+    return false
+}
+
 export function monitorProjectChanges() {
-    return function(dispatch) {
+    return function(dispatch, getState) {
         socket.on('new_task', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                dispatch(Actions.snackbarMessage(name + ' added the task ' + data.task.content, 'info'))
                 dispatch(Actions._addTask(data.task));
             }
         })
+        socket.on('update_task', (data) => {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let taskName = getState().tasks.filter(task => task.id === data.task_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' updated the task ' + taskName, 'info'))
+                dispatch(Actions._editTask(data.task_id, data.task));
+            }
+        })
         socket.on('mark_done', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let taskName = getState().tasks.filter(task => task.id === data.task_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' completed the task ' + taskName, 'info'))
                 dispatch(Actions._markDone(data.task_id));
             }
         })
         socket.on('delete_task', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let taskName = getState().tasks.filter(task => task.id === data.task_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' deleted the task ' + taskName, 'info'))
                 dispatch(Actions._deleteTask(data.task_id));
             }
         })
         socket.on('new_milestone', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                dispatch(Actions.snackbarMessage(name + ' created the milestone ' + data.milestone.content, 'info'))
                 dispatch(Actions._createMilestone(data.milestone));
             }
         })
+        socket.on('update_milestone', (data) => {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let milestoneName = getState().milestones.filter(m => m.id === data.milestone_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' updated the milestone ' + milestoneName, 'info'))
+                dispatch(Actions._editMilestone(data.milestone_id, data.milestone));
+            }
+        })
+
         socket.on('delete_milestone', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let milestoneName = getState().milestones.filter(m => m.id === data.milestone_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' deleted the milestone ' + milestoneName, 'info'))
                 dispatch(Actions._deleteMilestone(data.milestone_id));
             }
         })
