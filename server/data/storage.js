@@ -104,6 +104,10 @@ module.exports = {
         if (payload.github_repo_owner) {
             project.github_repo_owner = payload.github_repo_owner
         }
+        if (payload.chatroom) {
+            project.chatroom = payload.chatroom
+        }
+
         return Project.update(project, {
             where: {
                 id: projectId
@@ -118,9 +122,8 @@ module.exports = {
                 model: Project,
                 joinTableAttributes: [],
                 include: [{
-                    model: User, as:'users',
-                    attributes: ['id', 'email', 'display_name', 'display_image']
-                }]                                  
+                    model: User, as:'users'
+                }]
             }
             );
         });

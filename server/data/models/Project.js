@@ -8,6 +8,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         content: DataTypes.TEXT,
         root_folder: DataTypes.STRING,
+        chatroom: DataTypes.STRING,
         github_repo_name: DataTypes.STRING,
         github_repo_owner: DataTypes.STRING
     },{

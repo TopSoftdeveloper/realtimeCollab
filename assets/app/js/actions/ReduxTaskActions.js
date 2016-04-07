@@ -50,7 +50,7 @@ export const _editMilestone = makeActionCreator(AppConstants.EDIT_MILESTONE, 'id
 export const _createProject = makeActionCreator(AppConstants.CREATE_PROJECT, 'project');
 export const _deleteProject = makeActionCreator(AppConstants.DELETE_PROJECT, 'id');
 export const replaceProjectId = makeActionCreator(AppConstants.REPLACE_PROJECT_ID, 'original', 'replacement');
-export const switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
+export const _switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
 export const projectAlert = makeActionCreator(AppConstants.PROJECT_INVITATION_ALERT, 'alert');
 export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id', 'payload');
 
@@ -439,6 +439,7 @@ export function initializeApp() {
                     var currentProject = normalizedTables.projects.filter(project => project.id === projectId)[0]
                     if (currentProject) {
                         dispatch(initializeFiles(currentProject))
+                        dispatch(switchChatRoom(currentProject.chatroom))
                     }
 
                     if (hasProjectWithoutGithub(normalizedTables.projects)) {
@@ -679,8 +680,8 @@ function normalize(projects) {
             directory_structure: [],
             files_loaded: false,
             github_repo_name: project.github_repo_name,
-            github_repo_owner: project.github_repo_owner
-
+            github_repo_owner: project.github_repo_owner,
+            chatroom: project.chatroom
         };
 
         project.milestones.forEach(milestone => {
@@ -698,7 +699,6 @@ function normalize(projects) {
                 return milestone
             })
         });
-
 
         currProj.milestones = milestoneState.map(milestone => milestone.id);
         currProj.tasks = taskState.map(task => task.id)
@@ -893,5 +893,61 @@ export function renameProject(projectId, name) {
         }).fail(e => {
             console.log(e)
         })
+    }
+}
+
+export function switchToProject(project) {
+    return function(dispatch) {
+        dispatch(initializeFiles(project))
+        dispatch(switchChatRoom(project.chatroom))
+        dispatch(_switchToProject(project.id))
+    }
+}
+
+export function changeChatRoom(projectId, name) {
+    // change chat room of a particular project
+    return function(dispatch) {
+        serverUpdateProject(projectId, {chatroom: name}).done(res => {
+            dispatch(_updateProject(projectId, {chatroom: name}))
+            if (!window.scrollback) {
+                dispatch(loadChatRoom(name))
+                dispatch(snackbarMessage('Chatroom ' + name + ' loaded', 'default'))
+            } else {
+                $('.scrollback-toast').remove();
+                dispatch(loadChatRoom(name))
+                dispatch(snackbarMessage('Chatroom ' + name + ' changed', 'default'))
+            }
+        }).fail(e => {
+            console.error(e)
+        })
+    }
+}
+
+export function switchChatRoom(name) {
+    // switch chat room from one project to another
+    return function(dispatch) {
+        if (!name) return
+        if (!window.scrollback) {
+            dispatch(loadChatRoom(name))
+        } else {
+            $('.scrollback-toast').remove();
+            dispatch(loadChatRoom(name))
+        }
+    }
+}
+
+export function loadChatRoom(name) {
+    return function(dispatch) {
+        window.scrollback = {
+            "room":name,"form":"toast","minimize":true
+        };
+        (function(d, s, h, e) {
+            //d: document object
+            //s: script
+            e = d.createElement(s);
+            e.async = 1;
+            e.src = (location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";
+            d.getElementsByTagName(s)[0].parentNode.appendChild(e);
+        }(document, "script"));
     }
 }
