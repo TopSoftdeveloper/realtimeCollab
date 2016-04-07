@@ -138,6 +138,7 @@ class MilestoneView extends Component {
                     key={_.uniqueId('completed')}
                     completedTasks={completedTasks}
                     actions={this.props.actions}
+                    highlightId={this.props.location.query.highlight}
                 />)
             }
         }); // milestones.forEach

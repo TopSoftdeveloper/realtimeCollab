@@ -263,15 +263,19 @@ function searchTasksByAssignee(queryString, users, tasks, projects) {
         let project = null
         matchingUsers.forEach(user=> {if (user.id === task.assignee_id) assignee = user})
         projects.forEach(p=> {if (p.id === task.project_id) project = p})
-
+        let primaryText = task.content
+        if (task.completed_on) {
+            primaryText = task.content + ' (completed)'
+        }
         return (
             {
                 id: task.id,
-                primaryText: task.content,
+                primaryText: primaryText,
                 secondaryText: assignee.display_name,
                 thumbnail: assignee.display_image,
                 project_id: project.id,
                 project_content: project.content,
+                completed_on: task.completed_on,
                 type: 'task'
             }
         )
@@ -456,7 +460,6 @@ export function initializeApp() {
                     user.colour = getNewColour(normalizedTables.users.map(k => k.colour))
                     return user
                 })
-                console.log(u)
                 dispatch(addUsers(u));
 
                 dispatch(testGithubRepos(normalizedTables.projects))
