@@ -13,7 +13,7 @@ require('babel-core/register')({
 });
 
 server.connection({
-    port: 80,
+    port: 4000,
     labels: ['api']
 });
 
