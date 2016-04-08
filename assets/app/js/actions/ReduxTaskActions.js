@@ -488,7 +488,7 @@ export function initializeApp() {
             }
         }).fail(e => {
             console.log(e)
-            window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+            window.location.assign(AppConstants.HOSTNAME);
         });
 
         serverGetNotifications().done(res => {
@@ -905,7 +905,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                     }))
                     dispatch(snackbarMessage('Synced with GitHub', 'default'))
                 }).fail(e => {
-                    window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+                    window.location.assign(AppConstants.HOSTNAME);
                 });
             })
         }).fail(e => {

@@ -1,5 +1,4 @@
 module.exports = {
-    BASE_URL: 'http://localhost:4000',
     GITHUB_ENDPOINT: 'https://api.github.com',
     NEWSFEED_MODEL_NAME: 'newsfeed',
     NOTIFICATION_MODEL_NAME: 'notifications',

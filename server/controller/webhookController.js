@@ -2,27 +2,14 @@ var constants = require('../constants');
 var Joi = require('joi');
 var Boom = require('boom');
 var config = require('config');
-var Jwt = require('jsonwebtoken')
 var storage = require('../data/storage')
 var helper = require('../utils/helper')
 var accessControl = require('./accessControl');
-var clientSecret = config.get('github.client_secret');
-var clientId = config.get('github.client_id');
-var secret_key = config.get('authentication.privateKey')
-var Sequelize = require('sequelize');
-var Promise = require("bluebird");
 var req = require("request")
-var localtunnel = require('localtunnel');
 var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Newsfeed = require('./newsfeedController')
 var templates = require('./../templates')
-
-// localtunnel helps us test webhooks on localhost
-var tunnel = localtunnel(4000, function(err, tunnel) {
-    if (err) {
-        console.log(err)
-    }
-});
+var HOSTNAME = config.get('web.hostname')
 
 module.exports = {
     githubWebhook: {
@@ -75,7 +62,7 @@ function setupGithubWebhook(request, reply) {
             "push"
         ],
         "config": {
-            "url": tunnel.url + "/webhook/github",
+            "url": HOSTNAME + "/webhook/github",
             "content_type": "json"
         }
     }

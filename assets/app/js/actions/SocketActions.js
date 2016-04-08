@@ -1,6 +1,7 @@
 import io from 'socket.io-client'
-let host = 'ws://localhost:4001/'
-let socket = io.connect(host)
+let AppConstants = require('../AppConstants');
+var host = 'ws://' + AppConstants.HOSTNAME + ':4001/'
+var socket = io.connect(host)
 import * as Actions from '../actions/ReduxTaskActions'
 var templates = require('../../../../server/templates.js')
 
