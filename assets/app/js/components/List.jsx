@@ -1,26 +1,15 @@
 import React, { Component } from 'react';
-import {isLoggedIntoGoogle} from '../utils/auth'
 import { browserHistory } from 'react-router'
+import {getCurrentTab} from '../utils/general'
 
 class List extends Component {
     switchProject(projectId) {
         let actions = this.props.actions
-        let projectUrl = '/app/project/' + projectId;
+        let projectUrl = '/app/project/' + projectId + '/' + getCurrentTab();
         let project = this.props.items.filter(project => project.id === projectId)[0]
         browserHistory.push(projectUrl)
         actions.switchToProject(projectId)
-        if (!this.props.app.logged_into_google) {
-            isLoggedIntoGoogle(function(authResult) {
-                if (authResult && !authResult.error) {
-                    actions.loggedIntoGoogle()
-                    actions.initializeFiles(project)
-                } else {
-                    actions.loggedOutGoogle()
-                }
-            })
-        } else {
-            actions.initializeFiles(project)
-        }
+        actions.initializeFiles(project)
     }
 
     render() {

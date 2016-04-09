@@ -1,20 +1,70 @@
 import React, { Component, PropTypes } from 'react'
-import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert } from 'react-bootstrap'
+import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert, Button } from 'react-bootstrap'
 import _ from 'lodash'
 let AppConstants = require('../AppConstants');
 import {getCurrentProject} from '../utils/general'
+import LoadingIndicator from './LoadingIndicator.jsx'
+import { browserHistory } from 'react-router'
+import Github from './Github/Github.jsx'
+import Card from 'material-ui/lib/card/card';
+import CardHeader from 'material-ui/lib/card/card-header';
+import CardText from 'material-ui/lib/card/card-text';
+import FontIcon from 'material-ui/lib/font-icon';
+import {APP_ROOT_URL, PATH} from '../AppConstants'
+import RaisedButton from 'material-ui/lib/raised-button'
+import {GITHUB_CLIENT_ID} from '../AppConstants'
+import {getGithubAuthCode} from '../utils/general'
+import {githubOAuth} from '../utils/apiUtil'
 
 class Settings extends Component {
     constructor(props, context) {
         super(props, context); 
         this.state = {
-            inputEmail: ''
-        }            
+            inputEmail: '',
+            inputProjectName: '',
+            fetchedRepos: false
+        }
+    }
+
+    authorize() {
+        let redirectURI = APP_ROOT_URL + '/project/' + this.props.project.id + '/' + PATH.settings
+        window.location.assign('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID +
+            '&scope=repo,notifications,user&redirect_uri=' + redirectURI)
+    }
+
+    selectNewRepo() {
+        if (!this.props.app.github.repo_fetched) {
+            this.props.actions.initGithubRepos()
+        }
+        this.props.actions.updateProject(this.props.project.id, {
+            github_repo_name: null,
+            github_repo_owner: null
+        })
+    }
+
+    selectRootFolder() {
+        let projectId = this.props.project.id
+        this.props.actions.updateProject(projectId, {
+            root_folder: null,
+            directory_structure: [{name: 'Top level directory', id: 'root'}]
+        })
+        if (!this.props.app.is_top_level_folder_loaded) {
+            this.props.actions.initTopLevelFolders()
+        }
+
+        let projectUrl = '/app/project/' + projectId + '/files'
+        browserHistory.push(projectUrl)
     }
 
     handleChange() {
         this.setState({
             inputEmail: this.refs.addMemberInput.getValue()
+        });
+    }
+
+    projectNameChange() {
+        this.setState({
+            inputProjectName: this.refs.projectNameInput.getValue()
         });
     }
 
@@ -26,19 +76,44 @@ class Settings extends Component {
         e.preventDefault();
         let email = this.state.inputEmail.trim();
         if (email !== '') {
-            this.props.actions.inviteToProject(this.props.projectId, email);
+            this.props.actions.inviteToProject(this.props.project.id, email);
         }     
         this.setState({
             inputEmail: ''
         });        
     }
 
-    render() {   
+    renameProject(e) {
+        e.preventDefault()
+        if (this.state.inputProjectName.trim()) {
+            this.props.actions.renameProject(this.props.project.id, this.state.inputProjectName)
+        }
+    }
+
+    componentDidMount() {
+        // We check whether this is a redirect from github OAuth by checking
+        // if there is a "code" query param
+        let code = getGithubAuthCode()
+        if (code) {
+            githubOAuth(code).done(res => {
+                if (!res.error) {
+                    localStorage.setItem('github_token', res.access_token)
+                    this.props.actions.updateAppStatus({github_token: res.access_token})
+                    this.props.actions.updateGithubLogin(res.access_token)
+                    if (!this.props.app.github.repo_fetched) {
+                        this.props.actions.initGithubRepos()
+                    }
+                }
+            }).fail(e => console.log(e))
+        }
+    }
+
+    render() {
         let listGroups = [];
         let alertStatus = this.props.alerts.project_invitation;
 
-        this.props.basicUsers.forEach(user => listGroups.push(
-            <ListGroupItem key={_.uniqueId('settings_basic')}>
+        this.props.allActiveUsers.forEach(user => listGroups.push(
+            <ListGroupItem key={_.uniqueId('settings_users')}>
                 {user.display_name}
             </ListGroupItem>
         ));
@@ -54,7 +129,8 @@ class Settings extends Component {
             alertPanel = (
                 <Alert 
                     bsStyle="success" 
-                    onDismiss={this.handleAlertDismiss.bind(this)}  
+                    onDismiss={this.handleAlertDismiss.bind(this)}
+                    dismissAfter={4000}
                     >
                     Successfully invited!
                 </Alert>
@@ -63,8 +139,9 @@ class Settings extends Component {
             alertPanel = (
                 <Alert 
                     bsStyle="warning" 
-                    onDismiss={this.handleAlertDismiss.bind(this)} 
-                    >
+                    onDismiss={this.handleAlertDismiss.bind(this)}
+                    dismissAfter={4000}
+                >
                     User already invited!
                 </Alert>
             );            
@@ -72,11 +149,102 @@ class Settings extends Component {
             alertPanel = (
                 <Alert 
                     bsStyle="danger" 
-                    onDismiss={this.handleAlertDismiss.bind(this)} 
-                    >
+                    onDismiss={this.handleAlertDismiss.bind(this)}
+                    dismissAfter={4000}
+                >
                     User not found!
                 </Alert>
             );              
+        }
+
+        let project = this.props.project
+        let rootFolderName = 'Not yet selected'
+        if (project.root_folder && project.directory_structure[0]) {
+            rootFolderName = project.directory_structure[0].name
+        }
+
+        let githubRepo = 'Not yet selected'
+        let repoName = project.github_repo_name
+        let repoOwner = project.github_repo_owner
+        let repoSet = !!(repoName && repoOwner)
+        let githubCard = null
+        let selectNewRepoBtn = null
+
+        if (repoSet && !this.props.app.github.loading) {
+            githubRepo = project.github_repo_owner + '/' + project.github_repo_name
+            selectNewRepoBtn = <Button
+                onClick={this.selectNewRepo.bind(this)}
+                className="settings-btn">
+                Select new repository</Button>
+        } else {
+            githubCard =
+                <Card initiallyExpanded={true}>
+                    <CardHeader
+                        title="Enhance Collab's power with GitHub!"
+                        actAsExpander={true}
+                        showExpandableButton={true}
+                    />
+                    <CardText expandable={true}>
+                        <Github
+                            project={this.props.project}
+                            actions={this.props.actions}
+                            app={this.props.app}
+                            repos={this.props.repos}
+                            authorize={this.authorize.bind(this)}
+                        />
+                    </CardText>
+                </Card>
+        }
+
+
+        let googlePanel = <LoadingIndicator className="loading-indicator-left" size={0.4}/>
+        let githubPanel = <LoadingIndicator className="loading-indicator-left" size={0.4}/>
+
+        if (!this.props.app.files.loading) {
+            let style = {}
+            if (project.folder_error) {
+                rootFolderName = project.folder_error
+                style={color: 'red'}
+            }
+            googlePanel = (
+                <div>
+                    <span style={style}><b>Root folder: {rootFolderName}</b></span>
+                    <Button onClick={this.selectRootFolder.bind(this)} className="settings-btn">Select new root folder</Button>
+                </div>
+            )
+        }
+
+        if (!this.props.app.github.loading) {
+            let style = {}
+            if (project.github_error) {
+                githubRepo = project.github_error
+                style={color: 'red'}
+            }
+            githubPanel = (
+                <div>
+                    <span style={style}><b>Default repository: {githubRepo}</b></span>
+                    {selectNewRepoBtn}
+                    <br/>
+                    <br/>
+                    {githubCard}
+                </div>
+            )
+        }
+
+        if (!localStorage.github_token && repoSet) {
+            // Repo set but not authorized
+            githubPanel = (
+                <div>
+                    <div style={{color: 'red'}}><b>Please re-authorize Github</b></div>
+                    <br/>
+                    <RaisedButton
+                        label="Authorize Github"
+                        onTouchTap={this.authorize.bind(this)}
+                        primary={true}
+                        icon={<FontIcon className="fa fa-github"/>}
+                    />
+                </div>
+            )
         }
 
         return (
@@ -87,27 +255,39 @@ class Settings extends Component {
                     <ListGroupItem>
                         {alertPanel}
                         <form onSubmit={this.inviteMember.bind(this)}>
-                            <Input 
-                                type="email" 
-                                label="Search by email" 
+                            <Input
+                                type="email"
+                                label="Search by email"
                                 ref='addMemberInput'
                                 buttonAfter={<ButtonInput value="Invite member" type="submit"/>}
                                 value={this.state.inputEmail}
-                                onChange={this.handleChange.bind(this)} 
+                                onChange={this.handleChange.bind(this)}
                             />
                         </form>
                     </ListGroupItem>
                 </ListGroup>
 
-                <Panel header='Options'>
-                    <form>
-                        <Input 
-                            type="text" 
-                            label="Project name" 
-                            buttonAfter={<ButtonInput value="Rename"/>}
+                <Panel header='Google Integration' bsStyle="info">
+                    {googlePanel}
+                </Panel>
+
+                <Panel header='GitHub Integration' bsStyle="info">
+                    {githubPanel}
+                </Panel>
+
+                <Panel header='Options' bsStyle="info">
+                    <form onSubmit={this.renameProject.bind(this)}>
+                        <Input
+                            type="text"
+                            label={"Project name: " + this.props.project.content}
+                            ref='projectNameInput'
+                            value={this.state.inputProjectName}
+                            placeholder="New project name"
+                            onChange={this.projectNameChange.bind(this)}
+                            buttonAfter={<ButtonInput value="Rename" type="submit"/>}
                         />
-                    </form>                
-                </Panel>                
+                    </form>
+                </Panel>
             </div>
         );
     }

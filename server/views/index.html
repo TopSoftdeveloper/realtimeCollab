@@ -8,14 +8,27 @@
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com">
 
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/assets/home/css/home.css">
+    <link rel="stylesheet" type="text/css" href="/assets/home/css/bootstrap-social.css">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/platform.js?onload=start" async defer></script>
+    <script>
+        function start() {
+            gapi.load('auth2', function() {
+                auth2 = gapi.auth2.init({
+                    client_id: '300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com',
+                    scope: 'https://www.googleapis.com/auth/drive'
+                });
+                if (localStorage.jwt && localStorage.google_token) {
+                    window.location.assign('http://localhost:4000/app');
+                }
+            });
+        }
+    </script>
 </head>
 <body>
 <header id="first">
@@ -24,35 +37,40 @@
             <h1>Collab</h1>
             <h4>Helping small teams do big things</h4>
             <hr>
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <a class="btn btn-social btn-google" onclick="loginGoogle()">
+                <span class="fa fa-google"></span>
+                <span class="login-btn-text">Sign in with Google</span>
+            </a>
         </div>
     </div>
 </header>
 <script>
-    function onSignIn(googleUser) {
-        var profile = googleUser.getBasicProfile();
-        var id_token = googleUser.getAuthResponse().id_token;
-        localStorage.setItem('email', profile.getEmail());
-        localStorage.setItem('display_name', profile.getName());
-        localStorage.setItem('display_image', profile.getImageUrl());
-        localStorage.setItem('google_token', id_token);
-
-        var payload = {
-            display_name: profile.getName(),
-            display_image: profile.getImageUrl(),
-            email: profile.getEmail(),
-            google_id: profile.getId()
+    function signInCallback(authResult) {
+        console.log('callback')
+        console.log(authResult)
+        if (authResult.code) {
+            $.ajax({
+                type: 'POST',
+                url: 'http://devserver:4000/login',
+                data: {code: authResult.code}
+            }).done(function(res) {
+                console.log(res)
+                localStorage.setItem('jwt', res.collab_token);
+                localStorage.setItem('user_id', res.id);
+                localStorage.setItem('email', res.email);
+                localStorage.setItem('display_name', res.display_name);
+                localStorage.setItem('display_image', res.display_image);
+                localStorage.setItem('google_token', res.google_token);
+                localStorage.setItem('expiry_date', res.expiry_date);
+                window.location.assign('http://localhost:4000/app');
+            }).fail(function(res) {
+                console.error(res)
+            })
         }
-        $.ajax({
-            type: 'POST',
-            url: 'http://devserver.com:4000/login',
-            data: payload
-        }).done(function(res) {
-            localStorage.setItem('jwt', res.token);
-            localStorage.setItem('user_id', res.user_id);
-            window.location.assign('http://devserver.com:4000/app');
-        }).fail(function(res) {
-        })
+    }
+    function loginGoogle() {
+        $('.login-btn-text').text('Logging in...')
+        auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(signInCallback);
     }
 </script>
 </body>

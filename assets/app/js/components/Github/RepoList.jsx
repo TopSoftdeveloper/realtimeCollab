@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import FlatButton from 'material-ui/lib/flat-button'
+import FlatButton from '../../../../../node_modules/material-ui/lib/flat-button'
 
 class ListItem extends Component {
     render() {

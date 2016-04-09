@@ -8,16 +8,9 @@ import assign from 'object-assign';
 //         completed_on: null,
 //         milestone_id: 'mid1',
 //         assignee_id: '',
-//         project_id: 'ja0sfd'
-//         ...
-//     },
-//     {
-//         id: 'taskid3',
-//         content: 'Prepare report',
-//         completed_on: null,
-//         milestone_id: 'mid2',
-//         assignee_id: '123abc',
-//         project_id: 'ja0sasfasdffd'
+//         project_id: 'ja0sfd',
+//         editing: true,
+//         edited_by: 'NysSbasYe'
 //         ...
 //     }
 // ]
@@ -26,6 +19,7 @@ export default function tasks(state=[], action) {
     switch (action.type) {
         case AppConstants.INIT_TASKS:
             return action.tasks;
+
         case AppConstants.DELETE_MILESTONE:
             return state.map(task =>
                 task.milestone_id === action.id?
@@ -64,6 +58,18 @@ export default function tasks(state=[], action) {
             return state.map(task => 
                 task.id === action.original ? 
                 assign({}, task, {id : action.replacement}): task);
+
+        case AppConstants.USER_EDITING:
+            if (action.kind !== 'task') return state
+            return state.map(task =>
+                task.id === action.id ?
+                    assign({}, task, {editing : true, edited_by: action.user_id}): task);
+
+        case AppConstants.USER_STOP_EDITING:
+            if (action.kind !== 'task') return state
+            return state.map(task =>
+                task.id === action.id && task.edited_by === action.user_id ?
+                    assign({}, task, {editing : false, edited_by: ''}): task);
 
         default:
             return state;

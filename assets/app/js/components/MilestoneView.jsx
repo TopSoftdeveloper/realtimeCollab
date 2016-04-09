@@ -55,6 +55,10 @@ class MilestoneView extends Component {
         this.props.actions.editTask(task_id, content, assignee)
     }
 
+    deleteTask(task_id) {
+        this.props.actions.deleteTask(task_id, this.props.projectId)
+    }
+
     editMilestone(milestone_id, content, deadline) {
         this.props.actions.editMilestone(milestone_id, content, deadline)
     }
@@ -95,9 +99,7 @@ class MilestoneView extends Component {
                 onEdit = this.editMilestone.bind(this, milestone.id)
             }
             rows.push(<MilestoneRow
-                content={milestone.content}
-                deadline={milestone.deadline}
-                id={milestone.id}
+                milestone={milestone}
                 key={milestone.id}
                 onAddTask={this.addTask.bind(this, milestone.id)}
                 onEditMilestone={onEdit}
@@ -123,6 +125,7 @@ class MilestoneView extends Component {
                         task={task}
                         onCheck={this.markDone.bind(this, task.id)}
                         onEdit={this.editTask.bind(this, task.id)}
+                        onDelete={this.deleteTask.bind(this, task.id)}
                         assignees={assignees}
                         users={this.props.users}
                         highlight={highlight}

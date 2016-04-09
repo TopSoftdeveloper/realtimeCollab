@@ -7,6 +7,7 @@ var sinon = require('sinon')
 var storage = require('../server/data/storage')
 var socket = require('../server/controller/socket/handlers')
 var Promise = require('bluebird')
+var constants = require('../server/constants')
 
 describe('Newsfeed', function() {
 
@@ -29,7 +30,7 @@ describe('Newsfeed', function() {
         var socketMock = sinon.mock(socket);
         socketMock.expects('sendMessageToProject').once().withExactArgs(projectId, 'newsfeed_post', newsfeedPost)
 
-        newsfeed.updateNewsfeed(data, template, projectId).then(function(res) {
+        newsfeed.updateNewsfeed(data, template, projectId, constants.GITHUB).then(function(res) {
             expect(res).to.deep.equal(newsfeedPost)
             done()
         })

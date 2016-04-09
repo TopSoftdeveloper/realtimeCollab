@@ -14,6 +14,14 @@ module.exports = {
             view: 'Default.jsx'
         }
     },
+    images: {
+        auth: false,
+        handler: {
+            file: function (request) {
+                return './assets/images/' + request.params.filename;
+            }
+        }
+    },
     index: {
         auth: false,
         handler: {

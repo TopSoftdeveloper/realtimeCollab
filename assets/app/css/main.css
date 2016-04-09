@@ -33,6 +33,10 @@
 }
 
 /*************************** files area *******************/
+.upload-progress {
+  margin-top: 10px;
+}
+
 .drive-drop-zone {
   border: dashed #7a7a7a;
   min-height: 90px;
@@ -43,6 +47,10 @@
 .drive-drop-zone p {
   color: #7a7a7a;
   margin-top: 35px;
+}
+
+.set-root-dir {
+  margin-bottom: 20px;
 }
 /********************* task table ************************/
 .main-content {
@@ -62,10 +70,6 @@
 
 .milestone-row p {
   color: #7a7a7a;
-}
-
-.files-list {
-  max-height: 53vh;
 }
 
 .task-list ul {
@@ -101,11 +105,11 @@
   position: relative;
 }
 
-.reopen-task, .edit-task {
+.reopen-task, .edit-task, .delete-task {
   opacity: 0.5;
 }
 
-.reopen-task:hover, .edit-task:hover {
+.reopen-task:hover, .edit-task:hover, .delete-task:hover {
   cursor: pointer;
   display: inline-block;
   opacity: 1.0;
@@ -287,7 +291,7 @@
 
 .search-box {
   margin-left: 120px;
-  width: 40%;
+  width: 30%;
 }
 
 .display-pic-li {
@@ -318,6 +322,10 @@
 }
 
 /******************* General ****************************/
+.filter-by {
+  float: right;
+}
+
 .avatar-list {
   list-style: none;
   float: right;
@@ -352,12 +360,17 @@
 }
 
 .highlight-yellow {
-  background-color: yellow;
+  background-color: rgba(242, 255, 86, 0.83);
 }
 
 .loading-indicator {
   left: 45%;
   position: absolute;
+  margin-top: 15px;
+}
+
+.loading-indicator-left {
+  left: 45%;
 }
 
 .collab-logo h3 {
@@ -429,4 +442,9 @@
 
 .notif-buttons {
   margin-left: 43px;
+}
+
+/************************ Settings **************************/
+.settings-btn {
+  margin-left: 20px;
 }

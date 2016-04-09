@@ -7,14 +7,16 @@ import assign from 'object-assign';
 //         email: 'a@a',
 //         display_name: 'Yan Yi',
 //         display_image: 'url',
-//		     online: true
+//		     online: true,
+//         colour: '#FFFFFF'
 //     },
 //     {
 //         id: 'uid2',
 //         email: 'b@b',
 //         display_name: 'Cristina',
 //         display_image: 'url',
-//		     online: false
+//		     online: false,
+//         colour: '#FFFFFF'
 //     }        
 // ]
 

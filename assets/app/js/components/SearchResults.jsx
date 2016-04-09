@@ -7,13 +7,18 @@ import Avatar from 'material-ui/lib/avatar';
 import Colors from 'material-ui/lib/styles/colors';
 import {toFuzzyTime} from '../utils/general'
 import { browserHistory } from 'react-router'
+import LoadingIndicator from '../components/LoadingIndicator.jsx'
+import FontIcon from 'material-ui/lib/font-icon'
+import Code from '../icons/Code.jsx'
+import CodeFragment from './CodeFragment.jsx'
+import _ from 'lodash'
+import DropDownMenu from 'material-ui/lib/DropDownMenu';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import * as Actions from '../actions/ReduxTaskActions'
 
 class SearchResults extends Component {
     constructor() {
         super(...arguments);
-        this.state = {
-        }
-
     }
 
     goToResult(link, e) {
@@ -26,9 +31,36 @@ class SearchResults extends Component {
         browserHistory.push('/app/project/' + result.project_id + '/milestones?highlight=' + result.id)
     }
 
+    handleChange(event, index, value) {
+        this.props.dispatch(Actions.updateAppStatus({searchFilter: value}))
+    }
+
     render() {
+        if (this.props.app.queriesInProgress > 0) {
+            return (
+                <div className="main-content">
+                    <div className="no-items">
+                        <h4>Searching for <b>{this.props.app.queryString}</b>...</h4>
+                        <LoadingIndicator className="loading-indicator" />
+                    </div>
+                </div>
+            )
+        }
+
         let driveResults = this.props.search.filter(result => result.type === 'drive')
         let taskResults = this.props.search.filter(result => result.type === 'task')
+        let githubResults = this.props.search.filter(result => result.type === 'github')
+
+        if (driveResults.length === 0 && taskResults.length === 0 && githubResults.length === 0) {
+            return (
+                <div className="main-content">
+                    <div className="no-items">
+                        <h4>No search results for <b>{this.props.app.queryString}</b></h4>
+                    </div>
+                </div>
+            )
+        }
+
         let driveListItems = driveResults.map(result => {
             return (
                 <div key={result.id}>
@@ -68,24 +100,50 @@ class SearchResults extends Component {
             )
         })
 
-        if (driveResults.length === 0 && taskResults.length === 0) {
+        let githubListItems = githubResults.map(result => {
+            let codePreview = result.text_matches.map(match =>
+                <CodeFragment fragment={match.fragment} matches={match.matches} key={_.uniqueId('code')}/>
+            )
             return (
-                <div className="main-content">
-                    <div className="no-items">
-                        <h4>No search results for <b>{this.props.app.queryString}</b></h4>
-                    </div>
+                <div key={result.id}>
+                    <ListItem
+                        leftAvatar={<Avatar icon={<Code />} />}
+                        onTouchTap={this.goToResult.bind(this, result.link)}
+                        primaryText={result.primaryText}
+                        secondaryText={
+                            <p>
+                                {result.repo}
+                            </p>
+                         }
+                        secondaryTextLines={1}
+                    />
+                    {codePreview}
+                    <Divider inset={true} />
                 </div>
             )
-        }
+        })
 
         let taskList = null
         let driveList = null
+        let githubList = null
+        let filterMenu = null
+        let filterBy = []
         if (taskResults.length > 0) {
             taskList = (
                 <List subheader="Assigned Tasks">
                     {taskListItems}
                 </List>
             )
+            filterBy.push(<MenuItem value={"tasks"} primaryText="Assigned Tasks" key="tasks"/>)
+        }
+
+        if (githubResults.length > 0) {
+            githubList = (
+                <List subheader="Code">
+                    {githubListItems}
+                </List>
+            )
+            filterBy.push(<MenuItem value={"code"} primaryText="Code" key="code"/>)
         }
 
         if (driveResults.length > 0) {
@@ -94,12 +152,38 @@ class SearchResults extends Component {
                     {driveListItems}
                 </List>
             )
+            filterBy.push(<MenuItem value={"files"} primaryText="Files" key="files"/>)
+        }
+
+        if (filterBy.length > 1) {
+            filterBy = [<MenuItem value={"all"} primaryText="All" key="all"/>, ...filterBy]
+            filterMenu =
+                <div className="filter-by">
+                    <span>Filter </span>
+                    <DropDownMenu
+                        value={this.props.app.searchFilter}
+                        onChange={this.handleChange.bind(this)}>
+                        {filterBy}
+                    </DropDownMenu>
+                </div>
+            if (this.props.app.searchFilter === 'tasks') {
+                githubList = null
+                driveList = null
+            } else if (this.props.app.searchFilter === 'files') {
+                githubList = null
+                taskList = null
+            } else if (this.props.app.searchFilter === 'code') {
+                taskList = null
+                driveList = null
+            }
         }
 
         return (
             <div className="main-content">
                 <h4>Search results for <b>{this.props.app.queryString}</b></h4>
+                {filterMenu}
                 {taskList}
+                {githubList}
                 {driveList}
             </div>
         )
@@ -109,7 +193,7 @@ class SearchResults extends Component {
 
 SearchResults.propTypes = {
     search: PropTypes.array.isRequired,
-    app: PropTypes.object.isRequired,
+    app: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {

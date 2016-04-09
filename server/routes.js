@@ -11,10 +11,12 @@ var Newsfeed = require('./controller/newsfeedController')
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
+    { method: 'GET',  path: '/images/{filename}', config: Static.images },
     { method: 'GET',  path: '/app/{param*}', config: Static.app },
     { method: 'GET',  path: '/', config: Static.index },
 
     { method: 'POST',  path: '/login', config: Auth.login },
+    { method: 'POST',  path: '/refresh_google_token', config: Auth.refreshGoogleToken },
 
     { method: 'POST',  path: '/tasks', config: Task.createTask },
     { method: 'GET',  path: '/task/{task_id}', config: Task.getTask },
@@ -47,6 +49,8 @@ module.exports.endpoints = [
 
     { method: 'POST',  path: '/webhook/github/setup', config: WebHook.setupGithubWebhook },
     { method: 'POST',  path: '/webhook/github', config: WebHook.githubWebhook },
+    { method: 'POST',  path: '/webhook/drive', config: WebHook.googleDriveWebhook },
+
 
     { method: 'GET',  path: '/newsfeed', config: Newsfeed.getNewsfeed }
 ];

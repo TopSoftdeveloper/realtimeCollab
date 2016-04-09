@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import io from 'socket.io-client'
 import { browserHistory } from 'react-router'
 import * as Actions from '../actions/ReduxTaskActions'
+import * as SocketActions from '../actions/SocketActions'
 import Header from '../components/Header.jsx'
 import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
 import {isProjectPresent} from '../utils/collection'
@@ -11,74 +11,46 @@ import LeftPanel from '../components/LeftPanel.jsx'
 import { Grid, Row, Col } from 'react-bootstrap'
 import Sidebar from 'react-sidebar'
 import LoadingIndicator from '../components/LoadingIndicator.jsx'
+import Snackbar from 'material-ui/lib/snackbar';
+import {_updateAppStatus}  from '../actions/ReduxTaskActions'
+import {refreshTokens} from '../utils/apiUtil'
 
 var AppConstants = require('../AppConstants');
 
 class App extends Component {
     constructor(props, context) {
         super(props, context)
-        let host = 'ws://devserver.com:4001/'
-        let socket = io.connect(host)
-        this.state = { socket: socket }
         this.initApp()
-        this.userIsOnline()
-        this.monitorOnlineStatus()
-        this.monitorProjectChanges()
-        this.monitorNotifications()
+        const {dispatch} = this.props;
+        const socketActions = bindActionCreators(SocketActions, dispatch);
+        socketActions.userIsOnline()
+        socketActions.monitorOnlineStatus()
+        socketActions.monitorProjectChanges()
+        socketActions.monitorNotifications()
+        socketActions.monitorEditStatus()
+        window.scrollback = {"room":"collab","form":"toast","minimize":true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));
     }
 
     initApp() {
         this.props.dispatch(Actions.initializeApp())
+        this.autoRefreshTokens()
     }
 
-    userIsOnline() {
-        this.state.socket.emit('is_online', {user_id: localStorage.getItem('user_id')})
-        this.props.dispatch(Actions.userOnline(localStorage.getItem('user_id')))
+    checkTokenExpiry() {
+        const threshold_ms = 600000 // 10 mins
+        if (localStorage.expiry_date - new Date().getTime() < threshold_ms){
+            refreshTokens().done(res => {
+                localStorage.setItem('google_token', res.access_token);
+                localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
+            }).fail(e => {
+                console.log(e);
+            });
+        }
     }
 
-    monitorOnlineStatus() {
-        this.state.socket.on('teammate_online', (data) => {
-            this.props.dispatch(Actions.userOnline(data.user_id));
-        });        
-        this.state.socket.on('teammate_offline', (data) => {
-            this.props.dispatch(Actions.userOffline(data.user_id));
-        });   
-    }    
-
-    monitorProjectChanges() {
-        this.state.socket.on('new_task', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._addTask(data.task));
-            }
-        });        
-        this.state.socket.on('mark_done', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._markDone(data.task_id));                
-            }
-        });     
-        this.state.socket.on('delete_task', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._deleteTask(data.task_id));                
-            }
-        });
-        this.state.socket.on('new_milestone', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._createMilestone(data.milestone));
-            }
-        });
-        this.state.socket.on('delete_milestone', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
-                this.props.dispatch(Actions._deleteMilestone(data.milestone_id));
-            }
-        });
-
-    }
-
-    monitorNotifications() {
-        this.state.socket.on('new_notification', (data) => {
-            this.props.dispatch(Actions.addUsers([data.user]))
-            this.props.dispatch(Actions.newNotification(data.notification))
-        });
+    autoRefreshTokens() {
+        const checkingInterval_ms = 300000 // 5 mins
+        setInterval(this.checkTokenExpiry, checkingInterval_ms)
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -90,6 +62,11 @@ class App extends Component {
             return false;         
         }
         return true;
+    }
+
+    handleSnackbarClose() {
+        let dispatch = this.props.dispatch
+        dispatch(_updateAppStatus({snackbar: {isOpen: false, message: ''}}))
     }
 
     render() {
@@ -107,23 +84,23 @@ class App extends Component {
         }
 
         let children = this.props.children;
-        if (projects.length === 0 && matchesUrl(window.location.href, AppConstants.APP_ROOT_URL)) {
-            if (!app.loading) {
-                children = (
-                    <div className='main-content'>
-                        <div className="no-items">
-                            <h3>You have no projects yet!</h3>
-                            <p>Add one to get started</p>
-                        </div>
+        if (projects.length === 0 && matchesUrl(window.location.href, AppConstants.APP_ROOT_URL) && !app.loading) {
+            children = (
+                <div className='main-content'>
+                    <div className="no-items">
+                        <h3>You have no projects yet!</h3>
+                        <p>Add one to get started</p>
                     </div>
-                )
-            } else {
-                children = (
-                    <div className='main-content'>
-                        <LoadingIndicator/>
-                    </div>
-                )
-            }
+                </div>
+            )
+        }
+
+        if (app.loading) {
+            children = (
+                <div className='main-content'>
+                    <LoadingIndicator className="loading-indicator"/>
+                </div>
+            )
         }
 
         let displayName = users.filter(
@@ -163,12 +140,19 @@ class App extends Component {
                         displayName={displayName}
                         search={search}
                         actions={actions}
+                        app={app}
                     />
                     <div className="body-wrapper">
                         {children}
                     </div>
                 </Sidebar>
-
+                <Snackbar
+                    open={app.snackbar.isOpen}
+                    message={app.snackbar.message}
+                    autoHideDuration={5000}
+                    bodyStyle={{background: app.snackbar.background}}
+                    onRequestClose={this.handleSnackbarClose.bind(this)}
+                />
             </div>
         );
     }

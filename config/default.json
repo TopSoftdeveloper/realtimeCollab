@@ -15,7 +15,19 @@
     }
   },
   "authentication": {
-    "privateKey": "37LvDSm4XvjYOh9Y",
+    "privateKey": "-",
     "tokenExpirySeconds": 3600000
+  },
+  "github": {
+    "client_secret": "-",
+    "client_id": "3046c6aca85085abda12"
+  },
+  "google": {
+    "client_id": "300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com",
+    "client_secret": "-"
+  },
+  "web": {
+    "hostname": "http://localhost:4000",
+    "appRoot": "http://localhost:4000/app"
   }
 }

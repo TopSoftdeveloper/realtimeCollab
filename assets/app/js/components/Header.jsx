@@ -4,11 +4,13 @@ import { Link } from 'react-router'
 import $ from 'jquery'
 import {logout} from '../utils/auth.js'
 import {getUserAvatar} from '../utils/general'
-import AutoComplete from 'material-ui/lib/auto-complete';
-import ThemeManager from 'material-ui/lib/styles/theme-manager';
-import MyRawTheme from '../myTheme';
-import ListItem from 'material-ui/lib/lists/list-item';
-import Avatar from 'material-ui/lib/avatar';
+import AutoComplete from 'material-ui/lib/auto-complete'
+import ThemeManager from 'material-ui/lib/styles/theme-manager'
+import MyRawTheme from '../myTheme'
+import ListItem from 'material-ui/lib/lists/list-item'
+import Avatar from 'material-ui/lib/avatar'
+import FontIcon from 'material-ui/lib/font-icon'
+import Code from '../icons/Code.jsx'
 import _ from 'lodash'
 import { browserHistory } from 'react-router'
 
@@ -34,12 +36,18 @@ class Header extends Component {
         return { muiTheme: ThemeManager.getMuiTheme(MyRawTheme) }
     }
 
-    componentDidUpdate() {
+    componentDidMount() {
         if (!this.state.isHangoutBtnRendered && $('#hangouts-btn-placeholder').length) {
-            gapi.hangout.render('hangouts-btn-placeholder', { 'render': 'createhangout' });
-            this.setState({
-                isHangoutBtnRendered: true
-            })
+            var interval = setInterval(function() {
+                if (gapi && gapi.hangout) {
+                    clearInterval(interval)
+                    gapi.hangout.render('hangouts-btn-placeholder', { 'render': 'createhangout' });
+                    this.setState({
+                        isHangoutBtnRendered: true
+                    })
+                } else {
+                }
+            }.bind(this), 1000)
         }
     }
 
@@ -66,6 +74,9 @@ class Header extends Component {
     }
 
     newRequest() {
+        if (this.state.queryString !== this.state.lastQueryString) {
+            this.executeQuery(this.state.queryString)
+        }
         this.setState({queryString: ''})
         browserHistory.push('/app/search')
     }
@@ -106,19 +117,29 @@ class Header extends Component {
         let image = getUserAvatar(localStorage.getItem('display_image'), this.props.displayName)
         let searchResults = null
         if (this.props.search.length === 0 && this.state.queryString.length >= MIN_SEARCH_CHARS) {
+            let text = "There are no results that match your search"
+            if (this.props.app.queriesInProgress > 0) text = "Searching..."
             searchResults = [{
                 text: "",
                 value: (
-                    <ListItem primaryText="There are no results that match your search" disabled={true} />
+                    <ListItem
+                        primaryText={text}
+                        disabled={true}
+                    />
                 )
             }]
+
         } else {
             searchResults = this.props.search.map(result => {
+                let avatar = <Avatar size={24} src={result.thumbnail} />
+                if (result.type === 'github') {
+                    avatar = <Avatar size={24} icon={<Code  style={{margin: '0px'}}/>} />
+                }
                 return {
                     text: result.primaryText + _.uniqueId('search'),
                     value: (
                         <ListItem
-                            leftAvatar={<Avatar size={24} src={result.thumbnail} />}
+                            leftAvatar={avatar}
                             primaryText={result.primaryText}
                             innerDivStyle={itemStyles}
                             onTouchTap={this.goToResult.bind(this, result.link)}
@@ -162,7 +183,18 @@ class Header extends Component {
                         <li className="notif-li"><Link to="/app/notifications">Notifs  &nbsp;
                             {notifsCount}</Link></li>
                         <li className="display-pic-li">{image}</li>
-                        <li><span className=" navbar-text ">{this.props.displayName} </span></li>
+                        <li className="dropdown">
+                            <a href="#" className="dropdown-toggle"
+                               data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">{this.props.displayName} <span className="caret"></span></a>
+                            <ul className="dropdown-menu">
+                                <li><a href="#" onClick={logout}>Log Out</a></li>
+                            </ul>
+                        </li>
+
+                        <li><span className=" navbar-text "> </span></li>
                     </ul>
                 </div>
             </nav>

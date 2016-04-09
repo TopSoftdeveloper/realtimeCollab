@@ -348,21 +348,35 @@ function syncHandler(request, reply) {
                 return;
             }
 
-            addGithubMilestonesToCollab(owner, name, token, projectId).then(function() {
-                addGithubIssuesToCollab(owner, name, token, projectId).then(function() {
-                    addCollabMilestonesToGithub(owner, name, token, projectId).then(function() {
-                        addCollabTasksToGithub(owner, name, token, projectId).then(function() {
-                            reply({status: 'OK'})
-                        }, function(err) {
-                            reply(err)
-                        })
+            var promises = []
+            var githubToCollab = new Promise(function (resolve, reject) {
+                addGithubMilestonesToCollab(owner, name, token, projectId).then(function() {
+                    addGithubIssuesToCollab(owner, name, token, projectId).then(function() {
+                        resolve()
                     }, function(err) {
-                        reply(err)
+                        reject(err)
                     })
                 }, function(err) {
-                    reply(err)
+                    reject(err)
                 })
-            }, function(err) {
+            })
+            var collabToGithub = new Promise(function (resolve, reject) {
+                addCollabMilestonesToGithub(owner, name, token, projectId).then(function() {
+                    addCollabTasksToGithub(owner, name, token, projectId).then(function() {
+                        resolve()
+                    }, function(err) {
+                        reject(err)
+                    })
+                }, function(err) {
+                    reject(err)
+                })
+            })
+            promises.push(githubToCollab)
+            promises.push(collabToGithub)
+            Promise.all(promises).then(function() {
+                reply({status: 'OK'})
+            }).catch(function(err) {
+                console.log(err)
                 reply(err)
             })
         })

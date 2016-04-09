@@ -1,15 +1,18 @@
-import {serverCreateTask, serverUpdateGithubLogin, serverMarkDone,
+import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkDone,
         serverPopulate, serverCreateMilestone, serverCreateProject,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
-        syncGithubIssues, serverEditTask, serverEditMilestone,
-        queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed} from '../utils/apiUtil'
+        syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub,
+        queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed, refreshTokens,
+        listRepoEvents} from '../utils/apiUtil'
+import {getCurrentProject} from '../utils/general'
 import {isObjectPresent} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
 import Fuse from 'fuse.js'
 import UserColours from '../UserColours';
+import Promise from "bluebird"
 
 let AppConstants = require('../AppConstants');
 let ServerConstants = require('../../../../server/constants');
@@ -26,9 +29,11 @@ function makeActionCreator(type, ...argNames) {
 
 /**
  * Reducers listen for action types (the first parameter, referenced through AppConstants)
- * emitted by dispatched actionCreators
+ * emitted by dispatched actionCreators. Note: the first parameter of the action creator is already
+ * named "type". So DO NOT name other parameters as "type".
  */
 export const _updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app')
+export const snackbarMessage = makeActionCreator(AppConstants.SNACKBAR_MESSAGE, 'message', 'kind');
 export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original', 'replacement');
 export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID, 'original', 'replacement');
 export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
@@ -51,6 +56,8 @@ export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id
 
 export const initSearchResults = makeActionCreator(AppConstants.INIT_RESULTS, 'results');
 export const addSearchResults = makeActionCreator(AppConstants.ADD_RESULTS, 'results');
+export const queryProcessing = makeActionCreator(AppConstants.QUERY_PROCESSING);
+export const queryDone = makeActionCreator(AppConstants.QUERY_DONE);
 
 export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
 export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
@@ -66,9 +73,10 @@ export const addNewsfeedEvents = makeActionCreator(AppConstants.ADD_EVENT, 'even
 export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
 export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
 
+export const insertFile = makeActionCreator(AppConstants.INSERT_FILE, 'file');
 export const addFiles = makeActionCreator(AppConstants.ADD_FILES, 'files');
 export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
-export const _updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'payload');
+export const updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'payload');
 export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'id', 'directory');
 export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'projectId', 'dirId');
 export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT, 'projectId', 'dirId');
@@ -80,15 +88,49 @@ export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message')
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
 export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
+export const userEditing = makeActionCreator(AppConstants.USER_EDITING, 'kind', 'id', 'user_id');
+export const userStopEditing = makeActionCreator(AppConstants.USER_STOP_EDITING, 'kind', 'id', 'user_id');
 
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
 
-export function uploadFileToDrive(file) {
+export function uploadFileToDrive(file, directory) {
     return function(dispatch) {
-        uploadFile(file).then(res => {
-            console.log(res)
-        })
+        let fileData = file.data
+        const boundary = AppConstants.MULTIPART_BOUNDARY
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
+
+        var reader = new FileReader();
+        reader.readAsBinaryString(fileData);
+        reader.onload = function(e) {
+            var contentType = fileData.type || 'application/octect-stream';
+            var metadata = {
+                'name': fileData.name,
+                'mimeType': contentType
+            };
+            metadata.parents = [directory]
+
+            var base64Data = btoa(reader.result);
+            var multipartRequestBody =
+                delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+
+            uploadFile(multipartRequestBody).then(newFile => {
+                dispatch(deleteFile(file.id))
+                dispatch(insertFile(newFile))
+                dispatch(snackbarMessage('Uploaded ' + fileData.name, 'default'))
+            }, function (err) {
+                console.log(err)
+            })
+        }
     }
 }
 
@@ -98,51 +140,87 @@ export function updateGithubLogin(token) {
     }
 }
 
-function _getGithubRepos(dispatch) {
-    dispatch(_updateAppStatus({
-        github: {
-            loading: true
-        }
-    }))
-    getGithubRepos().done(res => {
-        dispatch(_updateAppStatus({
-            github: {
-                loading: false
-            }
-        }))
-        dispatch(_initGithubRepos(res))
-    }).fail(e => {
-        dispatch(_updateAppStatus({
-            github: {
-                loading: false
-            }
-        }))
-        if (e.statusText === "Unauthorized") {
-            dispatch(_updateAppStatus({github_token: ''}))
-        } else {
-            console.log(e)
-        }
-    })
+function testGithubRepos(projects) {
+    // Tests whether user can successfully call a repo's API
+    // So we can tell whether a repo has been removed, or there's
+    // something wrong with the authentication
+    return function(dispatch) {
+        projects.forEach(project => {
+            listRepoEvents(project.github_repo_owner, project.github_repo_name).done(res => {
+            }).fail(e => {
+                console.error(e)
+                let errorMsg = project.github_repo_owner + '/' + project.github_repo_name + ' is ' + e.responseJSON.message
+                dispatch(snackbarMessage(errorMsg, 'warning'))
+                dispatch(_updateProject(project.id, {
+                    github_error: errorMsg
+                }))
+            })
+        })
+    }
 }
 
+function getOwnerRepos(projects) {
+    // Iterates through all projects and returns the below string for GitHub querying.
+    // +repo:collab/cs3245+repo:collab/IndoorNavigation
+    let ownerRepos = ''
+    projects.forEach(project => {
+        if (project.github_repo_owner && project.github_repo_name) {
+            ownerRepos = ownerRepos + '+repo:' + project.github_repo_owner + '/' + project.github_repo_name
+        }
+    })
+    return ownerRepos
+}
 
 export function queryIntegrations(queryString) {
     return function(dispatch, getState) {
         let tasks = getState().tasks
         let projects = getState().projects
         let users = getState().users
+        let ownerRepos = getOwnerRepos(projects)
         dispatch(_updateAppStatus({
-            queryString: queryString
+            queryString: queryString,
+            searchFilter: 'all'
         }))
+        dispatch(initSearchResults([])) // clear the previous results
+        let promises = []
+        let taskResults = searchTasksByAssignee(queryString, users, tasks, projects)
+        dispatch(addSearchResults(taskResults))
 
-        queryGoogleDrive(queryString).then(res => {
-            let driveResults = normalizeDriveResults(res.result.files)
-            let taskResults = searchTasksByAssignee(queryString, users, tasks, projects)
-            dispatch(initSearchResults(driveResults.concat(taskResults)))
-        }, function (err) {
-            console.log(err)
-        })
+        promises.push(Promise.resolve(queryGoogleDrive(queryString)))
+        if (ownerRepos) promises.push(Promise.resolve(queryGithub(queryString, ownerRepos)))
+
+        Promise.all(promises.map(function(promise) {
+            dispatch(queryProcessing())
+            return promise.reflect();
+        })).each(function(inspection, i) {
+            if (inspection.isFulfilled()) {
+                let value = inspection.value()
+                if (i === 0) {
+                    let driveResults = normalizeDriveResults(value.files)
+                    dispatch(addSearchResults(driveResults))
+                } else if (i === 1) {
+                    let githubResults = normalizeGithubResults(value.items)
+                    dispatch(addSearchResults(githubResults))
+                }
+            } else {
+                console.error(inspection.reason());
+            }
+            dispatch(queryDone())
+        });
     }
+}
+
+function normalizeGithubResults(items) {
+    return items.map(item => {
+        return {
+            id: item.sha,
+            primaryText: item.path,
+            repo: item.repository.full_name,
+            link: item.html_url,
+            type: 'github',
+            text_matches: item.text_matches
+        }
+    })
 }
 
 function normalizeDriveResults(files) {
@@ -201,13 +279,31 @@ function searchTasksByAssignee(queryString, users, tasks, projects) {
 
 export function initGithubRepos() {
     return function(dispatch) {
-        if (!localStorage.getItem('github_token')) {
-            setTimeout(function() {
-                _getGithubRepos(dispatch)
-            }, 5000) // delay in case we are still in the midst of getting token
-        } else {
-            _getGithubRepos(dispatch)
-        }
+        dispatch(_updateAppStatus({
+            github: {
+                loading: true
+            }
+        }))
+        getGithubRepos().done(res => {
+            dispatch(_updateAppStatus({
+                github: {
+                    loading: false,
+                    repo_fetched: false
+                }
+            }))
+            dispatch(_initGithubRepos(res))
+        }).fail(e => {
+            dispatch(_updateAppStatus({
+                github: {
+                    loading: false
+                }
+            }))
+            if (e.statusText === "Unauthorized") {
+                dispatch(_updateAppStatus({github_token: ''}))
+            } else {
+                console.log(e)
+            }
+        })
     }
 }
 
@@ -226,6 +322,7 @@ export function dismissProjectAlert() {
 export function declineProject(projectId, notificationId) {
     return function(dispatch) {
         serverDeclineProject(projectId).done(res => {
+            dispatch(snackbarMessage('Project declined', 'default'))
             serverDeleteNotification(notificationId).done(res => {
                 dispatch(_deleteNotification(notificationId))
             }).fail(e => {
@@ -240,6 +337,7 @@ export function declineProject(projectId, notificationId) {
 export function acceptProject(projectId, notificationId) {
     return function(dispatch) {
         serverAcceptProject(projectId).done(res => {
+            dispatch(snackbarMessage('Project accepted', 'default'))
             serverDeleteNotification(notificationId).done(res => {
                 dispatch(_deleteNotification(notificationId))
             }).fail(e => {
@@ -267,6 +365,23 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function hasProjectWithoutGithub(projects) {
+    for (let i=0; i<projects.length; ++i) {
+        let project = projects[i]
+        if (!project.github_repo_name || !project.github_repo_owner) return true
+    }
+    return false
+}
+
+function hasProjectWithGithub(projects) {
+    for (let i=0; i<projects.length; ++i) {
+        let project = projects[i]
+        if (project.github_repo_name && project.github_repo_owner) return true
+    }
+    return false
+}
+
+
 export function initializeApp() {
     return function(dispatch) {
         dispatch(addUsers([{
@@ -279,21 +394,32 @@ export function initializeApp() {
             me: true
         }]));
         dispatch(initApp({
-            logged_into_google: false,
-            refresh_github_token: false,
+            is_linked_to_drive: true,
+            is_top_level_folder_loaded: false,
             github: {
+                loading: false,
+                repo_fetched: false
+            },
+            files: {
                 loading: false
             },
+            queriesInProgress: 0,
             loading: true,
-            queryString: ''
+            queryString: '',
+            searchFilter: 'all',
+            snackbar: {
+                isOpen: false,
+                message: '',
+                background: ''
+            }
         }));
+
         serverPopulate().done(res => {
             if (res.projects.length > 0) {
                 let normalizedTables = normalize(res.projects);
-                dispatch(initApp({
+                dispatch(_updateAppStatus({
                     current_project: normalizedTables.projects[0].id,
-                    github_token: localStorage.getItem('github_token'),
-                    loading: false
+                    github_token: localStorage.getItem('github_token')
                 }));
                 dispatch(initMilestones(normalizedTables.milestones));
                 dispatch(initProjects(normalizedTables.projects));
@@ -304,6 +430,29 @@ export function initializeApp() {
                     return user
                 })
                 dispatch(addUsers(u));
+
+                dispatch(testGithubRepos(normalizedTables.projects))
+                refreshTokens().done(res => {
+                    localStorage.setItem('google_token', res.access_token);
+                    localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
+                    let projectId = getCurrentProject()
+                    var currentProject = normalizedTables.projects.filter(project => project.id === projectId)[0]
+                    if (currentProject) {
+                        dispatch(initializeFiles(currentProject))
+                    }
+
+                    if (hasProjectWithoutGithub(normalizedTables.projects)) {
+                        dispatch(initGithubRepos())
+                    }
+                    setTimeout(function() {
+                        dispatch(_updateAppStatus({
+                            loading: false
+                        }));
+                    }, 1000)
+
+                }).fail(e => {
+                    console.log(e);
+                });
             }
         }).fail(e => {
             console.log(e)
@@ -345,7 +494,9 @@ export function initializeFiles(project) {
 export function markDone(id, projectId) {
     return function(dispatch) {
         dispatch(_markDone(id));
-        serverMarkDone(id, projectId).done(res => {}).fail(e => {
+        serverMarkDone(id, projectId).done(res => {
+            dispatch(snackbarMessage('Task completed', 'default'))
+        }).fail(e => {
             console.log(e);
             dispatch(_unmarkDone(id));
         });
@@ -359,15 +510,28 @@ export function addTask(task) {
   	return function(dispatch) {
         dispatch(_addTask(task));
         delete task.id
-        serverCreateTask(task)
-        .done(res => {
+        serverCreateTask(task).done(res => {
           // update the stores with the actual id
-          dispatch(replaceTaskId(task.id, res.id));
+            dispatch(snackbarMessage('Task added', 'default'))
+            dispatch(replaceTaskId(task.id, res.id));
         }).fail(e => {
           console.log(e);
           dispatch(_deleteTask(task.id));
         });
   	}
+}
+
+export function deleteTask(taskId, projectId) {
+    return function(dispatch) {
+        dispatch(markAsDirty(taskId))
+        serverDeleteTask(taskId, projectId).done(res => {
+            dispatch(_deleteTask(taskId));
+            dispatch(snackbarMessage('Task deleted', 'default'))
+        }).fail(e => {
+            dispatch(unmarkDirty(taskId))
+            console.log(e);
+        });
+    }
 }
 
 export function editTask(task_id, content, assignee_id) {
@@ -379,6 +543,7 @@ export function editTask(task_id, content, assignee_id) {
         serverEditTask(task_id, task)
             .done(res => {
                 dispatch(_editTask(task_id, task));
+                dispatch(snackbarMessage('Task updated', 'default'))
             }).fail(e => {
             console.log(e);
         });
@@ -396,6 +561,7 @@ export function editMilestone(milestone_id, content, deadline) {
         serverEditMilestone(milestone_id, milestone)
             .done(res => {
                 dispatch(_editMilestone(milestone_id, milestone));
+                dispatch(snackbarMessage('Milestone updated', 'default'))
             }).fail(e => {
             console.log(e);
         });
@@ -408,10 +574,11 @@ export function createMilestone(milestone) {
         serverCreateMilestone({
             content:milestone.content,
             project_id: milestone.project_id,
-            deadline: milestone.deadline,
+            deadline: milestone.deadline
         })
         .done(res => {
             dispatch(replaceMilestoneId(milestone.id, res.id));
+            dispatch(snackbarMessage('Milestone created', 'default'))
         }).fail(e => {
             console.log(e);
             dispatch(_deleteMilestone(milestone.id));
@@ -423,6 +590,7 @@ export function deleteMilestone(milestoneId, projectId) {
     return function(dispatch) {
         serverDeleteMilestone(milestoneId, projectId).done(res => {
             dispatch(_deleteMilestone(milestoneId))
+            dispatch(snackbarMessage('Milestone deleted', 'default'))
         }).fail(e => {
             console.log(e)
         });
@@ -445,6 +613,7 @@ export function createProject(content) {
                 directory_structure: [],
                 files_loaded: false
             }))
+            dispatch(snackbarMessage('Project created', 'default'))
         }).fail(e => {
             console.log(e);
         });
@@ -472,7 +641,8 @@ export function reopenTask(taskId) {
 	return function(dispatch) {
 		dispatch(_unmarkDone(taskId));
 		serverEditTask(taskId, {completed_on: null}).done(res => {
-	    }).fail(e => {
+        dispatch(snackbarMessage('Task reopened', 'default'))
+    }).fail(e => {
 	        console.log(e);
 	       	dispatch(_markDone(taskId));
 	    });
@@ -576,15 +746,28 @@ function getTopLevelFolders(files, rootId) {
 
 export function initTopLevelFolders(projectId) {
     return function(dispatch) {
+        dispatch(_updateAppStatus({
+            files: {
+                loading: true
+            }
+        }))
         getFileInfo('root').then(res => {
-            let rootId = res.result.id
+            let rootId = res.id
             getGoogleDriveFolders().then(res => {
-                let topLevelFolders = getTopLevelFolders(res.result.files, rootId)
+                let topLevelFolders = getTopLevelFolders(res.files, rootId)
                 dispatch(addFiles(topLevelFolders))
                 dispatch(_updateProject(projectId, {directory_structure: [{name: 'Top level directory', id: 'root'}]}))
+                dispatch(_updateAppStatus({
+                    files: {
+                        loading: false
+                    },
+                    is_top_level_folder_loaded: true
+                }))
             }, function (err) {
                 console.log(err)
             })
+        }, function (err) {
+            console.log(err)
         })
     }
 }
@@ -594,17 +777,48 @@ export function initTopLevelFolders(projectId) {
  */
 export function initChildrenFiles(projectId, folderId, folderName) {
     return function(dispatch) {
+        dispatch(_updateAppStatus({
+            files: {
+                loading: true
+            }
+        }))
         getChildrenFiles(folderId).then(res => {
-            dispatch(addFiles(res.result.files))
+            dispatch(addFiles(res.files))
             if (folderName) {
                 dispatch(addDirectory(projectId, {id: folderId, name: folderName}))
+                dispatch(_updateAppStatus({
+                    files: {
+                        loading: false
+                    }
+                }))
             } else {
                 getFileInfo(folderId).then(res => {
-                    dispatch(addDirectory(projectId, {id: folderId, name: res.result.name}))
+                    dispatch(addDirectory(projectId, {id: folderId, name: res.name}))
+                    dispatch(_updateAppStatus({
+                        files: {
+                            loading: false
+                        }
+                    }))
+                }, function (err) {
+                    if (err.responseJSON.error.errors[0].reason === 'notFound') {
+                        dispatch(snackbarMessage("Either the root folder is deleted, or you don't have permission to view this folder", 'warning'))
+                        dispatch(_updateProject(projectId, {
+                            folder_error: "Either the root folder is deleted, or you don't have permission to view this folder"
+                        }))
+                    }
+                    dispatch(_updateAppStatus({
+                        files: {
+                            loading: false
+                        }
+                    }))
                 })
             }
         }, function (err) {
-            console.log(err)
+            dispatch(_updateAppStatus({
+                files: {
+                    loading: false
+                }
+            }))
         })
     }
 }
@@ -626,6 +840,7 @@ export function setDirectoryAsRoot(projectId, folderId) {
     return function(dispatch) {
         serverUpdateProject(projectId, {root_folder: folderId}).done(res => {
             dispatch(_setDirectoryAsRoot(projectId, folderId))
+            dispatch(snackbarMessage('Directory set as root', 'default'))
         }).fail(e => {
             console.log(e)
         })
@@ -653,6 +868,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                             loading: false
                         }
                     }))
+                    dispatch(snackbarMessage('Synced with GitHub', 'default'))
                 }).fail(e => {
                     window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
                 });
@@ -663,16 +879,19 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
     }
 }
 
-export function sendMessage(text) {
+export function updateProject(projectId, payload) {
     return function(dispatch) {
-        let message =     {
-            id: _.uniqueId(),
-            threadID: 't_3',
-            threadName: 'Bill and Brian',
-            authorName: 'Brian',
-            text: text,
-            timestamp: Date.now() - 39999
-        }
-        dispatch(addMessage(message))
+        dispatch(_updateProject(projectId, payload))
+    }
+}
+
+export function renameProject(projectId, name) {
+    return function(dispatch) {
+        serverUpdateProject(projectId, {content: name}).done(res => {
+            dispatch(snackbarMessage('Project renamed to ' + name, 'default'))
+            dispatch(_updateProject(projectId, {content: name}))
+        }).fail(e => {
+            console.log(e)
+        })
     }
 }

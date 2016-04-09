@@ -66,7 +66,7 @@ class MilestoneModal extends Component {
                 primary={true}
                 onTouchTap={this.onDialogSubmit.bind(this)} />
         ]
-        //this.props.deadline
+
         let picker = (
             <DatePicker
                 hintText="Select a date"

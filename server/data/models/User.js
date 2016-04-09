@@ -12,7 +12,8 @@ module.exports = function(sequelize, DataTypes) {
         github_token: DataTypes.STRING,
         google_token: DataTypes.STRING,
         display_name: DataTypes.STRING,
-        display_image: DataTypes.STRING
+        display_image: DataTypes.STRING,
+        refresh_token: DataTypes.STRING
     },{
         underscored: true,
         classMethods: {
