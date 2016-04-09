@@ -8,8 +8,7 @@ class List extends Component {
         let projectUrl = '/app/project/' + projectId + '/' + getCurrentTab();
         let project = this.props.items.filter(project => project.id === projectId)[0]
         browserHistory.push(projectUrl)
-        actions.switchToProject(projectId)
-        actions.initializeFiles(project)
+        actions.switchToProject(project)
     }
 
     render() {

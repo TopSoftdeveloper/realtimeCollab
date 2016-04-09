@@ -6,11 +6,9 @@ var Boom = require('boom');
 var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
 var config = require('config');
-var Jwt = require('jsonwebtoken');
 var Promise = require("bluebird");
 var github = require('./githubController')
 var accessControl = require('./accessControl')
-var secret_key = config.get('authentication.privateKey');
 
 module.exports = {
     createTask: {
@@ -61,20 +59,28 @@ module.exports = {
 function updateTask(request, reply) {
     var task_id = request.params.task_id;
     var token = request.payload.github_token
+    var user_id = request.auth.credentials.user_id
     request.payload.completed_on = request.payload.completed_on ? request.payload.completed_on : null // convert empty string to null
-    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-        storage.findProjectOfTask(task_id).then(function(result) {
-            if (!result) {
-                reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-                return
+
+    storage.findProjectOfTask(task_id).then(function(result) {
+        if (!result) {
+            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
+            return
+        }
+        var project = result.project
+        accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
+            if (!isPartOf) {
+                reply(Boom.forbidden(constants.FORBIDDEN));
+                return;
             }
             var project = result.project
             var github_num = result.task.github_number
 
             storage.updateTask(request.payload, task_id).then(function() {
                 reply({status: constants.STATUS_OK});
+
                 socket.sendMessageToProject(project.id, 'update_task', {
-                    task: request.payload, sender: decoded.user_id
+                    task: request.payload, sender: user_id, task_id: task_id
                 })
                 if (!token) return
                 // Add the same task to github issues
@@ -101,41 +107,48 @@ function updateTask(request, reply) {
 
 function getTask(request, reply) {
     var task_id = request.params.task_id;
-    storage.doesTaskExist(task_id).then(function(exists) {
-        if (!exists) {
+    var user_id = request.auth.credentials.user_id
+
+    storage.findProjectOfTask(task_id).then(function(result) {
+        if (!result) {
             reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-        } else {
+            return
+        }
+        var project = result.project
+        accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
+            if (!isPartOf) {
+                reply(Boom.forbidden(constants.FORBIDDEN));
+                return;
+            }
             storage.getTask(task_id).then(function(task) {
                 reply(task);
             });
-        }
-    });
+        })
+    })
 }
 
 function createTask(request, reply) {
-    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-        storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
-            var currentProject = null
-            var matchingProjects = projects.filter(function(project) {
-                return project.id === request.payload.project_id
+    var user_id = request.auth.credentials.user_id
+    var projectId = request.payload.project_id
+    accessControl.isUserPartOfProject(user_id, projectId).then(function (isPartOf) {
+        if (!isPartOf) {
+            reply(Boom.forbidden(constants.FORBIDDEN));
+            return;
+        }
+
+        storage.createTask(request.payload).then(function(newTask) {
+            socket.sendMessageToProject(request.payload.project_id, 'new_task', {
+                task: newTask, sender: user_id
             })
-            if (err || matchingProjects.length !== 1) {
-                reply(Boom.forbidden(constants.FORBIDDEN));
-                return
-            } else {
-                currentProject = matchingProjects[0]
-            }
 
-            storage.createTask(request.payload).then(function(newTask) {
-                socket.sendMessageToProject(request.payload.project_id, 'new_task', {
-                    task: newTask, sender: decoded.user_id
-                })
+            reply(newTask);
+            if (!request.payload.github_token) return
 
-                reply(newTask);
-                if (!request.payload.github_token) return
+            storage.findProjectOfTask(newTask.id).then(function(result) {
+                var project = result.project
                 // Add the same task to github issues
-                var owner = currentProject.github_repo_owner
-                var repo = currentProject.github_repo_name
+                var owner = project.github_repo_owner
+                var repo = project.github_repo_name
                 var promises = []
                 if (request.payload.assignee_id) {
                     promises.push(storage.findGithubLogin(request.payload.assignee_id))
@@ -158,82 +171,81 @@ function createTask(request, reply) {
                         }
                         github.createGithubIssue(newTask.id, issue, owner, repo, request.payload.github_token).then(function() {},
                             function(err) {
-                            console.log(err)
-                        })
+                                console.log(err)
+                            })
                     }, function(err) {
                         console.log(err)
                     })
                 } else {
                     github.createGithubIssue(newTask.id, issue, owner, repo, request.payload.github_token)
                 }
+            })
 
-            }, function(error) {
-                reply(Boom.badRequest(error));
-            }); //storage.createTask
-
-        });
-    });
+        }, function(error) {
+            reply(Boom.badRequest(error));
+        }); //storage.createTask
+    })
 }
 
 function markTaskAsDone(request, reply) {
     var project_id = request.payload.project_id
     var task_id = request.payload.task_id;
     var token = request.payload.github_token
+    var user_id = request.auth.credentials.user_id
 
-    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-        storage.getProjectsOfUser(decoded.user_id).then(function(projects) {
-            var currentProject = null
-            var matchingProjects = projects.filter(function (project) {
-                return project.id === request.payload.project_id
-            })
-            if (err || matchingProjects.length !== 1) {
+    storage.findProjectOfTask(task_id).then(function(result) {
+        if (!result) {
+            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
+            return
+        }
+        var project = result.project
+        accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
+            if (!isPartOf) {
                 reply(Boom.forbidden(constants.FORBIDDEN));
-            } else {
-                currentProject = matchingProjects[0]
+                return;
             }
+            storage.markDone(task_id).then(function () {
+                socket.sendMessageToProject(project_id, 'mark_done', {
+                    task_id: task_id, sender: user_id
+                })
+                reply({status: constants.STATUS_OK});
+                if (!request.payload.github_token) return
+                // Add the same task to github issues
+                var owner = project.github_repo_owner
+                var repo = project.github_repo_name
 
-            storage.doesTaskExist(task_id).then(function (exists) {
-                if (!exists) {
-                    reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-                } else {
-                    storage.markDone(task_id).then(function () {
-                        socket.sendMessageToProject(project_id, 'mark_done', {
-                            task_id: task_id, sender: decoded.user_id
-                        })
-                        reply({status: constants.STATUS_OK});
-                        if (!request.payload.github_token) return
-                        // Add the same task to github issues
-                        var owner = currentProject.github_repo_owner
-                        var repo = currentProject.github_repo_name
-
-                        storage.findGithubIssueNumber(task_id).then(function(number) {
-                            github.updateGithubIssue(owner, repo, token, number, {state: 'closed'})
-                        }, function(err){
-                            console.log(err)
-                        })
-                    });
-                }
+                storage.findGithubIssueNumber(task_id).then(function(number) {
+                    github.updateGithubIssue(owner, repo, token, number, {state: 'closed'})
+                }, function(err){
+                    console.log(err)
+                })
             });
         })
     })
 }
 
 function deleteTask(request, reply) {
+    var user_id = request.auth.credentials.user_id
     var task_id = request.params.task_id;
-    Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function(err, decoded) {
-        storage.doesTaskExist(task_id).then(function(exists) {
-            if (!exists) {
-                reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-            } else {
-                storage.deleteTask(task_id).then(function() {
-                    socket.sendMessageToProject(request.payload.project_id, 'delete_task', {
-                        task_id: task_id, sender: decoded.user_id
-                    })
-                    reply({
-                        status: constants.STATUS_OK
-                    });
-                });
+    storage.findProjectOfTask(task_id).then(function(result) {
+        if (!result) {
+            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
+            return
+        }
+        var project = result.project
+        accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
+            if (!isPartOf) {
+                reply(Boom.forbidden(constants.FORBIDDEN));
+                return;
             }
-        });
+            storage.deleteTask(task_id).then(function() {
+                socket.sendMessageToProject(request.payload.project_id, 'delete_task', {
+                    task_id: task_id, sender: user_id
+                })
+                reply({
+                    status: constants.STATUS_OK
+                });
+            });
+        })
     })
 }

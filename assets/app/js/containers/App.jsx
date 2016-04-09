@@ -23,12 +23,12 @@ class App extends Component {
         this.initApp()
         const {dispatch} = this.props;
         const socketActions = bindActionCreators(SocketActions, dispatch);
+        const actions = bindActionCreators(Actions, dispatch);
         socketActions.userIsOnline()
         socketActions.monitorOnlineStatus()
         socketActions.monitorProjectChanges()
         socketActions.monitorNotifications()
         socketActions.monitorEditStatus()
-        window.scrollback = {"room":"collab","form":"toast","minimize":true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));
     }
 
     initApp() {
@@ -149,7 +149,7 @@ class App extends Component {
                 <Snackbar
                     open={app.snackbar.isOpen}
                     message={app.snackbar.message}
-                    autoHideDuration={5000}
+                    autoHideDuration={3500}
                     bodyStyle={{background: app.snackbar.background}}
                     onRequestClose={this.handleSnackbarClose.bind(this)}
                 />

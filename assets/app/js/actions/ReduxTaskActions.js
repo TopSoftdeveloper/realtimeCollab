@@ -3,11 +3,11 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
-        syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub,
+        syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
         queryGoogleDrive, serverDeclineProject, uploadFile, serverGetNewesfeed, refreshTokens,
         listRepoEvents} from '../utils/apiUtil'
 import {getCurrentProject} from '../utils/general'
-import {isObjectPresent} from '../utils/general'
+import {isObjectPresent, filterUnique} from '../utils/general'
 import assign from 'object-assign';
 import _ from 'lodash'
 import Fuse from 'fuse.js'
@@ -50,7 +50,7 @@ export const _editMilestone = makeActionCreator(AppConstants.EDIT_MILESTONE, 'id
 export const _createProject = makeActionCreator(AppConstants.CREATE_PROJECT, 'project');
 export const _deleteProject = makeActionCreator(AppConstants.DELETE_PROJECT, 'id');
 export const replaceProjectId = makeActionCreator(AppConstants.REPLACE_PROJECT_ID, 'original', 'replacement');
-export const switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
+export const _switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
 export const projectAlert = makeActionCreator(AppConstants.PROJECT_INVITATION_ALERT, 'alert');
 export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id', 'payload');
 
@@ -146,15 +146,16 @@ function testGithubRepos(projects) {
     // something wrong with the authentication
     return function(dispatch) {
         projects.forEach(project => {
-            listRepoEvents(project.github_repo_owner, project.github_repo_name).done(res => {
-            }).fail(e => {
-                console.error(e)
-                let errorMsg = project.github_repo_owner + '/' + project.github_repo_name + ' is ' + e.responseJSON.message
-                dispatch(snackbarMessage(errorMsg, 'warning'))
-                dispatch(_updateProject(project.id, {
-                    github_error: errorMsg
-                }))
-            })
+            if (project.github_repo_owner && project.github_repo_name) {
+                listRepoEvents(project.github_repo_owner, project.github_repo_name).done(res => {
+                }).fail(e => {
+                    let errorMsg = project.github_repo_owner + '/' + project.github_repo_name + ' is ' + e.responseJSON.message
+                    dispatch(snackbarMessage(errorMsg, 'warning'))
+                    dispatch(_updateProject(project.id, {
+                        github_error: errorMsg
+                    }))
+                })
+            }
         })
     }
 }
@@ -262,15 +263,19 @@ function searchTasksByAssignee(queryString, users, tasks, projects) {
         let project = null
         matchingUsers.forEach(user=> {if (user.id === task.assignee_id) assignee = user})
         projects.forEach(p=> {if (p.id === task.project_id) project = p})
-
+        let primaryText = task.content
+        if (task.completed_on) {
+            primaryText = task.content + ' (completed)'
+        }
         return (
             {
                 id: task.id,
-                primaryText: task.content,
+                primaryText: primaryText,
                 secondaryText: assignee.display_name,
                 thumbnail: assignee.display_image,
                 project_id: project.id,
                 project_content: project.content,
+                completed_on: task.completed_on,
                 type: 'task'
             }
         )
@@ -288,7 +293,7 @@ export function initGithubRepos() {
             dispatch(_updateAppStatus({
                 github: {
                     loading: false,
-                    repo_fetched: false
+                    repo_fetched: true
                 }
             }))
             dispatch(_initGithubRepos(res))
@@ -338,6 +343,32 @@ export function acceptProject(projectId, notificationId) {
     return function(dispatch) {
         serverAcceptProject(projectId).done(res => {
             dispatch(snackbarMessage('Project accepted', 'default'))
+            dispatch(_updateAppStatus({
+                loading: true
+            }));
+            serverPopulate().done(res => {
+                if (res.projects.length > 0) {
+                    let normalizedTables = normalize(res.projects);
+                    dispatch(initMilestones(normalizedTables.milestones));
+                    dispatch(initProjects(normalizedTables.projects));
+                    dispatch(initTasks(normalizedTables.tasks));
+                    dispatch(initSearchResults([]));
+                    let u = normalizedTables.users.map(user => {
+                        user.colour = getNewColour(normalizedTables.users.map(k => k.colour))
+                        return user
+                    })
+                    dispatch(addUsers(u));
+                    let projectId = getCurrentProject()
+                    let currentProject = normalizedTables.projects.filter(project => project.id === projectId)[0]
+                    if (currentProject) {
+                        dispatch(initializeFiles(currentProject))
+                    }
+                }
+                dispatch(_updateAppStatus({
+                    loading: false
+                }));
+            })
+
             serverDeleteNotification(notificationId).done(res => {
                 dispatch(_deleteNotification(notificationId))
             }).fail(e => {
@@ -439,6 +470,7 @@ export function initializeApp() {
                     var currentProject = normalizedTables.projects.filter(project => project.id === projectId)[0]
                     if (currentProject) {
                         dispatch(initializeFiles(currentProject))
+                        dispatch(switchChatRoom(currentProject.chatroom))
                     }
 
                     if (hasProjectWithoutGithub(normalizedTables.projects)) {
@@ -456,14 +488,16 @@ export function initializeApp() {
             }
         }).fail(e => {
             console.log(e)
-            window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+            window.location.assign(AppConstants.HOSTNAME);
         });
 
         serverGetNotifications().done(res => {
+            let users = filterUnique(res.users)
             let u = res.users.map(user => {
-                user.colour = getNewColour(res.users.map(k => k.colour))
+                user.colour = getNewColour(users.map(k => k.colour))
                 return user
             })
+
             dispatch(addUsers(u));
             dispatch(initNotifications(res.notifications));
         }).fail(e => {
@@ -477,6 +511,7 @@ export function initializeApp() {
         })
     }
 }
+
 
 export function initializeFiles(project) {
     return function(dispatch) {
@@ -679,8 +714,8 @@ function normalize(projects) {
             directory_structure: [],
             files_loaded: false,
             github_repo_name: project.github_repo_name,
-            github_repo_owner: project.github_repo_owner
-
+            github_repo_owner: project.github_repo_owner,
+            chatroom: project.chatroom
         };
 
         project.milestones.forEach(milestone => {
@@ -698,7 +733,6 @@ function normalize(projects) {
                 return milestone
             })
         });
-
 
         currProj.milestones = milestoneState.map(milestone => milestone.id);
         currProj.tasks = taskState.map(task => task.id)
@@ -856,6 +890,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                     loading: true
                 }
             }))
+            setupGithubWebhook(repoName, repoOwner)
             syncGithubIssues(projectId, repoName, repoOwner).done(res => {
                 serverPopulate().done(res => {
                     if (res.projects.length > 0) {
@@ -870,7 +905,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                     }))
                     dispatch(snackbarMessage('Synced with GitHub', 'default'))
                 }).fail(e => {
-                    window.location.assign(AppConstants.LANDING_PAGE_ROOT_URL);
+                    window.location.assign(AppConstants.HOSTNAME);
                 });
             })
         }).fail(e => {
@@ -893,5 +928,66 @@ export function renameProject(projectId, name) {
         }).fail(e => {
             console.log(e)
         })
+    }
+}
+
+export function switchToProject(project) {
+    return function(dispatch, getState) {
+        dispatch(initializeFiles(project))
+        dispatch(switchChatRoom(project.chatroom))
+        let app = getState().app
+
+        if (!app.github.repo_fetched && !project.github_repo_name) {
+            dispatch(initGithubRepos())
+        }
+        dispatch(_switchToProject(project.id))
+    }
+}
+
+export function changeChatRoom(projectId, name) {
+    // change chat room of a particular project
+    return function(dispatch) {
+        serverUpdateProject(projectId, {chatroom: name}).done(res => {
+            dispatch(_updateProject(projectId, {chatroom: name}))
+            if (!window.scrollback) {
+                dispatch(loadChatRoom(name))
+                dispatch(snackbarMessage('Chatroom ' + name + ' loaded', 'default'))
+            } else {
+                $('.scrollback-toast').remove();
+                dispatch(loadChatRoom(name))
+                dispatch(snackbarMessage('Chatroom ' + name + ' changed', 'default'))
+            }
+        }).fail(e => {
+            console.error(e)
+        })
+    }
+}
+
+export function switchChatRoom(name) {
+    // switch chat room from one project to another
+    return function(dispatch) {
+        if (!name) return
+        if (!window.scrollback) {
+            dispatch(loadChatRoom(name))
+        } else {
+            $('.scrollback-toast').remove();
+            dispatch(loadChatRoom(name))
+        }
+    }
+}
+
+export function loadChatRoom(name) {
+    return function(dispatch) {
+        window.scrollback = {
+            "room":name,"form":"toast","minimize":true
+        };
+        (function(d, s, h, e) {
+            //d: document object
+            //s: script
+            e = d.createElement(s);
+            e.async = 1;
+            e.src = (location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";
+            d.getElementsByTagName(s)[0].parentNode.appendChild(e);
+        }(document, "script"));
     }
 }

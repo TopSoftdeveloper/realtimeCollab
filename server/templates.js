@@ -32,7 +32,7 @@ module.exports = {
     },
 
     getLink: function(notification_id) {
-        return  constants.BASE_URL + '/app/notifications/' + notification_id
+        return  ''
     },
 
     INVITE_TO_PROJECT: 'INVITE_TO_PROJECT',

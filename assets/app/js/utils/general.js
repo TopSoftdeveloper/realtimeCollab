@@ -81,6 +81,16 @@ export function isObjectPresent(arr, id) {
 	return false
 }
 
+export function filterUnique(arr) {
+	let uniqueArr = []
+	arr.forEach(item => {
+		if (!isObjectPresent(uniqueArr, item.id)) {
+			uniqueArr.push(item)
+		}
+	})
+	return uniqueArr
+}
+
 export function getUserAvatar(imgSrc, displayName, enableTooltip, isSquare, memberColour) {
 	let image = null
 	let className = ""

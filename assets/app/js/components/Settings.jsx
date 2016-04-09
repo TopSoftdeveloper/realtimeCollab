@@ -22,7 +22,15 @@ class Settings extends Component {
         this.state = {
             inputEmail: '',
             inputProjectName: '',
+            chatName: '',
             fetchedRepos: false
+        }
+    }
+
+    changeChatRoom(e) {
+        e.preventDefault()
+        if (this.state.chatName.trim()) {
+            this.props.actions.changeChatRoom(this.props.project.id, this.state.chatName)
         }
     }
 
@@ -65,6 +73,12 @@ class Settings extends Component {
     projectNameChange() {
         this.setState({
             inputProjectName: this.refs.projectNameInput.getValue()
+        });
+    }
+
+    chatNameChange() {
+        this.setState({
+            chatName: this.refs.chatNameInput.getValue()
         });
     }
 
@@ -247,6 +261,12 @@ class Settings extends Component {
             )
         }
 
+        let chatName = 'None'
+        if (project.chatroom) {
+            chatName = project.chatroom
+        }
+        let chatLabel = 'Current chat room: ' + chatName
+
         return (
             <div className='settings'>
                 <ListGroup>
@@ -275,6 +295,20 @@ class Settings extends Component {
                     {githubPanel}
                 </Panel>
 
+                <Panel header='Chat Room' bsStyle="info">
+                    <form onSubmit={this.changeChatRoom.bind(this)}>
+                        <Input
+                            type="text"
+                            label={chatLabel}
+                            ref='chatNameInput'
+                            value={this.state.chatName}
+                            placeholder="Chat room name"
+                            onChange={this.chatNameChange.bind(this)}
+                            buttonAfter={<ButtonInput value="Join" type="submit"/>}
+                        />
+                    </form>
+                </Panel>
+
                 <Panel header='Options' bsStyle="info">
                     <form onSubmit={this.renameProject.bind(this)}>
                         <Input
@@ -287,6 +321,7 @@ class Settings extends Component {
                             buttonAfter={<ButtonInput value="Rename" type="submit"/>}
                         />
                     </form>
+                    <br/>
                 </Panel>
             </div>
         );

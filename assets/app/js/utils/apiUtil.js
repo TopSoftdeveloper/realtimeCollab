@@ -1,4 +1,3 @@
-let API_BASE_URL = 'http://devserver.com:4000';
 let CREATE_TASK_ENDPOINT = '/tasks';
 let COMPLETE_TASK_ENDPOINT = '/mark_completed';
 let CREATE_MILESTONE_ENDPOINT = '/milestones';
@@ -7,6 +6,8 @@ let INVITE_TO_PROJECT_ENDPOINT = '/invite_to_project';
 let POPULATE_ENDPOINT = '/user/populate';
 let GET_NOTIFICATION_ENDPOINT = '/notifications'
 let AppConstants = require('../AppConstants');
+let API_BASE_URL = AppConstants.API_BASE_URL;
+
 import $ from 'jquery'
 import Promise from 'bluebird'
 
@@ -164,6 +165,14 @@ export function getGithubRepos() {
 
 export function syncGithubIssues(projectId, name, owner) {
     return ajaxPost('/github/sync/' + projectId, {
+        token: localStorage.getItem('github_token'),
+        name: name,
+        owner: owner
+    })
+}
+
+export function setupGithubWebhook(name, owner) {
+    return ajaxPost('/webhook/github/setup', {
         token: localStorage.getItem('github_token'),
         name: name,
         owner: owner

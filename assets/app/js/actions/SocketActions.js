@@ -1,7 +1,9 @@
 import io from 'socket.io-client'
-let host = 'ws://localhost:4001/'
-let socket = io.connect(host)
+let AppConstants = require('../AppConstants');
+var host = 'ws://' + AppConstants.HOSTNAME + ':4001/'
+var socket = io.connect(host)
 import * as Actions from '../actions/ReduxTaskActions'
+var templates = require('../../../../server/templates.js')
 
 export function userIsOnline() {
     // informs server that the current logged in user is online
@@ -49,32 +51,89 @@ export function monitorOnlineStatus() {
     }
 }
 
+function getName(sender, users) {
+    // returns sender name if sender exists but is not current user
+    if (sender === localStorage.getItem('user_id')) return false
+    let name = users.filter(user => user.id === sender)[0]
+    if (name) {
+        return name.display_name
+    }
+    return false
+}
+
 export function monitorProjectChanges() {
-    return function(dispatch) {
+    return function(dispatch, getState) {
         socket.on('new_task', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                dispatch(Actions.snackbarMessage(name + ' added the task ' + data.task.content, 'info'))
                 dispatch(Actions._addTask(data.task));
             }
         })
+        socket.on('update_task', (data) => {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let taskName = getState().tasks.filter(task => task.id === data.task_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' updated the task ' + taskName, 'info'))
+                dispatch(Actions._editTask(data.task_id, data.task));
+            }
+        })
         socket.on('mark_done', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let taskName = getState().tasks.filter(task => task.id === data.task_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' completed the task ' + taskName, 'info'))
                 dispatch(Actions._markDone(data.task_id));
             }
         })
         socket.on('delete_task', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let taskName = getState().tasks.filter(task => task.id === data.task_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' deleted the task ' + taskName, 'info'))
                 dispatch(Actions._deleteTask(data.task_id));
             }
         })
         socket.on('new_milestone', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                dispatch(Actions.snackbarMessage(name + ' created the milestone ' + data.milestone.content, 'info'))
                 dispatch(Actions._createMilestone(data.milestone));
             }
         })
+        socket.on('update_milestone', (data) => {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let milestoneName = getState().milestones.filter(m => m.id === data.milestone_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' updated the milestone ' + milestoneName, 'info'))
+                dispatch(Actions._editMilestone(data.milestone_id, data.milestone));
+            }
+        })
         socket.on('delete_milestone', (data) => {
-            if (data.sender !== localStorage.getItem('user_id')) {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let milestoneName = getState().milestones.filter(m => m.id === data.milestone_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' deleted the milestone ' + milestoneName, 'info'))
                 dispatch(Actions._deleteMilestone(data.milestone_id));
             }
+        })
+        socket.on('update_project', (data) => {
+            let name = getName(data.sender, getState().users)
+            if (name) {
+                let projectName = getState().projects.filter(p => p.id === data.project_id)[0].content
+                dispatch(Actions.snackbarMessage(name + ' updated the project ' + projectName, 'info'))
+                dispatch(Actions._editMilestone(data.project_id, data.project));
+            }
+        })
+        socket.on('newsfeed_post', (event) => {
+            let data = JSON.parse(event.data)
+            let targetUser = getState().users.filter(user => user.id === data.user_id)
+            if (targetUser.length === 1) {
+                targetUser = targetUser[0]
+                data.displayName = targetUser.display_name
+                dispatch(Actions.snackbarMessage(templates.getMessage(event.template, data)), 'info')
+            }
+            dispatch(Actions.addNewsfeedEvents([event]));
         })
     }
 }
@@ -84,6 +143,7 @@ export function monitorNotifications() {
         socket.on('new_notification', (data) => {
             dispatch(Actions.addUsers([data.user]))
             dispatch(Actions.newNotification(data.notification))
+            dispatch(Actions.snackbarMessage(data.notification.text, 'info'))
         })
     }
 }
