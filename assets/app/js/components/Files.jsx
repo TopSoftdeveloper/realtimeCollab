@@ -60,7 +60,7 @@ class FilesList extends Component {
         this.props.dispatch(updateFile(file.id, {uploading: true}))
         let directoryStructure = this.props.directoryStructure
         let currDirectory = directoryStructure[directoryStructure.length-1].id
-        this.props.actions.uploadFileToDrive(file, currDirectory)
+        this.props.actions.uploadFileToDrive(file, currDirectory, this.props.projectId)
     }
 
     getImage(type) {

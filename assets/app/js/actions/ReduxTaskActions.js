@@ -1,5 +1,5 @@
 import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkDone,
-        serverPopulate, serverCreateMilestone, serverCreateProject,
+        serverPopulate, serverCreateMilestone, serverCreateProject, serverCreatePost,
         serverInviteToProject, serverGetNotifications, serverAcceptProject,
         serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
         getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
@@ -16,6 +16,7 @@ import Promise from "bluebird"
 
 let AppConstants = require('../AppConstants');
 let ServerConstants = require('../../../../server/constants');
+let templates = require('../../../../server/templates');
 
 function makeActionCreator(type, ...argNames) {
     return function(...args) {
@@ -53,6 +54,7 @@ export const replaceProjectId = makeActionCreator(AppConstants.REPLACE_PROJECT_I
 export const _switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
 export const projectAlert = makeActionCreator(AppConstants.PROJECT_INVITATION_ALERT, 'alert');
 export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id', 'payload');
+export const joinProject = makeActionCreator(AppConstants.JOIN_PROJECT, 'id', 'user_id');
 
 export const initSearchResults = makeActionCreator(AppConstants.INIT_RESULTS, 'results');
 export const addSearchResults = makeActionCreator(AppConstants.ADD_RESULTS, 'results');
@@ -94,7 +96,15 @@ export const userStopEditing = makeActionCreator(AppConstants.USER_STOP_EDITING,
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
 
-export function uploadFileToDrive(file, directory) {
+
+export function addUser(user) {
+    return function(dispatch, getState) {
+        user.colour = getNewColour(getState().users.map(k => k.colour))
+        dispatch(addUsers([user]))
+    }
+}
+
+export function uploadFileToDrive(file, directory, projectId) {
     return function(dispatch) {
         let fileData = file.data
         const boundary = AppConstants.MULTIPART_BOUNDARY
@@ -127,6 +137,15 @@ export function uploadFileToDrive(file, directory) {
                 dispatch(deleteFile(file.id))
                 dispatch(insertFile(newFile))
                 dispatch(snackbarMessage('Uploaded ' + fileData.name, 'default'))
+                let payload = {
+                    user_id: localStorage.getItem('user_id'),
+                    fileName: fileData.name
+                }
+                serverCreatePost({
+                    template: templates.DRIVE_UPLOAD,
+                    data: JSON.stringify(payload),
+                    source: ServerConstants.GOOGLE_DRIVE
+                }, projectId)
             }, function (err) {
                 console.log(err)
             })
@@ -482,6 +501,16 @@ export function initializeApp() {
                         }));
                     }, 1000)
 
+                }).fail(e => {
+                    console.log(e);
+                });
+            } else {
+                refreshTokens().done(res => {
+                    localStorage.setItem('google_token', res.access_token);
+                    localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
+                    dispatch(_updateAppStatus({
+                        loading: false
+                    }));
                 }).fail(e => {
                     console.log(e);
                 });
@@ -977,17 +1006,17 @@ export function switchChatRoom(name) {
 }
 
 export function loadChatRoom(name) {
-    return function(dispatch) {
-        window.scrollback = {
-            "room":name,"form":"toast","minimize":true
-        };
-        (function(d, s, h, e) {
-            //d: document object
-            //s: script
-            e = d.createElement(s);
-            e.async = 1;
-            e.src = (location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";
-            d.getElementsByTagName(s)[0].parentNode.appendChild(e);
-        }(document, "script"));
+    return function(dispatch) { //SCROLLBACK SITE IS DOWN
+        //window.scrollback = {
+        //    "room":name,"form":"toast","minimize":true
+        //};
+        //(function(d, s, h, e) {
+        //    //d: document object
+        //    //s: script
+        //    e = d.createElement(s);
+        //    e.async = 1;
+        //    e.src = (location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";
+        //    d.getElementsByTagName(s)[0].parentNode.appendChild(e);
+        //}(document, "script"));
     }
 }

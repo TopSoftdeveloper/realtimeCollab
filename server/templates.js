@@ -25,6 +25,9 @@ module.exports = {
             case this.DRIVE_UPDATE:
                 message = data.displayName + ' has updated the file ' + data.fileName
                 break
+            case this.DRIVE_UPLOAD:
+                message = data.displayName + ' has uploaded the file ' + data.fileName
+                break
             default:
                 message = ''
         }
@@ -41,5 +44,6 @@ module.exports = {
     GITHUB_CREATE: 'GITHUB_CREATE',
     GITHUB_PUSH: 'GITHUB_PUSH',
     DRIVE_REMOVE: 'DRIVE_REMOVE',
-    DRIVE_UPDATE: 'DRIVE_UPDATE'
+    DRIVE_UPDATE: 'DRIVE_UPDATE',
+    DRIVE_UPLOAD: 'DRIVE_UPLOAD'
 }

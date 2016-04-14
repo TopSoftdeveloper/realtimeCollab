@@ -33,6 +33,7 @@ function isAllNull(array) {
 class EventList extends Component {
     render() {
         let eventItems = this.props.events.map(event => {
+            if (!event.data) return null
             let data = JSON.parse(event.data)
             let targetUser = this.props.users.filter(user => user.id === data.user_id)
             if (targetUser.length === 1) {
