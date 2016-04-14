@@ -13,6 +13,7 @@ import _ from 'lodash'
 import Fuse from 'fuse.js'
 import UserColours from '../UserColours';
 import Promise from "bluebird"
+import {userIsOnline} from './SocketActions'
 
 let AppConstants = require('../AppConstants');
 let ServerConstants = require('../../../../server/constants');
@@ -365,6 +366,7 @@ export function acceptProject(projectId, notificationId) {
             dispatch(_updateAppStatus({
                 loading: true
             }));
+            dispatch(userIsOnline()) // send online signal again to join the project's socket
             serverPopulate().done(res => {
                 if (res.projects.length > 0) {
                     let normalizedTables = normalize(res.projects);

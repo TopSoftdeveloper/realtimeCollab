@@ -23,7 +23,6 @@ class App extends Component {
         this.initApp()
         const {dispatch} = this.props;
         const socketActions = bindActionCreators(SocketActions, dispatch);
-        const actions = bindActionCreators(Actions, dispatch);
         socketActions.userIsOnline()
         socketActions.monitorOnlineStatus()
         socketActions.monitorProjectChanges()
