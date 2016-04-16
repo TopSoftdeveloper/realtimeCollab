@@ -1008,17 +1008,17 @@ export function switchChatRoom(name) {
 }
 
 export function loadChatRoom(name) {
-    return function(dispatch) { //SCROLLBACK SITE IS DOWN
-        //window.scrollback = {
-        //    "room":name,"form":"toast","minimize":true
-        //};
-        //(function(d, s, h, e) {
-        //    //d: document object
-        //    //s: script
-        //    e = d.createElement(s);
-        //    e.async = 1;
-        //    e.src = (location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";
-        //    d.getElementsByTagName(s)[0].parentNode.appendChild(e);
-        //}(document, "script"));
+    return function(dispatch) {
+        window.scrollback = {
+            "room":name,"form":"toast","minimize":true
+        };
+        (function(d, s, h, e) {
+            //d: document object
+            //s: script
+            e = d.createElement(s);
+            e.async = 1;
+            e.src = (location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";
+            d.getElementsByTagName(s)[0].parentNode.appendChild(e);
+        }(document, "script"));
     }
 }
