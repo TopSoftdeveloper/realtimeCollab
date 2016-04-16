@@ -129,7 +129,7 @@ export function monitorProjectChanges() {
             if (!event.data) return
             let data = JSON.parse(event.data)
             let targetUser = getState().users.filter(user => user.id === data.user_id)
-            if (targetUser.length === 1) {
+            if (targetUser.length === 1 && targetUser[0].id !== localStorage.getItem('user_id')) {
                 targetUser = targetUser[0]
                 data.displayName = targetUser.display_name
                 dispatch(Actions.snackbarMessage(templates.getMessage(event.template, data)), 'info')
