@@ -195,6 +195,10 @@ export function serverInviteToProject(payload) {
     return ajaxPost(INVITE_TO_PROJECT_ENDPOINT, payload);
 }
 
+export function serverCreatePost(payload, projectId) {
+    return ajaxPost('/newsfeed/' + projectId, payload);
+}
+
 export function serverUpdateUser(payload) {
     return ajaxPut('/user/' + localStorage.getItem('user_id'), payload)
 }

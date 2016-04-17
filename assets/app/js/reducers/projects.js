@@ -36,6 +36,13 @@ export default function projects(state=[], action) {
             return state.map(project =>
                 project.id === action.id ?
                     assign({}, project, action.payload): project)
+        case AppConstants.JOIN_PROJECT:
+            let p = state.filter(project => project.id === action.id)[0]
+            p.pending = p.pending.filter(id => id !== action.user_id)
+            p.basic.push(action.user_id)
+            return state.map(project =>
+                project.id === action.id ?
+                    assign({}, project, p): project)
         case AppConstants.ADD_DIRECTORY:
             return state.map(project =>
                 project.id === action.id ?

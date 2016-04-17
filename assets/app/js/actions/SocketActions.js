@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 let AppConstants = require('../AppConstants');
-var host = 'ws://' + AppConstants.HOSTNAME + ':4001/'
+var host = 'ws://localhost:4001/'
 var socket = io.connect(host)
 import * as Actions from '../actions/ReduxTaskActions'
 var templates = require('../../../../server/templates.js')
@@ -126,9 +126,10 @@ export function monitorProjectChanges() {
             }
         })
         socket.on('newsfeed_post', (event) => {
+            if (!event.data) return
             let data = JSON.parse(event.data)
             let targetUser = getState().users.filter(user => user.id === data.user_id)
-            if (targetUser.length === 1) {
+            if (targetUser.length === 1 && targetUser[0].id !== localStorage.getItem('user_id')) {
                 targetUser = targetUser[0]
                 data.displayName = targetUser.display_name
                 dispatch(Actions.snackbarMessage(templates.getMessage(event.template, data)), 'info')
@@ -139,11 +140,15 @@ export function monitorProjectChanges() {
 }
 
 export function monitorNotifications() {
-    return function(dispatch) {
+    return function (dispatch) {
         socket.on('new_notification', (data) => {
-            dispatch(Actions.addUsers([data.user]))
+            dispatch(Actions.addUser(data.user))
             dispatch(Actions.newNotification(data.notification))
             dispatch(Actions.snackbarMessage(data.notification.text, 'info'))
+            if (data.notification.type === templates.JOINED_PROJECT) {
+                dispatch(Actions.userOnline(data.user.id));
+                dispatch(Actions.joinProject(data.notification.meta.project_id, data.user.id));
+            }
         })
     }
 }

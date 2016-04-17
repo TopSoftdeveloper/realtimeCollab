@@ -31,24 +31,22 @@ exports.is_online = function (socket, payload) {
     storage.getProjectsOfUser(payload.user_id).then(function(projects) {
     	// join project room if project has > 1 user
     	projects.forEach(function(project) {
-    		if (project.users.length > 1) {
-    			socket.join(project.id, function() {
-    				// let others in the project know user is online  	
-    				socket.to(project.id).emit('teammate_online', {
-			    		user_id: payload.user_id
-			    	});				    				   			
-    			});
+				socket.join(project.id, function() {
+					// let others in the project know user is online
+					socket.to(project.id).emit('teammate_online', {
+						user_id: payload.user_id
+					});
+				});
 
-		    	project.users.forEach(function(user) {
-					// let user know who is online
-		    		if (onlineUsers[user.id]) {
-	    				socket.emit('teammate_online', {
-				    		user_id: user.id
-				    	});
-		    		}
-		    	});
-    		}
-    	});  	
+				project.users.forEach(function(user) {
+				// let user know who is online
+					if (onlineUsers[user.id]) {
+						socket.emit('teammate_online', {
+							user_id: user.id
+						});
+					}
+				});
+    	});
 
     });
 };

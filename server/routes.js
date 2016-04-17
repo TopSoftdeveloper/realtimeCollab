@@ -51,6 +51,6 @@ module.exports.endpoints = [
     { method: 'POST',  path: '/webhook/github', config: WebHook.githubWebhook },
     { method: 'POST',  path: '/webhook/drive', config: WebHook.googleDriveWebhook },
 
-
+    { method: 'POST',  path: '/newsfeed/{project_id}', config: Newsfeed.createPost },
     { method: 'GET',  path: '/newsfeed', config: Newsfeed.getNewsfeed }
 ];
