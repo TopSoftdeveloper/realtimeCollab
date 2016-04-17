@@ -101,13 +101,15 @@ function login(request, reply) {
                 var u = {
                     display_image: profileInfo.image.url,
                     display_name: profileInfo.displayName,
-                    email: profileInfo.emails[0].value
+                    email: profileInfo.emails[0].value,
+	  	    google_id: googleId
                 }
                 if (refresh_token) u.refresh_token = refresh_token
 
                 storage.findUser(googleId).then(function(user) {
                     if (!user) {
                         storage.createUser(u).then(function(user) {
+                            user = JSON.parse(JSON.stringify(user))
                             delete user.refresh_token // don't return this for security
                             user.google_token = access_token
                             user.collab_token = get_token(privateKey, user.id, token_expiry)

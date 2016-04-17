@@ -10,7 +10,6 @@ var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Newsfeed = require('./newsfeedController')
 var templates = require('./../templates')
 var HOSTNAME = config.get('web.hostname')
-var localtunnel = require('localtunnel');
 
 
 // localtunnel helps us test webhooks on localhost

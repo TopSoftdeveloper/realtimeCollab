@@ -14,7 +14,7 @@ import Fuse from 'fuse.js'
 import UserColours from '../UserColours';
 import Promise from "bluebird"
 import {userIsOnline} from './SocketActions'
-
+import {logout} from '../utils/auth'
 let AppConstants = require('../AppConstants');
 let ServerConstants = require('../../../../server/constants');
 let templates = require('../../../../server/templates');
@@ -519,7 +519,7 @@ export function initializeApp() {
             }
         }).fail(e => {
             console.log(e)
-            window.location.assign(AppConstants.HOSTNAME);
+	    logout()
         });
 
         serverGetNotifications().done(res => {
@@ -936,7 +936,7 @@ export function syncWithGithub(projectId, repoName, repoOwner) {
                     }))
                     dispatch(snackbarMessage('Synced with GitHub', 'default'))
                 }).fail(e => {
-                    window.location.assign(AppConstants.HOSTNAME);
+		    logout()
                 });
             })
         }).fail(e => {
