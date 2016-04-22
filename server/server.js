@@ -14,13 +14,11 @@ require('babel-core/register')({
 
 server.connection({
     port: 4000,
-    host: 'localhost',
     labels: ['api']
 });
 
 server.connection({
     port: 4001,
-    host: 'localhost',
     labels: ['collaboration']
 });
 
