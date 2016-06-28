@@ -1,12 +1,14 @@
 # Collab
 Web-based collaboration tool to help small teams do big things
 
+Presentation slides on this project [can be found here](http://seowyanyi.org/pdfs/FYP_Final_Presentation.pdf)
+
 Installation
 -----------------
 
 1. Clone the repo
 
-   `git clone https://github.com/seowyanyi/tiny.git`
+   `git clone https://github.com/collab-tools/collab.git`
 
 
 2. Install MySQL and Nodejs if not installed
