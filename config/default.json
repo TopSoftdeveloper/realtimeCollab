@@ -2,7 +2,7 @@
   "database": {
     "name": "collab",
     "username": "root",
-    "password": "",
+    "password": "nuscollab",
     "options": {
       "host": "localhost",
       "dialect": "mysql",
