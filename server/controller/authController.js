@@ -102,8 +102,9 @@ function login(request, reply) {
                     display_image: profileInfo.image.url,
                     display_name: profileInfo.displayName,
                     email: profileInfo.emails[0].value,
-	  	    google_id: googleId
+	  	            google_id: googleId
                 }
+
                 if (refresh_token) u.refresh_token = refresh_token
 
                 storage.findUser(googleId).then(function(user) {
