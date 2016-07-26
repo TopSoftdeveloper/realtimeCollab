@@ -2,8 +2,9 @@
 node_modules
 assets/home-bundle.js
 assets/app-bundle.js
-config/local.json
 tmp
 coverage
 *.log
 *.dat
+!config/default.json
+
