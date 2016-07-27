@@ -11,7 +11,7 @@ module.exports = {
     INIT_RESULTS: 'INIT_RESULTS',
     INIT_GITHUB_REPOS: 'INIT_GITHUB_REPOS',
     GITHUB_CLIENT_ID: '3046c6aca85085abda12',
-    GOOGLE_CLIENT_ID: '300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com',
+    GOOGLE_CLIENT_ID: '961636068343-olv255ask1dc7ev2sc4anntvhkd7bq5t.apps.googleusercontent.com',
     UPDATE_APP_STATUS: 'UPDATE_APP_STATUS',
     SET_DIRECTORY_AS_ROOT: 'SET_DIRECTORY_AS_ROOT',
     SET_GITHUB_REPO: 'SET_GITHUB_REPO',

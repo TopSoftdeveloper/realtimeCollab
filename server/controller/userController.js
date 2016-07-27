@@ -51,7 +51,7 @@ function updateGithubLogin(request, reply) {
             return
         }
         var user = JSON.parse(body)
-        storage.updateUser(userId, {github_login: user.login}).then(function() {
+        storage.updateUser(userId, {github_login: user.login, github_refresh_token: request.payload.token}).then(function() {
             reply({
                 status: constants.STATUS_OK
             });

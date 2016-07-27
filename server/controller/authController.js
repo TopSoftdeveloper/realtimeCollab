@@ -47,7 +47,8 @@ function isProfileUpdated(last, current) {
     return last.display_name !== current.display_name ||
             last.display_image !== current.display_image ||
             last.email !== current.email ||
-            last.refresh_token !== current.refresh_token
+            last.google_refresh_token !== current.google_refresh_token ||
+            last.github_refresh_token !== current.github_refresh_token
 }
 
 function refreshGoogleToken(request, reply) {
@@ -61,7 +62,7 @@ function refreshGoogleToken(request, reply) {
             }
             req.post(options)
             .form({
-                    refresh_token: user.refresh_token,
+                    refresh_token: user.google_refresh_token,
                     client_secret: CLIENT_SECRET,
                     client_id: CLIENT_ID,
                     grant_type: 'refresh_token'
@@ -82,7 +83,7 @@ function login(request, reply) {
         // Now tokens contains an access_token and an optional refresh_token. Save them.
         if(!err) {
             var access_token = tokens.access_token
-            var refresh_token = tokens.refresh_token
+            var google_refresh_token = tokens.refresh_token
             var expiry_date = tokens.expiry_date
             var options = {
                 url: 'https://www.googleapis.com/plus/v1/people/me',
@@ -105,13 +106,13 @@ function login(request, reply) {
 	  	            google_id: googleId
                 }
 
-                if (refresh_token) u.refresh_token = refresh_token
+                if (google_refresh_token) u.google_refresh_token = google_refresh_token
 
                 storage.findUser(googleId).then(function(user) {
                     if (!user) {
                         storage.createUser(u).then(function(user) {
                             user = JSON.parse(JSON.stringify(user))
-                            delete user.refresh_token // don't return this for security
+                            delete user.google_refresh_token // don't return this for security
                             user.google_token = access_token
                             user.collab_token = get_token(privateKey, user.id, token_expiry)
                             reply(user);
@@ -126,7 +127,7 @@ function login(request, reply) {
                         user.google_token = access_token
                         user.collab_token = get_token(privateKey, user.id, token_expiry)
                         user.expiry_date = expiry_date
-                        delete user.refresh_token // don't return this for security
+                        delete user.google_refresh_token // don't return this for security
                         reply(user);
                     }
                 })
