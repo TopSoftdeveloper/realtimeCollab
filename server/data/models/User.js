@@ -9,11 +9,10 @@ module.exports = function(sequelize, DataTypes) {
         google_id: DataTypes.STRING,
         email: DataTypes.STRING,
         github_login: DataTypes.STRING,
-        github_token: DataTypes.STRING,
-        google_token: DataTypes.STRING,
         display_name: DataTypes.STRING,
         display_image: DataTypes.STRING,
-        refresh_token: DataTypes.STRING
+        google_refresh_token: DataTypes.STRING,
+        github_refresh_token: DataTypes.STRING
     },{
         underscored: true,
         classMethods: {
