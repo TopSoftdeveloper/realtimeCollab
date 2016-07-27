@@ -2,12 +2,12 @@
   "database": {
     "name": "collab",
     "username": "root",
-    "password": "root",
+    "password": "nuscollab",
     "options": {
       "host": "localhost",
       "dialect": "mysql",
       "pool": {
-        "max": 5,
+        "max": 10,
         "min": 0,
         "idle": 10000
       },
@@ -15,19 +15,19 @@
     }
   },
   "authentication": {
-    "privateKey": "-",
+    "privateKey": "",
     "tokenExpirySeconds": 3600000
   },
   "github": {
-    "client_secret": "-",
+    "client_secret": "",
     "client_id": "3046c6aca85085abda12"
   },
   "google": {
-    "client_id": "300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com",
-    "client_secret": "-"
+    "client_id": "961636068343-olv255ask1dc7ev2sc4anntvhkd7bq5t.apps.googleusercontent.com",
+    "client_secret": ""
   },
   "web": {
-    "hostname": "http://localhost:4000",
-    "appRoot": "http://localhost:4000/app"
+    "hostname": "https://collab.hooitong.com",
+    "appRoot": "http://collab.hooitong.com/app"
   }
 }

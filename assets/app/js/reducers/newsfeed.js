@@ -21,6 +21,7 @@ import AppConstants from '../AppConstants';
 export default function newsfeed(state=[], action) {
     switch (action.type) {
         case AppConstants.ADD_EVENT:
+	    if (!action.events) return state
             let eventsToAdd = []
             // check for duplicates
             for (let i=0; i<action.events.length; ++i) {

@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 let AppConstants = require('../AppConstants');
-var host = 'ws://localhost:4001/'
+var host = 'wss://collab.hooitong.com/'
 var socket = io.connect(host)
 import * as Actions from '../actions/ReduxTaskActions'
 var templates = require('../../../../server/templates.js')
@@ -132,7 +132,12 @@ export function monitorProjectChanges() {
             if (targetUser.length === 1 && targetUser[0].id !== localStorage.getItem('user_id')) {
                 targetUser = targetUser[0]
                 data.displayName = targetUser.display_name
-                dispatch(Actions.snackbarMessage(templates.getMessage(event.template, data)), 'info')
+		if (event.template === templates.DRIVE_UPLOAD) {
+		    setTimeout(function() {
+                	dispatch(Actions.snackbarMessage(templates.getMessage(event.template, data)), 'info')
+                    	dispatch(Actions.initializeFiles(event.project_id))
+		    }, 1000)
+                }
             }
             dispatch(Actions.addNewsfeedEvents([event]));
         })
