@@ -1,5 +1,5 @@
 ### Project Specifics ###
-config/local.json
+config/local*
 assets/home-bundle.js
 assets/app-bundle.js
 tmp
