@@ -1,6 +1,6 @@
 {
-  "name": "tiny",
-  "version": "0.0.0",
+  "name": "collab",
+  "version": "0.0.1",
   "scripts": {
     "start": "cross-env NODE_ENV=production node server/server.js",
     "build": "webpack -p --progress --optimize-minimize",
