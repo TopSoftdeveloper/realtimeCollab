@@ -1,4 +1,5 @@
 # Collab
+![Build Status](https://codeship.com/projects/167854/status?branch=master)
 Web-based collaboration tool to help small teams do big things
 
 Presentation slides on this project [can be found here](http://seowyanyi.org/pdfs/FYP_Final_Presentation.pdf)
