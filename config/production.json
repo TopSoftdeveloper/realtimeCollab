@@ -27,7 +27,7 @@
     "client_secret": ""
   },
   "web": {
-    "hostname": "https://collab.hooitong.com",
-    "appRoot": "http://collab.hooitong.com/app"
+    "hostname": "https://nuscollab.com",
+    "appRoot": "https://nuscollab.com/app"
   }
 }
