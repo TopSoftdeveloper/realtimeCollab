@@ -78,6 +78,6 @@ server.register([
             }
             console.log(__dirname);
             console.log('Server is listening at ' + server.select('api').info.uri);
-            console.log('Server is listening at ' + server.select('collaboration').info.uri);            
+            console.log('Server is listening at ' + server.select('collaboration').info.uri);
         });
 });

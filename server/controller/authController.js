@@ -76,13 +76,14 @@ function refreshGoogleToken(request, reply) {
         }
     })
 }
-
 function login(request, reply) {
     oauth2Client.getToken(request.payload.code, function(err, tokens) {
         // Now tokens contains an access_token and an optional refresh_token. Save them.
         if(!err) {
             var access_token = tokens.access_token
             var refresh_token = tokens.refresh_token
+            console.log("refresh_token");
+            console.log(refresh_token);
             var expiry_date = tokens.expiry_date
             var options = {
                 url: 'https://www.googleapis.com/plus/v1/people/me',
@@ -99,14 +100,15 @@ function login(request, reply) {
                 var profileInfo = JSON.parse(body)
                 var googleId = profileInfo.id
                 var u = {
-                    display_image: profileInfo.image.url,
+                    // display_image: profileInfo.image.url,
                     display_name: profileInfo.displayName,
                     email: profileInfo.emails[0].value,
 	  	            google_id: googleId
                 }
+                if (refresh_token) {
 
-                if (refresh_token) u.refresh_token = refresh_token
-
+                  u.refresh_token = refresh_token
+                }
                 storage.findUser(googleId).then(function(user) {
                     if (!user) {
                         storage.createUser(u).then(function(user) {

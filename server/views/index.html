@@ -5,9 +5,6 @@
     <title>NUS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="Codeply">
-    <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="300282221041-etbepkgu5gvfmo7fhd2khp1rv4ktm7b7.apps.googleusercontent.com">
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/assets/home/css/home.css">
@@ -18,11 +15,14 @@
     <script src="https://apis.google.com/js/platform.js?onload=start" async defer></script>
 
     <script>
-        var HOSTNAME = 'https://collab.hooitong.com'
+        // var HOSTNAME = 'https://collab.hooitong.com'
+        var HOSTNAME = 'http://localhost:8080'
         function start() {
             gapi.load('auth2', function() {
+                gapi.client.setApiKey("");
                 auth2 = gapi.auth2.init({
-                    client_id: '961636068343-olv255ask1dc7ev2sc4anntvhkd7bq5t.apps.googleusercontent.com',
+                    // client_id: '961636068343-olv255ask1dc7ev2sc4anntvhkd7bq5t.apps.googleusercontent.com',
+                    client_id: '251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com',
                     scope: 'https://www.googleapis.com/auth/drive'
                 });
                 if (localStorage.jwt && localStorage.google_token) {

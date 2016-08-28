@@ -15,7 +15,7 @@
     }
   },
   "authentication": {
-    "privateKey": "",
+    "privateKey": "empty",
     "tokenExpirySeconds": 3600000
   },
   "github": {
@@ -23,11 +23,11 @@
     "client_id": "3046c6aca85085abda12"
   },
   "google": {
-    "client_id": "961636068343-olv255ask1dc7ev2sc4anntvhkd7bq5t.apps.googleusercontent.com",
-    "client_secret": ""
+    "client_id": "251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com",
+    "client_secret": "fhANrTYA_XVYLTjrsyYMPcb9"
   },
   "web": {
-    "hostname": "https://collab.hooitong.com",
-    "appRoot": "http://collab.hooitong.com/app"
+    "hostname": "http://localhost:8080",
+    "appRoot": "localhost:8080/app"
   }
 }
