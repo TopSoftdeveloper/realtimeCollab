@@ -3,6 +3,10 @@
     "username": "",
     "password": ""
   },
+  "logging-database": {
+    "username": "",
+    "password": ""
+  },
   "authentication": {
     "privateKey": ""
   },
