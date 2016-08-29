@@ -14,10 +14,6 @@
       "logging": false
     }
   },
-  "authentication": {
-    "privateKey": "",
-    "tokenExpirySeconds": 3600000
-  },
   "github": {
     "client_secret": "",
     "client_id": ""
