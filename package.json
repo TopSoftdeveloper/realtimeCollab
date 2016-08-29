@@ -4,7 +4,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node server/server.js",
     "build": "webpack -p --progress --optimize-minimize",
-    "dev": "concurrently --kill-others \"webpack --progress --color --watch \" \"cross-env NODE_ENV=dev nodemon\"",
+    "dev": "concurrently --raw --kill-others \"webpack --progress --color --watch \" \"cross-env NODE_ENV=dev nodemon server/server.js\"",
     "test": "mocha"
   },
   "dependencies": {
