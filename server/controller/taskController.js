@@ -4,11 +4,13 @@ var format = require('string-format');
 var Joi = require('joi');
 var Boom = require('boom');
 var socket = require('./socket/handlers');
+var moment = require('moment');
 var helper = require('../utils/helper');
 var config = require('config');
 var Promise = require("bluebird");
-var github = require('./githubController')
-var accessControl = require('./accessControl')
+var github = require('./githubController');
+var accessControl = require('./accessControl')(config.logging_database);
+var analytics = require('collab-analytics');
 
 module.exports = {
     createTask: {
@@ -77,6 +79,14 @@ function updateTask(request, reply) {
             var github_num = result.task.github_number
 
             storage.updateTask(request.payload, task_id).then(function() {
+                analytics.task.logTaskActivity({
+                  activity: 'U',
+                  date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                  userId: user_id,
+                  projectId: project.id,
+                  taskId: task_id
+                })
+
                 reply({status: constants.STATUS_OK});
 
                 socket.sendMessageToProject(project.id, 'update_task', {
@@ -96,6 +106,13 @@ function updateTask(request, reply) {
                     storage.findGithubLogin(request.payload.assignee_id).then(function(login) {
                         payload.assignee = login
                         github.updateGithubIssue(owner, repo, token, github_num, payload)
+                        analytics.task.logTaskActivity({
+                          activity: 'A',
+                          date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                          userId: user_id,
+                          projectId: project.id,
+                          taskId: task_id
+                        })
                     })
                 } else {
                     github.updateGithubIssue(owner, repo, token, github_num, payload)
@@ -140,6 +157,24 @@ function createTask(request, reply) {
             socket.sendMessageToProject(request.payload.project_id, 'new_task', {
                 task: newTask, sender: user_id
             })
+
+            analytics.task.logTaskActivity({
+              activity: 'C',
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              userId: request.auth.credentials.user_id,
+              projectId: request.payload.project_id,
+              taskId: request.payload.id
+            })
+
+            if(request.payload.assignee_id) {
+              analytics.task.logTaskActivity({
+                activity: 'A',
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                userId: request.payload.assignee_id,
+                projectId: request.payload.project_id,
+                taskId: request.payload.id
+              })
+            }
 
             reply(newTask);
             if (!request.payload.github_token) return
@@ -205,6 +240,13 @@ function markTaskAsDone(request, reply) {
                 return;
             }
             storage.markDone(task_id).then(function () {
+                analytics.task.logTaskActivity({
+                  activity: 'D',
+                  date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                  userId: user_id,
+                  projectId: project_id,
+                  taskId: task_id
+                })
                 socket.sendMessageToProject(project_id, 'mark_done', {
                     task_id: task_id, sender: user_id
                 })
@@ -239,6 +281,13 @@ function deleteTask(request, reply) {
                 return;
             }
             storage.deleteTask(task_id).then(function() {
+                analytics.task.logTaskActivity({
+                  activity: 'X',
+                  date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                  userId: request.auth.credentials.user_id,
+                  projectId: project.id,
+                  taskId: task_id
+                })
                 socket.sendMessageToProject(request.payload.project_id, 'delete_task', {
                     task_id: task_id, sender: user_id
                 })
