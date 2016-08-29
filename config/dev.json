@@ -14,7 +14,7 @@
       "logging": false
     }
   },
-  "logging-database": {
+  "logging_database": {
     "name": "collab_logging",
     "username": "",
     "password": "",

@@ -29,6 +29,21 @@
       "logging": false
     }
   },
+  "logging_database": {
+    "name": "collab_logging",
+    "username": "",
+    "password": "",
+    "options": {
+      "host": "localhost",
+      "dialect": "mysql",
+      "pool": {
+        "max": 5,
+        "min": 0,
+        "idle": 10000
+      },
+      "logging": false
+    }
+  },
   "github": {
     "client_id": "3046c6aca85085abda12",
     "client_secret": ""

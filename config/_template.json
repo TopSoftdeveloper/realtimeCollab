@@ -14,7 +14,7 @@
       "logging": false
     }
   },
-  "logging-database": {
+  "logging_database": {
     "name": "",
     "username": "",
     "password": "",
