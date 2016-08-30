@@ -9,8 +9,8 @@ var helper = require('../utils/helper');
 var config = require('config');
 var Promise = require("bluebird");
 var github = require('./githubController');
-var accessControl = require('./accessControl')(config.logging_database);
-var analytics = require('collab-analytics');
+var accessControl = require('./accessControl');
+var analytics = require('collab-analytics').default(config.database, config.logging_database);
 
 module.exports = {
     createTask: {
