@@ -13,7 +13,7 @@ var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Sequelize = require('sequelize');
 var Promise = require("bluebird");
 var req = require("request")
-var analytics = require('collab-analytics').default(config.database, config.logging_database);
+var analytics = require('collab-analytics')(config.database, config.logging_database);
 
 module.exports = {
     getAccessToken: {

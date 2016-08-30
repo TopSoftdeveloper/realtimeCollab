@@ -10,7 +10,7 @@ var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Newsfeed = require('./newsfeedController')
 var templates = require('./../templates')
 var HOSTNAME = config.get('web.hostname')
-var analytics = require('collab-analytics').default(config.database, config.logging_database);
+var analytics = require('collab-analytics')(config.database, config.logging_database);
 
 // localtunnel helps us test webhooks on localhost
 //var tunnel = localtunnel(4000, function(err, tunnel) {

@@ -9,7 +9,7 @@ var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
 var config = require('config');
 var github = require('./githubController')
-var analytics = require('collab-analytics').default(config.database, config.logging_database);
+var analytics = require('collab-analytics')(config.database, config.logging_database);
 
 module.exports = {
     createMilestone: {

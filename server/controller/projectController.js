@@ -10,7 +10,7 @@ var templates = require('./../templates')
 var accessControl = require('./accessControl');
 var _ = require('lodash')
 var socket = require('./socket/handlers');
-var analytics = require('collab-analytics').default(config.database, config.logging_database);
+var analytics = require('collab-analytics')(config.database, config.logging_database);
 
 module.exports = {
     updateProject: {
