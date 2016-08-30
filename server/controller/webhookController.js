@@ -10,7 +10,7 @@ var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Newsfeed = require('./newsfeedController')
 var templates = require('./../templates')
 var HOSTNAME = config.get('web.hostname')
-
+var analytics = require('collab-analytics').default(config.database, config.logging_database);
 
 // localtunnel helps us test webhooks on localhost
 //var tunnel = localtunnel(4000, function(err, tunnel) {
@@ -115,6 +115,9 @@ function githubWebhookHandler(request, reply) {
                     // Commits via API actions that update references are also counted. This is the default event.
                     var commits = payload.commits
                     if (commits.length !== 0) {
+                        commits.forEach(function(commit) {
+                          analytics.github.logCommit(project.id, commit);
+                        });
                         Newsfeed.updateNewsfeed(
                             {commitSize: commits.length, user_id: userId},
                             templates.GITHUB_PUSH, project.id, constants.GITHUB,  new Date().toISOString())
@@ -127,6 +130,11 @@ function githubWebhookHandler(request, reply) {
                     Newsfeed.updateNewsfeed(
                         {ref_type: ref_type, ref: ref, user_id: userId},
                         templates.GITHUB_CREATE, project.id, constants.GITHUB,  new Date().toISOString())
+                } else if (event === 'release') {
+                  var release = payload.release;
+                  if (release !== null && release !== undefined) {
+                    analytics.github.logRelease(project.id, release);
+                  }
                 }
 
             })
