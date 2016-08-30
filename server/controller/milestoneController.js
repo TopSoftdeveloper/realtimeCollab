@@ -3,11 +3,13 @@ var storage = require('../data/storage');
 var format = require('string-format');
 var Joi = require('joi');
 var Boom = require('boom');
+var moment = require('moment');
 var accessControl = require('./accessControl');
 var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
 var config = require('config');
 var github = require('./githubController')
+var analytics = require('collab-analytics').default(config.database, config.logging_database);
 
 module.exports = {
     createMilestone: {
@@ -56,6 +58,14 @@ function updateMilestone(request, reply) {
                 return;
             }
             storage.updateMilestone(milestone, milestone_id).then(function() {
+                analytics.milestone.logMilestoneActivity({
+                    activity: 'U',
+                    date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    userId: user_id,
+                    projectId: project.id,
+                    milestoneId: milestone_id
+                })
+
                 socket.sendMessageToProject(project.id, 'update_milestone', {
                     milestone: milestone, sender: user_id, milestone_id: milestone_id
                 })
@@ -106,6 +116,14 @@ function createMilestone(request, reply) {
         }
 
         storage.createMilestone(milestone).then(function(m) {
+            analytics.milestone.logMilestoneActivity({
+                activity: 'C',
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                userId: user_id,
+                projectId: m.project_id,
+                milestoneId: m.id
+            })
+
             socket.sendMessageToProject(request.payload.project_id, 'new_milestone', {
                 milestone: m, sender: user_id
             })
@@ -149,6 +167,13 @@ function deleteMilestone(request, reply) {
             }
 
             storage.deleteMilestone(milestone_id).then(function() {
+                analytics.milestone.logMilestoneActivity({
+                    activity: 'X',
+                    date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    userId: user_id,
+                    projectId: project.id,
+                    milestoneId: milestone_id
+                })
                 reply({status: constants.STATUS_OK});
                 socket.sendMessageToProject(project.id, 'delete_milestone', {
                     milestone_id: milestone_id, sender: user_id
