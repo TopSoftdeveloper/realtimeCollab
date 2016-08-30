@@ -71,9 +71,9 @@ function updateProject(request, reply) {
         storage.updateProject(request.payload, projectId).then(function() {
             if(request.payload.root_folder !== undefined && request.payload.root_folder !== null) {
                 storage.findUserById(user_id).then(function (user) {
-                    analytics.drive.pullDrive(config('google'), projectId, request.payload.root_folder, user.google_refresh_token)
+                    analytics.drive.pullDrive(config.get('google'), projectId, request.payload.root_folder, user.google_refresh_token)
                     .then(function() {
-                        analytics.drive.pullRevision(config('google', projectId, user.google_refresh_token))
+                        analytics.drive.pullRevision(config.get('google', projectId, user.google_refresh_token))
                     })
                 })
             }
