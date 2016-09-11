@@ -72,7 +72,7 @@ class MilestoneView extends Component {
     }
 
     getCompletedTasks(milestone_id) {
-        return this.props.tasks.filter(task => 
+        return this.props.tasks.filter(task =>
             task.milestone_id === milestone_id && task.completed_on);
     }
 

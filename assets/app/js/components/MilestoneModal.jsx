@@ -3,7 +3,9 @@ import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert'
 import { IconButton, IconMenu, Dialog, TextField, FlatButton } from 'material-ui'
 import MenuItem from 'material-ui/lib/menus/menu-item'
 import DatePicker from 'material-ui/lib/date-picker/date-picker';
-import Toggle from 'material-ui/lib/toggle';
+import { Form } from 'formsy-react'
+import FormsyText from 'formsy-material-ui/lib/FormsyText'
+import FormsyDate from 'formsy-material-ui/lib/FormsyDate'
 
 const styles = {
     marginBottom: 16,
@@ -16,15 +18,26 @@ class MilestoneModal extends Component {
         super(props, context);
         this.state = {
             deadline: this.props.deadline,
-            toggle: true
+            canSubmit: false
         }
+    }
+    enableButton() {
+      this.setState({
+        canSubmit: true,
+      });
+    }
+
+    disableButton() {
+      this.setState({
+        canSubmit: false,
+      });
     }
 
     onDialogSubmit() {
         let content = this.refs.milestoneField.getValue().trim()
         let newDate = new Date(this.state.deadline)
         let isoDate  = null
-        if (this.state.toggle && new Date().getTime() < newDate.getTime()) { // deadline must be after current time
+        if (new Date().getTime() < newDate.getTime()) { // deadline must be after current time
             isoDate = newDate.toISOString()
         }
         if (content !== '') {
@@ -38,11 +51,6 @@ class MilestoneModal extends Component {
         return date.toLocaleDateString('en-US', options)
     }
 
-    toggleDeadline(e, status) {
-        this.setState({
-            toggle: status
-        })
-    }
 
     onDateChange(first, newDate) {
         //Since there is no particular event associated with the change
@@ -59,12 +67,13 @@ class MilestoneModal extends Component {
                 key={1}
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />,
+                onTouchTap={this.props.handleClose} />,
             <FlatButton
                 key={2}
                 label="Submit"
                 primary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />
+                onTouchTap={this.onDialogSubmit.bind(this)}
+                disabled={!this.state.canSubmit} />
         ]
 
         let picker = (
@@ -73,26 +82,25 @@ class MilestoneModal extends Component {
                 autoOk={true}
                 formatDate={this.formatDate.bind(this)}
                 onChange={this.onDateChange.bind(this)}
-                disabled={!this.state.toggle}
                 minDate={new Date()}
             />
         )
 
         if (this.props.deadline) {
-            let defaultDate = new Date(this.props.deadline)
-            if (new Date().getTime() <= defaultDate.getTime()) {
-                picker = (
-                <DatePicker
-                    hintText="Select a date"
-                    autoOk={true}
-                    formatDate={this.formatDate.bind(this)}
-                    onChange={this.onDateChange.bind(this)}
-                    disabled={!this.state.toggle}
-                    defaultDate={defaultDate}
-                    minDate={new Date()}
-                />)                
-            }
+          let defaultDate = new Date(this.props.deadline)
+          picker = (
+          <DatePicker
+              hintText="Select a date"
+              autoOk={true}
+              formatDate={this.formatDate.bind(this)}
+              onChange={this.onDateChange.bind(this)}
+              defaultDate={new Date(this.props.deadline)}
+              minDate={new Date()}
+          />)
         }
+
+
+
 
         return (
             <Dialog
@@ -100,21 +108,23 @@ class MilestoneModal extends Component {
                 actions={actions}
                 onRequestClose={this.props.handleClose}
                 open={this.props.open}>
-                <TextField
-                    hintText="Milestone name"
-                    onEnterKeyDown={this.onDialogSubmit.bind(this)}
+                <Form
+                    onValid={this.enableButton.bind(this)}
+                    onInvalid={this.disableButton.bind(this)}
+                    onValidSubmit={this.onDialogSubmit.bind(this)}
+                >
+                <FormsyText
+                    autoFocus
+                    value = {this.props.content}
+                    required
+                    name="Milestone name"
+                    floatingLabelText="Milestone Name(required)"
                     ref="milestoneField"
-                    defaultValue={this.props.content}
                 />
                 <br/>
-                <br/>
-                <Toggle
-                    label="Deadline"
-                    style={styles}
-                    onToggle={this.toggleDeadline.bind(this)}
-                    defaultToggled={this.state.toggle}
-                />
+
                 {picker}
+              </Form>
             </Dialog>
         )
     }
