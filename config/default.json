@@ -19,8 +19,8 @@
     "tokenExpirySeconds": 3600000
   },
   "github": {
-    "client_secret": "",
-    "client_id": "3046c6aca85085abda12"
+    "client_secret": "42fb5972fb08a8bb86289044d6285d9ca474d81a",
+    "client_id": "d530a5d9c552e390d942"
   },
   "google": {
     "client_id": "251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com",

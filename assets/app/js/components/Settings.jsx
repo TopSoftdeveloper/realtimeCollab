@@ -18,7 +18,7 @@ import {githubOAuth} from '../utils/apiUtil'
 
 class Settings extends Component {
     constructor(props, context) {
-        super(props, context); 
+        super(props, context);
         this.state = {
             inputEmail: '',
             inputProjectName: '',
@@ -91,10 +91,10 @@ class Settings extends Component {
         let email = this.state.inputEmail.trim();
         if (email !== '') {
             this.props.actions.inviteToProject(this.props.project.id, email);
-        }     
+        }
         this.setState({
             inputEmail: ''
-        });        
+        });
     }
 
     renameProject(e) {
@@ -138,11 +138,11 @@ class Settings extends Component {
             </ListGroupItem>
         ));
 
-        let alertPanel = (<br></br>); 
+        let alertPanel = (<br></br>);
         if (alertStatus === AppConstants.INVITED_TO_PROJECT) {
             alertPanel = (
-                <Alert 
-                    bsStyle="success" 
+                <Alert
+                    bsStyle="success"
                     onDismiss={this.handleAlertDismiss.bind(this)}
                     dismissAfter={4000}
                     >
@@ -151,24 +151,24 @@ class Settings extends Component {
             );
         } else if (alertStatus === AppConstants.USER_ALREADY_EXISTS) {
             alertPanel = (
-                <Alert 
-                    bsStyle="warning" 
+                <Alert
+                    bsStyle="warning"
                     onDismiss={this.handleAlertDismiss.bind(this)}
                     dismissAfter={4000}
                 >
                     User already invited!
                 </Alert>
-            );            
+            );
         } else if (alertStatus === AppConstants.USER_NOT_FOUND) {
             alertPanel = (
-                <Alert 
-                    bsStyle="danger" 
+                <Alert
+                    bsStyle="danger"
                     onDismiss={this.handleAlertDismiss.bind(this)}
                     dismissAfter={4000}
                 >
                     User not found!
                 </Alert>
-            );              
+            );
         }
 
         let project = this.props.project
@@ -329,4 +329,3 @@ class Settings extends Component {
 }
 
 export default Settings;
-     
