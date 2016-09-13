@@ -29,7 +29,7 @@ class Project extends Component {
         browserHistory.push(getProjectRoot() + '/' + newTab)
     }
 
-    render() {   
+    render() {
         const {alerts, milestones, projects, tasks, users, dispatch, app,
             files, githubRepos, newsfeed, location} = this.props
         const actions = bindActionCreators(Actions, dispatch)
@@ -129,12 +129,12 @@ class Project extends Component {
 }
 
 Project.propTypes = {
-    dispatch: PropTypes.func.isRequired,    
+    dispatch: PropTypes.func.isRequired,
     alerts: PropTypes.object.isRequired,
     app: PropTypes.object.isRequired,
-    milestones: PropTypes.array.isRequired,    
+    milestones: PropTypes.array.isRequired,
     projects: PropTypes.array.isRequired,
-    tasks: PropTypes.array.isRequired,    
+    tasks: PropTypes.array.isRequired,
     users: PropTypes.array.isRequired,
     files: PropTypes.array.isRequired,
     newsfeed: PropTypes.array.isRequired

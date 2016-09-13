@@ -36,13 +36,13 @@ class TaskRow extends Component {
     onMouseEnter() {
         this.setState({
             hidden: false
-        })  
+        })
     }
 
     onMouseLeave() {
         this.setState({
             hidden: true
-        })  
+        })
     }
 
     onEdit(content, assignee_id) {
@@ -84,7 +84,8 @@ class TaskRow extends Component {
         }
 
         return (
-        <li className="task-row"
+        <div>
+        <div className="task-row"
             onMouseEnter={this.onMouseEnter.bind(this)}
             onMouseLeave={this.onMouseLeave.bind(this)}
             style={listStyle}>
@@ -100,7 +101,7 @@ class TaskRow extends Component {
             </div>
             <AvatarList className="assignee-avatar" members={this.props.assignees} />
             {editIndicator}
-            <Divider />
+
             <TaskModal
                 title="Edit Task"
                 content={this.props.task.content}
@@ -110,7 +111,8 @@ class TaskRow extends Component {
                 taskMethod={this.onEdit.bind(this)}
                 users={this.props.users}
             />
-        </li>
+        </div>
+        </div>
         )
     }
 }

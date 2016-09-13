@@ -1,190 +1,145 @@
 import React, { Component, PropTypes } from 'react'
 import _ from 'lodash'
 import $ from 'jquery'
-import MilestoneRow from './MilestoneRow.jsx'
-import CompletedRow from './CompletedRow.jsx'
-import TaskRow from './TaskRow.jsx'
-import Remove from './../icons/Remove.jsx'
+
+import Toolbar from 'material-ui/lib/toolbar/toolbar';
 import Paper from 'material-ui/lib/paper';
 import FlatButton from 'material-ui/lib/flat-button';
+import DropDownMenu from 'material-ui/lib/DropDownMenu';
+
 import MilestoneModal from './MilestoneModal.jsx'
+import MilestoneRow from './MilestoneRow.jsx'
+import Remove from './../icons/Remove.jsx'
 import AvatarList from './AvatarList.jsx'
 
 class MilestoneView extends Component {
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            isDialogOpen: false
-        }
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      isDialogOpen: false,
+      AssigneeFilter: null,
+      sortByDeadline: true
+    }
+  }
+
+  handleClose() {
+    this.setState({
+      isDialogOpen: false
+    })
+  }
+
+  openModal() {
+    this.setState({
+      isDialogOpen: true
+    })
+  }
+
+  addMilestone(content, deadline) {
+    this.props.actions.createMilestone({
+      id: _.uniqueId('milestone'),
+      content: content,
+      deadline: deadline,
+      project_id: this.props.projectId,
+      tasks: []
+    })
+  }
+
+  editMilestone(milestone_id, content, deadline) {
+    this.props.actions.editMilestone(milestone_id, content, deadline)
+  }
+
+  deleteMilestone(milestone_id) {
+    this.props.actions.deleteMilestone(milestone_id, this.props.projectId)
+  }
+
+
+
+  render() {
+    let rows = [];
+    let milestones = this.props.milestones
+    if (milestones.length === 0 || (milestones[0].id !== null)) {
+      milestones.unshift({  // Just a placeholder milestone for tasks without milestones
+        content: 'Default Milestone',
+        deadline: null,
+        key: 'uncategorized-tasks',
+        id: null
+      })
     }
 
-    handleClose() {
-        this.setState({
-            isDialogOpen: false
-        })
+    this.props.milestones.forEach(milestone => {
+      let onDelete = false
+      let onEdit = false
+      if (milestone.id) {
+        onDelete = this.deleteMilestone.bind(this, milestone.id)
+        onEdit = this.editMilestone.bind(this, milestone.id)
+      }
+      let milestoneView = <MilestoneRow
+        milestone={milestone}
+        onEditMilestone={onEdit}
+        onDeleteMilestone={onDelete}
+        location = {this.props.location}
+        projectId={this.props.projectId}
+        key={milestone.id}
+        users={this.props.users}
+        actions={this.props.actions}
+        tasks ={this.props.tasks.filter(task => task.milestone_id === milestone.id)}
+        />
+      rows.push(milestoneView)
+
+    }); // milestones.forEach
+
+    let buttonClassName = "add-milestone-btn "
+
+    if (milestones.length === 1 && this.props.tasks.length === 0) {
+      buttonClassName += "animated infinite pulse"
+      var empty = (
+        <div className="no-items todo-empty">
+          <h3>Your to-do list is empty!</h3>
+          <p>Add something to get started</p>
+        </div>
+      )
     }
 
-    openModal() {
-        this.setState({
-            isDialogOpen: true
-        })
-    }
+    return (
+      <Paper zDepth={0} className='milestone-menu-view'>
+        <div>
+          <div>
+            <DropDownMenu maxHeight={300} value={this.state.value} onChange={this.handleChange}>
 
-    addMilestone(content, deadline) {
-        this.props.actions.createMilestone({
-            id: _.uniqueId('milestone'),
-            content: content,
-            deadline: deadline,
-            project_id: this.props.projectId,
-            tasks: []
-        })
-    }
+            </DropDownMenu>
+          </div>
 
-    addTask(milestone_id, content, assignee_id) {
-        let task = {
-            id: _.uniqueId('task'), //temp id
-            content: content,
-            project_id: this.props.projectId,
-            assignee_id: assignee_id,
-            milestone_id: milestone_id
-        }
-        this.props.actions.addTask(task);
-    }
-
-    editTask(task_id, content, assignee) {
-        this.props.actions.editTask(task_id, content, assignee)
-    }
-
-    deleteTask(task_id) {
-        this.props.actions.deleteTask(task_id, this.props.projectId)
-    }
-
-    editMilestone(milestone_id, content, deadline) {
-        this.props.actions.editMilestone(milestone_id, content, deadline)
-    }
-
-    deleteMilestone(milestone_id) {
-        this.props.actions.deleteMilestone(milestone_id, this.props.projectId)
-    }
-
-    markDone(task_id) {
-        this.props.actions.markDone(task_id, this.props.projectId)
-    }
-
-    getCompletedTasks(milestone_id) {
-        return this.props.tasks.filter(task =>
-            task.milestone_id === milestone_id && task.completed_on);
-    }
-
-    render() {
-        let rows = [];
-        let milestones = this.props.milestones
-        if (milestones.length === 0 || (milestones[0].id !== null)) {
-            milestones.unshift({  // Just a placeholder milestone for tasks without milestones
-                content: '',
-                deadline: null,
-                key: 'uncategorized-tasks',
-                id: null
-            })
-        }
-
-        this.props.milestones.forEach(milestone => {
-            let onDelete = false
-            let onEdit = false
-            if (milestone.id) {
-                onDelete = this.deleteMilestone.bind(this, milestone.id)
-                onEdit = this.editMilestone.bind(this, milestone.id)
-            }
-            rows.push(<MilestoneRow
-                milestone={milestone}
-                key={milestone.id}
-                onAddTask={this.addTask.bind(this, milestone.id)}
-                onEditMilestone={onEdit}
-                onDeleteMilestone={onDelete}
-                users={this.props.users}
-            />)
-
-            let tasks = []
-            this.props.tasks.forEach(task => {
-                // Only show non-completed tasks and non-dirtied tasks
-                if (!task.completed_on &&
-                    task.dirty !== true &&
-                    task.milestone_id === milestone.id) {
-                    let assignees = this.props.users.filter(user => user.id === task.assignee_id)
-                    let highlightId = this.props.location.query.highlight
-                    let highlight = false
-                    if (highlightId === task.id) {
-                        highlight = true
-                    }
-
-                    tasks.push(<TaskRow
-                        key={_.uniqueId('task')}
-                        task={task}
-                        onCheck={this.markDone.bind(this, task.id)}
-                        onEdit={this.editTask.bind(this, task.id)}
-                        onDelete={this.deleteTask.bind(this, task.id)}
-                        assignees={assignees}
-                        users={this.props.users}
-                        highlight={highlight}
-                    />)
-                }
-            }) // task.forEach
-
-            rows.push(<ul key={_.uniqueId()}>{tasks}</ul>)
-
-            let completedTasks = this.getCompletedTasks(milestone.id)
-            if (completedTasks.length > 0) {
-                rows.push(<CompletedRow
-                    key={_.uniqueId('completed')}
-                    completedTasks={completedTasks}
-                    actions={this.props.actions}
-                    highlightId={this.props.location.query.highlight}
-                />)
-            }
-        }); // milestones.forEach
-
-        let buttonClassName = "add-milestone-btn "
-
-        if (milestones.length === 1 && this.props.tasks.length === 0) {
-            buttonClassName += "animated infinite pulse"
-            var empty = (
-                <div className="no-items todo-empty">
-                    <h3>Your to-do list is empty!</h3>
-                    <p>Add something to get started</p>
-                </div>
-            )
-        }
-
-        return (
-        <Paper zDepth={1}>
-            <div className='milestone-view'>
-                <FlatButton
-                    key="add-milestone-btn"
-                    label="Add Milestone"
-                    className={buttonClassName}
-                    onTouchTap={this.openModal.bind(this)}
-                    secondary={true}/>
-                <AvatarList
-                    className="online-users"
-                    members={this.props.users.filter(user => user.online && !user.me)}
-                    isSquare={true}
-                    colour={true}
-                />
-                <div className='task-list'>
-                    {rows}
-                    {empty}
-                </div>
-            </div>
-            <MilestoneModal
-                key="add-milestone-modal"
-                title="Add Milestone"
-                open={this.state.isDialogOpen}
-                handleClose={this.handleClose.bind(this)}
-                method={this.addMilestone.bind(this)}
+          <div class='pull-right'>
+            <FlatButton
+              key="add-milestone-btn"
+              label="Add Milestone"
+              className={buttonClassName}
+              onTouchTap={this.openModal.bind(this)}
+              secondary={true}/>
+            <AvatarList
+              className="online-users"
+              members={this.props.users.filter(user => user.online && !user.me)}
+              isSquare={true}
+              colour={true}
+              />
+          </div>
+          <MilestoneModal
+            key="add-milestone-modal"
+            title="Add Milestone"
+            open={this.state.isDialogOpen}
+            handleClose={this.handleClose.bind(this)}
+            method={this.addMilestone.bind(this)}
             />
-        </Paper>
-        );
-    }
+        </div>
+        {rows}
+        <div>
+          <div className='task-list'>
+            {empty}
+          </div>
+        </div>
+      </Paper>
+    );
+  }
 }
 
 export default MilestoneView;

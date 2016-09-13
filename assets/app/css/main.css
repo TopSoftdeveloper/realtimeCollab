@@ -58,27 +58,16 @@
   margin-left: 30px;
 }
 
-.add-milestone-btn {
-  float:right;
-}
 
-.milestone-view {
-  min-height: 50vh;
-  margin-top: 20px;
-  padding: 20px;
-}
-
-.milestone-row p {
-  color: #7a7a7a;
-}
 
 .task-list ul {
   list-style: none;
 }
 
 .task-row {
-  margin-left: -40px;
-  min-height: 50px;
+  /*margin-left: -40px;*/
+  min-height: 30px;
+  padding: 5px 10px 0px 10px ;
 }
 
 .task-content{
@@ -100,10 +89,6 @@
   margin-left: 20px;
 }
 
-.completed-content {
-  display: inline-block;
-  position: relative;
-}
 
 .reopen-task, .edit-task, .delete-task {
   opacity: 0.5;
@@ -120,11 +105,15 @@
 }
 
 .completed-task-list ul {
-    margin-left: -30px;
+    /*margin-left: -30px;*/
 }
 
 .completed-content {
   text-decoration: line-through;
+  position: relative;
+  bottom: 5px;
+  font-size: large;
+  margin-top: 14px;
 }
 
 .completed-task-list {
@@ -304,14 +293,27 @@
 
 /****************** milestone row ***********************/
 
-.milestone-header, .more-vert-btn {
-  float: left;
-  display:inline;
+
+.milestone-opt-button {
+
 }
 
-.more-vert-btn {
-  top: 9px;
-  position: relative;
+.milestone-menu-view {
+  height: auto;
+  margin-top: 10px;
+  /*margin-bottom: 10px;*/
+  border-radius: 1px;
+}
+.milestone-row {
+
+}
+.milestone-row-header {
+  margin-top: 20px;
+  padding-left: 5px;
+}
+.milestone-title {
+  font-size: x-large;
+  font-weight: bold;
 }
 
 /************************ Project header ***************************/
@@ -333,7 +335,7 @@
 }
 
 .avatar-list li {
-  padding-left: 3px;
+  padding-left: 2px;
 }
 
 .assignee-avatar {

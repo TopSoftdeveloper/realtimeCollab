@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import IconButton from 'material-ui/lib/icon-button';
+import Checkbox from 'material-ui/lib/checkbox'
 
 class CompletedItem extends Component {
     constructor(props, context) {
@@ -32,21 +33,22 @@ class CompletedItem extends Component {
         }
 
         return (
-            <li onMouseEnter={this.onMouseEnter.bind(this)} onMouseLeave={this.onMouseLeave.bind(this)}>
-                <div className={taskContentClass}>
-                    {this.props.text}
-                </div>
-                <div className={taskActionClass}>
-                    <i className="material-icons reopen-task" onClick={this.props.reopen}>undo</i>
-                </div>
-            </li>
+          <div className="task-row">
+              <div className="task-checkbox" onClick={this.props.reopen}>
+                  <Checkbox checked={true}/>
+              </div>
+              <div className={taskContentClass}>
+                  {this.props.text}
+              </div>
+          </div>
+
         )
     }
 }
 
 class CompletedRow extends Component {
     constructor(props, context) {
-        super(props, context); 
+        super(props, context);
         this.state = {
             hidden: true
         }
@@ -55,7 +57,7 @@ class CompletedRow extends Component {
     toggle() {
         this.setState({
             hidden: !this.state.hidden
-        })  
+        })
     }
 
     reopen(taskId) {
@@ -78,23 +80,9 @@ class CompletedRow extends Component {
                 highlight={highlight}
             />
         })
-
-        let list = null
-
-        if (!this.state.hidden || toOpen) {
-            list = (
-                <ul>
-                    {rows}
-                </ul>
-            )
-        }
-
         return (
             <div className="completed-task-list">
-                <div className="completed-text" onClick={this.toggle.bind(this)}>
-                    {this.props.completedTasks.length + ' completed'}
-                </div>
-                {list}
+                {rows}
             </div>
         )
     }

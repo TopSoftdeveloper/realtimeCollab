@@ -8,7 +8,7 @@ import Header from '../components/Header.jsx'
 import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
 import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
-import { Grid, Row, Col } from 'react-bootstrap'
+import {Grid, Row, Col } from 'react-bootstrap'
 import Sidebar from 'react-sidebar'
 import LoadingIndicator from '../components/LoadingIndicator.jsx'
 import Snackbar from 'material-ui/lib/snackbar';
@@ -58,7 +58,7 @@ class App extends Component {
             // Redirect to default project (current set as project at index 0)
             let defaultProjectId = projects[0].id;
             browserHistory.push('/app/project/' + defaultProjectId);
-            return false;         
+            return false;
         }
         return true;
     }
@@ -118,7 +118,8 @@ class App extends Component {
         if (projectCreator) allActiveUsers.push(projectCreator)
 
         return (
-            <div>
+            <Grid>
+              <Row>
                 <Sidebar
                     sidebarClassName="left-panel"
                     sidebar={
@@ -152,7 +153,8 @@ class App extends Component {
                     bodyStyle={{background: app.snackbar.background}}
                     onRequestClose={this.handleSnackbarClose.bind(this)}
                 />
-            </div>
+              </Row>
+            </Grid>
         );
     }
 }
