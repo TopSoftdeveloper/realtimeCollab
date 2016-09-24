@@ -2,7 +2,6 @@
 .github-repo-list ul, .github-repo-list li {
   list-style-type: none;
 }
-
 .github-repo-list {
   overflow-y: auto;
   max-height: 60vh;
@@ -66,27 +65,24 @@
 
 .task-row {
   /*margin-left: -40px;*/
-  min-height: 30px;
-  padding: 5px 10px 0px 10px ;
+  /*min-height: 40px;*/
+  margin: 5px 10px 0px 10px;
 }
 
 .task-content{
   display: inline-block;
-  position: relative;
-  bottom: 5px;
+  word-break: break-all;
   font-size: large;
-  margin-top: 14px;
 }
 
 .task-checkbox {
-  display: inline-block;
-  float: left;
-  margin-top: 10px;
+  padding-top: 8px;
 }
 
 .task-actions {
   display: inline-block;
-  margin-left: 20px;
+  padding-left: 20px;
+  margin-top: 3px;
 }
 
 
@@ -104,11 +100,10 @@
   cursor: pointer;
 }
 
-.completed-task-list ul {
-    /*margin-left: -30px;*/
-}
+
 
 .completed-content {
+  word-break: break-all;
   text-decoration: line-through;
   position: relative;
   bottom: 5px;
@@ -297,11 +292,21 @@
 .milestone-opt-button {
 
 }
+.milestone-online-users {
+  display: inline-block;
+}
 
+.milestone-actions {
+  display: inline-block;
+  margin-left: 10px;
+}
+.milestone-row-info {
+  display: inline-block;
+}
 .milestone-menu-view {
   height: auto;
-  margin-top: 10px;
-  /*margin-bottom: 10px;*/
+  margin-top: 5px;
+  margin-bottom: 10px;
   border-radius: 1px;
 }
 .milestone-row {
@@ -312,6 +317,8 @@
   padding-left: 5px;
 }
 .milestone-title {
+  display: block;
+  word-break: break-all;
   font-size: x-large;
   font-weight: bold;
 }
@@ -324,14 +331,18 @@
 }
 
 /******************* General ****************************/
+.inline-block {
+  display: inline-block;
+}
+.block {
+  display: block;
+}
 .filter-by {
   float: right;
 }
 
 .avatar-list {
   list-style: none;
-  float: right;
-  display: flex;
 }
 
 .avatar-list li {

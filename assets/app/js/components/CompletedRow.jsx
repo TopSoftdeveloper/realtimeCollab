@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import IconButton from 'material-ui/lib/icon-button';
 import Checkbox from 'material-ui/lib/checkbox'
+import {Grid, Row, Col} from 'react-bootstrap'
 
 class CompletedItem extends Component {
     constructor(props, context) {
@@ -33,14 +34,25 @@ class CompletedItem extends Component {
         }
 
         return (
+
           <div className="task-row">
-              <div className="task-checkbox" onClick={this.props.reopen}>
+            <Grid fluid={true}>
+            <Row>
+              <Col xs={1}>
+                <div className="task-checkbox" onClick={this.props.reopen}>
                   <Checkbox checked={true}/>
-              </div>
-              <div className={taskContentClass}>
+                </div>
+              </Col>
+              <Col xs={10}>
+                <div className={taskContentClass}>
                   {this.props.text}
               </div>
+              </Col>
+            </Row>
+            </Grid>
           </div>
+
+
 
         )
     }
@@ -49,15 +61,6 @@ class CompletedItem extends Component {
 class CompletedRow extends Component {
     constructor(props, context) {
         super(props, context);
-        this.state = {
-            hidden: true
-        }
-    }
-
-    toggle() {
-        this.setState({
-            hidden: !this.state.hidden
-        })
     }
 
     reopen(taskId) {
@@ -87,5 +90,4 @@ class CompletedRow extends Component {
         )
     }
 }
-
 export default CompletedRow

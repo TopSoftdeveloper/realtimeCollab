@@ -7,8 +7,9 @@ import { bindActionCreators } from 'redux'
 import * as SocketActions from '../actions/SocketActions'
 import { connect } from 'react-redux'
 
-class TaskRow extends Component {
+import {Grid, Row, Col} from 'react-bootstrap'
 
+class TaskRow extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -16,7 +17,9 @@ class TaskRow extends Component {
             isDialogOpen: false
         }
     }
-
+    onEdit(content, assignee_id) {
+        this.props.onEdit(content, assignee_id)
+    }
     openModal(id) {
         this.setState({
             isDialogOpen: true
@@ -45,11 +48,8 @@ class TaskRow extends Component {
         })
     }
 
-    onEdit(content, assignee_id) {
-        this.props.onEdit(content, assignee_id)
-    }
-
     render() {
+        //
         let taskActionClass = "task-actions"
         let taskContentClass = "task-content"
         if (this.state.hidden) {
@@ -84,24 +84,34 @@ class TaskRow extends Component {
         }
 
         return (
-        <div>
+
         <div className="task-row"
             onMouseEnter={this.onMouseEnter.bind(this)}
             onMouseLeave={this.onMouseLeave.bind(this)}
             style={listStyle}>
-            <div className="task-checkbox" onClick={this.props.onCheck}>
-                <Checkbox/>
-            </div>
-            <div className={taskContentClass}>
-                {this.props.task.content}
-            </div>
-            <div className={taskActionClass}>
-                <i className="material-icons edit-task" onClick={this.openModal.bind(this, this.props.task.id)}>mode_edit</i>
-                <i className="material-icons delete-task" onClick={this.props.onDelete}>delete</i>
-            </div>
-            <AvatarList className="assignee-avatar" members={this.props.assignees} />
-            {editIndicator}
+            <Grid fluid={true}>
+            <Row>
+              <Col xs={1}>
+                <div className='task-checkbox'>
+                  <Checkbox onClick={this.props.onCheck}/>
+                </div>
+              </Col>
+              <Col xs={10}>
+              <div className={taskContentClass}>
+                  {this.props.task.content}
+                <div className={taskActionClass}>
+                  <i className="material-icons edit-task" onClick={this.openModal.bind(this, this.props.task.id)}>mode_edit</i>
+                  <i className="material-icons delete-task" onClick={this.props.onDelete}>delete</i>
+                </div>
+              </div>
+              </Col>
+              <Col xs={1}>
+              <AvatarList className="assignee-avatar" members={this.props.assignees} />
+              {editIndicator}
+              </Col>
 
+            </Row>
+            </Grid>
             <TaskModal
                 title="Edit Task"
                 content={this.props.task.content}
@@ -111,7 +121,7 @@ class TaskRow extends Component {
                 taskMethod={this.onEdit.bind(this)}
                 users={this.props.users}
             />
-        </div>
+
         </div>
         )
     }
