@@ -50,7 +50,7 @@ class TaskModal extends Component {
             return <MenuItem value={user.id} key={user.id} primaryText={user.display_name}/>
         })
 
-        possibleAssignees.unshift(<MenuItem value={'none'} key={0} primaryText="None"/>)
+        possibleAssignees.unshift(<MenuItem key={0} primaryText="None"/>)
 
         return (
             <Dialog

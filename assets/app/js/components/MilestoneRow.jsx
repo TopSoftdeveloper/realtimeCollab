@@ -189,7 +189,7 @@ class MilestoneRow extends Component {
     <Dialog actions={confirmDeleteActions}
       modal={false}
       open={this.state.isDeleteConfirmationOpen}
-      onRequestClose={this.handleDeleteConfirmationClose}>
+      onRequestClose={this.handleDeleteConfirmationClose.bind(this)}>
       {confirmDeleteMsg}
     </Dialog>
 
@@ -267,7 +267,7 @@ class MilestoneRow extends Component {
                   <div className="pull-right">
                     <IconButton
                       tooltip="new task"
-                      tooltipPosition="bottom-right"
+                      tooltipPosition="top-right"
                       onClick={this.openModal.bind(this)}
                     ><AddIcon/></IconButton>
                   </div>
