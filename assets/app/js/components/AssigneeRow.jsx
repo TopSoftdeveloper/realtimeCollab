@@ -158,6 +158,7 @@ class AssigneeRow extends Component {
                   {taskList}
                 </div>
                 <TaskModal
+                  
                   title="Add Task"
                   open={this.state.isDialogOpen}
                   handleClose={this.handleClose.bind(this)}

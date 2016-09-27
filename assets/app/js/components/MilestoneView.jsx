@@ -188,7 +188,7 @@ class MilestoneView extends Component {
         }
 
         let milestoneRows = [];
-        let milestones = this.props.milestones
+        let milestones = [...this.props.milestones]
         if (milestones.length === 0 || (milestones[0].id !== null)) {
           milestones.unshift({  // Just a placeholder milestone for tasks without milestones
             content: 'Default Milestone',
@@ -201,7 +201,7 @@ class MilestoneView extends Component {
         if (this.state.isFilterApplied) {
           tasks = tasks.filter(filterByAssignee)
         }
-        this.props.milestones.sort(sortByDeadline).forEach(milestone => {
+        milestones.sort(sortByDeadline).forEach(milestone => {
           // console.log(milestone)
           let onDelete = false
           let onEdit = false
@@ -212,6 +212,7 @@ class MilestoneView extends Component {
           let taskList = tasks.filter(task => task.milestone_id === milestone.id)
           if(taskList.length>0 || !this.state.isFilterApplied) {
             let milestoneView = <MilestoneRow
+
               milestone={milestone}
               onEditMilestone={onEdit}
               onDeleteMilestone={onDelete}

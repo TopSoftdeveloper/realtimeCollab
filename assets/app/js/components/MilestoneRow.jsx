@@ -135,7 +135,7 @@ class MilestoneRow extends Component {
           }
           taskList.push(
             <TaskRow
-            key={_.uniqueId('task')}
+            key={task.id}
             task={task}
             assignees={assignees}
             onCheck={this.markDone.bind(this, task.id)}
@@ -287,7 +287,7 @@ class MilestoneRow extends Component {
               users={this.props.users}
               />
             <MilestoneModal
-              id = {this.props.milestone.id}
+              key = {this.props.milestone.id}
               title="Edit Milestone"
               open={this.state.milestoneDialog}
               handleClose={this.handleMilestoneClose.bind(this, this.props.milestone.id)}
