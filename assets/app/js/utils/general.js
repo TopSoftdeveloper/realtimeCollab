@@ -24,7 +24,7 @@ function hasTrailingSlash(urlString) {
 function trimUrlString(urlString) {
 	if (hasTrailingSlash(urlString)) {
 		return urlString.substring(0, urlString.length-1);
-	} 
+	}
 	return urlString
 }
 

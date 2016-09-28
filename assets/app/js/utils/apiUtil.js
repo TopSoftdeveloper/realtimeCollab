@@ -11,8 +11,10 @@ let API_BASE_URL = AppConstants.API_BASE_URL;
 import $ from 'jquery'
 import Promise from 'bluebird'
 
+const googleDriveAPIFiledParams = "fields=lastModifyingUser%2CmodifiedTime%2CiconLink%2CwebViewLink%2Cparents%2Cname%2Cid%2CmimeType"
+
 export function uploadFile(multipartRequestBody) {
-    return $.ajax('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=lastModifyingUser%2CmodifiedTime%2CiconLink%2CwebViewLink%2Cparents%2Cname%2Cid',{
+    return $.ajax('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&'+googleDriveAPIFiledParams ,{
         'data': multipartRequestBody,
         'type': 'POST',
         'processData': false,
@@ -23,10 +25,74 @@ export function uploadFile(multipartRequestBody) {
     })
 }
 
+export function removeFile(fileId) {
+  return $.ajax('https://www.googleapis.com/drive/v3/files/' + fileId, {
+    'type': 'DELETE',
+    'headers': {
+        'Authorization': 'Bearer ' + localStorage.getItem('google_token')
+    }
+  })
+}
+
+export function copyFile(fileId) {
+  return $.ajax('https://www.googleapis.com/drive/v3/files/' + fileId +"/copy?"+googleDriveAPIFiledParams, {
+    'type': 'POST',
+    'headers': {
+        'Authorization': 'Bearer ' + localStorage.getItem('google_token')
+    }
+  })
+}
+
+export function renameFile(fileId, newName) {
+  return $.ajax('https://www.googleapis.com/drive/v3/files/' + fileId +"?"+googleDriveAPIFiledParams, {
+    'type': 'PATCH',
+    'processData': false,
+    'headers': {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ' + localStorage.getItem('google_token')
+    },
+    'data': JSON.stringify({'name':newName})
+
+  })
+}
+
+export function createFolder(multipartRequestBody) {
+  return $.ajax('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&'+googleDriveAPIFiledParams,{
+      'data': multipartRequestBody,
+      'type': 'POST',
+      'headers': {
+          'Authorization': 'Bearer ' + localStorage.getItem('google_token'),
+          'Content-Type': 'multipart/mixed; boundary="' + AppConstants.MULTIPART_BOUNDARY + '"'
+      },
+      'data': multipartRequestBody
+  })
+}
+
+
+
 export function queryGoogleDrive(queryString) {
     return googleGet('/drive/v3/files', {
         'pageSize': '20',
         'q': "fullText contains '" + queryString + "'",
+        'fields': 'files'
+    })
+}
+
+export function getGoogleDriveFolders() {
+    return googleGet('/drive/v3/files', {
+        'pageSize': '100',
+        'orderBy': 'modifiedTime desc',
+        'spaces': 'drive',
+        'q': "mimeType = 'application/vnd.google-apps.folder'",
+        'fields': 'files'
+    })
+}
+
+export function getChildrenFiles(folderId) {
+    return googleGet('/drive/v3/files', {
+        'pageSize': '100',
+        'orderBy': 'modifiedTime desc',
+        'q': "'" + folderId + "' in parents",
         'fields': 'files'
     })
 }
@@ -52,24 +118,6 @@ export function queryGithub(queryString, ownerRepos) {
     })
 }
 
-export function getGoogleDriveFolders() {
-    return googleGet('/drive/v3/files', {
-        'pageSize': '100',
-        'orderBy': 'modifiedTime desc',
-        'spaces': 'drive',
-        'q': "mimeType = 'application/vnd.google-apps.folder'",
-        'fields': 'files'
-    })
-}
-
-export function getChildrenFiles(folderId) {
-    return googleGet('/drive/v3/files', {
-        'pageSize': '100',
-        'orderBy': 'modifiedTime desc',
-        'q': "'" + folderId + "' in parents",
-        'fields': 'files'
-    })
-}
 
 export function getFileInfo(fileId) {
     return googleGet('/drive/v3/files/' + fileId)
