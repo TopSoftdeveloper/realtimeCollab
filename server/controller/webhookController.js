@@ -109,7 +109,6 @@ function githubWebhookHandler(request, reply) {
             if (!users || users.length === 0) return
             var userId = users[0].id
             projects.forEach(function(project) {
-
                 if (event === 'push') {
                     // Any Git push to a Repository, including editing tags or branches.
                     // Commits via API actions that update references are also counted. This is the default event.

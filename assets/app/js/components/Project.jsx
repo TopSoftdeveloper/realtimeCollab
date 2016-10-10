@@ -39,7 +39,7 @@ class Project extends Component {
         let pendingUsers = [];
         let projectCreator = '';
         let currentProject = null
-
+        
         if (isProjectPresent(projects, currentProjectId)) {
             currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
             let basicUserIds = currentProject.basic;

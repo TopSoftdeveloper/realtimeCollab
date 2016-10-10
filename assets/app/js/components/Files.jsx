@@ -5,11 +5,12 @@ import Dropzone from 'react-dropzone'
 import _ from 'lodash'
 import {toFuzzyTime} from '../utils/general'
 import {insertFile, deleteFile, updateFile}  from '../actions/ReduxTaskActions'
-import LinearProgress from 'material-ui/lib/linear-progress'
-import LoadingIndicator from './LoadingIndicator.jsx'
 
+import LoadingIndicator from './LoadingIndicator.jsx'
+import TreeModal from './common/Tree.jsx'
 import {Table, Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 
+import LinearProgress from 'material-ui/lib/linear-progress'
 import Dialog from 'material-ui/lib/dialog';
 import RaisedButton from 'material-ui/lib/raised-button'
 import IconMenu from 'material-ui/lib/menus/icon-menu';
@@ -28,7 +29,7 @@ require('rc-steps/assets/iconfont.css');
 const IMG_ROOT = '../../../images/'
 
 const isFolder = file =>  file.mimeType ==='application/vnd.google-apps.folder'
-
+const isNotTrash = file => !file.trashed
 
 
 class BreadcrumbInstance extends Component {
@@ -71,7 +72,9 @@ class FilesList extends Component {
     this.state = {
       selectedFile: {},
       isModalOpen: false,
-      canSubmit:false
+      canSubmit:false,
+      isMoveModalOpen:false,
+      movedFile:null
     }
   }
 
@@ -96,6 +99,9 @@ class FilesList extends Component {
   renameFile(fileId, newName) {
     this.props.actions.renameFileToDrive(fileId, newName)
   }
+  moveFile(fileId, oldParents, newParents){
+    this.props.actions.moveFileToDrive(fileId, oldParents, newParents)
+  }
 
   navigate(fileId) {
     let selectedFile = this.props.files.filter(file => file.id === fileId)[0]
@@ -111,7 +117,11 @@ class FilesList extends Component {
   }
   onDrop(files) {
     let file = files[0]
-    this.renderFilePreview(file)
+    // filter folder
+    // as folder type is empty
+    if(file.type) {
+      this.renderFilePreview(file)
+    }
   }
   renderFilePreview(fileData) {
     let imgSrc = this.getImage(fileData.type)
@@ -125,6 +135,39 @@ class FilesList extends Component {
       isPreview: true,
       data: fileData
     }))
+
+  }
+  computeDirectoryTree(disableFileId) {
+    let folders = this.props.files.filter(isFolder).filter(isNotTrash).map(folder=>{
+      let data = {'text':folder.name, 'id':folder.id, 'parents':folder.parents }
+      data.disabled = data.id === disableFileId
+      return data
+    })
+    let parentChildrenDict = {}
+
+    folders.map(folder=>{
+      let parent = folder.parents[0]
+      if(parentChildrenDict[parent]) {
+        parentChildrenDict[parent].push(folder)
+      } else {
+        parentChildrenDict[parent] = [folder]
+      }
+    })
+
+    let root = {'text':'root', 'id':this.props.rootFolder, 'children':[]}
+    let queue = [root]
+
+    while(queue.length > 0) {
+      let current = queue.shift()
+      let children = parentChildrenDict[current.id]
+      if(children != null) {
+        children.forEach(folder=>{queue.push(folder)})
+        current.children = children
+      } else {
+        current.nodes = []
+      }
+    }
+    return root
   }
 
   handleClose() {
@@ -153,6 +196,19 @@ class FilesList extends Component {
       canSubmit: false,
     });
   }
+  handleMoveModalOpen(file) {
+    this.setState({
+      isMoveModalOpen:true,
+      movedFile:file
+    });
+  }
+  handleMoveModalClose() {
+    this.setState({
+      isMoveModalOpen:false,
+      movedFile:null
+    });
+  }
+
   onDialogSubmit() {
     this.renameFile(this.state.selectedFile.id, this.refs.renameField.getValue().trim())
     this.handleClose()
@@ -178,6 +234,13 @@ class FilesList extends Component {
     }
   }
   render() {
+    const sortByFolderFirst = (fileA, fileB) => {
+      if(!isFolder(fileA) && isFolder(fileB)) {
+        return 1
+      } else {
+        return -1;
+      }
+    }
     let directories = this.props.directoryStructure
     // only display files under the current directory
     let filesToDisplay = []
@@ -185,7 +248,7 @@ class FilesList extends Component {
       filesToDisplay = this.props.files.filter(file => {
         let currDirectory = directories[directories.length-1].id
         return file.parents && file.parents[0] === currDirectory && !file.trashed
-      })
+      }).sort(sortByFolderFirst)
     }
 
     let tableBody = <tr>
@@ -253,7 +316,7 @@ class FilesList extends Component {
                 <Divider/>
                 { !isFolder(file) && <MenuItem primaryText="make a copy"  onTouchTap={this.copyFile.bind(this, file.id)}/>}
                 <MenuItem primaryText="Rename" onTouchTap={this.handleOpen.bind(this, file)} />
-                <MenuItem primaryText="Move" />
+                <MenuItem primaryText="Move" onTouchTap={this.handleMoveModalOpen.bind(this, file)} />
                 <Divider/>
                 <MenuItem primaryText="Delete" onTouchTap={this.removeFile.bind(this, file.id)}/>
 
@@ -318,6 +381,13 @@ class FilesList extends Component {
       </Dialog>
       )
 
+      const moveModal = (this.state.isMoveModalOpen &&
+        <TreeModal
+          handleClose = {this.handleMoveModalClose.bind(this)}
+          onDialogSubmit={this.moveFile.bind(this, this.state.movedFile.id, this.state.movedFile.parents)}
+          treeNode={this.computeDirectoryTree(this.state.movedFile.id)}
+        />
+      )
 
 
     return (
@@ -331,6 +401,7 @@ class FilesList extends Component {
           />
         {dropzone}
         {modal}
+        {moveModal}
         <RaisedButton
           label="Create Folder"
           onTouchTap={this.createFolder.bind(this)}

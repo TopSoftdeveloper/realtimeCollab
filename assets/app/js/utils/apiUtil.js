@@ -10,6 +10,7 @@ let API_BASE_URL = AppConstants.API_BASE_URL;
 
 import $ from 'jquery'
 import Promise from 'bluebird'
+import {dumpList} from './general'
 
 const googleDriveAPIFiledParams = "fields=lastModifyingUser%2CmodifiedTime%2CiconLink%2CwebViewLink%2Cparents%2Cname%2Cid%2CmimeType"
 
@@ -68,6 +69,18 @@ export function createFolder(multipartRequestBody) {
   })
 }
 
+export function moveFile(fileId, oldParents, newParents) {
+
+  return $.ajax('https://www.googleapis.com/drive/v3/files/' + fileId +"?"+googleDriveAPIFiledParams+"&addParents="+dumpList(newParents)+"&removeParents="+dumpList(oldParents), {
+    'type': 'PATCH',
+    'processData': false,
+    'headers': {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ' + localStorage.getItem('google_token')
+    }
+
+  })
+}
 
 
 export function queryGoogleDrive(queryString) {

@@ -4,7 +4,8 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
   serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
   getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
   syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
-  queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile, createFolder,
+  queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile,
+  createFolder, moveFile,
   serverGetNewesfeed, refreshTokens, listRepoEvents} from '../utils/apiUtil'
   import {getCurrentProject} from '../utils/general'
   import {isObjectPresent, filterUnique} from '../utils/general'
@@ -102,6 +103,19 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
     return function(dispatch, getState) {
       user.colour = getNewColour(getState().users.map(k => k.colour))
       dispatch(addUsers([user]))
+    }
+  }
+
+  export function moveFileToDrive(fileId, oldParents, newParents) {
+    return function(dispatch) {
+      moveFile(fileId, oldParents, newParents).then(
+        (newFile) => {
+          dispatch(deleteFile(fileId))
+          dispatch(insertFile(newFile))
+          dispatch(snackbarMessage(newFile.name+' moved successfully', 'default'))
+        },function(err) {
+          console.log(err)
+        })
     }
   }
 

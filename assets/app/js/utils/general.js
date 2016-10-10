@@ -123,3 +123,16 @@ export function getUserAvatar(imgSrc, displayName, enableTooltip, isSquare, memb
 	}
 	return image
 }
+
+// dump a list to string with separators.
+export function dumpList(list, separator = ',') {
+
+		var output = '';
+		while(list.length>0) {
+			output += list.shift()
+			if(list.length>0) {
+				output+=separator
+			}
+		}
+		return output
+}
