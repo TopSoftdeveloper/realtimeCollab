@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { browserHistory } from 'react-router'
+import { browserHistory, Link } from 'react-router'
 import {getCurrentTab} from '../utils/general'
 
 class List extends Component {
@@ -40,10 +40,12 @@ class List extends Component {
         return (
             <div className="project-list">
                 <div className="project-list-header">
+
                     <table>
+
                         <tbody>
                         <tr>
-                            <td><span>Projects</span></td>
+                            <td><Link to="/app/dashboard" >Projects</Link></td>
                             <td><i
                                 className={iconClassName}
                                 onClick={this.props.onAddProject}>add_circle</i>

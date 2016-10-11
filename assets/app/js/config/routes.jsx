@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route } from 'react-router'
+import { Route,IndexRoute, IndexRedirect } from 'react-router'
 import App from '../containers/App.jsx'
 import Project from '../components/Project.jsx'
 import _404 from '../components/_404.jsx'
@@ -11,6 +11,7 @@ let AppConstants = require('../AppConstants');
 
 export default (
   <Route path='/app' component={App}>
+    <IndexRedirect to="dashboard" />>
     <Route path='project/:id' component={Project}>
       <Route path={AppConstants.PATH.milestones} />
       <Route path={AppConstants.PATH.files} />

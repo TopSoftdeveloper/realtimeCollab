@@ -162,11 +162,7 @@ class MilestoneView extends Component {
 
       else {
 
-        const filterByAssignee = (task) => {
-          if(this.state.assigneeFilter == 'all' || task.assignee_id == this.state.assigneeFilter) {
-            return task
-          }
-        }
+        const filterByAssignee = task => (this.state.assigneeFilter == 'all' || task.assignee_id == this.state.assigneeFilter)
         // deadline sorting function
         // milestones without a deadline should be always be put in bottom
         const sortByDeadline = (milestoneA, milestoneB) => {
@@ -243,7 +239,7 @@ class MilestoneView extends Component {
         let AssignesMenuItems = this.props.users.map(user => {
           return <MenuItem value={user.id} key={user.id} primaryText={user.display_name}/>
         })
-        AssignesMenuItems.unshift(<MenuItem value={''} key={''} primaryText="None"/>)
+        AssignesMenuItems.unshift(<MenuItem value={null} key={''} primaryText="None"/>)
         AssignesMenuItems.unshift(<MenuItem value={'all'} key={'all'} primaryText="All"/>)
 
 
