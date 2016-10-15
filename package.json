@@ -1,10 +1,10 @@
 {
   "name": "Collab",
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/collab-tools/collab.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/collab-tools/collab.git"
   },
-  "license" : "GPL-3.0",
+  "license": "GPL-3.0",
   "version": "1.0.0",
   "scripts": {
     "start": "cross-env NODE_ENV=production node server/server.js",
@@ -46,6 +46,7 @@
     "react-bootstrap": "0.28.3",
     "react-dom": "~0.14.3",
     "react-dropzone": "3.3.2",
+    "react-ga": "^2.1.2",
     "react-redux": "4.4.0",
     "react-router": "2.0.1",
     "react-router-bootstrap": "0.20.1",
