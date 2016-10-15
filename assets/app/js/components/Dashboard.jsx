@@ -113,7 +113,6 @@ class Dashboard extends Component {
             milestone={milestone}
             onEditMilestone={onEdit}
             onDeleteMilestone={onDelete}
-            location = {this.props.location}
             projectId={projectId}
             key={milestone.id}
             users={users}

@@ -21,8 +21,6 @@ import Remove from './../icons/Remove.jsx'
 import AvatarList from './AvatarList.jsx'
 
 
-
-
 class MilestoneView extends Component {
   constructor(props, context) {
     super(props, context);
@@ -104,7 +102,6 @@ class MilestoneView extends Component {
         let taskList = this.props.tasks.filter(task => task.assignee_id === user.id)
         let assigneeRow =
         <AssigneeRow
-          location = {this.props.location}
           projectId={this.props.projectId}
           key={user.id}
           user={user}
@@ -121,7 +118,6 @@ class MilestoneView extends Component {
       }
       let taskList = this.props.tasks.filter(task => (!task.assignee_id || task.assignee_id === nonUser.id))
       assigneeRows.unshift(<AssigneeRow
-        location = {this.props.location}
         projectId={this.props.projectId}
         key={nonUser.id}
         user={nonUser}
@@ -212,7 +208,6 @@ class MilestoneView extends Component {
               milestone={milestone}
               onEditMilestone={onEdit}
               onDeleteMilestone={onDelete}
-              location = {this.props.location}
               projectId={this.props.projectId}
               key={milestone.id}
               users={this.props.users}
@@ -323,5 +318,12 @@ class MilestoneView extends Component {
       }
     }
   }
+MilestoneView.propTypes = {
+  milestones: PropTypes.array.isRequired,
+  tasks: PropTypes.array.isRequired,
+  actions: PropTypes.object.isRequired,
+  projectId: PropTypes.string.isRequired,
+  users: PropTypes.array.isRequired,
+}
 
-  export default MilestoneView;
+export default MilestoneView;

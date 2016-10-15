@@ -442,6 +442,7 @@ class Files extends Component {
   }
 
   render() {
+    console.log('call rerender in Files')
     let app = this.props.app
     let project = this.props.project
     let filesList = <FilesList

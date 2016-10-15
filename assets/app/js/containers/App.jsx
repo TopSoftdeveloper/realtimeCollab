@@ -29,7 +29,11 @@ class App extends Component {
         socketActions.monitorNotifications()
         socketActions.monitorEditStatus()
     }
-
+    getChildContext() {
+      return {
+        location: this.props.location
+      }
+    }
     initApp() {
         this.props.dispatch(Actions.initializeApp())
         this.autoRefreshTokens()
@@ -170,7 +174,9 @@ App.propTypes = {
     app: PropTypes.object.isRequired,
     search: PropTypes.array.isRequired
 };
-
+App.childContextTypes = {
+    location: React.PropTypes.object
+}
 function mapStateToProps(state) {
     return {
         notifications: state.notifications,

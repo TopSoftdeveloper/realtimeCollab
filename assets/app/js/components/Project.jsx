@@ -33,6 +33,7 @@ class Project extends Component {
         const {alerts, milestones, projects, tasks, users, dispatch, app,
             files, githubRepos, newsfeed, location} = this.props
         const actions = bindActionCreators(Actions, dispatch)
+
         const currentProjectId = getCurrentProject()
 
         let basicUsers = [];
@@ -83,7 +84,6 @@ class Project extends Component {
                             actions={actions}
                             projectId={currentProjectId}
                             users={allActiveUsers}
-                            location={location}
                         />
                     </Tab>
                     <Tab label="Files"
