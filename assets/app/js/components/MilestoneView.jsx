@@ -319,11 +319,13 @@ class MilestoneView extends Component {
     }
   }
 MilestoneView.propTypes = {
+  projectId: PropTypes.string,
+  
   milestones: PropTypes.array.isRequired,
   tasks: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
-  projectId: PropTypes.string.isRequired,
   users: PropTypes.array.isRequired,
 }
+
 
 export default MilestoneView;

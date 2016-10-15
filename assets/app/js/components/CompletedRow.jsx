@@ -77,7 +77,7 @@ class CompletedRow extends Component {
                 toOpen = true
             }
             return <CompletedItem
-                key={_.uniqueId('completed')}
+                key={task.id}
                 text={task.content}
                 reopen={this.reopen.bind(this, task.id)}
                 highlight={highlight}

@@ -425,7 +425,7 @@ class FilesList extends Component {
   }
 }
 
-class Files extends Component {
+class FileView extends Component {
   constructor(props, context) {
     super(props, context)
     this.state = {
@@ -528,5 +528,13 @@ class Files extends Component {
   }
 
 }
+//
+// FileView.propTypes = {
+//     actions: PropTypes.object.isRequired,
+//     project: PropTypes.object.isRequired,
+//     app: PropTypes.object.isRequired,
+//     users: PropTypes.array.isRequired,
+//     events: PropTypes.array.isRequired
+// };
 
-export default Files
+export default FileView

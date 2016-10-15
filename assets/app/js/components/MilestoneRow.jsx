@@ -280,6 +280,7 @@ class MilestoneRow extends Component {
             {taskList}
           </div>
             <TaskModal
+              key={this.props.milestone.id+'_taskModal'}
               title="Add Task"
               open={this.state.isDialogOpen}
               handleClose={this.handleClose.bind(this)}
@@ -287,7 +288,7 @@ class MilestoneRow extends Component {
               users={this.props.users}
               />
             <MilestoneModal
-              key = {this.props.milestone.id}
+              key = {this.props.milestone.id+'milestoneModal'}
               title="Edit Milestone"
               open={this.state.milestoneDialog}
               handleClose={this.handleMilestoneClose.bind(this, this.props.milestone.id)}

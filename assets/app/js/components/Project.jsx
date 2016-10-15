@@ -2,10 +2,10 @@ import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions/ReduxTaskActions';
-import MilestoneView from './MilestoneView.jsx'
+import ProjectMilestoneViewContainer from '../containers/ProjectMilestoneViewContainer.jsx'
 import _404 from './_404.jsx'
 import Settings from './Settings.jsx'
-import Files from './Files.jsx'
+import Files from './FileView.jsx'
 import Newsfeed from './Newsfeed/Newsfeed.jsx'
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject, getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
@@ -19,18 +19,12 @@ class Project extends Component {
         super(props, context);
     }
 
-    getMilestoneIds(milestones) {
-        let ids = [];
-        milestones.forEach(milestone => ids.push(milestone.id));
-        return ids;
-    }
-
     changeTab(newTab) {
         browserHistory.push(getProjectRoot() + '/' + newTab)
     }
 
     render() {
-        const {alerts, milestones, projects, tasks, users, dispatch, app,
+        const {alerts, projects, users, dispatch, app,
             files, githubRepos, newsfeed, location} = this.props
         const actions = bindActionCreators(Actions, dispatch)
 
@@ -53,12 +47,6 @@ class Project extends Component {
             return (<_404 />);
         }
 
-        let milestonesInProj = milestones.filter(
-            milestone => milestone.project_id === currentProjectId);
-
-        let tasksInProj = tasks.filter(
-            task => task.project_id === currentProjectId);
-
         let allActiveUsers = basicUsers.slice()
         if (projectCreator) allActiveUsers.push(projectCreator)
 
@@ -78,12 +66,9 @@ class Project extends Component {
                     <Tab label="Milestones"
                          value={AppConstants.PATH.milestones}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.milestones)}>
-                        <MilestoneView
-                            milestones={milestonesInProj}
-                            tasks={tasksInProj}
+                        <ProjectMilestoneViewContainer
                             actions={actions}
                             projectId={currentProjectId}
-                            users={allActiveUsers}
                         />
                     </Tab>
                     <Tab label="Files"
@@ -130,9 +115,7 @@ Project.propTypes = {
     dispatch: PropTypes.func.isRequired,
     alerts: PropTypes.object.isRequired,
     app: PropTypes.object.isRequired,
-    milestones: PropTypes.array.isRequired,
     projects: PropTypes.array.isRequired,
-    tasks: PropTypes.array.isRequired,
     users: PropTypes.array.isRequired,
     files: PropTypes.array.isRequired,
     newsfeed: PropTypes.array.isRequired
@@ -142,9 +125,7 @@ function mapStateToProps(state) {
     return {
         alerts: state.alerts,
         app: state.app,
-        milestones: state.milestones,
         projects: state.projects,
-        tasks: state.tasks,
         users: state.users,
         files: state.files,
         githubRepos: state.githubRepos,
