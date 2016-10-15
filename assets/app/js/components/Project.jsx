@@ -103,8 +103,6 @@ class Project extends Component {
                          onActive={this.changeTab.bind(this, AppConstants.PATH.newsfeed)}>
                         <Newsfeed
                             project={currentProject}
-                            actions={actions}
-                            events={events}
                             app={app}
                             users={allActiveUsers}
                         />
