@@ -32,7 +32,6 @@ module.exports = {
     getTask: {
         handler: getTask
     },
-
     updateTask: {
         handler: updateTask,
         payload: {
@@ -80,7 +79,7 @@ function updateTask(request, reply) {
 
             storage.updateTask(request.payload, task_id).then(function() {
                 analytics.task.logTaskActivity({
-                  activity: 'U',
+                  activity: analytics.task.constants.ACTIVITY_UPDATE,
                   date: moment().format('YYYY-MM-DD HH:mm:ss'),
                   userId: user_id,
                   projectId: project.id,
@@ -107,7 +106,7 @@ function updateTask(request, reply) {
                         payload.assignee = login
                         github.updateGithubIssue(owner, repo, token, github_num, payload)
                         analytics.task.logTaskActivity({
-                          activity: 'A',
+                          activity: analytics.task.constants.ACTIVITY_ASSIGN,
                           date: moment().format('YYYY-MM-DD HH:mm:ss'),
                           userId: user_id,
                           projectId: project.id,
@@ -159,7 +158,7 @@ function createTask(request, reply) {
             })
 
             analytics.task.logTaskActivity({
-              activity: 'C',
+              activity: analytics.task.constants.ACTIVITY_CREATE,
               date: moment().format('YYYY-MM-DD HH:mm:ss'),
               userId: request.auth.credentials.user_id,
               projectId: request.payload.project_id,
@@ -168,7 +167,7 @@ function createTask(request, reply) {
 
             if(request.payload.assignee_id) {
               analytics.task.logTaskActivity({
-                activity: 'A',
+                activity: analytics.task.constants.ACTIVITY_ASSIGN,
                 date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 userId: request.payload.assignee_id,
                 projectId: request.payload.project_id,
@@ -241,7 +240,7 @@ function markTaskAsDone(request, reply) {
             }
             storage.markDone(task_id).then(function () {
                 analytics.task.logTaskActivity({
-                  activity: 'D',
+                  activity: analytics.task.constants.ACTIVITY_DONE,
                   date: moment().format('YYYY-MM-DD HH:mm:ss'),
                   userId: user_id,
                   projectId: project_id,
@@ -282,7 +281,7 @@ function deleteTask(request, reply) {
             }
             storage.deleteTask(task_id).then(function() {
                 analytics.task.logTaskActivity({
-                  activity: 'X',
+                  activity: analytics.task.constants.ACTIVITY_DELETE,
                   date: moment().format('YYYY-MM-DD HH:mm:ss'),
                   userId: request.auth.credentials.user_id,
                   projectId: project.id,

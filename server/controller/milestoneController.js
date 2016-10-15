@@ -59,7 +59,7 @@ function updateMilestone(request, reply) {
             }
             storage.updateMilestone(milestone, milestone_id).then(function() {
                 analytics.milestone.logMilestoneActivity({
-                    activity: 'U',
+                    activity: analytics.milestone.constants.ACTIVITY_UPDATE,
                     date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     userId: user_id,
                     projectId: project.id,
@@ -117,7 +117,7 @@ function createMilestone(request, reply) {
 
         storage.createMilestone(milestone).then(function(m) {
             analytics.milestone.logMilestoneActivity({
-                activity: 'C',
+                activity: analytics.milestone.constants.ACTIVITY_CREATE,
                 date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 userId: user_id,
                 projectId: m.project_id,
@@ -168,7 +168,7 @@ function deleteMilestone(request, reply) {
 
             storage.deleteMilestone(milestone_id).then(function() {
                 analytics.milestone.logMilestoneActivity({
-                    activity: 'X',
+                    activity: analytics.milestone.constants.ACTIVITY_DELETE,
                     date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     userId: user_id,
                     projectId: project.id,
@@ -181,7 +181,6 @@ function deleteMilestone(request, reply) {
                 if (!token) return
                 github.deleteGithubMilestone(project.github_repo_owner, project.github_repo_name, token, milestone.github_number)
             });
-
         })
     })
 }
