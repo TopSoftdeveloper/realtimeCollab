@@ -93,6 +93,7 @@ class MilestoneView extends Component {
   }
 
   render() {
+    console.log('render milestone view')
     // condition for assignee mode
     if(this.state.viewBy === 'assignee') {
       let users = this.props.users
@@ -321,7 +322,7 @@ class MilestoneView extends Component {
 MilestoneView.propTypes = {
   // props passed by parents
   projectId: PropTypes.string,
-  // props passed by container 
+  // props passed by container
   milestones: PropTypes.array.isRequired,
   tasks: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,

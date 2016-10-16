@@ -2,10 +2,10 @@ import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions/ReduxTaskActions';
-import ProjectMilestoneViewContainer from '../containers/ProjectMilestoneViewContainer.jsx'
-import ProjectFileViewContainer from '../containers/ProjectFileViewContainer.jsx'
-import ProjectNewsfeedViewContainer from '../containers/ProjectNewsfeedViewContainer.jsx'
-import ProjectSettingViewContainer from '../containers/ProjectSettingViewContainer.jsx'
+import ProjectMilestoneView from '../containers/ProjectMilestoneView.jsx'
+import ProjectFileView from '../containers/ProjectFileView.jsx'
+import ProjectNewsfeedView from '../containers/ProjectNewsfeedView.jsx'
+import ProjectSettingView from '../containers/ProjectSettingView.jsx'
 import _404 from './_404.jsx'
 
 import {isProjectPresent} from '../utils/collection'
@@ -64,7 +64,7 @@ class Project extends Component {
                     <Tab label="Milestones"
                          value={AppConstants.PATH.milestones}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.milestones)}>
-                        <ProjectMilestoneViewContainer
+                        <ProjectMilestoneView
                             actions={actions}
                             projectId={currentProjectId}
                             users={allActiveUsers}
@@ -73,7 +73,7 @@ class Project extends Component {
                     <Tab label="Files"
                          value={AppConstants.PATH.files}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.files)}>
-                        <ProjectFileViewContainer
+                        <ProjectFileView
                             project={currentProject}
                             actions={actions}
                             app={app}
@@ -82,7 +82,7 @@ class Project extends Component {
                     <Tab label="Newsfeed"
                          value={AppConstants.PATH.newsfeed}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.newsfeed)}>
-                        <ProjectNewsfeedViewContainer
+                        <ProjectNewsfeedView
                             project={currentProject}
                             app={app}
                             users={allActiveUsers}
@@ -91,7 +91,7 @@ class Project extends Component {
                     <Tab label="Settings"
                          value={AppConstants.PATH.settings}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.settings)}>
-                        <ProjectSettingViewContainer
+                        <ProjectSettingView
                             project={currentProject}
                             pendingUsers={pendingUsers}
                             allActiveUsers={allActiveUsers}
