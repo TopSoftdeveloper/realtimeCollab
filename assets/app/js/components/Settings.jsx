@@ -328,4 +328,16 @@ class Settings extends Component {
     }
 }
 
+Settings.propTypes = {
+  // props passed by parents
+  actions: PropTypes.object.isRequired,
+  project: PropTypes.object.isRequired,
+  app: PropTypes.object.isRequired,
+  allActiveUsers: PropTypes.array.isRequired,
+  pendingUsers: PropTypes.array.isRequired,
+  // props passed by container
+  alerts: PropTypes.object.isRequired,
+  githubRepos: PropTypes.array
+}
+
 export default Settings;

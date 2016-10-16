@@ -3,10 +3,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions/ReduxTaskActions';
 import ProjectMilestoneViewContainer from '../containers/ProjectMilestoneViewContainer.jsx'
+import ProjectFileViewContainer from '../containers/ProjectFileViewContainer.jsx'
+import ProjectNewsfeedViewContainer from '../containers/ProjectNewsfeedViewContainer.jsx'
+import ProjectSettingViewContainer from '../containers/ProjectSettingViewContainer.jsx'
 import _404 from './_404.jsx'
-import Settings from './Settings.jsx'
-import Files from './FileView.jsx'
-import Newsfeed from './Newsfeed/Newsfeed.jsx'
+
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject, getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
 import Tabs from 'material-ui/lib/tabs/tabs'
@@ -24,8 +25,7 @@ class Project extends Component {
     }
 
     render() {
-        const {alerts, projects, users, dispatch, app,
-            files, githubRepos, newsfeed, location} = this.props
+        const {projects, users, dispatch, app } = this.props
         const actions = bindActionCreators(Actions, dispatch)
 
         const currentProjectId = getCurrentProject()
@@ -50,15 +50,13 @@ class Project extends Component {
         let allActiveUsers = basicUsers.slice()
         if (projectCreator) allActiveUsers.push(projectCreator)
 
-        let events = newsfeed.filter(event => event.project_id === currentProjectId)
-
         // Set the active tab
         let currentTab = getCurrentTab()
         if (currentTab === '') currentTab = AppConstants.PATH.milestones //default tab
 
-        let repoName = currentProject.github_repo_name
-        let repoOwner = currentProject.github_repo_owner
-        let repoSet = repoName && repoOwner
+        // let repoName = currentProject.github_repo_name
+        // let repoOwner = currentProject.github_repo_owner
+        // let repoSet = repoName && repoOwner
 
         return (
             <div className="main-content">
@@ -69,24 +67,22 @@ class Project extends Component {
                         <ProjectMilestoneViewContainer
                             actions={actions}
                             projectId={currentProjectId}
+                            users={allActiveUsers}
                         />
                     </Tab>
                     <Tab label="Files"
                          value={AppConstants.PATH.files}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.files)}>
-                        <Files
+                        <ProjectFileViewContainer
                             project={currentProject}
                             actions={actions}
-                            files={files}
                             app={app}
-                            actions={actions}
-                            dispatch={dispatch}
                         />
                     </Tab>
                     <Tab label="Newsfeed"
                          value={AppConstants.PATH.newsfeed}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.newsfeed)}>
-                        <Newsfeed
+                        <ProjectNewsfeedViewContainer
                             project={currentProject}
                             app={app}
                             users={allActiveUsers}
@@ -95,14 +91,12 @@ class Project extends Component {
                     <Tab label="Settings"
                          value={AppConstants.PATH.settings}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.settings)}>
-                        <Settings
+                        <ProjectSettingViewContainer
                             project={currentProject}
                             pendingUsers={pendingUsers}
                             allActiveUsers={allActiveUsers}
                             actions={actions}
-                            alerts={alerts}
                             app={app}
-                            repos={githubRepos}
                         />
                     </Tab>
                 </Tabs>
@@ -113,23 +107,16 @@ class Project extends Component {
 
 Project.propTypes = {
     dispatch: PropTypes.func.isRequired,
-    alerts: PropTypes.object.isRequired,
     app: PropTypes.object.isRequired,
     projects: PropTypes.array.isRequired,
     users: PropTypes.array.isRequired,
-    files: PropTypes.array.isRequired,
-    newsfeed: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        alerts: state.alerts,
         app: state.app,
         projects: state.projects,
         users: state.users,
-        files: state.files,
-        githubRepos: state.githubRepos,
-        newsfeed: state.newsfeed
     };
 }
 

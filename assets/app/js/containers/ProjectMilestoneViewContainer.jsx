@@ -7,7 +7,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     milestones: state.milestones.filter(milestone => milestone.project_id === ownProps.projectId),
     tasks: state.tasks.filter(task => task.project_id === ownProps.projectId),
-    users: state.users,
   }
 }
 

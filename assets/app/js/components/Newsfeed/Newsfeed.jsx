@@ -16,18 +16,17 @@ class Newsfeed extends Component {
     }
 }
 Newsfeed.propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    project: PropTypes.object.isRequired,
-    app: PropTypes.object.isRequired,
-    users: PropTypes.array.isRequired,
-    events: PropTypes.array.isRequired
+  // props passed by parents
+  project: PropTypes.object.isRequired,
+  app: PropTypes.object.isRequired,
+
+  // props passed by container
+  users: PropTypes.array.isRequired,
+  events: PropTypes.array.isRequired,
+  dispatch: PropTypes.func.isRequired,
+
+
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    events: state.newsfeed.filter(event => event.project_id === ownProps.project.id)
-  }
-}
 
-
-export default connect(mapStateToProps)(Newsfeed)
+export default Newsfeed;

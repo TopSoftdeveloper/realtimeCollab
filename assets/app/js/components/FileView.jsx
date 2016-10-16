@@ -528,13 +528,15 @@ class FileView extends Component {
   }
 
 }
-//
-// FileView.propTypes = {
-//     actions: PropTypes.object.isRequired,
-//     project: PropTypes.object.isRequired,
-//     app: PropTypes.object.isRequired,
-//     users: PropTypes.array.isRequired,
-//     events: PropTypes.array.isRequired
-// };
+
+FileView.propTypes = {
+  // props passed by parent
+  project: PropTypes.object.isRequired,
+  app: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
+  // props passed by container
+  dispatch: PropTypes.func.isRequired,
+  files: PropTypes.array.isRequired,
+};
 
 export default FileView

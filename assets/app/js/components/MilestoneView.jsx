@@ -319,8 +319,9 @@ class MilestoneView extends Component {
     }
   }
 MilestoneView.propTypes = {
+  // props passed by parents
   projectId: PropTypes.string,
-  
+  // props passed by container 
   milestones: PropTypes.array.isRequired,
   tasks: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
