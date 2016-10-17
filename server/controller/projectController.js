@@ -73,7 +73,7 @@ function updateProject(request, reply) {
                 storage.findUserById(user_id).then(function (user) {
                     analytics.drive.pullDrive(config.get('google'), projectId, request.payload.root_folder, user.google_refresh_token)
                     .then(function() {
-                        analytics.drive.pullRevision(config.get('google', projectId, user.google_refresh_token))
+                        analytics.drive.pullRevisions(config.get('google'), projectId, user.google_refresh_token);
                     })
                 })
             }

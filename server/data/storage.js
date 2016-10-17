@@ -1,6 +1,8 @@
 var constants = require('../constants');
 var shortid = require('shortid');
+var config = require('config');
 var Promise = require("bluebird");
+var moment = require('moment');
 var models = require('./models/modelManager');
 var Task = models.Task;
 var Milestone = models.Milestone;
@@ -9,7 +11,7 @@ var Project = models.Project;
 var UserProject = models.UserProject;
 var Notification = models.Notification;
 var Newsfeed = models.Newsfeed;
-
+var analytics = require('collab-analytics')(config.database, config.logging_database);
 var format = require('string-format');
 
 module.exports = {
@@ -385,6 +387,11 @@ module.exports = {
         }).then(function(t) {
             if (!t) {
                 task.id = shortid.generate()
+                analytics.task.logTaskActivity(
+                  analytics.task.constants.ACTIVITY_CREATE,
+                  moment().format('YYYY-MM-DD HH:mm:ss'),
+                  task.user_id
+                );
                 return Task.create(task)
             }
             return new Promise(function(resolve, reject) {resolve(t)})
@@ -398,6 +405,11 @@ module.exports = {
         }).then(function(m) {
             if (!m) {
                 milestone.id = shortid.generate()
+                analytics.milestone.logMilestoneActivity(
+                  analytics.milestone.constants.ACTIVITY_CREATE,
+                  moment().format('YYYY-MM-DD HH:mm:ss'),
+                  milestone
+                );
                 return Milestone.create(milestone)
             }
             return new Promise(function(resolve, reject) {resolve(m)})
