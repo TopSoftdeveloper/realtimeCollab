@@ -1,9 +1,14 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import EventList from './EventList.jsx'
-
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 class Newsfeed extends Component {
+  constructor(props, context) {
+    super(props, context);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
     render() {
+      console.log('render newsfeed')
         return (
             <div>
                 <br/>

@@ -73,6 +73,7 @@ class App extends Component {
     }
 
     render() {
+      // console.log('render in app')
         const {notifications, projects, users, dispatch, app, files, search} = this.props;
         const actions = bindActionCreators(Actions, dispatch);
         const currentProjectId = getCurrentProject()

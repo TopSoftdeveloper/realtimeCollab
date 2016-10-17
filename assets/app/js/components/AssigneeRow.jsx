@@ -82,7 +82,7 @@ class AssigneeRow extends Component {
       if(this.state.showOngoing) {
         // Only show non-completed tasks and non-dirtied tasks
         let assignees = this.props.users.filter(user => user.id === task.assignee_id)
-        let highlightId = this.props.location.query.highlight
+        let highlightId = this.context.location.query.highlight
         let highlight = false
         if (highlightId === task.id) {
           highlight = true
@@ -108,7 +108,7 @@ class AssigneeRow extends Component {
           key={_.uniqueId('completed')}
           completedTasks={completedTasks}
           actions={this.props.actions}
-          highlightId={this.props.location.query.highlight}
+          highlightId={this.context.location.query.highlight}
           />)
         }
 
@@ -173,6 +173,10 @@ class AssigneeRow extends Component {
 
         );
       }
+    }
+
+    AssigneeRow.contextTypes = {
+      location: React.PropTypes.object
     }
 
     export default connect()(AssigneeRow)

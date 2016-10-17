@@ -123,6 +123,7 @@ class Settings extends Component {
     }
 
     render() {
+      console.log('rerender settings')
         let listGroups = [];
         let alertStatus = this.props.alerts.project_invitation;
 
@@ -337,7 +338,7 @@ Settings.propTypes = {
   pendingUsers: PropTypes.array.isRequired,
   // props passed by container
   alerts: PropTypes.object.isRequired,
-  githubRepos: PropTypes.array
+  repos: PropTypes.array
 }
 
 export default Settings;

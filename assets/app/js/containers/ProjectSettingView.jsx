@@ -6,7 +6,7 @@ import Settings from '../components/Settings.jsx'
 const mapStateToProps = (state, ownProps) => {
   return {
     alerts: state.alerts,
-    githubRepos: state.githubRepos,
+    repos: state.githubRepos,
   }
 }
 

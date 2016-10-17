@@ -25,30 +25,14 @@ class Project extends Component {
     }
 
     render() {
-        const {projects, users, dispatch, app } = this.props
-        const actions = bindActionCreators(Actions, dispatch)
+        console.log('render projectView')
+        const {app, actions, activeUsers, pendingUsers, currentProject} = this.props
+        const currentProjectId = currentProject.id
 
-        const currentProjectId = getCurrentProject()
 
-        let basicUsers = [];
-        let pendingUsers = [];
-        let projectCreator = '';
-        let currentProject = null
-
-        if (isProjectPresent(projects, currentProjectId)) {
-            currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
-            let basicUserIds = currentProject.basic;
-            let pendingUserIds = currentProject.pending;
-
-            projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
-            basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
-            pendingUsers = users.filter(user => isItemPresent(pendingUserIds, user.id));
-        } else {
+        if (!currentProject) {
             return (<_404 />);
         }
-
-        let allActiveUsers = basicUsers.slice()
-        if (projectCreator) allActiveUsers.push(projectCreator)
 
         // Set the active tab
         let currentTab = getCurrentTab()
@@ -64,11 +48,14 @@ class Project extends Component {
                     <Tab label="Milestones"
                          value={AppConstants.PATH.milestones}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.milestones)}>
+                      {
+                        // currentTab === AppConstants.PATH.milestones &&
                         <ProjectMilestoneView
-                            actions={actions}
-                            projectId={currentProjectId}
-                            users={allActiveUsers}
+                        projectId={currentProjectId}
+                        users={activeUsers}
+                        actions={actions}
                         />
+                      }
                     </Tab>
                     <Tab label="Files"
                          value={AppConstants.PATH.files}
@@ -85,7 +72,7 @@ class Project extends Component {
                         <ProjectNewsfeedView
                             project={currentProject}
                             app={app}
-                            users={allActiveUsers}
+                            users={activeUsers}
                         />
                     </Tab>
                     <Tab label="Settings"
@@ -94,7 +81,7 @@ class Project extends Component {
                         <ProjectSettingView
                             project={currentProject}
                             pendingUsers={pendingUsers}
-                            allActiveUsers={allActiveUsers}
+                            allActiveUsers={activeUsers}
                             actions={actions}
                             app={app}
                         />
@@ -106,18 +93,45 @@ class Project extends Component {
 }
 
 Project.propTypes = {
-    dispatch: PropTypes.func.isRequired,
+    // dispatch: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
-    projects: PropTypes.array.isRequired,
-    users: PropTypes.array.isRequired,
+    currentProject: PropTypes.object.isRequired,
+    activeUsers: PropTypes.array.isRequired,
+    pendingUsers: PropTypes.array.isRequired,
+    actions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
+    const users = state.users
+    const projects = state.projects
+    const currentProjectId = getCurrentProject()
+    let basicUsers = [];
+    let pendingUsers = [];
+    let projectCreator = '';
+    let currentProject = null
+    const shouldRender = isProjectPresent(projects, currentProjectId)
+    if (isProjectPresent(projects, currentProjectId)) {
+        currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
+        let basicUserIds = currentProject.basic;
+        let pendingUserIds = currentProject.pending;
+
+        projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
+        basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
+        pendingUsers = users.filter(user => isItemPresent(pendingUserIds, user.id));
+      }
+    let activeUsers = basicUsers.slice()
+    if (projectCreator) activeUsers.push(projectCreator)
+
     return {
+        currentProject: currentProject,
+        activeUsers: activeUsers,
+        pendingUsers: pendingUsers,
         app: state.app,
-        projects: state.projects,
-        users: state.users,
     };
 }
-
-export default connect(mapStateToProps)(Project)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Project)

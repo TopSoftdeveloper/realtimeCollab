@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import _ from 'lodash'
 import $ from 'jquery'
 
@@ -24,16 +25,23 @@ import AvatarList from './AvatarList.jsx'
 class MilestoneView extends Component {
   constructor(props, context) {
     super(props, context);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
     this.state = {
       isDialogOpen: false,
       assigneeFilter: 'all',
       sortByDeadlineDescending: true,
       showResetButton: false,
       isFilterApplied: false,
-      // viewBy: 'assignee'
       viewBy: 'milestone'
 
     }
+  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log('in shouldComponentUpdate')
+  //   return false
+  // }
+  componentWillReceiveProps(nextProps) {
+    console.log('yesplease')
   }
   changeViewMode(mode) {
     this.setState({
@@ -93,7 +101,7 @@ class MilestoneView extends Component {
   }
 
   render() {
-    console.log('render milestone view')
+    console.log('render milestone')
     // condition for assignee mode
     if(this.state.viewBy === 'assignee') {
       let users = this.props.users
