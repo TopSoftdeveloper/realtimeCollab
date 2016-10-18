@@ -152,11 +152,20 @@ function driveWebhookHandler(request, reply) {
             fileName: file.name,
             email: lastModifiedBy
         }
-
         var template = templates.DRIVE_UPDATE
+        var activity = analytics.drive.constants.FILE_MODIFIED
         if (change.removed || file.trashed) {
             template = templates.DRIVE_REMOVE
+            activity = analytics.drive.constants.FILE_DELETED
         }
+
+        analytics.drive.logFileActivity(
+          activity,
+          change.time,
+          lastModifiedBy,
+          null,
+          file
+        )
         Newsfeed.updateNewsfeed(data, template, projectId, constants.GOOGLE_DRIVE, file.modifiedTime)
     })
 }

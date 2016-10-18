@@ -8,6 +8,7 @@ var accessControl = require('./accessControl');
 var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
 var config = require('config');
+var camelcaseKeys = require('camelcase-keys');
 var github = require('./githubController')
 var analytics = require('collab-analytics')(config.database, config.logging_database);
 
@@ -57,14 +58,12 @@ function updateMilestone(request, reply) {
                 reply(Boom.forbidden(constants.FORBIDDEN));
                 return;
             }
-            storage.updateMilestone(milestone, milestone_id).then(function() {
-                analytics.milestone.logMilestoneActivity({
-                    activity: analytics.milestone.constants.ACTIVITY_UPDATE,
-                    date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                    userId: user_id,
-                    projectId: project.id,
-                    milestoneId: milestone_id
-                })
+            storage.updateMilestone(milestone, milestone_id).then(function(m) {
+                analytics.milestone.logMilestoneActivity(
+                    analytics.milestone.constants.ACTIVITY_UPDATE,
+                    moment().format('YYYY-MM-DD HH:mm:ss'),
+                    camelcaseKeys(m.toJSON())
+                )
 
                 socket.sendMessageToProject(project.id, 'update_milestone', {
                     milestone: milestone, sender: user_id, milestone_id: milestone_id
@@ -116,13 +115,11 @@ function createMilestone(request, reply) {
         }
 
         storage.createMilestone(milestone).then(function(m) {
-            analytics.milestone.logMilestoneActivity({
-                activity: analytics.milestone.constants.ACTIVITY_CREATE,
-                date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                userId: user_id,
-                projectId: m.project_id,
-                milestoneId: m.id
-            })
+            analytics.milestone.logMilestoneActivity(
+                analytics.milestone.constants.ACTIVITY_CREATE,
+                moment().format('YYYY-MM-DD HH:mm:ss'),
+                camelcaseKeys(m.toJSON())
+            )
 
             socket.sendMessageToProject(request.payload.project_id, 'new_milestone', {
                 milestone: m, sender: user_id
@@ -167,13 +164,12 @@ function deleteMilestone(request, reply) {
             }
 
             storage.deleteMilestone(milestone_id).then(function() {
-                analytics.milestone.logMilestoneActivity({
-                    activity: analytics.milestone.constants.ACTIVITY_DELETE,
-                    date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                    userId: user_id,
-                    projectId: project.id,
-                    milestoneId: milestone_id
-                })
+                analytics.milestone.logMilestoneActivity(
+                  analytics.milestone.constants.ACTIVITY_DELETE,
+                  moment().format('YYYY-MM-DD HH:mm:ss'),
+                  { projectId: project.id, id: milestone_id}
+                )
+
                 reply({status: constants.STATUS_OK});
                 socket.sendMessageToProject(project.id, 'delete_milestone', {
                     milestone_id: milestone_id, sender: user_id

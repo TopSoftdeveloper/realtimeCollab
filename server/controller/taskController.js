@@ -7,6 +7,7 @@ var socket = require('./socket/handlers');
 var moment = require('moment');
 var helper = require('../utils/helper');
 var config = require('config');
+var camelcaseKeys = require('camelcase-keys');
 var Promise = require("bluebird");
 var github = require('./githubController');
 var accessControl = require('./accessControl');
@@ -77,14 +78,13 @@ function updateTask(request, reply) {
             var project = result.project
             var github_num = result.task.github_number
 
-            storage.updateTask(request.payload, task_id).then(function() {
-                analytics.task.logTaskActivity({
-                  activity: analytics.task.constants.ACTIVITY_UPDATE,
-                  date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                  userId: user_id,
-                  projectId: project.id,
-                  taskId: task_id
-                })
+            storage.updateTask(request.payload, task_id).then(function(t) {
+                analytics.task.logTaskActivity(
+                    analytics.task.constants.ACTIVITY_UPDATE,
+                    moment().format('YYYY-MM-DD HH:mm:ss'),
+                    user_id,
+                    camelcaseKeys(t.toJSON())
+                )
 
                 reply({status: constants.STATUS_OK});
 
@@ -105,13 +105,12 @@ function updateTask(request, reply) {
                     storage.findGithubLogin(request.payload.assignee_id).then(function(login) {
                         payload.assignee = login
                         github.updateGithubIssue(owner, repo, token, github_num, payload)
-                        analytics.task.logTaskActivity({
-                          activity: analytics.task.constants.ACTIVITY_ASSIGN,
-                          date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                          userId: user_id,
-                          projectId: project.id,
-                          taskId: task_id
-                        })
+                        analytics.task.logTaskActivity(
+                          analytics.task.constants.ACTIVITY_ASSIGN,
+                          moment().format('YYYY-MM-DD HH:mm:ss'),
+                          user_id,
+                          camelcaseKeys(t.toJSON())
+                        )
                     })
                 } else {
                     github.updateGithubIssue(owner, repo, token, github_num, payload)
@@ -157,22 +156,20 @@ function createTask(request, reply) {
                 task: newTask, sender: user_id
             })
 
-            analytics.task.logTaskActivity({
-              activity: analytics.task.constants.ACTIVITY_CREATE,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-              userId: request.auth.credentials.user_id,
-              projectId: request.payload.project_id,
-              taskId: request.payload.id
-            })
+            analytics.task.logTaskActivity(
+              analytics.task.constants.ACTIVITY_CREATE,
+              moment().format('YYYY-MM-DD HH:mm:ss'),
+              request.auth.credentials.user_id,
+              camelcaseKeys(newTask.toJSON())
+            )
 
             if(request.payload.assignee_id) {
-              analytics.task.logTaskActivity({
-                activity: analytics.task.constants.ACTIVITY_ASSIGN,
-                date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                userId: request.payload.assignee_id,
-                projectId: request.payload.project_id,
-                taskId: request.payload.id
-              })
+              analytics.task.logTaskActivity(
+                analytics.task.constants.ACTIVITY_ASSIGN,
+                moment().format('YYYY-MM-DD HH:mm:ss'),
+                request.payload.assignee_id,
+                camelcaseKeys(newTask.toJSON())
+              )
             }
 
             reply(newTask);
@@ -239,13 +236,12 @@ function markTaskAsDone(request, reply) {
                 return;
             }
             storage.markDone(task_id).then(function () {
-                analytics.task.logTaskActivity({
-                  activity: analytics.task.constants.ACTIVITY_DONE,
-                  date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                  userId: user_id,
-                  projectId: project_id,
-                  taskId: task_id
-                })
+                analytics.task.logTaskActivity(
+                  analytics.task.constants.ACTIVITY_DONE,
+                  moment().format('YYYY-MM-DD HH:mm:ss'),
+                  user_id,
+                  camelcaseKeys(result.task.toJSON())
+                )
                 socket.sendMessageToProject(project_id, 'mark_done', {
                     task_id: task_id, sender: user_id
                 })
@@ -280,13 +276,12 @@ function deleteTask(request, reply) {
                 return;
             }
             storage.deleteTask(task_id).then(function() {
-                analytics.task.logTaskActivity({
-                  activity: analytics.task.constants.ACTIVITY_DELETE,
-                  date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                  userId: request.auth.credentials.user_id,
-                  projectId: project.id,
-                  taskId: task_id
-                })
+                analytics.task.logTaskActivity(
+                  analytics.task.constants.ACTIVITY_DELETE,
+                  moment().format('YYYY-MM-DD HH:mm:ss'),
+                  user_id,
+                  camelcaseKeys(result.task.toJSON())
+                )
                 socket.sendMessageToProject(request.payload.project_id, 'delete_task', {
                     task_id: task_id, sender: user_id
                 })
