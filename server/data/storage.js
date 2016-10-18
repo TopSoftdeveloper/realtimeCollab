@@ -387,11 +387,6 @@ module.exports = {
         }).then(function(t) {
             if (!t) {
                 task.id = shortid.generate()
-                analytics.task.logTaskActivity(
-                  analytics.task.constants.ACTIVITY_CREATE,
-                  moment().format('YYYY-MM-DD HH:mm:ss'),
-                  task.user_id
-                );
                 return Task.create(task)
             }
             return new Promise(function(resolve, reject) {resolve(t)})
@@ -405,11 +400,6 @@ module.exports = {
         }).then(function(m) {
             if (!m) {
                 milestone.id = shortid.generate()
-                analytics.milestone.logMilestoneActivity(
-                  analytics.milestone.constants.ACTIVITY_CREATE,
-                  moment().format('YYYY-MM-DD HH:mm:ss'),
-                  milestone
-                );
                 return Milestone.create(milestone)
             }
             return new Promise(function(resolve, reject) {resolve(m)})
