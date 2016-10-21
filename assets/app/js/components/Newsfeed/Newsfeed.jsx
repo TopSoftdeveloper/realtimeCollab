@@ -12,12 +12,12 @@ class Newsfeed extends Component {
     render() {
       console.log('Newsfeed::render()')
       const {events, project} = this.props
-      let eventsInProject = events.filter(event => event.project_id === project.id)
+      // let eventsInProject = events.filter(event => event.project_id === project.id)
         return (
             <div>
                 <br/>
                 <EventList
-                    events={eventsInProject}
+                    events={events}
                     users={this.props.users}
                 />
             </div>

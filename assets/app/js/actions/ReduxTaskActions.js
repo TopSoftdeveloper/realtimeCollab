@@ -525,6 +525,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         me: true
       }]));
       dispatch(initApp({
+        currentProjectId: null,
         is_linked_to_drive: true,
         is_top_level_folder_loaded: false,
         github: {
@@ -640,7 +641,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
     return function(dispatch) {
       dispatch(_markDone(id));
       serverMarkDone(id, projectId).done(res => {
-        // dispatch(snackbarMessage('Task completed', 'default'))
+        dispatch(snackbarMessage('Task completed', 'default'))
       }).fail(e => {
         console.log(e);
         dispatch(_unmarkDone(id));
