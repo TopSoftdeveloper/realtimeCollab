@@ -1,3 +1,11 @@
+/*********************** Dashboard *******************/
+.project-panel {
+  /*padding: 5px 5px 5px 5px;*/
+  margin-top: 20px;
+}
+.Project-panel-title {
+  background-color: #7a7a7a;
+}
 /************************ Github **********************/
 .github-repo-list ul, .github-repo-list li {
   list-style-type: none;

@@ -246,7 +246,7 @@ class MilestoneRow extends Component {
           <Grid fluid={true}>
           <div className="milestone-row">
           {editIndicator}
-          <Divider/>
+
           <div className="milestone-row-header">
             <Grid fluid={true}>
               <Row>
@@ -275,7 +275,7 @@ class MilestoneRow extends Component {
               </Row>
             </Grid>
           </div>
-
+          <Divider/>
           <div>
             {taskList}
           </div>

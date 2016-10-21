@@ -5,10 +5,19 @@ import * as Actions from '../actions/ReduxTaskActions';
 import _ from 'lodash'
 import $ from 'jquery'
 
+import theme from '../myTheme.js'
+
 import FontIcon from 'material-ui/lib/font-icon';
 import Toolbar from 'material-ui/lib/toolbar/toolbar';
 import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
 import ToolbarSeparator from 'material-ui/lib/toolbar/toolbar-separator';
+
+import Card from 'material-ui/lib/card/card';
+import CardActions from 'material-ui/lib/card/card-actions';
+import CardHeader from 'material-ui/lib/card/card-header';
+import CardText from 'material-ui/lib/card/card-text';
+import CardTitle from 'material-ui/lib/card/card-title';
+
 import Paper from 'material-ui/lib/paper';
 import RaisedButton from 'material-ui/lib/raised-button';
 import FlatButton from 'material-ui/lib/flat-button';
@@ -39,6 +48,7 @@ class Dashboard extends Component {
 
 
   render() {
+    console.log('Dashboard::render()')
     const {
       users,
       milestones,
@@ -124,10 +134,28 @@ class Dashboard extends Component {
       })
       let projectName = projects.filter(project=>project.id===projectId)[0].content
       let projectRow = (
-        <Paper key={projectId} zDepth={0} className='milestone-menu-view'>
+        <Paper key={projectId} zDepth={1} className='project-panel milestone-menu-view'>
           <h2>{projectName}</h2>
           <div>{milestoneRows}</div>
         </Paper>)
+      projectRow = (
+        <Card
+          className ='project-panel'
+          key={projectId}
+          initiallyExpanded = {true}
+
+        >
+         <CardTitle
+           title={projectName}
+           showExpandableButton = {true}
+           style = {{'backgroundColor':theme.palette.primary1Color}}
+           titleColor={'white'}
+           actAsExpander = {true}/>
+          <CardText expandable={true}>
+            {milestoneRows}
+          </CardText>
+        </Card>
+      )
 
         if(milestoneRows.length>0 || true) {
           projectRows.push(projectRow)
@@ -145,12 +173,14 @@ class Dashboard extends Component {
 
       return (
         <Paper zDepth={0} className='main-content'>
-          <Toolbar>
+          <Toolbar
+            >
             <ToolbarGroup firstChild={true} float="left">
             </ToolbarGroup>
             <ToolbarGroup float="right">
               <ToolbarSeparator />
               <FlatButton
+
                 label={this.state.sortByDeadlineDescending?'Earliest':'Oldest'}
                 onTouchTap={this.toggleSortByDeadline.bind(this)}
                 primary={false}
