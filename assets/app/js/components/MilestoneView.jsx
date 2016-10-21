@@ -36,12 +36,8 @@ class MilestoneView extends Component {
 
     }
   }
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log('in shouldComponentUpdate')
-  //   return false
-  // }
   componentWillReceiveProps(nextProps) {
-    console.log('yesplease')
+    console.log('milestone receive new props')
   }
   changeViewMode(mode) {
     this.setState({
@@ -101,7 +97,7 @@ class MilestoneView extends Component {
   }
 
   render() {
-    console.log('render milestone')
+    console.log('MilestoneView::render()')
     // condition for assignee mode
     if(this.state.viewBy === 'assignee') {
       let users = this.props.users

@@ -37,6 +37,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
   */
   export const _updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app')
   export const snackbarMessage = makeActionCreator(AppConstants.SNACKBAR_MESSAGE, 'message', 'kind');
+  export const updateSnackbar = makeActionCreator(AppConstants.UPDATE_SNACKBAR, 'snackbar');
   export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original', 'replacement');
   export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID, 'original', 'replacement');
   export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
@@ -63,6 +64,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
   export const queryProcessing = makeActionCreator(AppConstants.QUERY_PROCESSING);
   export const queryDone = makeActionCreator(AppConstants.QUERY_DONE);
 
+  export const initSnackbar = makeActionCreator(AppConstants.INIT_SNACKBAR, 'snackbar')
   export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
   export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
   export const initNotifications = makeActionCreator(AppConstants.INIT_NOTIFICATIONS, 'notifications');
@@ -72,6 +74,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
   export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
   export const initMessages = makeActionCreator(AppConstants.INIT_MESSAGES, 'messages');
   export const _initGithubRepos = makeActionCreator(AppConstants.INIT_GITHUB_REPOS, 'repos');
+
   export const addNewsfeedEvents = makeActionCreator(AppConstants.ADD_EVENT, 'events');
 
   export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
@@ -535,12 +538,12 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         loading: true,
         queryString: '',
         searchFilter: 'all',
-        snackbar: {
-          isOpen: false,
-          message: '',
-          background: ''
-        }
       }));
+      dispatch(initSnackbar({
+        isOpen: false,
+        message: '',
+        background: ''
+      }))
 
       serverPopulate().done(res => {
         if (res.projects.length > 0) {
@@ -637,7 +640,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
     return function(dispatch) {
       dispatch(_markDone(id));
       serverMarkDone(id, projectId).done(res => {
-        dispatch(snackbarMessage('Task completed', 'default'))
+        // dispatch(snackbarMessage('Task completed', 'default'))
       }).fail(e => {
         console.log(e);
         dispatch(_unmarkDone(id));

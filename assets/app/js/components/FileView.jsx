@@ -442,7 +442,7 @@ class FileView extends Component {
   }
 
   render() {
-    console.log('rerender Files')
+    console.log('FileView::render()')
     let app = this.props.app
     let project = this.props.project
     let filesList = <FilesList

@@ -1,12 +1,13 @@
 import React, { Component, PropTypes } from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions/ReduxTaskActions';
-import ProjectMilestoneView from '../containers/ProjectMilestoneView.jsx'
-import ProjectFileView from '../containers/ProjectFileView.jsx'
-import ProjectNewsfeedView from '../containers/ProjectNewsfeedView.jsx'
-import ProjectSettingView from '../containers/ProjectSettingView.jsx'
-import _404 from './_404.jsx'
+import ProjectMilestoneView from './ProjectMilestoneView.jsx'
+import ProjectFileView from './ProjectFileView.jsx'
+import ProjectNewsfeedView from './ProjectNewsfeedView.jsx'
+import ProjectSettingView from './ProjectSettingView.jsx'
+import _404 from '../components/_404.jsx'
 
 import {isProjectPresent} from '../utils/collection'
 import {getCurrentProject, getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
@@ -18,14 +19,19 @@ let AppConstants = require('../AppConstants');
 class Project extends Component {
     constructor(props, context) {
         super(props, context);
+        this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
     }
 
     changeTab(newTab) {
         browserHistory.push(getProjectRoot() + '/' + newTab)
     }
+    componentWillReceiveProps(nextProps) {
+      console.log('project receive new props')
+    }
+
 
     render() {
-        console.log('render projectView')
+        console.log('Project::render()')
         const {app, actions, activeUsers, pendingUsers, currentProject} = this.props
         const currentProjectId = currentProject.id
 

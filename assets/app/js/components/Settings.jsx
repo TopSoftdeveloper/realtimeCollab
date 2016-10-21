@@ -123,7 +123,7 @@ class Settings extends Component {
     }
 
     render() {
-      console.log('rerender settings')
+      console.log('Settings::render()')
         let listGroups = [];
         let alertStatus = this.props.alerts.project_invitation;
 
