@@ -6,9 +6,6 @@ class Newsfeed extends Component {
     super(props, context);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
-  componentWillReceiveProps(nextProps) {
-    console.log('newsfeed receive new props')
-  }
     render() {
       console.log('Newsfeed::render()')
       const {events, project} = this.props

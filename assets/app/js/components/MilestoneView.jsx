@@ -36,9 +36,6 @@ class MilestoneView extends Component {
 
     }
   }
-  componentWillReceiveProps(nextProps) {
-    console.log('milestone receive new props')
-  }
   changeViewMode(mode) {
     this.setState({
       viewBy: mode

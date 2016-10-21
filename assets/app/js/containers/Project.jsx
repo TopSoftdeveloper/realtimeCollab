@@ -9,8 +9,9 @@ import ProjectNewsfeedView from './ProjectNewsfeedView.jsx'
 import ProjectSettingView from './ProjectSettingView.jsx'
 import _404 from '../components/_404.jsx'
 
-import {isProjectPresent} from '../utils/collection'
-import {getCurrentProject, getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
+import {getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
+import {getCurrentProject, getProjectActiveUsers, getProjectPendingUsers} from '../selector'
+
 import Tabs from 'material-ui/lib/tabs/tabs'
 import Tab from 'material-ui/lib/tabs/tab'
 import { browserHistory } from 'react-router'
@@ -24,9 +25,6 @@ class Project extends Component {
 
     changeTab(newTab) {
         browserHistory.push(getProjectRoot() + '/' + newTab)
-    }
-    componentWillReceiveProps(nextProps) {
-      console.log('project receive new props')
     }
 
 
@@ -108,30 +106,10 @@ Project.propTypes = {
 };
 
 function mapStateToProps(state) {
-    const users = state.users
-    const projects = state.projects
-    const currentProjectId = getCurrentProject()
-    let basicUsers = [];
-    let pendingUsers = [];
-    let projectCreator = '';
-    let currentProject = null
-    const shouldRender = isProjectPresent(projects, currentProjectId)
-    if (isProjectPresent(projects, currentProjectId)) {
-        currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
-        let basicUserIds = currentProject.basic;
-        let pendingUserIds = currentProject.pending;
-
-        projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
-        basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
-        pendingUsers = users.filter(user => isItemPresent(pendingUserIds, user.id));
-      }
-    let activeUsers = basicUsers.slice()
-    if (projectCreator) activeUsers.push(projectCreator)
-
     return {
-        currentProject: currentProject,
-        activeUsers: activeUsers,
-        pendingUsers: pendingUsers,
+        currentProject: getCurrentProject(state),
+        activeUsers: getProjectActiveUsers(state),
+        pendingUsers: getProjectPendingUsers(state),
         app: state.app,
     };
 }
