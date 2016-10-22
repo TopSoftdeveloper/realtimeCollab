@@ -19,6 +19,12 @@ import IconButton from 'material-ui/lib/icon-button';
 import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
 import FlatButton from 'material-ui/lib/flat-button'
 import Divider from 'material-ui/lib/divider';
+import ContentCopy from 'material-ui/lib/svg-icons/content/content-copy';
+import Delete from 'material-ui/lib/svg-icons/action/delete';
+import Move from 'material-ui/lib/svg-icons/action/input';
+import Rename from 'material-ui/lib/svg-icons/Editor/mode-edit';
+import RemoveRedEye from 'material-ui/lib/svg-icons/image/remove-red-eye';
+
 
 import { Form } from 'formsy-react'
 import FormsyText from 'formsy-material-ui/lib/FormsyText'
@@ -312,13 +318,13 @@ class FilesList extends Component {
                 anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                 targetOrigin={{horizontal: 'left', vertical: 'top'}}
                 >
-                <MenuItem primaryText="preview" onTouchTap={this.navigate.bind(this, file.id)}/>
+                <MenuItem primaryText="preview" leftIcon={<RemoveRedEye />} onTouchTap={this.navigate.bind(this, file.id)}/>
                 <Divider/>
-                { !isFolder(file) && <MenuItem primaryText="make a copy"  onTouchTap={this.copyFile.bind(this, file.id)}/>}
-                <MenuItem primaryText="Rename" onTouchTap={this.handleOpen.bind(this, file)} />
-                <MenuItem primaryText="Move" onTouchTap={this.handleMoveModalOpen.bind(this, file)} />
+                { !isFolder(file) && <MenuItem primaryText="make a copy" leftIcon={<ContentCopy />} onTouchTap={this.copyFile.bind(this, file.id)}/>}
+                <MenuItem primaryText="Rename" leftIcon={<Rename />} onTouchTap={this.handleOpen.bind(this, file)} />
+                <MenuItem primaryText="Move" leftIcon={<Move />} onTouchTap={this.handleMoveModalOpen.bind(this, file)} />
                 <Divider/>
-                <MenuItem primaryText="Delete" onTouchTap={this.removeFile.bind(this, file.id)}/>
+                <MenuItem primaryText="Delete" leftIcon={<Delete />} onTouchTap={this.removeFile.bind(this, file.id)}/>
 
               </IconMenu>
             </td>
