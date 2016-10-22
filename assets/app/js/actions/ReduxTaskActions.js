@@ -525,7 +525,6 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         me: true
       }]));
       dispatch(initApp({
-        currentProjectId: null,
         is_linked_to_drive: true,
         is_top_level_folder_loaded: false,
         github: {
@@ -570,6 +569,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
             let projectId = getCurrentProject()
             var currentProject = normalizedTables.projects.filter(project => project.id === projectId)[0]
             if (currentProject) {
+              dispatch(switchToProject(currentProject))
               dispatch(initializeFiles(currentProject))
               dispatch(switchChatRoom(currentProject.chatroom))
             }
