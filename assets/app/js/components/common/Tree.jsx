@@ -22,8 +22,11 @@ class TreeNode extends Component {
       children,
       disabled
     } = this.props
+
     return (
-      <ListGroupItem disabled={disabled} bsStyle={isSelected?'info':''}>
+      disabled ? null :
+      <ListGroupItem className='borderless' disabled={disabled}
+         bsStyle={isSelected?'info':null}>
         <p onClick={onClick}>{text}</p>
         {children}
       </ListGroupItem>
@@ -52,7 +55,7 @@ class Tree extends Component {
         let subTree = []
         treeNode.children.forEach(childNode=>{subTree.push(renderTreeNode(childNode))})
         return (
-        <TreeNode disabled={treeNode.disabled} key={treeNode.id} text={treeNode.text} isSelected={this.state.selected && treeNode.id===this.state.selected.id} onClick={this.onNodeClick.bind(this, treeNode)}>
+        <TreeNode  disabled={treeNode.disabled} key={treeNode.id} text={treeNode.text} isSelected={this.state.selected && treeNode.id===this.state.selected.id} onClick={this.onNodeClick.bind(this, treeNode)}>
           <ListGroup>
             {subTree}
           </ListGroup>
@@ -115,6 +118,9 @@ class TreeModal extends Component {
     ]
     return(
       <Dialog
+      autoScrollBodyContent = {true}
+      className= 'overflow-y'
+      title={"Select destination folder"}
       actions={actions}
       onRequestClose={handleClose}
       open={true}>
