@@ -72,8 +72,6 @@ class App extends Component {
         const {notifications, projects, users, dispatch, app, search, snackbar, actions} = this.props;
         const currentProjectId = getCurrentProject()
 
-        let basicUsers = [];
-        let projectCreator = '';
         let currentProject = null
 
         if (users.length === 0) {
@@ -108,13 +106,7 @@ class App extends Component {
 
         if (isProjectPresent(projects, currentProjectId)) {
             currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
-            let basicUserIds = currentProject.basic;
-
-            projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
-            basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
         }
-        let allActiveUsers = basicUsers
-        if (projectCreator) allActiveUsers.push(projectCreator)
 
         return (
             <Grid>
