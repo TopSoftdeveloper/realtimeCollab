@@ -256,7 +256,7 @@ class MilestoneView extends Component {
         let assigneeFilterTooltip = <Tooltip id="assignee">filter by asssignees</Tooltip>
         let sortByDeadlineTooltip = <Tooltip id="deadline">sort by deadline</Tooltip>
         return (
-          <Paper zDepth={0} className='milestone-menu-view'>
+          <Paper zDepth={1} className='milestone-menu-view'>
 
             <div>{resetButton}</div>
             <Toolbar>
