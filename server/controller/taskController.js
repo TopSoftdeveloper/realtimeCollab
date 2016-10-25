@@ -200,6 +200,15 @@ function createTask(request, reply) {
                         } else if (request.payload.assignee_id) {
                             issue.assignee = a[0]
                         }
+                        if(request.payload.milestone_id) {
+                          analytics.milestone.logMilestoneActivity(
+                              analytics.milestone.constants.ACTIVITY_TASK_ASSIGNED,
+                              moment().format('YYYY-MM-DD HH:mm:ss'),
+                              user_id,
+                              {projectId: project.id, id: request.payload.milestone_id}
+                          )
+                        }
+
                         github.createGithubIssue(newTask.id, issue, owner, repo, request.payload.github_token).then(function() {},
                             function(err) {
                                 console.log(err)
