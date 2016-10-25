@@ -1,4 +1,5 @@
 var constants = require('../constants')
+var config = require('config')
 var storage = require('../data/storage')
 var format = require('string-format')
 var Joi = require('joi')
@@ -9,7 +10,7 @@ var templates = require('./../templates')
 var accessControl = require('./accessControl');
 var _ = require('lodash')
 var socket = require('./socket/handlers');
-
+var analytics = require('collab-analytics')(config.database, config.logging_database);
 
 module.exports = {
     updateProject: {
@@ -68,6 +69,14 @@ function updateProject(request, reply) {
             return;
         }
         storage.updateProject(request.payload, projectId).then(function() {
+            if(request.payload.root_folder !== undefined && request.payload.root_folder !== null) {
+                storage.findUserById(user_id).then(function (user) {
+                    analytics.drive.pullFiles(config.get('google'), projectId, request.payload.root_folder, user.google_refresh_token)
+                    .then(function() {
+                        analytics.drive.pullChanges(config.get('google'), projectId, user.google_refresh_token);
+                    })
+                })
+            }
             reply({status: constants.STATUS_OK})
             socket.sendMessageToProject(projectId, 'update_project', {
                 project_id: projectId, sender: user_id, project: request.payload

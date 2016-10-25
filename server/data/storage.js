@@ -1,6 +1,8 @@
 var constants = require('../constants');
 var shortid = require('shortid');
+var config = require('config');
 var Promise = require("bluebird");
+var moment = require('moment');
 var models = require('./models/modelManager');
 var Task = models.Task;
 var Milestone = models.Milestone;
@@ -9,7 +11,7 @@ var Project = models.Project;
 var UserProject = models.UserProject;
 var Notification = models.Notification;
 var Newsfeed = models.Newsfeed;
-
+var analytics = require('collab-analytics')(config.database, config.logging_database);
 var format = require('string-format');
 
 module.exports = {
@@ -236,7 +238,7 @@ module.exports = {
     },
     findUserById: function(id) {
         return User.findById(id)
-    },    
+    },
     addProjectToUser: function(user_id, project) {
         return User.findById(user_id).then(function(user) {
             return user === null ? Promise.reject(new Error('No user found')) :

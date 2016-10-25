@@ -1,13 +1,13 @@
 {
   "database": {
-    "name": "collab",
+    "name": "",
     "username": "",
     "password": "",
     "options": {
-      "host": "localhost",
-      "dialect": "mysql",
+      "host": "",
+      "dialect": "",
       "pool": {
-        "max": 5,
+        "max": 10,
         "min": 0,
         "idle": 10000
       },
@@ -15,12 +15,12 @@
     }
   },
   "logging_database": {
-    "name": "collab_logging",
+    "name": "",
     "username": "",
     "password": "",
     "options": {
-      "host": "localhost",
-      "dialect": "mysql",
+      "host": "",
+      "dialect": "",
       "pool": {
         "max": 5,
         "min": 0,
@@ -30,15 +30,15 @@
     }
   },
   "github": {
-    "client_id": "3046c6aca85085abda12",
+    "client_id": "",
     "client_secret": ""
   },
   "google": {
-    "client_id": "961636068343-olv255ask1dc7ev2sc4anntvhkd7bq5t.apps.googleusercontent.com",
+    "client_id": "",
     "client_secret": ""
   },
   "web": {
-    "hostname": "https://nuscollab.com",
-    "appRoot": "https://nuscollab.com/app"
+    "hostname": "yourdomain",
+    "appRoot": "yourdomain/app"
   }
 }

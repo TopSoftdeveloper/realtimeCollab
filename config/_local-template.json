@@ -1,0 +1,19 @@
+{
+  "database": {
+    "username": "",
+    "password": ""
+  },
+  "logging_database": {
+    "username": "",
+    "password": ""
+  },
+  "authentication": {
+    "privateKey": ""
+  },
+  "github": {
+    "client_secret": ""
+  },
+  "google": {
+    "client_secret": ""
+  }
+}

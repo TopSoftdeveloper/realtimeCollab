@@ -13,6 +13,7 @@ var GITHUB_ENDPOINT = constants.GITHUB_ENDPOINT
 var Sequelize = require('sequelize');
 var Promise = require("bluebird");
 var req = require("request")
+var analytics = require('collab-analytics')(config.database, config.logging_database);
 
 module.exports = {
     getAccessToken: {
@@ -340,6 +341,9 @@ function syncHandler(request, reply) {
     var owner = request.payload.owner
     var name = request.payload.name
     var token = request.payload.token
+
+    analytics.github.pullCommits(projectId, owner, name, token);
+    analytics.github.pullReleases(projectId, owner, name, token);
 
     Jwt.verify(helper.getTokenFromAuthHeader(request.headers.authorization), secret_key, function (err, decoded) {
         accessControl.isUserPartOfProject(decoded.user_id, projectId).then(function (isPartOf) {

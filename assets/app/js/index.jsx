@@ -6,6 +6,7 @@ import reducer from './reducers/index'
 import thunk from 'redux-thunk'
 import { Router } from 'react-router'
 import { browserHistory } from 'react-router'
+import ReactGA from 'react-ga'
 import routes from './config/routes.jsx'
 let injectTapEventPlugin = require("react-tap-event-plugin")
 injectTapEventPlugin()
@@ -15,10 +16,16 @@ const store = createStoreWithMiddleware(reducer);
 
 let rootElement = document.getElementById('task-panel');
 
+ReactGA.initialize('UA-84478427-2');
+function logPage() {
+  ReactGA.set({ page: window.location.pathname });
+  ReactGA.pageview(window.location.pathname);
+}
+
 function run() {
     ReactDOM.render(
     	<Provider store={store}>
-    		<Router history={browserHistory} routes={routes} />
+    		<Router history={browserHistory} routes={routes} onUpdate={logPage}/>
       </Provider>,
       rootElement
     );
