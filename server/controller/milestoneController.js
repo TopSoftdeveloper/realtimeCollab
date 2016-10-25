@@ -62,6 +62,7 @@ function updateMilestone(request, reply) {
                 analytics.milestone.logMilestoneActivity(
                     analytics.milestone.constants.ACTIVITY_UPDATE,
                     moment().format('YYYY-MM-DD HH:mm:ss'),
+                    user_id,
                     camelcaseKeys(m.toJSON())
                 )
 
@@ -118,6 +119,7 @@ function createMilestone(request, reply) {
             analytics.milestone.logMilestoneActivity(
                 analytics.milestone.constants.ACTIVITY_CREATE,
                 moment().format('YYYY-MM-DD HH:mm:ss'),
+                user_id,
                 camelcaseKeys(m.toJSON())
             )
 
@@ -167,6 +169,7 @@ function deleteMilestone(request, reply) {
                 analytics.milestone.logMilestoneActivity(
                   analytics.milestone.constants.ACTIVITY_DELETE,
                   moment().format('YYYY-MM-DD HH:mm:ss'),
+                  user_id,
                   { projectId: project.id, id: milestone_id}
                 )
 
