@@ -13,7 +13,7 @@ Setting Up Development Environment
   
   *SSH Auth*: `git clone git@github.com:collab-tools/collab.git`
 
-**2. Install MySQL and Node.js **
+**2. Install MySQL and Node.js**
 
 *MariaDB is highly recommended but feel free to use any mySQL variants.*
 
