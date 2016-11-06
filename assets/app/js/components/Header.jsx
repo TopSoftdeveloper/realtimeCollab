@@ -155,26 +155,36 @@ class Header extends Component {
         }
 
         return (
-            <nav className="navbar navbar-default navbar-fixed-top container-fluid">
-                <div>
-                    <div className="navbar-left collab-logo">
-                        <h3>Collab</h3>
-                    </div>
-                    <div className="navbar-left search-box" id="search">
-                        <AutoComplete
-                            hintText="Search Collab"
-                            disableFocusRipple={false}
-                            filter={AutoComplete.noFilter}
-                            dataSource={searchResults}
-                            onUpdateInput={this.query.bind(this)}
-                            onNewRequest={this.newRequest.bind(this)}
-                            listStyle={listStyles}
-                            style={styles}
-                            searchText={this.state.queryString}
-                        />
-                    </div>
+            <nav className="navbar navbar-default navbar-fixed-top">
+              <div className='container-fluid'>
+                <div className="navbar-header collab-logo">
+                    <button type="button" className="navbar-toggle collapsed " data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                      <span className="sr-only">Toggle navigation</span>
+                      <span className="icon-bar"></span>
+                      <span className="icon-bar"></span>
+                      <span className="icon-bar"></span>
+                    </button>
+                    <a className='navbar-brand'>Collab</a>
+                </div>
+                    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-                    <ul className="nav navbar-nav navbar-right ">
+
+                    <ul className="nav navbar-nav navbar-left header-left">
+                        <li className='search-box' id='search'>
+                          <AutoComplete
+                              hintText="Search Collab"
+                              disableFocusRipple={false}
+                              filter={AutoComplete.noFilter}
+                              dataSource={searchResults}
+                              onUpdateInput={this.query.bind(this)}
+                              onNewRequest={this.newRequest.bind(this)}
+                              listStyle={listStyles}
+                              style={styles}
+                              searchText={this.state.queryString}
+                          />
+                        </li>
+                    </ul>
+                    <ul className="nav navbar-nav navbar-right">
                         <li>
                             <div id="hangouts-btn-wrapper">
                                 <div id="hangouts-btn-placeholder"></div>
@@ -193,13 +203,12 @@ class Header extends Component {
                                 <li><a href="#" onClick={logout}>Log Out</a></li>
                             </ul>
                         </li>
-
-                        <li><span className=" navbar-text "> </span></li>
                     </ul>
+                    </div>
                 </div>
             </nav>
         )
     }
-}                            
+}
 
 export default Header

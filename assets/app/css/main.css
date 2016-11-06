@@ -1,3 +1,12 @@
+/*********************** Global *******************/
+/*Set content width to full screen*/
+html, body{
+  position:relative;
+  height: 100%;
+  min-width:1024px; /* suppose you want minimun width of 1000px */
+  width: auto !important;  /* Firefox will set width as auto */
+  width:1024px;             /* As IE ignores !important it will set width as 1000px; */
+}
 /*********************** TreeNode *******************/
 .borderless {
   border: none;
@@ -290,10 +299,13 @@
     background-color: #455a64;
   }
 }
-
+.header-left {
+  width: 25%;
+}
 .search-box {
-  margin-left: 120px;
-  width: 30%;
+  margin-left: 10%;
+  width: 100%;
+  /*min-width: 400px;*/
 }
 
 .display-pic-li {
@@ -356,6 +368,7 @@
 }
 
 /******************* General ****************************/
+
 .inline-block {
   display: inline-block;
 }
@@ -413,7 +426,7 @@
 
 .collab-logo h3 {
   margin-left: 60px;
-  padding-top: 15px;
+  /*padding-top: 15px;*/
   color: white;
 }
 
@@ -424,8 +437,10 @@
 }
 
 .collab-logo {
-  margin-top: -20px;
-  height: 50px;
+  margin-left: 60px;
+  font-size: large;
+  /*margin-top: -20px;*/
+  /*height: 50px;*/
 }
 
 .body-wrapper {
