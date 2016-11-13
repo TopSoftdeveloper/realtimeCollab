@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 let AppConstants = require('../AppConstants');
-var host = 'wss://nuscollab.com/'
+var host = 'ws://localhost:8080/'
 var socket = io.connect(host)
 import * as Actions from '../actions/ReduxTaskActions'
 var templates = require('../../../../server/templates.js')
