@@ -22,7 +22,7 @@ import Divider from 'material-ui/lib/divider';
 import ContentCopy from 'material-ui/lib/svg-icons/content/content-copy';
 import Delete from 'material-ui/lib/svg-icons/action/delete';
 import Move from 'material-ui/lib/svg-icons/action/input';
-import Rename from 'material-ui/lib/svg-icons/Editor/mode-edit';
+import Rename from 'material-ui/lib/svg-icons/editor/mode-edit';
 import RemoveRedEye from 'material-ui/lib/svg-icons/image/remove-red-eye';
 
 
