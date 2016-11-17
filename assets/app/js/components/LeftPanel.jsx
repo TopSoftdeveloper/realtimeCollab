@@ -1,12 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import List from './List.jsx'
-import { IconButton, Dialog, TextField, FlatButton } from 'material-ui'
+import { IconButton, Dialog, FlatButton, Paper } from 'material-ui'
+import { Form } from 'formsy-react'
+import FormsyText from 'formsy-material-ui/lib/FormsyText'
 
 class LeftPanel extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            isDialogOpen: false
+            isDialogOpen: false,
+            canSubmit: false
         }
     }
 
@@ -31,6 +34,17 @@ class LeftPanel extends Component {
             isDialogOpen: true
         })
     }
+    enableButton() {
+      this.setState({
+        canSubmit: true,
+      });
+    }
+
+    disableButton() {
+      this.setState({
+        canSubmit: false,
+      });
+    }
 
     render() {
         let actions = [
@@ -38,12 +52,13 @@ class LeftPanel extends Component {
                 key={1}
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />,
+                onTouchTap={this.handleRequestClose.bind(this)} />,
             <FlatButton
                 key={2}
                 label="Submit"
                 primary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />
+                onTouchTap={this.onDialogSubmit.bind(this)}
+                disabled={!this.state.canSubmit} />
         ]
 
         return (
@@ -59,17 +74,34 @@ class LeftPanel extends Component {
                     actions={this.props.actions}
                     onAddProject={this.openModal.bind(this)}
                 />
-                <Dialog
-                    title="Add Project"
-                    actions={actions}
-                    open={this.state.isDialogOpen}
-                    onRequestClose={this.handleRequestClose.bind(this)}>
-                    <TextField
-                        hintText="Project name"
-                        onEnterKeyDown={this.onDialogSubmit.bind(this)}
-                        ref="projectField"
-                    />
-                </Dialog>
+
+                  <Paper>
+
+                    <Dialog
+                        title="Add Project"
+                        actions={actions}
+                        open={this.state.isDialogOpen}
+                        onRequestClose={this.handleRequestClose.bind(this)}>
+                      <Form
+                          onValid={this.enableButton.bind(this)}
+                          onInvalid={this.disableButton.bind(this)}
+                          onValidSubmit={this.onDialogSubmit.bind(this)}
+                          onInvalidSubmit={this.notifyFormError}
+                      >
+                        <FormsyText
+                          autoFocus
+                          name="Project name"
+                          validations="isWords"
+                          validationError={"Please use only letters"}
+                          required
+                          floatingLabelText="Project Name(required)"
+                          ref="projectField"
+                        />
+                      </Form>
+                    </Dialog>
+
+                </Paper>
+
             </div>
         );
     }

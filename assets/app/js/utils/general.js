@@ -24,7 +24,7 @@ function hasTrailingSlash(urlString) {
 function trimUrlString(urlString) {
 	if (hasTrailingSlash(urlString)) {
 		return urlString.substring(0, urlString.length-1);
-	} 
+	}
 	return urlString
 }
 
@@ -122,4 +122,17 @@ export function getUserAvatar(imgSrc, displayName, enableTooltip, isSquare, memb
 				)
 	}
 	return image
+}
+
+// dump a list to string with separators.
+export function dumpList(list, separator = ',') {
+
+		var output = '';
+		while(list.length>0) {
+			output += list.shift()
+			if(list.length>0) {
+				output+=separator
+			}
+		}
+		return output
 }

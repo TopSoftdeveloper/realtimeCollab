@@ -4,8 +4,8 @@ import _ from 'lodash'
 
 class AvatarList extends Component {
     constructor(props, context) {
-        super(props, context); 
-    }    
+        super(props, context);
+    }
 
     render() {
         let avatars = this.props.members.map(member => {

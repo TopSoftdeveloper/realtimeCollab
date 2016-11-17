@@ -1,8 +1,34 @@
+/*********************** Global *******************/
+/*Set content width to full screen*/
+html, body{
+  position:relative;
+  height: 100%;
+  min-width:1024px; /* suppose you want minimun width of 1000px */
+  width: auto !important;  /* Firefox will set width as auto */
+  width:1024px;             /* As IE ignores !important it will set width as 1000px; */
+}
+/*********************** TreeNode *******************/
+.borderless {
+  border: none;
+}
+.node-title {
+  height: auto;
+  width: 100%;
+  border: 1 1 1 1;
+}
+
+/*********************** Dashboard *******************/
+.project-panel {
+  /*padding: 5px 5px 5px 5px;*/
+  margin-top: 20px;
+}
+.Project-panel-title {
+  background-color: #7a7a7a;
+}
 /************************ Github **********************/
 .github-repo-list ul, .github-repo-list li {
   list-style-type: none;
 }
-
 .github-repo-list {
   overflow-y: auto;
   max-height: 60vh;
@@ -58,52 +84,34 @@
   margin-left: 30px;
 }
 
-.add-milestone-btn {
-  float:right;
-}
 
-.milestone-view {
-  min-height: 50vh;
-  margin-top: 20px;
-  padding: 20px;
-}
-
-.milestone-row p {
-  color: #7a7a7a;
-}
 
 .task-list ul {
   list-style: none;
 }
 
 .task-row {
-  margin-left: -40px;
-  min-height: 50px;
+  /*margin-left: -40px;*/
+  /*min-height: 40px;*/
+  margin: 5px 10px 0px 10px;
 }
 
 .task-content{
   display: inline-block;
-  position: relative;
-  bottom: 5px;
+  word-break: break-all;
   font-size: large;
-  margin-top: 14px;
 }
 
 .task-checkbox {
-  display: inline-block;
-  float: left;
-  margin-top: 10px;
+  padding-top: 8px;
 }
 
 .task-actions {
   display: inline-block;
-  margin-left: 20px;
+  padding-left: 20px;
+  margin-top: 3px;
 }
 
-.completed-content {
-  display: inline-block;
-  position: relative;
-}
 
 .reopen-task, .edit-task, .delete-task {
   opacity: 0.5;
@@ -119,12 +127,15 @@
   cursor: pointer;
 }
 
-.completed-task-list ul {
-    margin-left: -30px;
-}
+
 
 .completed-content {
+  word-break: break-all;
   text-decoration: line-through;
+  position: relative;
+  bottom: 5px;
+  font-size: large;
+  margin-top: 14px;
 }
 
 .completed-task-list {
@@ -288,10 +299,13 @@
     background-color: #455a64;
   }
 }
-
+.header-left {
+  width: 25%;
+}
 .search-box {
-  margin-left: 120px;
-  width: 30%;
+  margin-left: 10%;
+  width: 100%;
+  /*min-width: 400px;*/
 }
 
 .display-pic-li {
@@ -304,14 +318,46 @@
 
 /****************** milestone row ***********************/
 
-.milestone-header, .more-vert-btn {
-  float: left;
-  display:inline;
+
+.milestone-opt-button {
+
+}
+.milestone-online-users {
+  display: inline-block;
 }
 
-.more-vert-btn {
-  top: 9px;
-  position: relative;
+.milestone-actions {
+  display: inline-block;
+  margin-left: 10px;
+}
+.milestone-row-info {
+  display: inline-block;
+}
+.milestone-menu-view {
+  height: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-bottom: 10px;
+  border-radius: 1px;
+}
+.milestone-content-view {
+  height: auto;
+  margin-top: 5px;
+
+  border-radius: 1px;
+}
+.milestone-row {
+
+}
+.milestone-row-header {
+  margin-top: 20px;
+  padding-left: 5px;
+}
+.milestone-title {
+  display: block;
+  word-break: break-all;
+  font-size: x-large;
+  font-weight: bold;
 }
 
 /************************ Project header ***************************/
@@ -322,18 +368,23 @@
 }
 
 /******************* General ****************************/
+
+.inline-block {
+  display: inline-block;
+}
+.block {
+  display: block;
+}
 .filter-by {
   float: right;
 }
 
 .avatar-list {
   list-style: none;
-  float: right;
-  display: flex;
 }
 
 .avatar-list li {
-  padding-left: 3px;
+  padding-left: 2px;
 }
 
 .assignee-avatar {
@@ -375,7 +426,7 @@
 
 .collab-logo h3 {
   margin-left: 60px;
-  padding-top: 15px;
+  /*padding-top: 15px;*/
   color: white;
 }
 
@@ -386,8 +437,10 @@
 }
 
 .collab-logo {
-  margin-top: -20px;
-  height: 50px;
+  margin-left: 60px;
+  font-size: large;
+  /*margin-top: -20px;*/
+  /*height: 50px;*/
 }
 
 .body-wrapper {

@@ -1,52 +1,51 @@
 import React, { Component } from 'react';
-import { browserHistory } from 'react-router'
+import { browserHistory, Link } from 'react-router'
 import {getCurrentTab} from '../utils/general'
+import theme from '../myTheme.js'
 
 class List extends Component {
     switchProject(projectId) {
+      const {currentProject, actions} = this.props
+      if(!currentProject || currentProject.id !== projectId) {
         let actions = this.props.actions
         let projectUrl = '/app/project/' + projectId + '/' + getCurrentTab();
         let project = this.props.items.filter(project => project.id === projectId)[0]
         browserHistory.push(projectUrl)
         actions.switchToProject(project)
+      }
     }
 
     render() {
-        let listItems = this.props.items.map(project => {
-                if (this.props.currentProject && this.props.currentProject.id === project.id) {
-                    return (
-                        <li
-                            onTouchTap={this.switchProject.bind(this, project.id)}
-                            key={'projectlist' + project.id}>
-                            <b>{project.content}</b>
-                        </li>
-                    )
-                }
+      const {currentProject, items, app, actions, onAddProject} = this.props
+        let listItems = items.map(project => {
+                const active = currentProject && project.id === currentProject.id
+
                 return (
                     <li
-                        onTouchTap={this.switchProject.bind(this, project.id)}
-                        key={'projectlist' + project.id}>
-                        {project.content}
+                      key={'projectlist' + project.id}
+                      onTouchTap={this.switchProject.bind(this, project.id)}
+                      style={{color: active?theme.palette.primary1Color:'inherit'}}
+                    >
+                      {project.content}
                     </li>
                 )
             }
         )
 
         let iconClassName = "material-icons add_circle "
-        if (this.props.items.length === 0) {
+        if (items.length === 0) {
             iconClassName += "animated infinite wobble"
         }
-
         return (
             <div className="project-list">
                 <div className="project-list-header">
                     <table>
                         <tbody>
                         <tr>
-                            <td><span>Projects</span></td>
+                            <td><Link to="/app/dashboard">Projects</Link></td>
                             <td><i
                                 className={iconClassName}
-                                onClick={this.props.onAddProject}>add_circle</i>
+                                onClick={onAddProject}>add_circle</i>
                             </td>
                         </tr>
                         </tbody>

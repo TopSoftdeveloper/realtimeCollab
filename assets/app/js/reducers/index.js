@@ -10,6 +10,7 @@ import files from './files'
 import githubRepos from './githubRepos'
 import newsfeed from './newsfeed'
 import search from './search'
+import snackbar from './snackbar'
 
 export default combineReducers({
     milestones,
@@ -22,5 +23,6 @@ export default combineReducers({
     files,
     githubRepos,
     newsfeed,
-    search
+    search,
+    snackbar
 });

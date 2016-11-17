@@ -74,6 +74,7 @@ server.register([
 
     server.route(Routes.endpoints);
 
+
     server.start(function(err) {
       if (err) {
         throw err;

@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
@@ -8,11 +9,10 @@ import Header from '../components/Header.jsx'
 import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
 import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
-import { Grid, Row, Col } from 'react-bootstrap'
+import {Grid, Row, Col } from 'react-bootstrap'
 import Sidebar from 'react-sidebar'
 import LoadingIndicator from '../components/LoadingIndicator.jsx'
-import Snackbar from 'material-ui/lib/snackbar';
-import {_updateAppStatus}  from '../actions/ReduxTaskActions'
+import Snackbar from './Snackbar.jsx';
 import {refreshTokens} from '../utils/apiUtil'
 
 var AppConstants = require('../AppConstants');
@@ -20,16 +20,20 @@ var AppConstants = require('../AppConstants');
 class App extends Component {
     constructor(props, context) {
         super(props, context)
+        this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
         this.initApp()
-        const {dispatch} = this.props;
-        const socketActions = bindActionCreators(SocketActions, dispatch);
+        const {socketActions} = this.props;
         socketActions.userIsOnline()
         socketActions.monitorOnlineStatus()
         socketActions.monitorProjectChanges()
         socketActions.monitorNotifications()
         socketActions.monitorEditStatus()
     }
-
+    getChildContext() {
+      return {
+        location: this.props.location
+      }
+    }
     initApp() {
         this.props.dispatch(Actions.initializeApp())
         this.autoRefreshTokens()
@@ -56,25 +60,18 @@ class App extends Component {
         const { projects } = this.props;
         if (matchesUrl(window.location.href, AppConstants.APP_ROOT_URL) && projects.length > 0) {
             // Redirect to default project (current set as project at index 0)
-            let defaultProjectId = projects[0].id;
-            browserHistory.push('/app/project/' + defaultProjectId);
-            return false;         
+            // let defaultProjectId = projects[0].id;
+            // browserHistory.push('/app/project/' + defaultProjectId);
+            return false;
         }
         return true;
     }
 
-    handleSnackbarClose() {
-        let dispatch = this.props.dispatch
-        dispatch(_updateAppStatus({snackbar: {isOpen: false, message: ''}}))
-    }
-
     render() {
-        const {notifications, projects, users, dispatch, app, files, search} = this.props;
-        const actions = bindActionCreators(Actions, dispatch);
+        console.log('APP::render()')
+        const {notifications, projects, users, dispatch, app, search, snackbar, actions} = this.props;
         const currentProjectId = getCurrentProject()
 
-        let basicUsers = [];
-        let projectCreator = '';
         let currentProject = null
 
         if (users.length === 0) {
@@ -109,16 +106,19 @@ class App extends Component {
 
         if (isProjectPresent(projects, currentProjectId)) {
             currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
-            let basicUserIds = currentProject.basic;
-
-            projectCreator = users.filter(user  => currentProject.creator === user.id)[0];
-            basicUsers = users.filter(user => isItemPresent(basicUserIds, user.id));
         }
-        let allActiveUsers = basicUsers
-        if (projectCreator) allActiveUsers.push(projectCreator)
 
         return (
-            <div>
+            <Grid>
+              <Row>
+                <Header
+                    unreadCount={unreadCount}
+                    projects={projects}
+                    displayName={displayName}
+                    search={search}
+                    actions={actions}
+                    app={app}
+                />
                 <Sidebar
                     sidebarClassName="left-panel"
                     sidebar={
@@ -126,33 +126,21 @@ class App extends Component {
                         currentProject={currentProject}
                         projects={projects}
                         app={app}
-                        files={files}
                         actions={actions}
                         onCreateProject={actions.createProject}
                       />
                     }
                     open={true}
-                    docked={true}>
-                    <Header
-                        unreadCount={unreadCount}
-                        projects={projects}
-                        displayName={displayName}
-                        search={search}
-                        actions={actions}
-                        app={app}
-                    />
+                    docked={true}
+                >
+
                     <div className="body-wrapper">
                         {children}
                     </div>
                 </Sidebar>
-                <Snackbar
-                    open={app.snackbar.isOpen}
-                    message={app.snackbar.message}
-                    autoHideDuration={3500}
-                    bodyStyle={{background: app.snackbar.background}}
-                    onRequestClose={this.handleSnackbarClose.bind(this)}
-                />
-            </div>
+                <Snackbar />
+              </Row>
+            </Grid>
         );
     }
 }
@@ -164,20 +152,29 @@ App.propTypes = {
     notifications: PropTypes.array.isRequired,
     projects: PropTypes.array.isRequired,
     users: PropTypes.array.isRequired,
-    files: PropTypes.array.isRequired,
     app: PropTypes.object.isRequired,
-    search: PropTypes.array.isRequired
-};
+    search: PropTypes.array.isRequired,
 
-function mapStateToProps(state) {
+};
+App.childContextTypes = {
+    location: React.PropTypes.object
+}
+const mapStateToProps = (state) => {
     return {
         notifications: state.notifications,
         projects: state.projects,
         users: state.users,
-        files: state.files,
         app: state.app,
-        search: state.search
+        search: state.search,
     };
 }
 
-export default connect(mapStateToProps)(App)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(Actions, dispatch),
+    socketActions:bindActionCreators(SocketActions, dispatch),
+    dispatch: dispatch
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import IconButton from 'material-ui/lib/icon-button';
+import Checkbox from 'material-ui/lib/checkbox'
+import {Grid, Row, Col} from 'react-bootstrap'
 
 class CompletedItem extends Component {
     constructor(props, context) {
@@ -32,30 +34,33 @@ class CompletedItem extends Component {
         }
 
         return (
-            <li onMouseEnter={this.onMouseEnter.bind(this)} onMouseLeave={this.onMouseLeave.bind(this)}>
+
+          <div className="task-row">
+            <Grid fluid={true}>
+            <Row>
+              <Col xs={1}>
+                <div className="task-checkbox" onClick={this.props.reopen}>
+                  <Checkbox checked={true}/>
+                </div>
+              </Col>
+              <Col xs={10}>
                 <div className={taskContentClass}>
-                    {this.props.text}
-                </div>
-                <div className={taskActionClass}>
-                    <i className="material-icons reopen-task" onClick={this.props.reopen}>undo</i>
-                </div>
-            </li>
+                  {this.props.text}
+              </div>
+              </Col>
+            </Row>
+            </Grid>
+          </div>
+
+
+
         )
     }
 }
 
 class CompletedRow extends Component {
     constructor(props, context) {
-        super(props, context); 
-        this.state = {
-            hidden: true
-        }
-    }
-
-    toggle() {
-        this.setState({
-            hidden: !this.state.hidden
-        })  
+        super(props, context);
     }
 
     reopen(taskId) {
@@ -72,32 +77,17 @@ class CompletedRow extends Component {
                 toOpen = true
             }
             return <CompletedItem
-                key={_.uniqueId('completed')}
+                key={task.id}
                 text={task.content}
                 reopen={this.reopen.bind(this, task.id)}
                 highlight={highlight}
             />
         })
-
-        let list = null
-
-        if (!this.state.hidden || toOpen) {
-            list = (
-                <ul>
-                    {rows}
-                </ul>
-            )
-        }
-
         return (
             <div className="completed-task-list">
-                <div className="completed-text" onClick={this.toggle.bind(this)}>
-                    {this.props.completedTasks.length + ' completed'}
-                </div>
-                {list}
+                {rows}
             </div>
         )
     }
 }
-
 export default CompletedRow

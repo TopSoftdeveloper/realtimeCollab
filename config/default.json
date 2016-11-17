@@ -1,6 +1,6 @@
 {
   "authentication": {
-    "privateKey": "",
+    "privateKey": "empty",
     "tokenExpirySeconds": 3600000
   }
 }

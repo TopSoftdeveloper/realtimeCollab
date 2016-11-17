@@ -17,5 +17,5 @@ module.exports = {
             promises.push(storage.getProject(data.project_id))
         }
         return Sequelize.Promise.all(promises)
-    }
+    },
 };
