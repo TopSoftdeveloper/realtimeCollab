@@ -104,33 +104,31 @@ function login(request, reply) {
           email: profileInfo.emails[0].value,
           google_id: googleId
         }
-        if (refresh_token) {
-          if (google_refresh_token) u.google_refresh_token = google_refresh_token
+        if (google_refresh_token) u.google_refresh_token = google_refresh_token
 
-          storage.findUser(googleId).then(function(user) {
-            if (!user) {
-              storage.createUser(u).then(function(user) {
-                user = JSON.parse(JSON.stringify(user))
-                delete user.google_refresh_token // don't return this for security
-                user.google_token = access_token
-                user.collab_token = get_token(privateKey, user.id, token_expiry)
-                reply(user);
-              }, function(error) {
-                reply(Boom.forbidden(error));
-              });
-            } else {
-              if (isProfileUpdated(user, u)) {
-                storage.updateUser(user.id, u)
-              }
+        storage.findUser(googleId).then(function(user) {
+          if (!user) {
+            storage.createUser(u).then(function(user) {
               user = JSON.parse(JSON.stringify(user))
+              delete user.google_refresh_token // don't return this for security
               user.google_token = access_token
               user.collab_token = get_token(privateKey, user.id, token_expiry)
-              user.expiry_date = expiry_date
-              delete user.google_refresh_token // don't return this for security
               reply(user);
+            }, function(error) {
+              reply(Boom.forbidden(error));
+            });
+          } else {
+            if (isProfileUpdated(user, u)) {
+              storage.updateUser(user.id, u)
             }
-          })
-        }
+            user = JSON.parse(JSON.stringify(user))
+            user.google_token = access_token
+            user.collab_token = get_token(privateKey, user.id, token_expiry)
+            user.expiry_date = expiry_date
+            delete user.google_refresh_token // don't return this for security
+            reply(user);
+          }
+        })
       })
 
     } else {
