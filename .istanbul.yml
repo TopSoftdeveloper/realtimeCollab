@@ -1,0 +1,5 @@
+instrumentation:
+  root: ./assets/js
+  extensions:
+    - .js
+    - .jsx

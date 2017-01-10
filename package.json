@@ -6,7 +6,9 @@
     "build": "webpack -p --progress --optimize-minimize",
     "dev": "webpack --progress --color --watch & nodemon",
     "test": "mocha --compilers js:babel-core/register --recursive  test",
-    "fTest": "mocha --compilers js:babel-core/register \"./assets/app/test\" --recursive"
+    "testF": "mocha --compilers js:babel-core/register \"./assets/app/test\" --recursive",
+    "coverage": "istanbul cover _mocha -- -R spec",
+    "coverageF": "gulp mocha_tests;"
   },
   "dependencies": {
     "babel-runtime": "6.6.1",
@@ -61,6 +63,7 @@
   },
   "devDependencies": {
     "babel": "6.1.18",
+    "babel-cli": "^6.18.0",
     "babel-core": "6.2.1",
     "babel-loader": "6.2.0",
     "babel-plugin-syntax-jsx": "6.1.18",
@@ -70,9 +73,11 @@
     "chai": "3.4.1",
     "css-loader": "0.18.0",
     "enzyme": "^2.7.0",
-    "istanbul": "0.4.0",
+    "gulp-jsx-coverage": "^0.3.8",
+    "isparta": "^4.0.0",
+    "istanbul": "^1.0.0-alpha",
     "jsx-loader": "0.13.2",
-    "mocha": "2.3.4",
+    "mocha": "^2.3.4",
     "nodemon": "1.8.1",
     "react-addons-test-utils": "~0.14.8",
     "react-dom": "^0.14.8",
