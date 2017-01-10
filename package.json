@@ -5,7 +5,7 @@
     "start": "node server/server.js",
     "build": "webpack -p --progress --optimize-minimize",
     "dev": "webpack --progress --color --watch & nodemon",
-    "test": "mocha --recursive",
+    "test": "mocha --compilers js:babel-core/register --recursive  test",
     "fTest": "mocha --compilers js:babel-core/register \"./assets/app/test\" --recursive"
   },
   "dependencies": {
