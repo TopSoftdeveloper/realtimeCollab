@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import {getUserAvatar} from '../utils/general'
+import React, { Component, PropTypes } from 'react'
+import UserAvatar from './UserAvatar.jsx'
 import _ from 'lodash'
 
 class AvatarList extends Component {
@@ -8,22 +8,40 @@ class AvatarList extends Component {
     }
 
     render() {
-        let avatars = this.props.members.map(member => {
-            let colour = this.props.colour ? member.colour : false
-            let image = getUserAvatar(member.display_image, member.display_name, true, this.props.isSquare, colour)
+        const {members, colour, isSquare, className} = this.props
+        let avatars = members && members.map(
+          member => {
+            let memberColour = colour ? member.colour : false
+            let image = <UserAvatar
+              imgSrc={member.display_image}
+              displayName={member.display_name}
+              enableTooltip={true}
+              isSquare={isSquare}
+              memberColour={memberColour} />
             return (
                 <li key={_.uniqueId()}>
                     {image}
                 </li>)
-        });
-
-        let className = this.props.className + " avatar-list-wrapper"
+        })
         return (
-            <div className={className}>
+            <div className={className + " avatar-list-wrapper"}>
                 <ul className='avatar-list'>{avatars}</ul>
             </div>
         );
     }
+}
+AvatarList.defaultProps = {
+  colour: false,
+  isSquare: false,
+  className: '',
+};
+
+
+AvatarList.proptypes = {
+  members: PropTypes.array.isRequired,
+  colour: PropTypes.bool,
+  isSquare: PropTypes.bool,
+  className: PropTypes.string,
 }
 
 export default AvatarList

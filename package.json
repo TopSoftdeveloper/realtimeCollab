@@ -7,8 +7,9 @@
     "dev": "webpack --progress --color --watch & nodemon",
     "test": "mocha --compilers js:babel-core/register --recursive  test",
     "testF": "mocha --compilers js:babel-core/register \"./assets/app/test\" --recursive",
-    "coverage": "istanbul cover _mocha -- -R spec",
-    "coverageF": "gulp mocha_tests;"
+    "coverageB": "istanbul cover _mocha -- -R spec",
+    "coverageF": "gulp front_end_test;",
+    "coverage": "gulp front_end_test_subset;"
   },
   "dependencies": {
     "babel-runtime": "6.6.1",
