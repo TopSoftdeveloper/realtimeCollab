@@ -57,7 +57,7 @@ require('gulp').task('front_end_test', require('gulp-jsx-coverage').createTask({
 
 
 require('gulp').task('front_end_test_subset', require('gulp-jsx-coverage').createTask({
-    src: ['assets/app/test/**/AvatarList.test.js'],  // will pass to gulp.src as mocha tests
+    src: ['assets/app/test/**/UserAvatar.test.js'],  // will pass to gulp.src as mocha tests
     isparta: false,                                  // use istanbul as default
     istanbul: {                                      // will pass to istanbul or isparta
         preserveComments: true,                      // required for istanbul 0.4.0+

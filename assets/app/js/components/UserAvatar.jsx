@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, {PropTypes } from 'react'
 import Avatar from 'material-ui/lib/avatar';
 import {Tooltip, OverlayTrigger} from 'react-bootstrap'
 
@@ -33,4 +33,15 @@ const UserAvatar = ({imgSrc, displayName, enableTooltip, isSquare, memberColour}
   return image
 }
 
+UserAvatar.proptypes = {
+  imgSrc: PropTypes.string,
+  displayName:PropTypes.string.isRequired,
+  enableTooltip: PropTypes.bool,
+  isSquare: PropTypes.bool,
+  memberColour: PropTypes.string
+}
+UserAvatar.defaultProps = {
+  enableTooltip: false,
+  isSquare: false
+};
 export default UserAvatar
