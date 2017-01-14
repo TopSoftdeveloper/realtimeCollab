@@ -104,8 +104,11 @@ function login(request, reply) {
           email: profileInfo.emails[0].value,
           google_id: googleId
         }
-        if (google_refresh_token) u.google_refresh_token = google_refresh_token
-
+        if (google_refresh_token) {
+          console.log('findGogoogle_refresh_tokeno')
+          console.log(google_refresh_token)
+          u.google_refresh_token = google_refresh_token
+        }
         storage.findUser(googleId).then(function(user) {
           if (!user) {
             storage.createUser(u).then(function(user) {

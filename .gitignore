@@ -5,7 +5,6 @@ assets/app-bundle.js
 tmp
 coverage
 
-
 ### Node Specifics ###
 # Logs
 logs

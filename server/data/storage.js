@@ -223,11 +223,13 @@ module.exports = {
         })
     },
     findUser: function(googleId) {
+      console.log(googleId)
         return User.find({
             where: {
                 google_id: googleId
             }
         });
+        console.log("end")
     },
     findUserByEmail: function(email) {
         return User.find({
