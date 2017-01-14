@@ -1,3 +1,6 @@
+import * as Cookies from "js-cookie";
+const base64json = require('base64json');
+const client_config = JSON.parse(base64json.parse(Cookies.getJSON('config')));
 module.exports = {
     PATH: {
         milestones: 'milestones',
@@ -10,8 +13,8 @@ module.exports = {
     ADD_RESULTS: 'ADD_RESULTS',
     INIT_RESULTS: 'INIT_RESULTS',
     INIT_GITHUB_REPOS: 'INIT_GITHUB_REPOS',
-    GITHUB_CLIENT_ID: 'd530a5d9c552e390d942',
-    GOOGLE_CLIENT_ID: '251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com',
+    GITHUB_CLIENT_ID: client_config.github_client_id,
+    GOOGLE_CLIENT_ID: client_config.google_client_id,
     UPDATE_APP_STATUS: 'UPDATE_APP_STATUS',
     SET_DIRECTORY_AS_ROOT: 'SET_DIRECTORY_AS_ROOT',
     SET_GITHUB_REPO: 'SET_GITHUB_REPO',
@@ -66,9 +69,9 @@ module.exports = {
     INIT_TASKS: 'INIT_TASKS',
     INIT_USERS: 'INIT_USERS',
     INIT_FILES: 'INIT_FILES',
-    APP_ROOT_URL: 'http://localhost:8080/app',
-    HOSTNAME: 'http://localhost:8080',
-    API_BASE_URL: 'http://localhost:8080',
+    APP_ROOT_URL: client_config.app_root_url,
+    HOSTNAME: client_config.hostname,
+    API_BASE_URL: client_config.api_base_url,
     INIT_MESSAGES: 'INIT_MESSAGES',
     ADD_MESSAGE: 'ADD_MESSAGE',
     DELETE_MESSAGE: 'DELETE_MESSAGE',

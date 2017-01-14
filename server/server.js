@@ -33,54 +33,62 @@ var validate = function(decodedToken, request, callback) {
 };
 
 server.register([
-    require('vision'),
-    require('inert'),
-    require('hapi-auth-jwt2'),
-    require('./controller/socket'), {
-      register: Good,
-      options: {
-        reporters: [{
-          reporter: require('good-console'),
-          events: {
-            response: '*',
-            log: '*'
-          }
-        }]
-      }
+  require('vision'),
+  require('inert'),
+  require('hapi-auth-jwt2'),
+  require('./controller/socket'), {
+    register: Good,
+    options: {
+      reporters: [{
+        reporter: require('good-console'),
+        events: {
+          response: '*',
+          log: '*'
+        }
+      }]
     }
-  ],
-  function(err) {
-    if (err) {
-      console.log(err);
+  }
+],
+function(err) {
+  if (err) {
+    console.log(err);
+  }
+  server.auth.strategy('jwt', 'jwt', {
+    validateFunc: validate,
+    key: privateKey,
+    verifyOptions: {
+      algorithms: ['HS256']
     }
-    server.auth.strategy('jwt', 'jwt', {
-      validateFunc: validate,
-      key: privateKey,
-      verifyOptions: {
-        algorithms: ['HS256']
-      }
-    });
-
-    server.auth.default('jwt');
-
-    server.views({
-      engines: {
-        jsx: require('hapi-react-views'),
-        html: require('handlebars')
-      },
-      relativeTo: __dirname,
-      path: 'views'
-    });
-
-    server.route(Routes.endpoints);
-
-
-    server.start(function(err) {
-      if (err) {
-        throw err;
-      }
-      console.log(__dirname);
-      console.log('Server is listening at ' + server.select('api').info.uri);
-      console.log('Server is listening at ' + server.select('collaboration').info.uri);
-    });
   });
+
+  server.auth.default('jwt');
+
+  server.views({
+    engines: {
+      jsx: require('hapi-react-views'),
+      html: require('handlebars')
+    },
+    relativeTo: __dirname,
+    path: 'views'
+  });
+  server.state('config', {
+    ttl: null,
+    isSecure: false,
+    isHttpOnly: false,
+    encoding: 'base64json',
+    clearInvalid: false, // remove invalid cookies
+    strictHeader: true // don't allow violations of RFC 6265
+
+  });
+  server.route(Routes.endpoints);
+
+
+  server.start(function(err) {
+    if (err) {
+      throw err;
+    }
+    console.log(__dirname);
+    console.log('Server is listening at ' + server.select('api').info.uri);
+    console.log('Server is listening at ' + server.select('collaboration').info.uri);
+  });
+});

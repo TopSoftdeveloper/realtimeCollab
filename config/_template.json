@@ -41,5 +41,12 @@
     "hostname": "www.app.com",
     "appRoot": "www.app.com/app",
     "socketHost": ""
+  },
+  "client_config": {
+    "hostname": "",
+    "app_root_url": "",
+    "api_base_url": "",
+    "google_client_id": "",
+    "github_client_id": "",
   }
 }

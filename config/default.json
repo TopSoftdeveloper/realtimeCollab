@@ -45,5 +45,12 @@
   "authentication": {
     "privateKey": "",
     "tokenExpirySeconds": 3600000
+  },
+  "client_config": {
+    "hostname": "",
+    "app_root_url": "",
+    "api_base_url": "",
+    "google_client_id": "",
+    "github_client_id": ""
   }
 }

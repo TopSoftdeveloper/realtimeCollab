@@ -1,3 +1,4 @@
+
 module.exports = {
     getPublic: {
         auth: false,
@@ -10,9 +11,11 @@ module.exports = {
     },
     app: {
         auth: false,
-        handler: {
-            view: 'Default.jsx'
-        }
+        handler:
+            function(request, reply) {
+              reply.view('Default.jsx').state('config', JSON.stringify(require('config').get('client_config')));
+            }
+
     },
     images: {
         auth: false,
