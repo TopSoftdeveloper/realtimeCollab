@@ -1,13 +1,13 @@
 {
   "database": {
-    "name": "",
+    "name": "collab",
     "username": "",
     "password": "",
     "options": {
       "host": "",
       "dialect": "",
       "pool": {
-        "max": 10,
+        "max": 5,
         "min": 0,
         "idle": 10000
       },
@@ -15,7 +15,7 @@
     }
   },
   "logging_database": {
-    "name": "",
+    "name": "collab_logging",
     "username": "",
     "password": "",
     "options": {
@@ -38,7 +38,8 @@
     "client_secret": ""
   },
   "web": {
-    "hostname": "yourdomain",
-    "appRoot": "yourdomain/app"
+    "hostname": "www.app.com",
+    "appRoot": "www.app.com/app",
+    "socketHost": ""
   }
 }

@@ -1,6 +1,49 @@
 {
+  "database": {
+    "name": "collab",
+    "username": "",
+    "password": "",
+    "options": {
+      "host": "localhost",
+      "dialect": "mysql",
+      "pool": {
+        "max": 5,
+        "min": 0,
+        "idle": 10000
+      },
+      "logging": false
+    }
+  },
+  "logging_database": {
+    "name": "collab_logging",
+    "username": "",
+    "password": "",
+    "options": {
+      "host": "localhost",
+      "dialect": "mysql",
+      "pool": {
+        "max": 5,
+        "min": 0,
+        "idle": 10000
+      },
+      "logging": false
+    }
+  },
+  "github": {
+    "client_id": "",
+    "client_secret": ""
+  },
+  "google": {
+    "client_id": "",
+    "client_secret": ""
+  },
+  "web": {
+    "hostname": "",
+    "appRoot": "",
+    "socketHost": ""
+  },
   "authentication": {
-    "privateKey": "empty",
+    "privateKey": "",
     "tokenExpirySeconds": 3600000
   }
 }
