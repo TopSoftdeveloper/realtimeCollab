@@ -99,7 +99,7 @@ function login(request, reply) {
         var profileInfo = JSON.parse(body)
         var googleId = profileInfo.id
         var u = {
-          // display_image: profileInfo.image.url,
+          display_image: profileInfo.image.url,
           display_name: profileInfo.displayName,
           email: profileInfo.emails[0].value,
           google_id: googleId
