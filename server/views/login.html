@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>NUS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0/">
+  <meta name="generator" content="Codeply"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="/assets/home/css/home.css"/>
+  <link rel="stylesheet" type="text/css" href="/assets/home/css/bootstrap-social.css"/>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js?onload=start" async defer></script>
+
+  <script>
+  const google_client_id = "{{google_client_id}}";
+  const HOSTNAME  = "{{hostname}}";
+  function start() {
+    gapi.load('auth2', function() {
+      auth2 = gapi.auth2.init({
+        client_id: google_client_id,
+        scope: 'https://www.googleapis.com/auth/drive'
+      });
+      if (localStorage.jwt && localStorage.google_token) {
+        window.location.assign(HOSTNAME + '/app');
+      }
+    });
+  }
+  </script>
+</head>
+<body>
+  <header id="first">
+    <div class="header-content">
+      <div class="inner">
+        <h1>Collab</h1>
+        <h4>Helping small teams do big things</h4>
+        <hr>
+        <a class="btn btn-social btn-google" onclick="loginGoogle()">
+          <span class="fa fa-google"></span>
+          <span class="login-btn-text">Sign in with Google</span>
+        </a>
+      </div>
+    </div>
+  </header>
+  <script>
+  function signInCallback(authResult) {
+    if (authResult.code) {
+      $.ajax({
+        type: 'POST',
+        url: HOSTNAME + '/login',
+        data: {code: authResult.code}
+      }).done(function(res) {
+        localStorage.setItem('jwt', res.collab_token);
+        localStorage.setItem('user_id', res.id);
+        localStorage.setItem('email', res.email);
+        localStorage.setItem('display_name', res.display_name);
+        localStorage.setItem('display_image', res.display_image);
+        localStorage.setItem('google_token', res.google_token);
+        localStorage.setItem('expiry_date', res.expiry_date);
+        window.location.assign(HOSTNAME + '/app');
+      }).fail(function(res) {
+        console.error(res)
+      })
+    }
+  }
+  function loginGoogle() {
+    $('.login-btn-text').text('Logging in...')
+    auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(signInCallback);
+  }
+  </script>
+</body>
+
+</html>

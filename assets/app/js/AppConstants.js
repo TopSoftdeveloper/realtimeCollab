@@ -1,6 +1,7 @@
 import * as Cookies from "js-cookie";
 const base64json = require('base64json');
 const client_config = JSON.parse(base64json.parse(Cookies.getJSON('config')));
+console.log(client_config)
 module.exports = {
     PATH: {
         milestones: 'milestones',

@@ -1,3 +1,4 @@
+const client_config = require('config').get('client_config')
 
 module.exports = {
     getPublic: {
@@ -13,7 +14,7 @@ module.exports = {
         auth: false,
         handler:
             function(request, reply) {
-              reply.view('Default.jsx').state('config', JSON.stringify(require('config').get('client_config')));
+              reply.view('Default.jsx')
             }
 
     },
@@ -27,14 +28,10 @@ module.exports = {
     },
     index: {
         auth: false,
-        handler: {
-            view: {
-                template: 'index.html',
-                context: {
-                    title: 'NUSCollab',
-                    header: 'Collaborate with your project mates with ease'
-                }
-            }
-        }
+        handler:
+          function(request, reply) {
+            reply.view('login.html', {google_client_id: client_config.google_client_id, hostname: client_config.hostname}).state('config', JSON.stringify(client_config));
+          }
+
     }
 };
