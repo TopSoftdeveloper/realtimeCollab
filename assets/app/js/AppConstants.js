@@ -1,5 +1,7 @@
 import * as Cookies from "js-cookie";
 const base64json = require('base64json');
+
+var config_encoded = Cookies.getJSON('config')
 const defaultConfig = {
   "hostname": "http://localhost:8080",
   "app_root_url": "http://localhost:8080/app",
@@ -7,7 +9,7 @@ const defaultConfig = {
   "google_client_id": "251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com",
   "github_client_id": "d530a5d9c552e390d942"
 }
-const client_config = Cookies.getJSON('config') != null ? JSON.parse(base64json.parse()) : defaultConfig;
+const client_config =  config_encoded != null ? JSON.parse(base64json.parse(config_encoded)) : defaultConfig;
 module.exports = {
     PATH: {
         milestones: 'milestones',
