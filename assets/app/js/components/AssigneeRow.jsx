@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component,PropTypes } from 'react'
 import * as SocketActions from '../actions/SocketActions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
