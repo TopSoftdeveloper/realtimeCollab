@@ -22,5 +22,9 @@ module.exports = {
       loader: 'style-loader!css-loader'
     }]
   },
-  plugins: [new webpack.OldWatchingPlugin()]
+  plugins: [new webpack.OldWatchingPlugin()],
+  externals: {
+    'cheerio': 'window',
+    'react-addons-test-utils': true
+  }
 };

@@ -19,9 +19,6 @@ import CompletedRow from './CompletedRow.jsx'
 import TaskModal from './TaskModal.jsx'
 import MilestoneModal from './MilestoneModal.jsx'
 
-
-
-
 class AssigneeRow extends Component {
 
   constructor(props, context) {
@@ -32,7 +29,6 @@ class AssigneeRow extends Component {
       showCompleted:false,
     }
   }
-
 
   toggleOngoing() {
     this.setState({
@@ -158,7 +154,6 @@ class AssigneeRow extends Component {
                   {taskList}
                 </div>
                 <TaskModal
-
                   title="Add Task"
                   open={this.state.isDialogOpen}
                   handleClose={this.handleClose.bind(this)}
@@ -174,7 +169,17 @@ class AssigneeRow extends Component {
         );
       }
     }
-
+    AssigneeRow.defaultProps = {
+      key: _.uniqueId('AssigneeRow')
+    };
+    AssigneeRow.proptypes = {
+      projectId: PropTypes.string.isRequired,
+      key: PropTypes.string,
+      user: PropTypes.object.isRequired,
+      users: PropTypes.array.isRequired,
+      actions: PropTypes.object.isRequired,
+      tasks: PropTypes.array.isRequired,
+    }
     AssigneeRow.contextTypes = {
       location: React.PropTypes.object
     }
