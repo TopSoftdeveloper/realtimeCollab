@@ -1,7 +1,13 @@
 import * as Cookies from "js-cookie";
 const base64json = require('base64json');
-const client_config = JSON.parse(base64json.parse(Cookies.getJSON('config')));
-console.log(client_config)
+const defaultConfig = {
+  "hostname": "http://localhost:8080",
+  "app_root_url": "http://localhost:8080/app",
+  "api_base_url": "http://localhost:8080",
+  "google_client_id": "251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com",
+  "github_client_id": "d530a5d9c552e390d942"
+}
+const client_config = Cookies.getJSON('config') != null ? JSON.parse(base64json.parse()) : defaultConfig;
 module.exports = {
     PATH: {
         milestones: 'milestones',

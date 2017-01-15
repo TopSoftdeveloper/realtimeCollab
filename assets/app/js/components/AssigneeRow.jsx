@@ -2,6 +2,7 @@ import React, { Component,PropTypes } from 'react'
 import * as SocketActions from '../actions/SocketActions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 
 import Paper from 'material-ui/lib/paper'
 import Divider from 'material-ui/lib/divider'
