@@ -8,3 +8,4 @@ coverage
 *.dat
 /config/local.json
 coverage
+config/local*
