@@ -10,7 +10,7 @@ Setting Up Development Environment
 **1. Clone project repository**
 
   *HTTP Auth*: `git clone https://github.com/collab-tools/collab.git`
-  
+
   *SSH Auth*: `git clone git@github.com:collab-tools/collab.git`
 
 **2. Install MySQL and Node.js**
@@ -38,40 +38,42 @@ Setting Up Development Environment
   `mysql -u root -p <password>`
 
   `> CREATE DATABASE collab;`
-  
+
   `> CREATE DATABASE collab_logging;`
 
 **4. Install required dependencies**
 
   **Linux Variants**
-  
+
   `sudo apt-get install g++`
-  
+
   **OSX**
-  
+
   *Python 2.7*: `brew install python`
 
 
   `sudo npm i -g node-gyp && node-gyp clean`
-  
-  `npm install`
+
+  `npm install` (see section 5 to resolve NPM local dependencies in [Deployment Guide](https://github.com/collab-tools/collab/blob/master/DeploymentGuide.md))
 
 **5. Configure local environment**
   `cd <project-root>/config`
-  
+
   `cp _local-template.json  local-dev.json`
-  
+
   Fill in `local-dev.json` with your server information *(secret keys, database authentication)*.
 
 **6. Run the development server**
 
   `npm run dev`
-  
+
   `default browser access: http://127.0.0.1:8080`
 
 Setting Up Production Environment
 --------------
 > WIP - Section to include information on how to deploy the application in its production state (w/ SSL, HTTP2, etc.) to any Ubuntu machine.
+
+Find details in [Deployment Guide](https://github.com/collab-tools/collab/blob/master/DeploymentGuide.md)
 
 Testing Framework and Implementation
 -----------------
