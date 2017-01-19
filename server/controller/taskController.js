@@ -83,7 +83,7 @@ function updateTask(request, reply) {
                     analytics.task.constants.ACTIVITY_UPDATE,
                     moment().format('YYYY-MM-DD HH:mm:ss'),
                     user_id,
-                    camelcaseKeys(t.toJSON())
+                    camelcaseKeys(result.task.toJSON())
                 )
 
                 reply({status: constants.STATUS_OK});
@@ -109,7 +109,7 @@ function updateTask(request, reply) {
                           analytics.task.constants.ACTIVITY_ASSIGN,
                           moment().format('YYYY-MM-DD HH:mm:ss'),
                           user_id,
-                          camelcaseKeys(t.toJSON())
+                          camelcaseKeys(result.task.toJSON())
                         )
                     })
                 } else {

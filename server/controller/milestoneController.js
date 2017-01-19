@@ -63,7 +63,7 @@ function updateMilestone(request, reply) {
                     analytics.milestone.constants.ACTIVITY_UPDATE,
                     moment().format('YYYY-MM-DD HH:mm:ss'),
                     user_id,
-                    camelcaseKeys(m.toJSON())
+                    camelcaseKeys(result.milestone.toJSON())
                 )
 
                 socket.sendMessageToProject(project.id, 'update_milestone', {
