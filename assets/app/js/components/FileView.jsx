@@ -8,7 +8,8 @@ import {insertFile, deleteFile, updateFile}  from '../actions/ReduxTaskActions'
 
 import LoadingIndicator from './LoadingIndicator.jsx'
 import TreeModal from './common/Tree.jsx'
-import {Table, Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
+import BreadcrumbInstance from './common/BreadcrumbInstance.jsx'
+import {Table} from 'react-bootstrap'
 
 import LinearProgress from 'material-ui/lib/linear-progress'
 import Dialog from 'material-ui/lib/dialog';
@@ -38,39 +39,7 @@ const isFolder = file =>  file.mimeType ==='application/vnd.google-apps.folder'
 const isNotTrash = file => !file.trashed
 
 
-class BreadcrumbInstance extends Component {
-  changeCurrentDirectory(directoryId) {
-    this.props.initUpperLevelFolder(this.props.projectId, directoryId)
-  }
 
-  render() {
-    let breadcrumbItems = this.props.directories.map((directory, index) => {
-      if (index === this.props.directories.length - 1) {
-        return (
-          <BreadcrumbItem
-            active
-            key={_.uniqueId('breadcrumb')}>
-            {directory.name}
-          </BreadcrumbItem>
-        )
-      }
-
-      return (
-        <BreadcrumbItem
-          onClick={this.changeCurrentDirectory.bind(this, directory.id)}
-          key={_.uniqueId('breadcrumb')}>
-          {directory.name}
-        </BreadcrumbItem>
-      )
-    })
-
-    return (
-      <Breadcrumb>
-        {breadcrumbItems}
-      </Breadcrumb>
-    )
-  }
-}
 
 class FilesList extends Component {
   constructor(props, context) {
