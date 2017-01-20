@@ -367,6 +367,7 @@ class FilesList extends Component {
 
     let modal = (this.state.isModalOpen &&
         <Dialog
+        autoScrollBodyContent
         actions={actions}
         onRequestClose={this.handleClose.bind(this)}
         open={this.state.isModalOpen}>

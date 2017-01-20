@@ -118,8 +118,7 @@ class TreeModal extends Component {
     ]
     return(
       <Dialog
-      autoScrollBodyContent = {true}
-      className= 'overflow-y'
+      autoScrollBodyContent
       title={"Select destination folder"}
       actions={actions}
       onRequestClose={handleClose}

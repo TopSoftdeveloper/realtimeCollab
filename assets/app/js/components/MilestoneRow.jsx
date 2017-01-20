@@ -186,7 +186,9 @@ class MilestoneRow extends Component {
       confirmDeleteMsg = "You still have " + ongoingTasks.length + " ongoing task(s). " + confirmDeleteMsg
     }
     let confirmDeleteDialog =
-    <Dialog actions={confirmDeleteActions}
+    <Dialog
+      autoScrollBodyContent
+      actions={confirmDeleteActions}
       modal={false}
       open={this.state.isDeleteConfirmationOpen}
       onRequestClose={this.handleDeleteConfirmationClose.bind(this)}>
