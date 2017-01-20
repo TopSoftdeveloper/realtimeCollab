@@ -1,38 +1,21 @@
-import React, { Component, PropTypes } from 'react'
+import React, {PropTypes } from 'react'
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
-class BreadcrumbInstance extends Component {
-  changeCurrentDirectory(directoryId) {
-    this.props.initUpperLevelFolder(this.props.projectId, directoryId)
-  }
 
-  render() {
-    const {directories} = this.props
-    let breadcrumbItems = directories.map((directory, index) => {
-      if (index === directories.length - 1) {
-        return (
-          <BreadcrumbItem
-            active
-            key={_.uniqueId('breadcrumb')}>
-            {directory.name}
-          </BreadcrumbItem>
-        )
-      }
+const BreadcrumbInstance = ({directories, initUpperLevelFolder, projectId}) => {
 
-      return (
-        <BreadcrumbItem
-          onClick={this.changeCurrentDirectory.bind(this, directory.id)}
-          key={_.uniqueId('breadcrumb')}>
-          {directory.name}
-        </BreadcrumbItem>
-      )
-    })
-
-    return (
-      <Breadcrumb>
-        {breadcrumbItems}
-      </Breadcrumb>
+  let breadcrumbItems = directories.map((directory, index) => {
+    let isCurrentItem = index === directories.length - 1
+    return  (
+      <BreadcrumbItem
+        active={isCurrentItem}
+        onClick={!isCurrentItem ? () => {initUpperLevelFolder(projectId, directory.id)} : null}
+        key={'breadcrumb'+directory.id}>
+        {directory.name}
+      </BreadcrumbItem>
     )
-  }
+  })
+  return  <Breadcrumb>{breadcrumbItems}</Breadcrumb>
+
 }
 
 BreadcrumbInstance.propTypes = {
