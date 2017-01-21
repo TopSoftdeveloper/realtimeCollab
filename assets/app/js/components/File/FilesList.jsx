@@ -19,7 +19,7 @@ import RenameIcon from 'material-ui/lib/svg-icons/editor/mode-edit';
 import RemoveRedEyeIcon from 'material-ui/lib/svg-icons/image/remove-red-eye';
 import CreateNewFolderIcon from 'material-ui/lib/svg-icons/file/create-new-folder';
 import FileUploadIcon from 'material-ui/lib/svg-icons/file/file-upload';
-
+import CardHeader from 'material-ui/lib/card/card-header';
 import { Form } from 'formsy-react'
 import FormsyText from 'formsy-material-ui/lib/FormsyText'
 
@@ -309,18 +309,21 @@ class FilesList extends Component {
   }
   renderFileStandard(file) {
     let lastModifyingUser = + file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
-    let lastModified = toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
+    let lastModified = 'Modified' + toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
 
     return (
       <tr className="table-row-file" key={file.id}>
         <td onClick={this.navigate.bind(this, file.id)} >
-          <img src={file.iconLink}/><span className="table-filename">{file.name}</span>
+          <CardHeader
+            style={{padding: 5, height:'inherit'}}
+            title={file.name}
+            subtitle={lastModified}
+            avatar={<img style={{width: 15}} src={file.iconLink}/>}
+          />
         </td>
-        <td onClick={this.navigate.bind(this, file.id)} >
-          {lastModified}
-        </td>
-        <td>
+        <td style={{verticalAlign: 'middle'}}>
           <IconMenu
+            className="pull-right"
             iconButtonElement={<IconButton><MoreVertIcon/></IconButton>}
             anchorOrigin={{horizontal: 'right', vertical: 'top'}}
             targetOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -375,7 +378,6 @@ class FilesList extends Component {
          <thead>
            <tr>
              <th>Name</th>
-             <th>Last modified</th>
              <th></th>
            </tr>
          </thead>
@@ -390,7 +392,6 @@ class FilesList extends Component {
 
     return (
       <div style={{marginTop: 10}}>
-
           <div style={{width:"auto", display:'inline-block'}}>
             <BreadcrumbInstance
               directories={directoryStructure}
