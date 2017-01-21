@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import Dropzone from 'react-dropzone'
 import _ from 'lodash'
 
-import {Table, Grid, Row, Col} from 'react-bootstrap'
+import {Table} from 'react-bootstrap'
 import LinearProgress from 'material-ui/lib/linear-progress'
 import Dialog from 'material-ui/lib/dialog';
 import RaisedButton from 'material-ui/lib/raised-button'
