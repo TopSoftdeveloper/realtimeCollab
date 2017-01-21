@@ -38,7 +38,25 @@ const IMG_ROOT = '../../../images/'
 const isFolder = file =>  file.mimeType ==='application/vnd.google-apps.folder'
 const isNotTrash = file => !file.trashed
 
-
+const getImage = type => {
+  if (type.includes('image/')) {
+    return IMG_ROOT + 'icon_11_image_list.png'
+  } else if (type.includes('spreadsheet')) {
+    return IMG_ROOT + 'icon_11_spreadsheet_list.png'
+  } else if (type.includes('presentation')) {
+    return IMG_ROOT + 'icon_11_presentation_list.png'
+  } else if (type.includes('pdf')) {
+    return IMG_ROOT + 'icon_12_pdf_list.png'
+  } else if (type.includes('zip') || type.includes('compressed')) {
+    return IMG_ROOT + 'icon_9_archive_list.png'
+  } else if (type.includes('word')) {
+    return IMG_ROOT + 'icon_11_document_list.png'
+  } else if (type.includes('text/')) {
+    return IMG_ROOT + 'icon_10_text_list.png'
+  } else {
+    return IMG_ROOT + 'generic_app_icon_16.png'
+  }
+}
 
 
 class FilesList extends Component {
@@ -99,7 +117,7 @@ class FilesList extends Component {
     }
   }
   renderFilePreview(fileData) {
-    let imgSrc = this.getImage(fileData.type)
+    let imgSrc = getImage(fileData.type)
     let directoryStructure = this.props.directoryStructure
     let currDirectory = directoryStructure[directoryStructure.length-1].id
     this.props.dispatch(insertFile({
@@ -189,25 +207,7 @@ class FilesList extends Component {
     this.handleClose()
   }
 
-  getImage(type) {
-    if (type.includes('image/')) {
-      return IMG_ROOT + 'icon_11_image_list.png'
-    } else if (type.includes('spreadsheet')) {
-      return IMG_ROOT + 'icon_11_spreadsheet_list.png'
-    } else if (type.includes('presentation')) {
-      return IMG_ROOT + 'icon_11_presentation_list.png'
-    } else if (type.includes('pdf')) {
-      return IMG_ROOT + 'icon_12_pdf_list.png'
-    } else if (type.includes('zip') || type.includes('compressed')) {
-      return IMG_ROOT + 'icon_9_archive_list.png'
-    } else if (type.includes('word')) {
-      return IMG_ROOT + 'icon_11_document_list.png'
-    } else if (type.includes('text/')) {
-      return IMG_ROOT + 'icon_10_text_list.png'
-    } else {
-      return IMG_ROOT + 'generic_app_icon_16.png'
-    }
-  }
+
   render() {
     const sortByFolderFirst = (fileA, fileB) => {
       if(!isFolder(fileA) && isFolder(fileB)) {
@@ -408,25 +408,24 @@ class FileView extends Component {
       preview: ''
     }
   }
-
   setAsRoot(id) {
     this.props.actions.setDirectoryAsRoot(this.props.project.id, id)
   }
 
   authorizeDrive() {
+    // TODO implement this function
     console.log('get drive permission here')
   }
 
   render() {
     console.log('FileView::render()')
-    let app = this.props.app
-    let project = this.props.project
+    const {app, project, actions, files, dispatch} = this.props
     let filesList = <FilesList
       directoryStructure={project.directory_structure}
-      files={this.props.files}
-      actions={this.props.actions}
+      files={files}
+      actions={actions}
       projectId={project.id}
-      dispatch={this.props.dispatch}
+      dispatch={dispatch}
       app={app}
       rootFolder={project.root_folder}
       />
@@ -434,73 +433,48 @@ class FileView extends Component {
 
     if (app.is_linked_to_drive && project.root_folder) {
       return (
-        <div>
-          {filesList}
-        </div>
+        <div>{filesList}</div>
       )
-    }
-
-    if (!app.is_linked_to_drive && project.root_folder) {
-      return (
-        <div>
-          <h4>Please re-authorize Google Drive</h4>
-          <RaisedButton
-            label="Authorize"
+    } else {
+      let currentStep = 0
+      const steps = [{title: 'Authorize Google Drive'}, {title: 'Select root folder'}]
+      let currentDirectory = {name: 'Top level directory', id: 'root'}
+      if (project.directory_structure && project.directory_structure.length > 0) {
+        currentDirectory = project.directory_structure[project.directory_structure.length-1]
+      }
+      let stepActionButton = <RaisedButton label="Authorize"
             onTouchTap={this.authorizeDrive.bind(this)}
             primary={true}
+            ></RaisedButton>
+      if (app.is_linked_to_drive && !project.root_folder) {
+        currentStep = 1
+         stepActionButton = <RaisedButton
+            className="set-root-dir"
+            label="Set current directory as root"
+            onTouchTap={this.setAsRoot.bind(this, currentDirectory.id)}
+            secondary={true}
             />
-        </div>
-      )
-    }
-
-    let content = null
-    let currentStep = 0
-    let steps = [{title: 'Authorize Google Drive'}, {title: 'Select root folder'}]
-    let currentDirectory = {name: 'Top level directory', id: 'root'}
-    if (project.directory_structure && project.directory_structure.length > 0) {
-      currentDirectory = project.directory_structure[project.directory_structure.length-1]
-    }
-
-    if (!app.is_linked_to_drive && !project.root_folder) {
-      content = (
-        <RaisedButton
-          label="Authorize"
-          onTouchTap={this.authorizeDrive.bind(this)}
-          primary={true}
-          />
-      )
-    } else if (app.is_linked_to_drive && !project.root_folder) {
-      currentStep = 1
-      let setDirectoryBtn = null
-      if (!app.files.loading) {
-        setDirectoryBtn = <RaisedButton
-          className="set-root-dir"
-          label="Set current directory as root"
-          onTouchTap={this.setAsRoot.bind(this, currentDirectory.id)}
-          secondary={true}
-          />
       }
-      content = (
-        <div>
-          {filesList}
-          {setDirectoryBtn}
+      let content = (
+          <div>
+            {filesList}
+            {!app.files.loading && stepActionButton}
+          </div>
+        )
+      return (
+        <div className='my-step-container'>
+          <Steps current={currentStep}>
+            {steps.map(function(s, i) {
+              return <Steps.Step
+                key={i}
+                title={s.title}
+              ></Steps.Step>
+            })}
+          </Steps>
+          {content}
         </div>
       )
     }
-
-    return (
-      <div className='my-step-container'>
-        <Steps current={currentStep}>
-          {steps.map(function(s, i) {
-            return <Steps.Step
-              key={i}
-              title={s.title}
-              ></Steps.Step>
-          })}
-        </Steps>
-        {content}
-      </div>
-    )
   }
 
 }
