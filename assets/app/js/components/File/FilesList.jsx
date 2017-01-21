@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import Dropzone from 'react-dropzone'
 import _ from 'lodash'
-import {Table} from 'react-bootstrap'
 
+import {Table, Grid, Row, Col} from 'react-bootstrap'
 import LinearProgress from 'material-ui/lib/linear-progress'
 import Dialog from 'material-ui/lib/dialog';
 import RaisedButton from 'material-ui/lib/raised-button'
@@ -12,11 +12,13 @@ import IconButton from 'material-ui/lib/icon-button';
 import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
 import FlatButton from 'material-ui/lib/flat-button'
 import Divider from 'material-ui/lib/divider';
-import ContentCopy from 'material-ui/lib/svg-icons/content/content-copy';
-import Delete from 'material-ui/lib/svg-icons/action/delete';
-import Move from 'material-ui/lib/svg-icons/action/input';
-import Rename from 'material-ui/lib/svg-icons/editor/mode-edit';
-import RemoveRedEye from 'material-ui/lib/svg-icons/image/remove-red-eye';
+import ContentCopyIcon from 'material-ui/lib/svg-icons/content/content-copy';
+import DeleteIcon from 'material-ui/lib/svg-icons/action/delete';
+import MoveIcon from 'material-ui/lib/svg-icons/action/input';
+import RenameIcon from 'material-ui/lib/svg-icons/editor/mode-edit';
+import RemoveRedEyeIcon from 'material-ui/lib/svg-icons/image/remove-red-eye';
+import CreateNewFolderIcon from 'material-ui/lib/svg-icons/file/create-new-folder';
+import FileUploadIcon from 'material-ui/lib/svg-icons/file/file-upload';
 
 import { Form } from 'formsy-react'
 import FormsyText from 'formsy-material-ui/lib/FormsyText'
@@ -200,6 +202,9 @@ class FilesList extends Component {
     this.renameFile(this.state.selectedFile.id, this.refs.renameField.getValue().trim())
     this.handleClose()
   }
+  onFileUploadButtonClick() {
+    this.dropzone.open()
+  }
   renderMoveModal() {
     return (this.state.isMoveModalOpen &&
       <TreeModal
@@ -248,23 +253,25 @@ class FilesList extends Component {
       )
   }
 
-  renderDropzone() {
+  renderDropzone(className='') {
     // If user is logged in and already configured root folder
     return (this.props.app.is_linked_to_drive && this.props.rootFolderId &&
-      <Dropzone ref="dropzone" onDrop={this.onDrop.bind(this)} multiple={false} className="drive-drop-zone">
+      <Dropzone ref={(node) => { this.dropzone = node; }} onDrop={this.onDrop.bind(this)} multiple={false} className={"drive-drop-zone "+ className}>
         <p>Drop a file here, or click to select a file to upload.</p>
       </Dropzone>
     )
   }
-  renderCreateFolderButton() {
+  renderCreateButton() {
     // If user is logged in and already configured root folder
-    return (this.props.app.is_linked_to_drive && this.props.rootFolderId &&
-      <RaisedButton
-        label="Create Folder"
-        onTouchTap={this.createFolder.bind(this)}
-        primary={true}
-        />
-    )
+    return (this.props.app.is_linked_to_drive && this.props.rootFolderId && !this.props.app.files.loading &&
+    <IconMenu
+      iconButtonElement={<RaisedButton label="New" primary={true}/>}
+      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+      targetOrigin={{horizontal: 'left', vertical: 'top'}}
+      >
+      <MenuItem primaryText="New Folder" leftIcon={<CreateNewFolderIcon />} onTouchTap={this.createFolder.bind(this)} />
+      <MenuItem primaryText="Upload File" leftIcon={<FileUploadIcon />} onTouchTap={this.onFileUploadButtonClick.bind(this)} />
+    </IconMenu>)
   }
   renderFilePreview(file) {
     let tableData = (
@@ -318,13 +325,13 @@ class FilesList extends Component {
             anchorOrigin={{horizontal: 'right', vertical: 'top'}}
             targetOrigin={{horizontal: 'left', vertical: 'top'}}
             >
-            <MenuItem primaryText="preview" leftIcon={<RemoveRedEye />} onTouchTap={this.navigate.bind(this, file.id)}/>
+            <MenuItem primaryText="preview" leftIcon={<RemoveRedEyeIcon />} onTouchTap={this.navigate.bind(this, file.id)}/>
             <Divider/>
-            { !isFolder(file) && <MenuItem primaryText="make a copy" leftIcon={<ContentCopy />} onTouchTap={this.copyFile.bind(this, file.id)}/>}
-            <MenuItem primaryText="Rename" leftIcon={<Rename />} onTouchTap={this.handleRenmaeModalOpen.bind(this, file)} />
-            <MenuItem primaryText="Move" leftIcon={<Move />} onTouchTap={this.handleMoveModalOpen.bind(this, file)} />
+            { !isFolder(file) && <MenuItem primaryText="make a copy" leftIcon={<ContentCopyIcon />} onTouchTap={this.copyFile.bind(this, file.id)}/>}
+            <MenuItem primaryText="Rename" leftIcon={<RenameIcon />} onTouchTap={this.handleRenmaeModalOpen.bind(this, file)} />
+            <MenuItem primaryText="Move" leftIcon={<MoveIcon />} onTouchTap={this.handleMoveModalOpen.bind(this, file)} />
             <Divider/>
-            <MenuItem primaryText="Delete" leftIcon={<Delete />} onTouchTap={this.removeFile.bind(this, file.id)}/>
+            <MenuItem primaryText="Delete" leftIcon={<DeleteIcon />} onTouchTap={this.removeFile.bind(this, file.id)}/>
 
           </IconMenu>
         </td>
@@ -348,56 +355,57 @@ class FilesList extends Component {
         return file.parents && file.parents[0] === curDirectoryId && !file.trashed
       }).sort(sortByFolderFirst)
     }
-
-    let tableBody =
-    <tr>
-      <td className="no-items" colSpan={3} rowSpan={3}><LoadingIndicator className="loading-indicator"/></td>
-    </tr>
+    let content  = <LoadingIndicator className="loading-indicator"/>
 
     if (!app.files.loading) {
-      tableBody =
-      <tr>
-        <td className="no-items" colSpan={3} rowSpan={3}><h3>No files here</h3></td>
-      </tr>
-      if (filesToDisplay.length > 0) {
-        tableBody = filesToDisplay.map(file => {
+      if (filesToDisplay.length === 0) {
+        content = this.renderDropzone()
+      } else {
+        let tableBody = filesToDisplay.map(file => {
          if (file.isPreview) {
            return this.renderFilePreview(file)
          } else {
            return this.renderFileStandard(file)
          }
        })
+       content =
+       <div>{this.renderDropzone('hidden')}
+       <Table hover responsive condensed>
+
+         <thead>
+           <tr>
+             <th>Name</th>
+             <th>Last modified</th>
+             <th></th>
+           </tr>
+         </thead>
+         <tbody>
+           {tableBody}
+         </tbody>
+       </Table>
+       </div>
       }
     } // not loading
 
+
     return (
-      <div className="file-area">
+      <div style={{marginTop: 10}}>
 
-        <BreadcrumbInstance
-          directories={directoryStructure}
-          initUpperLevelFolder={actions.initUpperLevelFolder.bind(this)}
-          projectId={projectId}
-          key={'breadcrumb_' + projectId}
-          />
-
+          <div style={{width:"auto", display:'inline-block'}}>
+            <BreadcrumbInstance
+              directories={directoryStructure}
+              initUpperLevelFolder={actions.initUpperLevelFolder.bind(this)}
+              projectId={projectId}
+              key={'breadcrumb_' + projectId}
+              />
+          </div>
+        <div style={{float:'right' }}>
+          {this.renderCreateButton()}
+        </div>
         {this.renderRenameModal()}
         {this.renderMoveModal()}
-        {this.renderDropzone()}
-        {this.renderCreateFolderButton()}
-        <Table hover responsive condensed>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Last modified</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {tableBody}
-          </tbody>
-        </Table>
-
-      </div>
+        {content}
+    </div>
     )
   }
 }
