@@ -27,7 +27,7 @@ import BreadcrumbInstance from './BreadcrumbInstance.jsx'
 import {toFuzzyTime} from '../../utils/general'
 import {insertFile, deleteFile, updateFile}  from '../../actions/ReduxTaskActions'
 import LoadingIndicator from '../LoadingIndicator.jsx'
-import TreeModal from '../common/Tree.jsx'
+import TreeModal from './TreeModal.jsx'
 
 
 const IMG_ROOT = '../../../../images/'
@@ -128,12 +128,12 @@ class FilesList extends Component {
   }
   computeDirectoryTree(disableFileId) {
     let folders = this.props.files.filter(isFolder).filter(isNotTrash).map(folder=>{
-      let data = {'text':folder.name, 'id':folder.id, 'parents':folder.parents }
+      let data = {style: {backgroundColor:'white'}, 'name':folder.name, 'id':folder.id, 'parents':folder.parents, toggled: true }
       data.disabled = data.id === disableFileId
       return data
     })
     let parentChildrenDict = {}
-    // fill data inside the dictionary
+    // fill data into Parent-Children dictionary
     folders.map(folder=>{
       let parent = folder.parents[0]
       if(parentChildrenDict[parent]) {
@@ -143,7 +143,7 @@ class FilesList extends Component {
       }
     })
 
-    let root = {'text':'root', 'id':this.props.rootFolderId, 'children':[]}
+    let root = {style: {backgroundColor:'white'}, name:'root',toggled: true, id:this.props.rootFolderId, children:[]}
     let queue = [root]
 
     while(queue.length > 0) {
