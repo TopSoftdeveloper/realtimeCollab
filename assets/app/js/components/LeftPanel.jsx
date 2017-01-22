@@ -78,6 +78,7 @@ class LeftPanel extends Component {
                   <Paper>
 
                     <Dialog
+                        autoScrollBodyContent
                         title="Add Project"
                         actions={actions}
                         open={this.state.isDialogOpen}

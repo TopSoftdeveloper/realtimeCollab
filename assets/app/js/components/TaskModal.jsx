@@ -54,6 +54,7 @@ class TaskModal extends Component {
 
         return (
             <Dialog
+                autoScrollBodyContent
                 title={this.props.title}
                 actions={actions}
                 onRequestClose={this.props.handleClose}

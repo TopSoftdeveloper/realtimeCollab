@@ -1,5 +1,6 @@
 import AppConstants from '../AppConstants';
 import assign from 'object-assign';
+import _ from 'lodash';
 // Example state tree:
 // [
 //     {
@@ -16,7 +17,7 @@ import assign from 'object-assign';
 //         files_loaded: true,
 //         github_repo_name : 'repoName',
 //         github_repo_owner: 'repoOwner'
-//     }             
+//     }
 // ]
 
 
@@ -27,10 +28,10 @@ export default function projects(state=[], action) {
         case AppConstants.CREATE_PROJECT:
             return [action.project, ...state]
         case AppConstants.DELETE_PROJECT:
-            return state.filter(project => project.id !== action.id);   
+            return state.filter(project => project.id !== action.id);
         case AppConstants.REPLACE_PROJECT_ID:
-            return state.map(project => 
-                project.id === action.original ? 
+            return state.map(project =>
+                project.id === action.original ?
                 assign({}, project, {id : action.replacement}): project)
         case AppConstants.UPDATE_PROJECT:
             return state.map(project =>
@@ -44,11 +45,16 @@ export default function projects(state=[], action) {
                 project.id === action.id ?
                     assign({}, project, p): project)
         case AppConstants.ADD_DIRECTORY:
-            return state.map(project =>
-                project.id === action.id ?
-                    assign({}, project, {
-                        directory_structure : [...project.directory_structure, action.directory]
-                    }): project)
+            return state.map(project => {
+              // avoid adding duplicate directory 
+              if (project.id == action.id && (_.findIndex(project.directory_structure, o => {return o.id == action.directory.id})) === -1) {
+                return assign({}, project, {
+                    directory_structure : [...project.directory_structure, action.directory]
+                })
+              } else {
+                return project
+              }
+            })
         case AppConstants.GO_TO_DIRECTORY:
             return state.map(project => {
                 if (project.id === action.projectId) {
