@@ -133,7 +133,7 @@ class FilesList extends Component {
       return data
     })
     let parentChildrenDict = {}
-
+    // fill data inside the dictionary
     folders.map(folder=>{
       let parent = folder.parents[0]
       if(parentChildrenDict[parent]) {
@@ -309,7 +309,7 @@ class FilesList extends Component {
   }
   renderFileStandard(file) {
     let lastModifyingUser = + file.lastModifyingUser.me ? 'me' : file.lastModifyingUser.displayName
-    let lastModified = 'Modified' + toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
+    let lastModified = 'Modified ' + toFuzzyTime(file.modifiedTime) + ' by ' + lastModifyingUser
 
     return (
       <tr className="table-row-file" key={file.id}>
