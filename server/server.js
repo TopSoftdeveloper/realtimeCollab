@@ -92,3 +92,5 @@ function(err) {
     console.log('Server is listening at ' + server.select('collaboration').info.uri);
   });
 });
+
+module.exports = server;
