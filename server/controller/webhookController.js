@@ -114,9 +114,9 @@ function githubWebhookHandler(request, reply) {
                     // Commits via API actions that update references are also counted. This is the default event.
                     var commits = payload.commits
                     if (commits.length !== 0) {
-                        commits.forEach(function(commit) {
-                          analytics.github.logCommit(project.id, commit);
-                        });
+                        // commits.forEach(function(commit) {
+                        //   analytics.github.logCommit(project.id, commit);
+                        // });
                         Newsfeed.updateNewsfeed(
                             {commitSize: commits.length, user_id: userId},
                             templates.GITHUB_PUSH, project.id, constants.GITHUB,  new Date().toISOString())
