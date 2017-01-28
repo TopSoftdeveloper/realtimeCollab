@@ -1,14 +1,14 @@
 import React, {PropTypes } from 'react'
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 
-const BreadcrumbInstance = ({directories, initUpperLevelFolder, projectId}) => {
+const BreadcrumbInstance = ({directories, initUpperLevelFolder}) => {
 
   let breadcrumbItems = directories.map((directory, index) => {
     let isCurrentItem = index === directories.length - 1
     return  (
       <BreadcrumbItem
         active={isCurrentItem}
-        onClick={!isCurrentItem ? () => {initUpperLevelFolder(projectId, directory.id)} : null}
+        onClick={!isCurrentItem ? () => {initUpperLevelFolder(directory.id)} : null}
         key={'breadcrumb'+directory.id}>
         {directory.name}
       </BreadcrumbItem>
@@ -21,6 +21,5 @@ const BreadcrumbInstance = ({directories, initUpperLevelFolder, projectId}) => {
 BreadcrumbInstance.propTypes = {
   directories: PropTypes.array.isRequired,
   initUpperLevelFolder: PropTypes.func.isRequired,
-  projectId: PropTypes.string.isRequired
 };
 export default BreadcrumbInstance

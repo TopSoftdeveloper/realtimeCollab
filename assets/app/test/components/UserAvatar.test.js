@@ -44,7 +44,7 @@ describe("UserAvatar.jsx ", function() {
       expect(this.wrapper).to.exist;
     });
     it("renders both avatar and OverlayTrigger", function() {
-      console.log(this.wrapper.debug())
+      // console.log(this.wrapper.debug())
       expect(this.wrapper.find('Avatar')).to.have.length(1)
       expect(this.wrapper.find('OverlayTrigger')).to.have.length(1)
     });

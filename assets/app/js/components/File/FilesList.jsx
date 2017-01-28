@@ -128,7 +128,15 @@ class FilesList extends Component {
   }
   computeDirectoryTree(disableFileId) {
     let folders = this.props.files.filter(isFolder).filter(isNotTrash).map(folder=>{
-      let data = {style: {backgroundColor:'white'}, 'name':folder.name, 'id':folder.id, 'parents':folder.parents, toggled: true }
+      let data = {
+        style: {
+          backgroundColor:'white'
+        },
+        'name':folder.name,
+        'id':folder.id,
+        'parents':folder.parents,
+        toggled: true
+      }
       data.disabled = data.id === disableFileId
       return data
     })
@@ -217,20 +225,22 @@ class FilesList extends Component {
   renderRenameModal() {
     let renameModalActions = [
         <FlatButton
-            key={13}
-            label="Cancel"
-            secondary={true}
-            onTouchTap={this.handleClose.bind(this)} />,
+          key={13}
+          label="Cancel"
+          secondary={true}
+          onTouchTap={this.handleClose.bind(this)}
+        />,
         <FlatButton
-            key={23}
-            label="Submit"
-            primary={true}
-            onTouchTap={this.onDialogSubmit.bind(this)}
-            disabled={!this.state.canSubmit} />
+          key={23}
+          label="Submit"
+          primary={true}
+          onTouchTap={this.onDialogSubmit.bind(this)}
+          disabled={!this.state.canSubmit}
+        />
     ]
 
     return (this.state.isRenameModalOpen &&
-        <Dialog
+      <Dialog
         autoScrollBodyContent
         actions={renameModalActions}
         onRequestClose={this.handleClose.bind(this)}
@@ -256,22 +266,37 @@ class FilesList extends Component {
   renderDropzone(className='') {
     // If user is logged in and already configured root folder
     return (this.props.app.is_linked_to_drive && this.props.rootFolderId &&
-      <Dropzone ref={(node) => { this.dropzone = node; }} onDrop={this.onDrop.bind(this)} multiple={false} className={"drive-drop-zone "+ className}>
-        <p>Drop a file here, or click to select a file to upload.</p>
+      <Dropzone
+        ref={(node) => { this.dropzone = node; }}
+        onDrop={this.onDrop.bind(this)}
+        multiple={false}
+        className={"drive-drop-zone "+ className}>
+        <p>
+          Drop a file here, or click to select a file to upload.
+        </p>
       </Dropzone>
     )
   }
   renderCreateButton() {
     // If user is logged in and already configured root folder
-    return (this.props.app.is_linked_to_drive && this.props.rootFolderId && !this.props.app.files.loading &&
-    <IconMenu
-      iconButtonElement={<RaisedButton label="New" primary={true}/>}
-      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-      targetOrigin={{horizontal: 'left', vertical: 'top'}}
+    return (
+      this.props.app.is_linked_to_drive && this.props.rootFolderId && !this.props.app.files.loading &&
+      <IconMenu
+        iconButtonElement={<RaisedButton label="New" primary={true}/>}
+        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+        targetOrigin={{horizontal: 'left', vertical: 'top'}}
       >
-      <MenuItem primaryText="New Folder" leftIcon={<CreateNewFolderIcon />} onTouchTap={this.createFolder.bind(this)} />
-      <MenuItem primaryText="Upload File" leftIcon={<FileUploadIcon />} onTouchTap={this.onFileUploadButtonClick.bind(this)} />
-    </IconMenu>)
+        <MenuItem
+          primaryText="New Folder"
+          leftIcon={<CreateNewFolderIcon />}
+          onTouchTap={this.createFolder.bind(this)}
+        />
+        <MenuItem
+          primaryText="Upload File"
+          leftIcon={<FileUploadIcon />} onTouchTap={this.onFileUploadButtonClick.bind(this)}
+        />
+      </IconMenu>
+    )
   }
   renderFilePreview(file) {
     let tableData = (
@@ -300,7 +325,10 @@ class FilesList extends Component {
     return (
       <tr className="table-row-file" key={file.id}>
         <td>
-          <img src={file.iconLink}/><span className="table-filename">{file.name}</span>
+          <img src={file.iconLink}/>
+          <span className="table-filename">
+            {file.name}
+          </span>
         </td>
         {tableData}
         <td></td>
@@ -358,7 +386,7 @@ class FilesList extends Component {
         return file.parents && file.parents[0] === curDirectoryId && !file.trashed
       }).sort(sortByFolderFirst)
     }
-    let content  = <LoadingIndicator className="loading-indicator"/>
+    let content = <LoadingIndicator className="loading-indicator"/>
 
     if (!app.files.loading) {
       if (filesToDisplay.length === 0) {
@@ -372,19 +400,19 @@ class FilesList extends Component {
          }
        })
        content =
-       <div>{this.renderDropzone('hidden')}
-       <Table hover responsive condensed>
-
-         <thead>
-           <tr>
-             <th>Name</th>
-             <th></th>
-           </tr>
-         </thead>
-         <tbody>
-           {tableBody}
-         </tbody>
-       </Table>
+       <div>
+         {this.renderDropzone('hidden')}
+         <Table hover responsive condensed>
+           <thead>
+             <tr>
+               <th>Name</th>
+               <th></th>
+             </tr>
+           </thead>
+           <tbody>
+             {tableBody}
+           </tbody>
+         </Table>
        </div>
       }
     } // not loading
@@ -392,21 +420,20 @@ class FilesList extends Component {
 
     return (
       <div style={{marginTop: 10}}>
-          <div style={{width:"auto", display:'inline-block'}}>
-            <BreadcrumbInstance
-              directories={directoryStructure}
-              initUpperLevelFolder={actions.initUpperLevelFolder.bind(this)}
-              projectId={projectId}
-              key={'breadcrumb_' + projectId}
-              />
-          </div>
+        <div style={{width:"auto", display:'inline-block'}}>
+          <BreadcrumbInstance
+            key={'breadcrumb_' + projectId}
+            directories={directoryStructure}
+            initUpperLevelFolder={actions.initUpperLevelFolder.bind(this, projectId)}
+            />
+        </div>
         <div style={{float:'right' }}>
           {this.renderCreateButton()}
         </div>
         {this.renderRenameModal()}
         {this.renderMoveModal()}
         {content}
-    </div>
+      </div>
     )
   }
 }
