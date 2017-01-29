@@ -1,0 +1,51 @@
+{
+  "database": {
+    "name": "collab_test",
+    "username": "root",
+    "password": "",
+    "options": {
+      "host": "localhost",
+      "dialect": "mysql",
+      "pool": {
+        "max": 5,
+        "min": 0,
+        "idle": 10000
+      },
+      "logging": false
+    }
+  },
+  "logging_database": {
+    "name": "collab_logging_test",
+    "username": "root",
+    "password": "",
+    "options": {
+      "host": "localhost",
+      "dialect": "mysql",
+      "pool": {
+        "max": 5,
+        "min": 0,
+        "idle": 10000
+      },
+      "logging": false
+    }
+  },
+  "github": {
+    "client_id": "d530a5d9c552e390d942",
+    "client_secret": ""
+  },
+  "google": {
+    "client_id": "251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com",
+    "client_secret": ""
+  },
+  "web": {
+    "hostname": "http://localhost:8080",
+    "appRoot": "http://localhost:8080/app"
+  },
+  "client_config": {
+    "hostname": "http://localhost:8080",
+    "app_root_url": "http://localhost:8080/app",
+    "api_base_url": "http://localhost:8080",
+    "google_client_id": "251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com",
+    "github_client_id": "d530a5d9c552e390d942"
+  }
+}
