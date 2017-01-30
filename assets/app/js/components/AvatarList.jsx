@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
-import UserAvatar from './UserAvatar.jsx'
 import _ from 'lodash'
+
+import UserAvatar from './UserAvatar.jsx'
 
 class AvatarList extends Component {
     constructor(props, context) {

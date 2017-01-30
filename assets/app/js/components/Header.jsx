@@ -2,17 +2,17 @@ import React, { Component } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Link } from 'react-router'
 import $ from 'jquery'
-import {logout} from '../utils/auth.js'
-import {getUserAvatar} from '../utils/general'
-import AutoComplete from 'material-ui/lib/auto-complete'
-import ThemeManager from 'material-ui/lib/styles/theme-manager'
-import MyRawTheme from '../myTheme'
-import ListItem from 'material-ui/lib/lists/list-item'
-import Avatar from 'material-ui/lib/avatar'
-import FontIcon from 'material-ui/lib/font-icon'
-import Code from '../icons/Code.jsx'
 import _ from 'lodash'
 import { browserHistory } from 'react-router'
+import {ListItem} from 'material-ui/List';
+import Avatar from 'material-ui/Avatar'
+import FontIcon from 'material-ui/FontIcon';
+import AutoComplete from 'material-ui/AutoComplete';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MyRawTheme from '../myTheme'
+import Code from '../icons/Code.jsx'
+import {logout} from '../utils/auth.js'
+import UserAvatar from './UserAvatar.jsx'
 
 let RATE_LIMIT_MS = 900
 let MIN_SEARCH_CHARS = 3
@@ -33,7 +33,7 @@ class Header extends Component {
     }
 
     getChildContext() {
-        return { muiTheme: ThemeManager.getMuiTheme(MyRawTheme) }
+        return { muiTheme: getMuiTheme(MyRawTheme) }
     }
 
     componentDidMount() {
@@ -114,7 +114,12 @@ class Header extends Component {
             color: 'white'
         }
 
-        let image = getUserAvatar(localStorage.getItem('display_image'), this.props.displayName)
+        let image = (
+          <UserAvatar
+            imgSrc={localStorage.getItem('display_image')}
+            displayName={this.props.displayName}
+          />
+        );
         let searchResults = null
         if (this.props.search.length === 0 && this.state.queryString.length >= MIN_SEARCH_CHARS) {
             let text = "There are no results that match your search"

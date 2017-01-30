@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
-import Checkbox from 'material-ui/lib/checkbox'
-import AvatarList from './AvatarList.jsx'
-import Divider from 'material-ui/lib/divider';
-import TaskModal from './TaskModal.jsx'
 import { bindActionCreators } from 'redux'
 import * as SocketActions from '../actions/SocketActions'
 import { connect } from 'react-redux'
-
 import {Grid, Row, Col} from 'react-bootstrap'
+import Checkbox from 'material-ui/Checkbox'
+import Divider from 'material-ui/Divider';
+
+import AvatarList from './AvatarList.jsx'
+import TaskModal from './TaskModal.jsx'
+
+
 
 class TaskRow extends Component {
     constructor(props, context) {

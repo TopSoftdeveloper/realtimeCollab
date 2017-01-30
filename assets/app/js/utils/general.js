@@ -1,4 +1,3 @@
-import Avatar from 'material-ui/lib/avatar';
 import React, { Component } from 'react'
 import {Tooltip, OverlayTrigger} from 'react-bootstrap'
 import vagueTime from 'vague-time'
@@ -89,39 +88,6 @@ export function filterUnique(arr) {
 		}
 	})
 	return uniqueArr
-}
-
-export function getUserAvatar(imgSrc, displayName, enableTooltip, isSquare, memberColour) {
-	let image = null
-	let className = ""
-	if (isSquare) className = "square-avatar"
-	let styles = {}
-
-	if (memberColour) {
-		styles = {
-			borderBottomStyle: 'solid',
-			borderBottomColor: memberColour,
-			borderBottomWidth: '7px'
-		}
-	}
-
-	if (imgSrc && imgSrc !== 'undefined') {
-		image = <Avatar size={36} src={imgSrc} className={className} style={styles}/>
-	} else {
-		image = <Avatar size={36} style={styles}>{displayName[0]}</Avatar>
-	}
-
-	if (enableTooltip) {
-		const tooltip = (
-				<Tooltip id={displayName}>{displayName}</Tooltip>
-		);
-		image = (
-				<OverlayTrigger placement="bottom" overlay={tooltip}>
-					{image}
-				</OverlayTrigger>
-				)
-	}
-	return image
 }
 
 // dump a list to string with separators.

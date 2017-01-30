@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
-import EventList from './EventList.jsx'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+
+import EventList from './EventList.jsx'
+
 class Newsfeed extends Component {
   constructor(props, context) {
     super(props, context);

@@ -3,7 +3,7 @@ import Steps from 'rc-steps'
 require('rc-steps/assets/index.css');
 require('rc-steps/assets/iconfont.css');
 import _ from 'lodash'
-import RaisedButton from 'material-ui/lib/raised-button'
+import RaisedButton from 'material-ui/RaisedButton';
 
 import FilesList from './FilesList.jsx'
 

@@ -1,8 +1,7 @@
 import React, {Component, PropTypes} from 'react';
-import FlatButton from 'material-ui/lib/flat-button'
-import Dialog from 'material-ui/lib/dialog';
-import Paper from 'material-ui/lib/paper';
-
+import FlatButton from 'material-ui/FlatButton'
+import Dialog from 'material-ui/Dialog';
+import Paper from 'material-ui/Paper';
 import { Form } from 'formsy-react'
 import FormsyText from 'formsy-material-ui/lib/FormsyText'
 import {Treebeard} from 'react-treebeard'
@@ -93,13 +92,13 @@ const TreebeardStyle = { // template from Treebeard src/themes/defaults.js https
 }
 
 const propTypes = {
-  treeNode: PropTypes.arrayOf(PropTypes.shape({
+  treeNode: PropTypes.shape({
     name: PropTypes.string.isRequired,
     id: PropTypes.number.isRequired,
     toggled: PropTypes.bool.isRequired,
     children: PropTypes.array,
     style: PropTypes.object,
-   }).isRequired).isRequired,
+  }).isRequired,
   handleClose: PropTypes.func.isRequired,
   onDialogSubmit: PropTypes.func.isRequired,
 };
@@ -149,13 +148,15 @@ class TreeModal extends Component {
         key={1}
         label="Cancel"
         secondary={true}
-        onTouchTap={handleClose} />,
+        onTouchTap={handleClose}
+      />,
       <FlatButton
         key={2}
         label="Submit"
         primary={true}
         onTouchTap={this.onDialogSubmit}
-        disabled={!this.state.canSubmit} />
+        disabled={!this.state.canSubmit}
+      />
     ]
     return(
       <Dialog
@@ -163,7 +164,8 @@ class TreeModal extends Component {
         title={"Select destination folder"}
         actions={actionButtons}
         onRequestClose={handleClose}
-        open={true}>
+        open={true}
+      >
         <Form
           onValid={this.enableSubmitButton}
           onInvalid={this.disableSubmitButton}
@@ -174,14 +176,14 @@ class TreeModal extends Component {
               data={treeNode}
               onToggle={this.onToggle}
               style={TreebeardStyle}
-              />
+            />
           </Paper>
           <FormsyText
             className = 'invisible'
             required
             value={this.state.cursor?this.state.cursor.id:''}
             name="hiddenInputPlaceHolder"
-            />
+          />
         </Form>
       </Dialog>
     )

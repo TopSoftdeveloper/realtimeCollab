@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
 import vagueTime from 'vague-time'
+
 import {acceptProject, declineProject}  from '../actions/ReduxTaskActions'
 import {getUserAvatar, toFuzzyTime} from '../utils/general'
 import {Button} from 'react-bootstrap'
@@ -37,7 +38,12 @@ class NotificationItem extends Component {
 
         let image = null
         if (this.props.user) {
-            image = getUserAvatar(this.props.user.display_image, this.props.user.display_name)
+            image = (
+              <UserAvatar
+                imgSrc={this.props.user.display_image}
+                displayName={this.props.user.display_name}
+              />
+            );
         }
 
         return (
@@ -91,7 +97,7 @@ class NotificationList extends Component {
     }
 }
 
-class Notifications extends Component {    
+class Notifications extends Component {
     render() {
         const {notifications, dispatch, users} = this.props;
         return (
@@ -102,7 +108,7 @@ class Notifications extends Component {
                     dispatch={dispatch}
                     users={users}
                 />
-            </div>            
+            </div>
         );
     }
 }

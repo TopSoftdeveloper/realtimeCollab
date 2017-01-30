@@ -1,25 +1,24 @@
 import React, { Component, PropTypes } from 'react'
 import Dropzone from 'react-dropzone'
 import _ from 'lodash'
-
 import {Table} from 'react-bootstrap'
-import LinearProgress from 'material-ui/lib/linear-progress'
-import Dialog from 'material-ui/lib/dialog';
-import RaisedButton from 'material-ui/lib/raised-button'
-import IconMenu from 'material-ui/lib/menus/icon-menu';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import IconButton from 'material-ui/lib/icon-button';
-import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
-import FlatButton from 'material-ui/lib/flat-button'
-import Divider from 'material-ui/lib/divider';
-import ContentCopyIcon from 'material-ui/lib/svg-icons/content/content-copy';
-import DeleteIcon from 'material-ui/lib/svg-icons/action/delete';
-import MoveIcon from 'material-ui/lib/svg-icons/action/input';
-import RenameIcon from 'material-ui/lib/svg-icons/editor/mode-edit';
-import RemoveRedEyeIcon from 'material-ui/lib/svg-icons/image/remove-red-eye';
-import CreateNewFolderIcon from 'material-ui/lib/svg-icons/file/create-new-folder';
-import FileUploadIcon from 'material-ui/lib/svg-icons/file/file-upload';
-import CardHeader from 'material-ui/lib/card/card-header';
+import LinearProgress from 'material-ui/LinearProgress';
+import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton'
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import FlatButton from 'material-ui/FlatButton'
+import Divider from 'material-ui/Divider';
+import ContentCopyIcon from 'material-ui/svg-icons/content/content-copy';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
+import MoveIcon from 'material-ui/svg-icons/action/input';
+import RenameIcon from 'material-ui/svg-icons/editor/mode-edit';
+import RemoveRedEyeIcon from 'material-ui/svg-icons/image/remove-red-eye';
+import CreateNewFolderIcon from 'material-ui/svg-icons/file/create-new-folder';
+import FileUploadIcon from 'material-ui/svg-icons/file/file-upload';
+import {CardHeader} from 'material-ui/Card';
 import { Form } from 'formsy-react'
 import FormsyText from 'formsy-material-ui/lib/FormsyText'
 

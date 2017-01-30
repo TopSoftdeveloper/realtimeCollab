@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
-import {getUserAvatar, toFuzzyTime} from '../../utils/general'
 import {Button} from 'react-bootstrap'
+import UserAvatar from '../UserAvatar.jsx'
+import {toFuzzyTime} from '../../utils/general'
 var templates = require('../../../../../server/templates.js')
 
 class EventItem extends Component {
     render() {
         let event = this.props.event
-        let image = getUserAvatar(event.avatarUrl, event.displayName)
+        let image = (
+          <UserAvatar
+            imgSrc={event.avatarUrl}
+            displayName={event.displayName}
+          />
+        )
 
         return (
             <li className="event-item">

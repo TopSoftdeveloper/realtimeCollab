@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import MSnackbar from 'material-ui/lib/snackbar';
+import MSnackbar from 'material-ui/Snackbar';
+
 import {updateSnackbar}  from '../actions/ReduxTaskActions'
 
 class Snackbar extends Component {

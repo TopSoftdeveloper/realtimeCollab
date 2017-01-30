@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
-import List from './List.jsx'
-import { IconButton, Dialog, FlatButton, Paper } from 'material-ui'
-import { Form } from 'formsy-react'
-import FormsyText from 'formsy-material-ui/lib/FormsyText'
+import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog';
+import Paper from 'material-ui/Paper';
+import { Form } from 'formsy-react';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
+import List from './List.jsx';
 
 class LeftPanel extends Component {
     constructor(props, context) {

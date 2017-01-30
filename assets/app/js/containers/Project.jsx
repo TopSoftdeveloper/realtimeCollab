@@ -2,20 +2,19 @@ import React, { Component, PropTypes } from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { browserHistory } from 'react-router'
 import * as Actions from '../actions/ReduxTaskActions';
+import {Tabs, Tab} from 'material-ui/Tabs';
+
 import ProjectMilestoneView from './ProjectMilestoneView.jsx'
 import ProjectFileView from './ProjectFileView.jsx'
 import ProjectNewsfeedView from './ProjectNewsfeedView.jsx'
 import ProjectSettingView from './ProjectSettingView.jsx'
 import _404 from '../components/_404.jsx'
-
 import {getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
 import {getCurrentProject, getProjectActiveUsers, getProjectPendingUsers} from '../selector'
 
-import Tabs from 'material-ui/lib/tabs/tabs'
-import Tab from 'material-ui/lib/tabs/tab'
-import { browserHistory } from 'react-router'
-let AppConstants = require('../AppConstants');
+const AppConstants = require('../AppConstants');
 
 class Project extends Component {
     constructor(props, context) {

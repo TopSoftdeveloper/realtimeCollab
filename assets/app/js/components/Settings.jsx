@@ -1,20 +1,19 @@
 import React, { Component, PropTypes } from 'react'
 import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert, Button } from 'react-bootstrap'
 import _ from 'lodash'
-let AppConstants = require('../AppConstants');
-import {getCurrentProject} from '../utils/general'
-import LoadingIndicator from './LoadingIndicator.jsx'
 import { browserHistory } from 'react-router'
-import Github from './Github/Github.jsx'
-import Card from 'material-ui/lib/card/card';
-import CardHeader from 'material-ui/lib/card/card-header';
-import CardText from 'material-ui/lib/card/card-text';
-import FontIcon from 'material-ui/lib/font-icon';
-import {APP_ROOT_URL, PATH} from '../AppConstants'
-import RaisedButton from 'material-ui/lib/raised-button'
+import {Card, CardHeader, CardText} from 'material-ui/Card';
+import FontIcon from 'material-ui/FontIcon';
+import RaisedButton from 'material-ui/RaisedButton'
+
 import {GITHUB_CLIENT_ID} from '../AppConstants'
 import {getGithubAuthCode} from '../utils/general'
 import {githubOAuth} from '../utils/apiUtil'
+let AppConstants = require('../AppConstants');
+import {APP_ROOT_URL, PATH} from '../AppConstants'
+import {getCurrentProject} from '../utils/general'
+import LoadingIndicator from './LoadingIndicator.jsx'
+import Github from './Github/Github.jsx'
 
 class Settings extends Component {
     constructor(props, context) {

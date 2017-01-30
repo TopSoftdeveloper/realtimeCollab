@@ -1,5 +1,5 @@
 import React, {PropTypes } from 'react'
-import Avatar from 'material-ui/lib/avatar';
+import Avatar from 'material-ui/Avatar';
 import {Tooltip, OverlayTrigger} from 'react-bootstrap'
 
 const UserAvatar = ({imgSrc, displayName, enableTooltip, isSquare, memberColour}) => {
@@ -34,7 +34,7 @@ const UserAvatar = ({imgSrc, displayName, enableTooltip, isSquare, memberColour}
 }
 
 UserAvatar.proptypes = {
-  imgSrc: PropTypes.string,
+  imgSrc: PropTypes.string.isRequired,
   displayName:PropTypes.string.isRequired,
   enableTooltip: PropTypes.bool,
   isSquare: PropTypes.bool,

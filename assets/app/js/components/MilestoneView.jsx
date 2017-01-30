@@ -2,17 +2,14 @@ import React, { Component, PropTypes } from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import _ from 'lodash'
 import $ from 'jquery'
-
-import FontIcon from 'material-ui/lib/font-icon';
-import Toolbar from 'material-ui/lib/toolbar/toolbar';
-import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
-import ToolbarSeparator from 'material-ui/lib/toolbar/toolbar-separator';
-import Paper from 'material-ui/lib/paper';
-import RaisedButton from 'material-ui/lib/raised-button';
-import FlatButton from 'material-ui/lib/flat-button';
-import DropDownMenu from 'material-ui/lib/DropDownMenu';
-import MenuItem from 'material-ui/lib/menus/menu-item'
-import ClearIcon from 'material-ui/lib/svg-icons/content/clear'
+import FontIcon from 'material-ui/FontIcon';
+import {Toolbar, ToolbarGroup, ToolbarSeparator} from 'material-ui/Toolbar';
+import Paper from 'material-ui/Paper';
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
+import ClearIcon from 'material-ui/svg-icons/content/clear'
 import {Alert, Tooltip, OverlayTrigger} from 'react-bootstrap'
 
 import MilestoneModal from './MilestoneModal.jsx'

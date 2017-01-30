@@ -2,16 +2,16 @@ import React, { Component } from 'react'
 import * as SocketActions from '../actions/SocketActions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
-import Paper from 'material-ui/lib/paper'
-import Divider from 'material-ui/lib/divider'
-import AddIcon from 'material-ui/lib/svg-icons/content/add'
-import Dialog from 'material-ui/lib/dialog';
-import { IconButton, IconMenu, FlatButton } from 'material-ui'
-import MenuItem from 'material-ui/lib/menus/menu-item'
-import SelectField from 'material-ui/lib/select-field';
-import Toolbar from 'material-ui/lib/toolbar/toolbar';
-import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
+import Paper from 'material-ui/Paper'
+import Divider from 'material-ui/Divider'
+import AddIcon from 'material-ui/svg-icons/content/add'
+import Dialog from 'material-ui/Dialog';
+import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import SelectField from 'material-ui/SelectField';
+import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
 import {Button, Grid, Row, Col} from 'react-bootstrap'
 
 import TaskRow from './TaskRow.jsx'

@@ -1,9 +1,9 @@
-import Colors from 'material-ui/lib/styles/colors';
+import {red500, pink500, purple500, deepPurple500, indigo500, blue500, lightBlue500, cyan500, teal500, green500, lightGreen500, lime500, yellow500, amber500, orange500, deepOrange500, brown500, blueGrey500, grey500} from 'material-ui/styles/colors.js';
 
-let UserColours = [Colors.red500, Colors.pink500, Colors.purple500, Colors.deepPurple500,
-    Colors.indigo500, Colors.blue500, Colors.lightBlue500, Colors.cyan500, Colors.teal500,
-    Colors.green500, Colors.lightGreen500, Colors.lime500, Colors.yellow500, Colors.amber500,
-    Colors.orange500, Colors.deepOrange500, Colors.brown500, Colors.blueGrey500, Colors.grey500]
+let UserColours = [red500, pink500, purple500, deepPurple500,
+    indigo500, blue500, lightBlue500, cyan500, teal500,
+    green500, lightGreen500, lime500, yellow500, amber500,
+    orange500, deepOrange500, brown500, blueGrey500, grey500]
 
 
 export default UserColours
