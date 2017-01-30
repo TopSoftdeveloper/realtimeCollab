@@ -7,8 +7,8 @@ chai.use(chaiEnzyme())
 
 import TreeModal from './../../../js/components/File/TreeModal.jsx';
 
-const shallowWrapperWithProps= (props) => shallow(<TreeModal {...props}/>)
-const mountWrapperWithProps= (props) => mount(<TreeModal {...props}/>)
+const shallowWrapperWithProps= (props) => shallow(<TreeModal {...props} />)
+const mountWrapperWithProps= (props) => mount(<TreeModal {...props} />)
 
 describe("TreeModal.jsx ", () => {
   describe("render without explosion and static testing", ()=>{
@@ -81,6 +81,39 @@ describe("TreeModal.jsx ", () => {
     it('pass correct value to TreeBeard', ()=> {
       expect(wrapper.find('TreeBeard').first()).to.have.prop('data').deep.equal(props.treeNode)
     });
+  });
+  describe("mount with a list of treeNodes", ()=>{
+    const handleCloseSpy = sinon.spy();
+    const onDialogSubmitSpy = sinon.spy();
+    const props = {
+      treeNode: {
+        name: 'root',
+        id: 1,
+        toggled: true,
+        children:[
+          {
+            name: 'folder1',
+            id: 2,
+            toggled: true,
+          },
+          {
+            name: 'folder2',
+            id: 3,
+            toggled: true,
+          },
+        ],
+      },
+      handleCloseSpy: handleCloseSpy,
+      onDialogSubmit: onDialogSubmitSpy,
+    };
+    const wrapper = shallowWrapperWithProps(props);
+    it('contains two action button', ()=> {
 
+      // console.log(wrapper.find('TreeBeard').first().mount().debug());
+      console.log(wrapper.html());
+      expect(wrapper.render().find('FlatButton')).to.have.length(2);
+      // expect(wrapper.find('TreeBeard').first()).to.have.prop('data').deep.equal(props.treeNode);
+
+    });
   });
 })

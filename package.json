@@ -11,7 +11,7 @@
     "build": "webpack -p --progress --optimize-minimize",
     "dev": "concurrently --raw --kill-others \"webpack --progress --color --watch \" \"cross-env NODE_ENV=dev nodemon server/server.js\"",
     "test": "mocha --compilers js:babel-core/register --recursive  test",
-    "testF": "mocha --compilers js:babel-core/register \"./assets/app/test\" --recursive -w",
+    "testF": "mocha --require ./assets/app/test/.setup.js --compilers js:babel-core/register \"./assets/app/test\" --recursive -w",
     "coverageB": "istanbul cover _mocha -- -R spec",
     "coverageF": "gulp front_end_test;",
     "coverage": "gulp front_end_test_subset;"
@@ -100,6 +100,7 @@
     "gulp-jsx-coverage": "^0.3.8",
     "isparta": "^4.0.0",
     "istanbul": "^1.0.0-alpha",
+    "jsdom": "^9.9.1",
     "jsx-loader": "0.13.2",
     "mocha": "^2.3.4",
     "nodemon": "1.8.1",
