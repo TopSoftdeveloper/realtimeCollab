@@ -424,7 +424,7 @@ class FilesList extends Component {
           <BreadcrumbInstance
             key={'breadcrumb_' + projectId}
             directories={directoryStructure}
-            initUpperLevelFolder={actions.initUpperLevelFolder.bind(this, projectId)}
+            changeDirectory={actions.initUpperLevelFolder.bind(this, projectId)}
             />
         </div>
         <div style={{float:'right' }}>
