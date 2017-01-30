@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, PropTypes} from 'react';
 import FlatButton from 'material-ui/lib/flat-button'
 import Dialog from 'material-ui/lib/dialog';
 import Paper from 'material-ui/lib/paper';
@@ -91,6 +91,19 @@ const TreebeardStyle = { // template from Treebeard src/themes/defaults.js https
     }
   }
 }
+
+const propTypes = {
+  treeNode: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
+    toggled: PropTypes.bool.isRequired,
+    children: PropTypes.array,
+    style: PropTypes.object,
+   }).isRequired).isRequired,
+  handleClose: PropTypes.func.isRequired,
+  onDialogSubmit: PropTypes.func.isRequired,
+};
+
 class TreeModal extends Component {
   constructor(props, context) {
     super(props, context);
@@ -174,5 +187,5 @@ class TreeModal extends Component {
     )
   }
 }
-
+TreeModal.propTypes = propTypes;
 export default TreeModal

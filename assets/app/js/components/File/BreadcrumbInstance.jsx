@@ -1,8 +1,11 @@
-import React, {PropTypes } from 'react'
+import React, {PropTypes} from 'react'
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 
 const propTypes = {
-  directories: PropTypes.array.isRequired,
+  directories: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
+   }).isRequired).isRequired,
   changeDirectory: PropTypes.func.isRequired,
 };
 
@@ -21,7 +24,7 @@ const BreadcrumbInstance = ({directories, changeDirectory}) => {
       </BreadcrumbItem>
     )
   })
-  return  <Breadcrumb>{breadcrumbItems}</Breadcrumb>
+  return <Breadcrumb>{breadcrumbItems}</Breadcrumb>
 }
 
 BreadcrumbInstance.propTypes = propTypes;
