@@ -8,8 +8,14 @@ global.expect = require('chai').expect;
 
 global.chai.should();
 
-beforeEach(() => {
+beforeEach((done) => {
   // TODO: Consider wrapping all tests in a transaction for more performant teardowns.
   // Recreate tables before each test.
-  sequelize.sync({ force: true });
+  sequelize
+    .query('SET FOREIGN_KEY_CHECKS = 0', { raw: true })
+    .then(() => sequelize.sync({ force: true }))
+    .then(() => sequelize.query('SET FOREIGN_KEY_CHECKS = 1', { raw: true }))
+    .then(() => {
+      done();
+    });
 });
