@@ -1,12 +1,12 @@
 import React from 'react'
-import { Route,IndexRoute, IndexRedirect } from 'react-router'
+import {Route, IndexRoute, IndexRedirect} from 'react-router'
 import App from '../containers/App.jsx'
 import Project from '../containers/Project.jsx'
 import _404 from '../components/_404.jsx'
 import Notifications from '../components/Notifications.jsx'
 import SearchResults from '../components/SearchResults.jsx'
 import Dashboard from '../components/Dashboard.jsx'
-let AppConstants = require('../AppConstants');
+import * as AppConstants from '../AppConstants';
 
 
 export default (

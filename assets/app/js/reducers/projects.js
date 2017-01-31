@@ -1,4 +1,4 @@
-import AppConstants from '../AppConstants';
+import * as AppConstants from '../AppConstants';
 import assign from 'object-assign';
 import _ from 'lodash';
 // Example state tree:
@@ -46,7 +46,7 @@ export default function projects(state=[], action) {
                     assign({}, project, p): project)
         case AppConstants.ADD_DIRECTORY:
             return state.map(project => {
-              // avoid adding duplicate directory 
+              // avoid adding duplicate directory
               if (project.id == action.id && (_.findIndex(project.directory_structure, o => {return o.id == action.directory.id})) === -1) {
                 return assign({}, project, {
                     directory_structure : [...project.directory_structure, action.directory]

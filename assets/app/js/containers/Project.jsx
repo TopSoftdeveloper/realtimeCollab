@@ -13,8 +13,7 @@ import ProjectSettingView from './ProjectSettingView.jsx'
 import _404 from '../components/_404.jsx'
 import {getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
 import {getCurrentProject, getProjectActiveUsers, getProjectPendingUsers} from '../selector'
-
-const AppConstants = require('../AppConstants');
+import * as AppConstants from '../AppConstants';
 
 class Project extends Component {
     constructor(props, context) {

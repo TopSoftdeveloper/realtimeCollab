@@ -1,16 +1,17 @@
-import React, {Component, PropTypes} from 'react'
-import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert, Button } from 'react-bootstrap'
-import _ from 'lodash'
+import React, {Component, PropTypes} from 'react';
+import { Panel, ListGroup, ListGroupItem, FormGroup, FormControl, ControlLabel, InputGroup, Alert, Button } from 'react-bootstrap';
+import _ from 'lodash';
 import { browserHistory } from 'react-router'
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton'
 
-import {getGithubAuthCode, getCurrentProject} from '../utils/general'
+import {getGithubAuthCode} from '../utils/general'
 import {githubOAuth} from '../utils/apiUtil'
 import {APP_ROOT_URL, PATH, GITHUB_CLIENT_ID, INVITED_TO_PROJECT, USER_ALREADY_EXISTS, USER_NOT_FOUND} from '../AppConstants';
 import LoadingIndicator from './LoadingIndicator.jsx'
 import Github from './Github/Github.jsx'
+
 
 class Settings extends Component {
     constructor(props, context) {
@@ -60,21 +61,21 @@ class Settings extends Component {
         browserHistory.push(projectUrl)
     }
 
-    handleChange() {
+    handleChange(event) {
         this.setState({
-            inputEmail: this.refs.addMemberInput.getValue()
+            inputEmail: event.target.value
         });
     }
 
-    projectNameChange() {
+    projectNameChange(event) {
         this.setState({
-            inputProjectName: this.refs.projectNameInput.getValue()
+            inputProjectName: event.target.value
         });
     }
 
-    chatNameChange() {
+    chatNameChange(event) {
         this.setState({
-            chatName: this.refs.chatNameInput.getValue()
+            chatName: event.target.value
         });
     }
 
@@ -141,7 +142,6 @@ class Settings extends Component {
                 <Alert
                     bsStyle="success"
                     onDismiss={this.handleAlertDismiss.bind(this)}
-                    dismissAfter={4000}
                     >
                     Successfully invited!
                 </Alert>
@@ -151,7 +151,6 @@ class Settings extends Component {
                 <Alert
                     bsStyle="warning"
                     onDismiss={this.handleAlertDismiss.bind(this)}
-                    dismissAfter={4000}
                 >
                     User already invited!
                 </Alert>
@@ -161,7 +160,6 @@ class Settings extends Component {
                 <Alert
                     bsStyle="danger"
                     onDismiss={this.handleAlertDismiss.bind(this)}
-                    dismissAfter={4000}
                 >
                     User not found!
                 </Alert>
@@ -208,8 +206,8 @@ class Settings extends Component {
         }
 
 
-        let googlePanel = <LoadingIndicator className="loading-indicator-left" size={0.4}/>
-        let githubPanel = <LoadingIndicator className="loading-indicator-left" size={0.4}/>
+        let googlePanel = <LoadingIndicator className="loading-indicator-left" />
+        let githubPanel = <LoadingIndicator className="loading-indicator-left" />
 
         if (!this.props.app.files.loading) {
             let style = {}
@@ -272,14 +270,19 @@ class Settings extends Component {
                     <ListGroupItem>
                         {alertPanel}
                         <form onSubmit={this.inviteMember.bind(this)}>
-                            <Input
+                          <ControlLabel>Search by email</ControlLabel>
+                          <InputGroup>
+
+                            <FormControl
                                 type="email"
-                                label="Search by email"
-                                ref='addMemberInput'
-                                buttonAfter={<ButtonInput value="Invite member" type="submit"/>}
+                                inputRef={ref => { this.addMemberInput = ref; }}
                                 value={this.state.inputEmail}
                                 onChange={this.handleChange.bind(this)}
                             />
+                            <InputGroup.Button>
+                              <Button type="submit">Invite member</Button>
+                            </InputGroup.Button>
+                          </InputGroup>
                         </form>
                     </ListGroupItem>
                 </ListGroup>
@@ -294,29 +297,40 @@ class Settings extends Component {
 
                 <Panel header='Chat Room' bsStyle="info">
                     <form onSubmit={this.changeChatRoom.bind(this)}>
-                        <Input
+                      <FormGroup>
+                        <ControlLabel>{chatLabel}</ControlLabel>
+                        <InputGroup>
+                        <FormControl
                             type="text"
-                            label={chatLabel}
-                            ref='chatNameInput'
+                            inputRef={ref => { this.chatNameInput = ref; }}
                             value={this.state.chatName}
                             placeholder="Chat room name"
                             onChange={this.chatNameChange.bind(this)}
-                            buttonAfter={<ButtonInput value="Join" type="submit"/>}
                         />
+                        <InputGroup.Button>
+                          <Button type="submit">Join</Button>
+                        </InputGroup.Button>
+                      </InputGroup>
+                      </FormGroup>
                     </form>
                 </Panel>
 
                 <Panel header='Options' bsStyle="info">
                     <form onSubmit={this.renameProject.bind(this)}>
-                        <Input
+                      <ControlLabel>{"Project name: " + this.props.project.content}</ControlLabel>
+                      <InputGroup>
+
+                        <FormControl
                             type="text"
-                            label={"Project name: " + this.props.project.content}
-                            ref='projectNameInput'
+                            inputRef={ref => { this.projectNameInput = ref; }}
                             value={this.state.inputProjectName}
                             placeholder="New project name"
                             onChange={this.projectNameChange.bind(this)}
-                            buttonAfter={<ButtonInput value="Rename" type="submit"/>}
                         />
+                        <InputGroup.Button>
+                          <Button type="submit">Rename</Button>
+                        </InputGroup.Button>
+                      </InputGroup>
                     </form>
                     <br/>
                 </Panel>
@@ -336,5 +350,4 @@ Settings.propTypes = {
   alerts: PropTypes.object.isRequired,
   repos: PropTypes.array
 }
-
 export default Settings;

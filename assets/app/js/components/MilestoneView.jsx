@@ -130,7 +130,7 @@ class MilestoneView extends Component {
 
 
             <Toolbar>
-              <ToolbarGroup firstChild={true} float="left">
+              <ToolbarGroup firstChild>
                 <AvatarList
                   className="milestone-online-users"
                   members={this.props.users.filter(user => user.online && !user.me)}
@@ -138,7 +138,7 @@ class MilestoneView extends Component {
                   colour={true}
                   />
               </ToolbarGroup>
-              <ToolbarGroup float="right">
+              <ToolbarGroup>
 
 
 
@@ -257,11 +257,13 @@ class MilestoneView extends Component {
 
             <div>{resetButton}</div>
             <Toolbar>
-              <ToolbarGroup firstChild={true} float="left">
+              <ToolbarGroup firstChild>
                 <OverlayTrigger placement="bottom" overlay={assigneeFilterTooltip}>
-                  <DropDownMenu maxHeight={300}
-                    value={this.state.assigneeFilter} onChange={this.applyAssigneeFilter.bind(this)}
-                    tooltipPosition="bottom-right">
+                  <DropDownMenu
+                    maxHeight={300}
+                    value={this.state.assigneeFilter}
+                    onChange={this.applyAssigneeFilter.bind(this)}
+                  >
                     {AssignesMenuItems}
                   </DropDownMenu>
                 </OverlayTrigger>
@@ -273,7 +275,7 @@ class MilestoneView extends Component {
                   />
 
               </ToolbarGroup>
-              <ToolbarGroup float="right">
+              <ToolbarGroup>
 
                 <FlatButton
                   label={this.state.sortByDeadlineDescending?'Earliest':'Oldest'}

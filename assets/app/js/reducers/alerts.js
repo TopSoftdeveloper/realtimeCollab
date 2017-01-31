@@ -1,7 +1,7 @@
-import AppConstants from '../AppConstants';
+import * as AppConstants from '../AppConstants';
 import assign from 'object-assign';
 
-// Example state tree: 
+// Example state tree:
 //{
 //     project_invitation: 'INVITED_TO_PROJECT/USER_NOT_FOUND/USER_ALREADY_EXISTS'
 //}
@@ -9,7 +9,7 @@ import assign from 'object-assign';
 export default function alerts(state={project_invitation: null}, action) {
     switch (action.type) {
         case AppConstants.PROJECT_INVITATION_ALERT:
-            return assign({}, state, {project_invitation : action.alert});        
+            return assign({}, state, {project_invitation : action.alert});
         default:
             return state;
     }

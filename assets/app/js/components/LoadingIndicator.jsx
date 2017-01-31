@@ -3,7 +3,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 class LoadingIndicator extends Component {
     render() {
-        let size = 0.6
+        let size = 40
         if (this.props.size) size = this.props.size
         return (
         <div className={this.props.className}>

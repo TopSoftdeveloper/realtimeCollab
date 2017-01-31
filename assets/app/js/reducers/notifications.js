@@ -1,11 +1,11 @@
-import AppConstants from '../AppConstants';
+import * as AppConstants from '../AppConstants';
 import assign from 'object-assign';
 // Example state tree:
 // [
 //     {
 //         id: 'notif-1',
 //         text: 'Cristina invited you to the project CS3201',
-//         time: new Date().toISOString(), 
+//         time: new Date().toISOString(),
 //         link: 'http://www.nus.edu.sg/',
 //         read: false,
 //         type: 'INVITE_TO_PROJECT',
