@@ -195,8 +195,8 @@ class Header extends Component {
                                 <div id="hangouts-btn-placeholder"></div>
                             </div>
                         </li>
-                        <li className="notif-li"><Link to="/app/notifications">Notifs  &nbsp;
-                            {notifsCount}</Link></li>
+                        <li className="notif-li"><Link to="/app/notifications"><span>Notifs  &nbsp;
+                            {notifsCount}</span></Link></li>
                         <li className="display-pic-li">{image}</li>
                         <li className="dropdown">
                             <a href="#" className="dropdown-toggle"

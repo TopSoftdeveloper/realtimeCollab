@@ -131,9 +131,9 @@ class FilesList extends Component {
         style: {
           backgroundColor:'white'
         },
-        'name':folder.name,
-        'id':folder.id,
-        'parents':folder.parents,
+        name: folder.name,
+        id: folder.id,
+        parents: folder.parents,
         toggled: true
       }
       data.disabled = data.id === disableFileId
@@ -150,7 +150,15 @@ class FilesList extends Component {
       }
     })
 
-    let root = {style: {backgroundColor:'white'}, name:'root',toggled: true, id:this.props.rootFolderId, children:[]}
+    let root = {
+      style: {
+        backgroundColor:'white'
+      },
+      name:'root',
+      toggled: true,
+      id:this.props.rootFolderId,
+      children:[]
+    }
     let queue = [root]
 
     while(queue.length > 0) {
@@ -269,7 +277,8 @@ class FilesList extends Component {
         ref={(node) => { this.dropzone = node; }}
         onDrop={this.onDrop.bind(this)}
         multiple={false}
-        className={"drive-drop-zone "+ className}>
+        className={"drive-drop-zone "+ className}
+      >
         <p>
           Drop a file here, or click to select a file to upload.
         </p>

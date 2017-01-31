@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import React, {Component, PropTypes} from 'react'
 import { Panel, ListGroup, ListGroupItem, ButtonInput, Input, Alert, Button } from 'react-bootstrap'
 import _ from 'lodash'
 import { browserHistory } from 'react-router'
@@ -6,12 +6,9 @@ import {Card, CardHeader, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton'
 
-import {GITHUB_CLIENT_ID} from '../AppConstants'
-import {getGithubAuthCode} from '../utils/general'
+import {getGithubAuthCode, getCurrentProject} from '../utils/general'
 import {githubOAuth} from '../utils/apiUtil'
-let AppConstants = require('../AppConstants');
-import {APP_ROOT_URL, PATH} from '../AppConstants'
-import {getCurrentProject} from '../utils/general'
+import {APP_ROOT_URL, PATH, GITHUB_CLIENT_ID, INVITED_TO_PROJECT, USER_ALREADY_EXISTS, USER_NOT_FOUND} from '../AppConstants';
 import LoadingIndicator from './LoadingIndicator.jsx'
 import Github from './Github/Github.jsx'
 
@@ -139,7 +136,7 @@ class Settings extends Component {
         ));
 
         let alertPanel = (<br></br>);
-        if (alertStatus === AppConstants.INVITED_TO_PROJECT) {
+        if (alertStatus === INVITED_TO_PROJECT) {
             alertPanel = (
                 <Alert
                     bsStyle="success"
@@ -149,7 +146,7 @@ class Settings extends Component {
                     Successfully invited!
                 </Alert>
             );
-        } else if (alertStatus === AppConstants.USER_ALREADY_EXISTS) {
+        } else if (alertStatus === USER_ALREADY_EXISTS) {
             alertPanel = (
                 <Alert
                     bsStyle="warning"
@@ -159,7 +156,7 @@ class Settings extends Component {
                     User already invited!
                 </Alert>
             );
-        } else if (alertStatus === AppConstants.USER_NOT_FOUND) {
+        } else if (alertStatus === USER_NOT_FOUND) {
             alertPanel = (
                 <Alert
                     bsStyle="danger"

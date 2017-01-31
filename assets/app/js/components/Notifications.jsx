@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
 import vagueTime from 'vague-time'
-
+import UserAvatar from './UserAvatar.jsx';
 import {acceptProject, declineProject}  from '../actions/ReduxTaskActions'
 import {getUserAvatar, toFuzzyTime} from '../utils/general'
 import {Button} from 'react-bootstrap'

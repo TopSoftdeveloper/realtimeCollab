@@ -12,4 +12,4 @@ class LoadingIndicator extends Component {
     }
 }
 
-export default LoadingIndicator
+export default LoadingIndicator;

@@ -4,7 +4,7 @@ import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap'
 const propTypes = {
   directories: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
    }).isRequired).isRequired,
   changeDirectory: PropTypes.func.isRequired,
 };

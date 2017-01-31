@@ -42,7 +42,7 @@ class List extends Component {
                     <table>
                         <tbody>
                         <tr>
-                            <td><Link to="/app/dashboard">Projects</Link></td>
+                            <td><Link to="/app/dashboard"><span>Projects</span></Link></td>
                             <td><i
                                 className={iconClassName}
                                 onClick={onAddProject}>add_circle</i>

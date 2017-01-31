@@ -165,9 +165,9 @@ class Dashboard extends Component {
         <Paper zDepth={0} className='main-content'>
           <Toolbar
             >
-            <ToolbarGroup firstChild={true} float="left">
+            <ToolbarGroup firstChild={true}>
             </ToolbarGroup>
-            <ToolbarGroup float="right">
+            <ToolbarGroup>
               <ToolbarSeparator />
               <FlatButton
 
