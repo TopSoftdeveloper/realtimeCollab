@@ -94,7 +94,10 @@ const TreebeardStyle = { // template from Treebeard src/themes/defaults.js https
 const propTypes = {
   treeNode: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    id: PropTypes.number.isRequired,
+    id: PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number,
+    ]).isRequired,
     toggled: PropTypes.bool.isRequired,
     children: PropTypes.array,
     style: PropTypes.object,

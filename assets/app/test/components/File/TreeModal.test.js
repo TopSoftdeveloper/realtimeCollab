@@ -5,28 +5,11 @@ import sinon from 'sinon';
 import chaiEnzyme from 'chai-enzyme';
 chai.use(chaiEnzyme())
 
+import {mountWithContext} from '../../testUtils.js'
 import TreeModal from './../../../js/components/File/TreeModal.jsx';
-
-const shallowWrapperWithProps= (props) => shallow(<TreeModal {...props} />)
-const mountWrapperWithProps= (props) => mount(<TreeModal {...props} />)
 
 describe("TreeModal.jsx ", () => {
   describe("render without explosion and static testing", ()=>{
-    it("renders with empty props", ()=> {
-      expect(shallowWrapperWithProps()).to.exist;
-    });
-  });
-  describe("renders with a empty treeNode", ()=>{
-    const handleCloseSpy = sinon.spy();
-    const onDialogSubmitSpy = sinon.spy();
-    const props = {
-      treeNode: {},
-      handleCloseSpy: handleCloseSpy,
-      onDialogSubmit: onDialogSubmitSpy,
-    }
-    expect(shallowWrapperWithProps(props)).to.exist;
-  });
-  describe("renders with full props", ()=>{
     const props = {
       treeNode: {
         name: 'folder',
@@ -37,7 +20,7 @@ describe("TreeModal.jsx ", () => {
       handleClose: sinon.spy(),
       onDialogSubmit: sinon.spy(),
     }
-    const wrapper = shallowWrapperWithProps(props);
+    const wrapper = shallow(<TreeModal {...props} />);
     it('render with exactly one dialog/TreeBeard', ()=> {
       expect(wrapper).to.have.exactly(1).descendants('Dialog');
       expect(wrapper).to.have.exactly(1).descendants('TreeBeard');
@@ -53,6 +36,7 @@ describe("TreeModal.jsx ", () => {
       expect(wrapper).to.have.state('canSubmit', false)
     });
   });
+
   describe("renders with a list of treeNodes", ()=>{
     const handleCloseSpy = sinon.spy();
     const onDialogSubmitSpy = sinon.spy();
@@ -77,11 +61,12 @@ describe("TreeModal.jsx ", () => {
       handleCloseSpy: handleCloseSpy,
       onDialogSubmit: onDialogSubmitSpy,
     };
-    const wrapper = shallowWrapperWithProps(props);
+    const wrapper = shallow(<TreeModal {...props} />);
     it('pass correct value to TreeBeard', ()=> {
       expect(wrapper.find('TreeBeard').first()).to.have.prop('data').deep.equal(props.treeNode)
     });
   });
+
   describe("mount with a list of treeNodes", ()=>{
     const handleCloseSpy = sinon.spy();
     const onDialogSubmitSpy = sinon.spy();
@@ -106,14 +91,13 @@ describe("TreeModal.jsx ", () => {
       handleCloseSpy: handleCloseSpy,
       onDialogSubmit: onDialogSubmitSpy,
     };
-    const wrapper = shallowWrapperWithProps(props);
+    const wrapper = mountWithContext(<TreeModal {...props}/>);
     it('contains two action button', ()=> {
-
-      // console.log(wrapper.find('TreeBeard').first().mount().debug());
-      console.log(wrapper.html());
-      expect(wrapper.render().find('FlatButton')).to.have.length(2);
+      console.log(wrapper.debug());
+      // expect(wrapper.find('FlatButton')).to.have.length(2);
       // expect(wrapper.find('TreeBeard').first()).to.have.prop('data').deep.equal(props.treeNode);
 
     });
   });
+
 })

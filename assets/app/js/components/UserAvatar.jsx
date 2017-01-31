@@ -38,7 +38,7 @@ UserAvatar.proptypes = {
   displayName:PropTypes.string.isRequired,
   enableTooltip: PropTypes.bool,
   isSquare: PropTypes.bool,
-  memberColour: PropTypes.string
+  memberColour: PropTypes.string,
 }
 UserAvatar.defaultProps = {
   enableTooltip: false,

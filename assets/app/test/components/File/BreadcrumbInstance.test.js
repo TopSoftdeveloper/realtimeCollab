@@ -11,13 +11,18 @@ const shallowWrapperWithProps= (props) => shallow(<BreadcrumbInstance {...props}
 
 describe("BreadcrumbInstance.jsx ", () => {
   describe("Able to render", ()=>{
-    it("should throw TypeError error with incorrect prop directories", ()=> {
-      expect(()=>shallowWrapperWithProps()).to.throw(TypeError);
-      expect(()=>shallowWrapperWithProps({directories:'132'})).to.throw(TypeError);
-    });
     it("renders without explosion", ()=> {
       const props = {
-        directories: ['root', 'folder1'],
+        directories: [
+          {
+            name:'root',
+            id: '1',
+          },
+          {
+            name:'folder1',
+            id: '2',
+          }
+        ],
         changeDirectory: ()=>null
       }
       expect(shallowWrapperWithProps(props)).to.exist;
@@ -40,11 +45,11 @@ describe("BreadcrumbInstance.jsx ", () => {
     const spy = sinon.spy();
     const props = {
       directories: [
-        {name:'root',id:1},
-        {name:'folder1',id:2},
-        {name:'folder2',id:3},
-        {name:'folder3',id:4},
-        {name:'folder4',id:5},
+        {name:'root',id:'1'},
+        {name:'folder1',id:'2'},
+        {name:'folder2',id:'3'},
+        {name:'folder3',id:'4'},
+        {name:'folder4',id:'5'},
       ],
       changeDirectory: spy
     }
@@ -76,7 +81,7 @@ describe("BreadcrumbInstance.jsx ", () => {
       const rootWrapper = wrapper.find('BreadcrumbItem').first();
       rootWrapper.simulate('click');
       expect(spy.calledOnce).to.equal(true);
-      expect(spy.calledWith(1)).to.equal(true);
+      expect(spy.calledWith('1')).to.equal(true);
     });
     it("changeDirectory is not triggered with correct directory id after click on last item", ()=> {
       spy.reset()
