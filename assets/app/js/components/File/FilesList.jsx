@@ -23,43 +23,22 @@ import { Form } from 'formsy-react'
 import FormsyText from 'formsy-material-ui/lib/FormsyText'
 
 import BreadcrumbInstance from './BreadcrumbInstance.jsx'
-import {toFuzzyTime} from '../../utils/general'
+import {getFileIcon, toFuzzyTime} from '../../utils/general'
 import {insertFile, deleteFile, updateFile}  from '../../actions/ReduxTaskActions'
 import LoadingIndicator from '../LoadingIndicator.jsx'
 import TreeModal from './TreeModal.jsx'
 
 
-const IMG_ROOT = '../../../../images/'
+
 
 const isFolder = file =>  file.mimeType ==='application/vnd.google-apps.folder'
 const isNotTrash = file => !file.trashed
-
-const getImage = type => {
-  if (type.includes('image/')) {
-    return IMG_ROOT + 'icon_11_image_list.png'
-  } else if (type.includes('spreadsheet')) {
-    return IMG_ROOT + 'icon_11_spreadsheet_list.png'
-  } else if (type.includes('presentation')) {
-    return IMG_ROOT + 'icon_11_presentation_list.png'
-  } else if (type.includes('pdf')) {
-    return IMG_ROOT + 'icon_12_pdf_list.png'
-  } else if (type.includes('zip') || type.includes('compressed')) {
-    return IMG_ROOT + 'icon_9_archive_list.png'
-  } else if (type.includes('word')) {
-    return IMG_ROOT + 'icon_11_document_list.png'
-  } else if (type.includes('text/')) {
-    return IMG_ROOT + 'icon_10_text_list.png'
-  } else {
-    return IMG_ROOT + 'generic_app_icon_16.png'
-  }
-}
-
 
 class FilesList extends Component {
   constructor(props, context) {
     super(props, context)
     this.state = {
-      selectedFile: {},
+      selectedFile: null,
       isRenameModalOpen: false,
       canSubmit:false,
       isMoveModalOpen:false,
@@ -113,7 +92,7 @@ class FilesList extends Component {
     }
   }
   createFilePreview(fileData) {
-    let imgSrc = getImage(fileData.type)
+    let imgSrc = getFileIcon(fileData.type)
     let currDirectoryId = _.last(this.props.directoryStructure).id
     this.props.dispatch(insertFile({
       iconLink: imgSrc,
@@ -182,7 +161,7 @@ class FilesList extends Component {
     });
   }
 
-  handleRenmaeModalOpen(file) {
+  handleRenameModalOpen(file) {
     this.setState({
       isRenameModalOpen: true,
       selectedFile: file,
@@ -309,6 +288,7 @@ class FilesList extends Component {
   renderFilePreview(file) {
     let tableData = (
       <td>
+        <div className="pull-right">
         <FlatButton
           label="Upload"
           secondary={true}
@@ -319,6 +299,7 @@ class FilesList extends Component {
           primary={true}
           onTouchTap={this.removePreview.bind(this, file.id)}
           />
+        </div>
       </td>
     )
     if (file.uploading) {
@@ -333,13 +314,13 @@ class FilesList extends Component {
     return (
       <tr className="table-row-file" key={file.id}>
         <td>
-          <img src={file.iconLink}/>
-          <span className="table-filename">
-            {file.name}
-          </span>
+          <CardHeader
+            style={{padding: 5, height:'inherit'}}
+            title={file.name}
+            avatar={<img style={{width: 15}} src={file.iconLink}/>}
+          />
         </td>
         {tableData}
-        <td></td>
       </tr>
     )
   }
@@ -363,15 +344,37 @@ class FilesList extends Component {
             iconButtonElement={<IconButton><MoreVertIcon/></IconButton>}
             anchorOrigin={{horizontal: 'right', vertical: 'top'}}
             targetOrigin={{horizontal: 'left', vertical: 'top'}}
-            >
-            <MenuItem primaryText="preview" leftIcon={<RemoveRedEyeIcon />} onTouchTap={this.navigate.bind(this, file.id)}/>
+          >
+            <MenuItem
+              primaryText="preview"
+              leftIcon={<RemoveRedEyeIcon />}
+              onTouchTap={this.navigate.bind(this, file.id)}
+            />
             <Divider/>
-            { !isFolder(file) && <MenuItem primaryText="make a copy" leftIcon={<ContentCopyIcon />} onTouchTap={this.copyFile.bind(this, file.id)}/>}
-            <MenuItem primaryText="Rename" leftIcon={<RenameIcon />} onTouchTap={this.handleRenmaeModalOpen.bind(this, file)} />
-            <MenuItem primaryText="Move" leftIcon={<MoveIcon />} onTouchTap={this.handleMoveModalOpen.bind(this, file)} />
+            {
+              !isFolder(file) &&
+              <MenuItem
+                 primaryText="make a copy"
+                leftIcon={<ContentCopyIcon />}
+                onTouchTap={this.copyFile.bind(this, file.id)}
+              />
+            }
+            <MenuItem
+              primaryText="Rename"
+              leftIcon={<RenameIcon />}
+              onTouchTap={this.handleRenameModalOpen.bind(this, file)}
+            />
+            <MenuItem
+              primaryText="Move"
+              leftIcon={<MoveIcon />}
+              onTouchTap={this.handleMoveModalOpen.bind(this, file)}
+            />
             <Divider/>
-            <MenuItem primaryText="Delete" leftIcon={<DeleteIcon />} onTouchTap={this.removeFile.bind(this, file.id)}/>
-
+            <MenuItem
+              primaryText="Delete"
+              leftIcon={<DeleteIcon />}
+              onTouchTap={this.removeFile.bind(this, file.id)}
+            />
           </IconMenu>
         </td>
       </tr>

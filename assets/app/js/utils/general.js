@@ -2,6 +2,28 @@ import React, { Component } from 'react'
 import {Tooltip, OverlayTrigger} from 'react-bootstrap'
 import vagueTime from 'vague-time'
 
+
+export const getFileIcon = type => {
+	const IMG_ROOT = '../../../images/'
+  if (type.includes('image/')) {
+    return IMG_ROOT + 'icon_11_image_list.png'
+  } else if (type.includes('spreadsheet')) {
+    return IMG_ROOT + 'icon_11_spreadsheet_list.png'
+  } else if (type.includes('presentation')) {
+    return IMG_ROOT + 'icon_11_presentation_list.png'
+  } else if (type.includes('pdf')) {
+    return IMG_ROOT + 'icon_12_pdf_list.png'
+  } else if (type.includes('zip') || type.includes('compressed')) {
+    return IMG_ROOT + 'icon_9_archive_list.png'
+  } else if (type.includes('word')) {
+    return IMG_ROOT + 'icon_11_document_list.png'
+  } else if (type.includes('text/')) {
+    return IMG_ROOT + 'icon_10_text_list.png'
+  } else {
+    return IMG_ROOT + 'generic_app_icon_16.png'
+  }
+};
+
 export function toFuzzyTime(time) {
 	// Display exact date if older than 1 day
 	let eventTime = new Date(time)

@@ -3,9 +3,10 @@ import chai, { expect } from 'chai';
 import {shallow, mount} from 'enzyme';
 import sinon from 'sinon';
 import chaiEnzyme from 'chai-enzyme';
-chai.use(chaiEnzyme())
+chai.use(chaiEnzyme());
+import FlatButton from 'material-ui/FlatButton';
 
-import {mountWithContext} from '../../testUtils.js'
+import {mountWithContext} from '../../testUtils.js';
 import TreeModal from './../../../js/components/File/TreeModal.jsx';
 
 describe("TreeModal.jsx ", () => {
@@ -93,11 +94,16 @@ describe("TreeModal.jsx ", () => {
     };
     const wrapper = mountWithContext(<TreeModal {...props}/>);
     it('contains two action button', ()=> {
-      console.log(wrapper.debug());
+      // console.log(wrapper.debug());
+      // console.log(wrapper.html());
       // expect(wrapper.find('FlatButton')).to.have.length(2);
       // expect(wrapper.find('TreeBeard').first()).to.have.prop('data').deep.equal(props.treeNode);
 
     });
   });
+  /*
+  TODO
+  pasue testing on TreeModal as it is suspected that the html is not rendered to DOM as the usual element. Furture work requires further research
+  */
 
 })
