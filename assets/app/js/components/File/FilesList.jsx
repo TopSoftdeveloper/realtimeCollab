@@ -19,15 +19,15 @@ import RemoveRedEyeIcon from 'material-ui/svg-icons/image/remove-red-eye';
 import CreateNewFolderIcon from 'material-ui/svg-icons/file/create-new-folder';
 import FileUploadIcon from 'material-ui/svg-icons/file/file-upload';
 import {CardHeader} from 'material-ui/Card';
-import { Form } from 'formsy-react'
-import FormsyText from 'formsy-material-ui/lib/FormsyText'
+import { Form } from 'formsy-react';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
-import BreadcrumbInstance from './BreadcrumbInstance.jsx'
-import {getFileIcon, toFuzzyTime} from '../../utils/general'
-import {insertFile, deleteFile, updateFile}  from '../../actions/ReduxTaskActions'
-import LoadingIndicator from '../LoadingIndicator.jsx'
-import TreeModal from './TreeModal.jsx'
-
+import BreadcrumbInstance from './BreadcrumbInstance.jsx';
+import {getFileIcon, toFuzzyTime} from '../../utils/general';
+import {insertFile, deleteFile, updateFile}  from '../../actions/ReduxTaskActions';
+import LoadingIndicator from '../LoadingIndicator.jsx';
+import TreeModal from './TreeModal.jsx';
+import RenameModal from './RenameModal.jsx';
 
 
 
@@ -38,12 +38,13 @@ class FilesList extends Component {
   constructor(props, context) {
     super(props, context)
     this.state = {
-      selectedFile: null,
       isRenameModalOpen: false,
-      canSubmit:false,
-      isMoveModalOpen:false,
-      movedFile:null
+      isMoveModalOpen: false,
+      targetFile: null,
     }
+    this.createFolder = this.createFolder.bind(this);
+    this.handleRenameModalClose = this.handleRenameModalClose.bind(this);
+    this.handleMoveModalClose = this.handleMoveModalClose.bind(this);
   }
 
   createFolder() {
@@ -67,6 +68,7 @@ class FilesList extends Component {
   renameFile(fileId, newName) {
     this.props.actions.renameFileToDrive(fileId, newName)
   }
+
   moveFile(fileId, oldParents, newParents){
     this.props.actions.moveFileToDrive(fileId, oldParents, newParents)
   }
@@ -76,7 +78,7 @@ class FilesList extends Component {
     if (isFolder(selectedFile)) {
       this.props.actions.initChildrenFiles(this.props.projectId, selectedFile.id, selectedFile.name)
     } else {
-      window.open(selectedFile.webViewLink, '_newtab')
+      window.open(targetFile.webViewLink, '_newtab')
     }
   }
 
@@ -115,7 +117,7 @@ class FilesList extends Component {
         parents: folder.parents,
         toggled: true
       }
-      data.disabled = data.id === disableFileId
+      data.disabled = (data.id === disableFileId)
       return data
     })
     let parentChildrenDict = {}
@@ -133,7 +135,7 @@ class FilesList extends Component {
       style: {
         backgroundColor:'white'
       },
-      name:'root',
+      name: 'root',
       toggled: true,
       id:this.props.rootFolderId,
       children:[]
@@ -144,7 +146,8 @@ class FilesList extends Component {
       let current = queue.shift()
       let children = parentChildrenDict[current.id]
       if(children != null) {
-        children.forEach(folder=>{queue.push(folder)})
+        children = children.filter(folder=>!folder.disabled);
+        children.forEach(folder=>{queue.push(folder)});
         current.children = children
       } else {
         current.nodes = []
@@ -153,48 +156,30 @@ class FilesList extends Component {
     return root
   }
 
-  handleClose() {
-    this.setState({
-      isRenameModalOpen: false,
-      selectedFile: null,
-      canSubmit:false,
-    });
-  }
-
   handleRenameModalOpen(file) {
     this.setState({
       isRenameModalOpen: true,
-      selectedFile: file,
-
+      targetFile: file,
     });
   }
-  enableButton() {
+  handleRenameModalClose() {
     this.setState({
-      canSubmit: true,
+      isRenameModalOpen: false,
+      targetFile: null,
     });
   }
 
-  disableButton() {
-    this.setState({
-      canSubmit: false,
-    });
-  }
   handleMoveModalOpen(file) {
     this.setState({
       isMoveModalOpen:true,
-      movedFile:file
+      targetFile:file
     });
   }
   handleMoveModalClose() {
     this.setState({
       isMoveModalOpen:false,
-      movedFile:null
+      targetFile:null
     });
-  }
-
-  onDialogSubmit() {
-    this.renameFile(this.state.selectedFile.id, this.refs.renameField.getValue().trim())
-    this.handleClose()
   }
   onFileUploadButtonClick() {
     this.dropzone.open()
@@ -203,50 +188,19 @@ class FilesList extends Component {
     return (this.state.isMoveModalOpen &&
       <TreeModal
         handleClose = {this.handleMoveModalClose.bind(this)}
-        onDialogSubmit={this.moveFile.bind(this, this.state.movedFile.id, this.state.movedFile.parents)}
-        treeNode={this.computeDirectoryTree(this.state.movedFile.id)}
+        onDialogSubmit={this.moveFile.bind(this, this.state.targetFile.id, this.state.targetFile.parents)}
+        treeNode={this.computeDirectoryTree(this.state.targetFile.id)}
       />
     )
   }
   renderRenameModal() {
-    let renameModalActions = [
-        <FlatButton
-          key={13}
-          label="Cancel"
-          secondary={true}
-          onTouchTap={this.handleClose.bind(this)}
-        />,
-        <FlatButton
-          key={23}
-          label="Submit"
-          primary={true}
-          onTouchTap={this.onDialogSubmit.bind(this)}
-          disabled={!this.state.canSubmit}
-        />
-    ]
-
     return (this.state.isRenameModalOpen &&
-      <Dialog
-        autoScrollBodyContent
-        actions={renameModalActions}
-        onRequestClose={this.handleClose.bind(this)}
-        open={this.state.isRenameModalOpen}>
-        <Form
-          onValid={this.enableButton.bind(this)}
-          onInvalid={this.disableButton.bind(this)}
-          onValidSubmit={this.onDialogSubmit.bind(this)}
-          >
-          <FormsyText
-            required
-            autoFocus
-            value = {this.state.selectedFile.name}
-            name="File Name"
-            floatingLabelText="New File Name(required)"
-            ref="renameField"
-            />
-        </Form>
-      </Dialog>
-      )
+      <RenameModal
+        handleClose = {this.handleRenameModalClose}
+        onDialogSubmit = {this.renameFile.bind(this, this.state.targetFile.id)}
+        inputValue = {this.state.targetFile.name}
+      />
+    );
   }
 
   renderDropzone(className='') {
@@ -276,7 +230,7 @@ class FilesList extends Component {
         <MenuItem
           primaryText="New Folder"
           leftIcon={<CreateNewFolderIcon />}
-          onTouchTap={this.createFolder.bind(this)}
+          onTouchTap={this.createFolder}
         />
         <MenuItem
           primaryText="Upload File"
