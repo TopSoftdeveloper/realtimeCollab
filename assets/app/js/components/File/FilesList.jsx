@@ -49,14 +49,14 @@ class FilesList extends Component {
 
   createFolder() {
     let directoryStructure = this.props.directoryStructure
-    let currDirectory = directoryStructure[directoryStructure.length-1].id
+    let currDirectory = _.last(directoryStructure).id
     this.props.actions.createFolderToDrive(currDirectory)
   }
 
   uploadFile(file, e) {
     this.props.dispatch(updateFile(file.id, {uploading: true}))
     let directoryStructure = this.props.directoryStructure
-    let currDirectory = directoryStructure[directoryStructure.length-1].id
+    let currDirectory = _.last(directoryStructure).id
     this.props.actions.uploadFileToDrive(file, currDirectory, this.props.projectId)
   }
   removeFile(fileId) {
@@ -223,6 +223,7 @@ class FilesList extends Component {
     return (
       this.props.app.is_linked_to_drive && this.props.rootFolderId && !this.props.app.files.loading &&
       <IconMenu
+        className = "drive-create-button"
         iconButtonElement={<RaisedButton label="New" primary={true}/>}
         anchorOrigin={{horizontal: 'right', vertical: 'top'}}
         targetOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -304,11 +305,11 @@ class FilesList extends Component {
               leftIcon={<RemoveRedEyeIcon />}
               onTouchTap={this.navigate.bind(this, file.id)}
             />
-            <Divider/>
+            <Divider />
             {
               !isFolder(file) &&
               <MenuItem
-                 primaryText="make a copy"
+                primaryText="make a copy"
                 leftIcon={<ContentCopyIcon />}
                 onTouchTap={this.copyFile.bind(this, file.id)}
               />
@@ -336,7 +337,13 @@ class FilesList extends Component {
   }
   render() {
     const {files, app, directoryStructure, actions, projectId} = this.props
-    const sortByFolderFirst = (fileA, fileB) => {
+    const sortByPreviewFirstThenByFolder = (fileA, fileB) => {
+      if(fileA.isPreview) {
+        return -1;
+      }
+      if(fileB.isPreview) {
+        return 1;
+      }
       if(!isFolder(fileA) && isFolder(fileB)) {
         return 1
       } else {
@@ -349,7 +356,7 @@ class FilesList extends Component {
       filesToDisplay = this.props.files.filter(file => {
         let curDirectoryId = _.last(directoryStructure).id
         return file.parents && file.parents[0] === curDirectoryId && !file.trashed
-      }).sort(sortByFolderFirst)
+      }).sort(sortByPreviewFirstThenByFolder);
     }
     let content = <LoadingIndicator className="loading-indicator"/>
 

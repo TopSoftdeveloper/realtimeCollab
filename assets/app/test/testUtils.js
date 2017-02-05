@@ -17,3 +17,7 @@ export const shallowWithContext = (node) => {
     childContextTypes: {muiTheme: React.PropTypes.object},
   })
 };
+
+export const debugWrapper = (wrapper) => {
+  return console.log(wrapper.debug());
+}
