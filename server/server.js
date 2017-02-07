@@ -32,24 +32,29 @@ var validate = function(decodedToken, request, callback) {
   callback(null, true, decodedToken);
 };
 
-server.register([
+const serverPlugins = [
   require('vision'),
   require('inert'),
   require('hapi-auth-jwt2'),
-  require('./controller/socket'), {
+  require('./controller/socket')
+];
+
+if (process.env.NODE_ENV !== 'test') {
+  serverPlugins.push({
     register: Good,
     options: {
       reporters: [{
         reporter: require('good-console'),
         events: {
           response: '*',
-          log: '*'
-        }
-      }]
-    }
-  }
-],
-function(err) {
+          log: '*',
+        },
+      }],
+    },
+  });
+}
+
+server.register(serverPlugins, function(err) {
   if (err) {
     console.log(err);
   }
@@ -92,3 +97,5 @@ function(err) {
     console.log('Server is listening at ' + server.select('collaboration').info.uri);
   });
 });
+
+module.exports = server;
