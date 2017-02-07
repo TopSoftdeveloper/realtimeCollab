@@ -16,7 +16,7 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
   import Promise from "bluebird"
   import {userIsOnline} from './SocketActions'
   import {logout} from '../utils/auth'
-  let AppConstants = require('../AppConstants');
+  import * as AppConstants from '../AppConstants';
   let ServerConstants = require('../../../../server/constants');
   let templates = require('../../../../server/templates');
 

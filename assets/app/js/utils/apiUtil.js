@@ -5,7 +5,7 @@ let CREATE_PROJECT_ENDPOINT = '/projects';
 let INVITE_TO_PROJECT_ENDPOINT = '/invite_to_project';
 let POPULATE_ENDPOINT = '/user/populate';
 let GET_NOTIFICATION_ENDPOINT = '/notifications'
-let AppConstants = require('../AppConstants');
+import * as AppConstants from '../AppConstants';
 let API_BASE_URL = AppConstants.API_BASE_URL;
 
 import $ from 'jquery'

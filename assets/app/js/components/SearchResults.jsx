@@ -1,20 +1,20 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import Divider from 'material-ui/lib/divider';
-import List from 'material-ui/lib/lists/list';
-import ListItem from 'material-ui/lib/lists/list-item';
-import Avatar from 'material-ui/lib/avatar';
-import Colors from 'material-ui/lib/styles/colors';
-import {toFuzzyTime} from '../utils/general'
 import { browserHistory } from 'react-router'
-import LoadingIndicator from '../components/LoadingIndicator.jsx'
-import FontIcon from 'material-ui/lib/font-icon'
+import _ from 'lodash'
+import Divider from 'material-ui/Divider';
+import {List, ListItem} from 'material-ui/List';
+import Avatar from 'material-ui/Avatar';
+import Colors from 'material-ui/styles/colors.js';
+import FontIcon from 'material-ui/FontIcon';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
+
+import * as Actions from '../actions/ReduxTaskActions'
 import Code from '../icons/Code.jsx'
 import CodeFragment from './CodeFragment.jsx'
-import _ from 'lodash'
-import DropDownMenu from 'material-ui/lib/DropDownMenu';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import * as Actions from '../actions/ReduxTaskActions'
+import {toFuzzyTime} from '../utils/general'
+import LoadingIndicator from '../components/LoadingIndicator.jsx'
 
 class SearchResults extends Component {
     constructor() {

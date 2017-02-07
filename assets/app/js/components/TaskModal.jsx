@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert'
+import MoreVert from 'material-ui/svg-icons/navigation/more-vert'
 import { IconButton, IconMenu, Dialog, TextField, FlatButton } from 'material-ui'
-import MenuItem from 'material-ui/lib/menus/menu-item'
-import SelectField from 'material-ui/lib/select-field';
+import MenuItem from 'material-ui/MenuItem'
+import SelectField from 'material-ui/SelectField';
 
 class TaskModal extends Component {
 

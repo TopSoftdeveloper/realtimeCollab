@@ -1,4 +1,4 @@
-import AppConstants from '../AppConstants';
+import * as AppConstants from '../AppConstants';
 import assign from 'object-assign';
 // Search results to be displayed in seach box.
 // Example state tree:

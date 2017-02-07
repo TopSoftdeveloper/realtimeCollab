@@ -1,14 +1,15 @@
 import React, { Component, PropTypes } from 'react'
 import {Table} from 'react-bootstrap'
 import vagueTime from 'vague-time'
-import Steps from 'rc-steps'
-import RaisedButton from 'material-ui/lib/raised-button'
-import RepoList from './../Github/RepoList.jsx'
-import LoadingIndicator from '../LoadingIndicator.jsx'
 require('rc-steps/assets/index.css')
 require('rc-steps/assets/iconfont.css')
+import Steps from 'rc-steps'
 import $ from 'jquery'
-import FontIcon from 'material-ui/lib/font-icon';
+import FontIcon from 'material-ui/FontIcon';
+import RaisedButton from 'material-ui/RaisedButton';
+
+import RepoList from './../Github/RepoList.jsx'
+import LoadingIndicator from '../LoadingIndicator.jsx'
 
 class Github extends Component {
     constructor(props, context) {

@@ -1,7 +1,16 @@
 import React from 'react';
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import {expect} from 'chai';
+import {mount} from 'enzyme';
 import UserAvatar from './../../js/components/UserAvatar.jsx';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+const muiTheme = getMuiTheme();
+const mountWithContext = (node) => mount(
+  node, {
+    context: {muiTheme},
+    childContextTypes: {muiTheme: React.PropTypes.object},
+  }
+);
+
 
 describe("UserAvatar.jsx ", function() {
   describe("with only displayName", function(){
@@ -9,7 +18,7 @@ describe("UserAvatar.jsx ", function() {
       this.customProps = {
         displayName: 'Alex Mark'
       }
-      this.wrapper = shallow(<UserAvatar {...this.customProps}/>);
+      this.wrapper = mountWithContext(<UserAvatar {...this.customProps}/>);
     });
 
     it("renders without explosion", function() {
@@ -37,14 +46,14 @@ describe("UserAvatar.jsx ", function() {
         memberColour: '6efa39'
 
       }
-      this.wrapper = shallow(<UserAvatar {...this.customProps}/>);
+      this.wrapper = mountWithContext(<UserAvatar {...this.customProps}/>);
     });
 
     it("renders without explosion", function() {
       expect(this.wrapper).to.exist;
     });
     it("renders both avatar and OverlayTrigger", function() {
-      console.log(this.wrapper.debug())
+      // console.log(this.wrapper.debug())
       expect(this.wrapper.find('Avatar')).to.have.length(1)
       expect(this.wrapper.find('OverlayTrigger')).to.have.length(1)
     });

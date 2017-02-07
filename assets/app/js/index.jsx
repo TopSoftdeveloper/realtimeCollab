@@ -7,8 +7,12 @@ import thunk from 'redux-thunk'
 import { Router } from 'react-router'
 import { browserHistory } from 'react-router'
 import ReactGA from 'react-ga'
-import routes from './config/routes.jsx'
 let injectTapEventPlugin = require("react-tap-event-plugin")
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import myTheme from './myTheme.js'
+import routes from './config/routes.jsx'
+
 injectTapEventPlugin()
 
 
@@ -26,11 +30,14 @@ function logPage() {
   ReactGA.pageview(window.location.pathname);
 }
 
+const muiTheme = getMuiTheme(myTheme);
 function run() {
     ReactDOM.render(
-    	<Provider store={store}>
-    		<Router history={browserHistory} routes={routes} onUpdate={logPage}/>
-      </Provider>,
+      <MuiThemeProvider >
+    	   <Provider store={store}>
+    		  <Router history={browserHistory} routes={routes} onUpdate={logPage}/>
+        </Provider>
+      </MuiThemeProvider>,
       rootElement
     );
 }

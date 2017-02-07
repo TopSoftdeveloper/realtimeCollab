@@ -3,6 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
+import Sidebar from 'react-sidebar'
 import * as Actions from '../actions/ReduxTaskActions'
 import * as SocketActions from '../actions/SocketActions'
 import Header from '../components/Header.jsx'
@@ -10,11 +11,9 @@ import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
 import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
 import {Grid, Row, Col } from 'react-bootstrap'
-import Sidebar from 'react-sidebar'
 import LoadingIndicator from '../components/LoadingIndicator.jsx'
 import Snackbar from './Snackbar.jsx';
 import {refreshTokens} from '../utils/apiUtil'
-
 var AppConstants = require('../AppConstants');
 
 class App extends Component {

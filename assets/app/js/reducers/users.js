@@ -1,4 +1,4 @@
-import AppConstants from '../AppConstants';
+import * as AppConstants from '../AppConstants';
 import assign from 'object-assign';
 import {filterUnique} from '../utils/general'
 
@@ -19,7 +19,7 @@ import {filterUnique} from '../utils/general'
 //         display_image: 'url',
 //		     online: false,
 //         colour: '#FFFFFF'
-//     }        
+//     }
 // ]
 
 export default function users(state=[], action) {
@@ -27,12 +27,12 @@ export default function users(state=[], action) {
         case AppConstants.INIT_USERS:
             return filterUnique(action.users);
         case AppConstants.USER_ONLINE:
-        	return state.map(user => 
-        		user.id === action.id ? 
+        	return state.map(user =>
+        		user.id === action.id ?
         		assign({}, user, {online: true}): user);
         case AppConstants.USER_OFFLINE:
-        	return state.map(user => 
-        		user.id === action.id ? 
+        	return state.map(user =>
+        		user.id === action.id ?
         		assign({}, user, {online: false}): user);
         case AppConstants.ADD_USERS:
             let users = filterUnique(action.users)

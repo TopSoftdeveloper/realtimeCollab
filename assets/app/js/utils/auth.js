@@ -1,5 +1,5 @@
 import $ from 'jquery'
-let AppConstants = require('../AppConstants');
+import * as AppConstants from '../AppConstants';
 
 export function logout() {
     localStorage.clear();

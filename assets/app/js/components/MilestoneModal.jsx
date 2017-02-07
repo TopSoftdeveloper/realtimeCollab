@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
-import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert'
-import { IconButton, IconMenu, Dialog, TextField, FlatButton } from 'material-ui'
-import MenuItem from 'material-ui/lib/menus/menu-item'
-import DatePicker from 'material-ui/lib/date-picker/date-picker';
-import { Form } from 'formsy-react'
+import MoreVert from 'material-ui/svg-icons/navigation/more-vert'
+import Dialog from 'material-ui/Dialog';
+import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import TextField from 'material-ui/TextField';
+import DatePicker from 'material-ui/DatePicker';
+import {Form} from 'formsy-react'
 import FormsyText from 'formsy-material-ui/lib/FormsyText'
 import FormsyDate from 'formsy-material-ui/lib/FormsyDate'
 

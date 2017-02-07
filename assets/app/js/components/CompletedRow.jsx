@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import IconButton from 'material-ui/lib/icon-button';
-import Checkbox from 'material-ui/lib/checkbox'
+import IconButton from 'material-ui/IconButton';
+import Checkbox from 'material-ui/Checkbox'
 import {Grid, Row, Col} from 'react-bootstrap'
 
 class CompletedItem extends Component {

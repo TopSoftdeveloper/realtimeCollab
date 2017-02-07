@@ -1,7 +1,7 @@
-import AppConstants from '../AppConstants';
+import * as AppConstants from '../AppConstants';
 import assign from 'object-assign';
 
-// Example state tree: 
+// Example state tree:
 // [
 //     {
 //         id: 'mid1',
@@ -31,8 +31,8 @@ export default function milestones(state=[], action) {
             return state.filter(milestone => milestone.id !== action.id);
 
         case AppConstants.REPLACE_MILESTONE_ID:
-            return state.map(milestone => 
-                milestone.id === action.original ? 
+            return state.map(milestone =>
+                milestone.id === action.original ?
                 assign({}, milestone, {id : action.replacement}): milestone);
 
         case AppConstants.USER_EDITING:

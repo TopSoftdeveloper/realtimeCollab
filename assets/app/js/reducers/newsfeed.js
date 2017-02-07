@@ -1,4 +1,4 @@
-import AppConstants from '../AppConstants';
+import * as AppConstants from '../AppConstants';
 // Example state tree:
 // [
 //{

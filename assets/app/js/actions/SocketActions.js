@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-let AppConstants = require('../AppConstants');
+import * as AppConstants from '../AppConstants';
 var host = AppConstants.HOSTNAME
 var socket = io.connect(host)
 import * as Actions from '../actions/ReduxTaskActions'
