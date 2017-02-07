@@ -80,41 +80,41 @@ const props = {
   projectId: "Vy0p9_AvG",
   rootFolderId: "0B6AfgueBZ9TMcTUwNmYyZ1FRNGc",
 };
-describe("FilesList.jsx ", () => {
-  describe("render without explosion and static testing on default behavior", ()=>{
+describe("FilesList.jsx ", function() {
+  describe("render without explosion and static testing on default behavior", function(){
     const wrapper = mountWithContext(<FilesList {...props} />);
     // console.log(wrapper.debug());
-    it('render without explosion', ()=> {
+    it('render without explosion', function() {
       expect(wrapper).to.exist;
     });
 
-    it('render with exactly one BreadcrumbInstance ', ()=> {
+    it('render with exactly one BreadcrumbInstance ', function() {
       expect(wrapper).to.have.exactly(1).descendants('BreadcrumbInstance');
 
     });
 
-    it('firstly renders the create button', ()=> {
+    it('firstly renders the create button', function() {
       const firstIconMenuWrapper = wrapper.find("IconMenu").first();
       // console.log(firstIconMenuWrapper.prop('iconButtonElement'));
       expect(firstIconMenuWrapper.prop('iconButtonElement').props.label).to.equal("New")
     });
-    it('should not render TreeModal or RenameModal by default', ()=> {
+    it('should not render TreeModal or RenameModal by default', function() {
       expect(wrapper).to.not.have.descendants('TreeModal');
       expect(wrapper).to.not.have.descendants('RenameModal');
     });
-    it('check default state', ()=> {
+    it('check default state', function() {
       expect(wrapper).to.have.state('targetFile', null);
       expect(wrapper).to.have.state('isRenameModalOpen', false);
       expect(wrapper).to.have.state('isMoveModalOpen', false);
     });
   });
-  describe("render diffrerent parts correctly based on different props/types", ()=>{
+  describe("render diffrerent parts correctly based on different props/types", function(){
     let wrapper;
-    beforeEach("init fileList", ()=>{
+    beforeEach("init fileList", function(){
       wrapper = mountWithContext(<FilesList {...props} />);
     });
-    describe("DropZone", ()=>{
-      it('DropZone will only be rendered if drive is linked and root folder is set', ()=> {
+    describe("DropZone", function(){
+      it('DropZone will only be rendered if drive is linked and root folder is set', function() {
         let appStatus = assign({}, props.app, {is_linked_to_drive : false})
         wrapper.setProps({app: appStatus});
         wrapper.setProps({rootFolderId: null});
@@ -125,7 +125,7 @@ describe("FilesList.jsx ", () => {
         wrapper.setProps({app: appStatus});
         expect(wrapper).to.have.exactly(1).descendants('Dropzone');
       });
-      it('DropZone will have not className of hidden if no file/directory is inside currentDirectory', ()=>{
+      it('DropZone will have not className of hidden if no file/directory is inside currentDirectory', function(){
         // set current Directory to be a dummy one
         wrapper.setProps({
           directoryStructure: [
@@ -147,8 +147,8 @@ describe("FilesList.jsx ", () => {
         expect(wrapper.find('Dropzone')).to.have.className("hidden");
       });
     })
-    describe("BreadcrumbInstance", ()=>{
-      it('BreadcrumbInstance will have correct directories path', ()=>{
+    describe("BreadcrumbInstance", function(){
+      it('BreadcrumbInstance will have correct directories path', function(){
         expect(wrapper.find('BreadcrumbInstance')).to.have.prop('directories', props.directoryStructure);
         const anotherDirectoryStructure = [
             {
@@ -165,13 +165,13 @@ describe("FilesList.jsx ", () => {
         emptyDirectoryStructure);
       });
     });
-    describe('fileList', ()=>{
-      it('files will be sort by: preview first then folder first',()=>{
+    describe('fileList', function(){
+      it('files will be sort by: preview first then folder first',function(){
         const fileNames = wrapper.find('CardHeader').map(node => node.prop('title'));
         expect(fileNames).to.eql([ 'a.png', 'new folder', 'BBQ.txt' ]);
 
       });
-      it('Loading indicator will be shown if app.files.loading', ()=>{
+      it('Loading indicator will be shown if app.files.loading', function(){
         let appStatus = assign({}, props.app, {files: {loading: false}});
         wrapper.setProps({app: appStatus});
         expect(wrapper).to.not.have.descendants('LoadingIndicator');
@@ -179,7 +179,7 @@ describe("FilesList.jsx ", () => {
         wrapper.setProps({app: appStatus});
         expect(wrapper).to.have.exactly(1).descendants('LoadingIndicator');
       });
-      it('file table will be shown if not app.file.loading', ()=>{
+      it('file table will be shown if not app.file.loading', function(){
         let appStatus = assign({}, props.app, {files: {loading: false}});
         wrapper.setProps({app: appStatus});
         expect(wrapper).to.not.have.descendants('LoadingIndicator');
@@ -188,7 +188,7 @@ describe("FilesList.jsx ", () => {
         expect(wrapper).to.have.exactly(1).descendants('LoadingIndicator');
       });
     });
-    describe('renderFilePreview', ()=> {
+    describe('renderFilePreview', function() {
       const previewFileData = {
         iconLink: '../../../images/icon_11_image_list.png',
         id: '19',
@@ -209,7 +209,7 @@ describe("FilesList.jsx ", () => {
         expect(previewFileWrapper.find('CardHeader').first()).to.have.prop('title', previewFileData.name);
       };
 
-      it('method `renderFilePreview` renders 2 action buttons when file is not uploading ', ()=> {
+      it('method `renderFilePreview` renders 2 action buttons when file is not uploading ', function() {
         previewFileData.uploading = false;
         const res = wrapper.instance().renderFilePreview(previewFileData);
         const previewFileWrapper = mountWithContext(res);
@@ -217,7 +217,7 @@ describe("FilesList.jsx ", () => {
         expect(previewFileWrapper).to.have.exactly(2).descendants('FlatButton');
         expect(previewFileWrapper).to.not.have.descendants('LinearProgress');
       });
-      it('method `renderFilePreview` renders 1 LinearProgress when file is uploading', ()=> {
+      it('method `renderFilePreview` renders 1 LinearProgress when file is uploading', function() {
         previewFileData.uploading = true;
         const res = wrapper.instance().renderFilePreview(previewFileData);
         const previewFileWrapper = mountWithContext(res);
@@ -227,7 +227,7 @@ describe("FilesList.jsx ", () => {
       });
     });
 
-    describe('renderFileStandard', ()=> {
+    describe('renderFileStandard', function() {
       const standardFileData = {
         id: "0B6AfgueBZ9TMYWlLZXl5UVJzd00",
         parents: ['0B6AfgueBZ9TMcTUwNmYyZ1FRNGc'],
@@ -243,7 +243,7 @@ describe("FilesList.jsx ", () => {
         expect(standardFileWrapper).to.have.exactly(1).descendants('CardHeader');
         expect(standardFileWrapper.find('CardHeader').first()).to.have.prop('title', standardFileData.name);
       }
-      it('method `renderFileStandard` renders menuItem for file to make a copy on 2nd place', ()=> {
+      it('method `renderFileStandard` renders menuItem for file to make a copy on 2nd place', function() {
         standardFileData.mimeType = "text/plain";
         const res = wrapper.instance().renderFileStandard(standardFileData);
         const standardFileWrapper = mountWithContext(res);
@@ -255,7 +255,7 @@ describe("FilesList.jsx ", () => {
 
 
       });
-      it('method `renderFileStandard` does notrenders menuItem for folder to make a copy on 2nd place', ()=> {
+      it('method `renderFileStandard` does notrenders menuItem for folder to make a copy on 2nd place', function() {
         standardFileData.mimeType = "application/vnd.google-apps.folder";
         const res = wrapper.instance().renderFileStandard(standardFileData);
         const standardFileWrapper = mountWithContext(res);
@@ -265,8 +265,8 @@ describe("FilesList.jsx ", () => {
         // expect(standardFileWrapper.find('MenuItem').get(1)).not.to.have.prop('primaryText','make a copy');
       });
     })
-    describe('`renderCreateButton`', ()=> {
-      it('will be shown only if linked to drive & rootFolder set and app is file loaded and file is not loading', ()=>{
+    describe('`renderCreateButton`', function() {
+      it('will be shown only if linked to drive & rootFolder set and app is file loaded and file is not loading', function(){
         let appStatus = assign({}, props.app, {is_linked_to_drive : false, files:{loading:true}})
         wrapper.setProps({app: appStatus});
         wrapper.setProps({rootFolderId: null});
@@ -283,12 +283,12 @@ describe("FilesList.jsx ", () => {
       });
     });
   });
-  describe("Behaves correctly for user operation", ()=>{
+  describe("Behaves correctly for user operation", function(){
     let wrapper;
-    beforeEach("wrapper initialization", ()=>{
+    beforeEach("wrapper initialization", function(){
       wrapper = mountWithContext(<FilesList {...props} />);
     });
-    describe("user could create a new folder/file", ()=>{
+    describe("user could create a new folder/file", function(){
       const getRenderToLayerWrapper = (wrapper)=> {
         const renderToLayer = wrapper.find('RenderToLayer').first();
         // console.log(renderToLayer);
@@ -297,7 +297,7 @@ describe("FilesList.jsx ", () => {
         // debugWrapper(renderToLayerWrapper);
         return renderToLayerWrapper;
       }
-      it("click on create button renders two menuItem: one to create folder one to upload file",()=>{
+      it("click on create button renders two menuItem: one to create folder one to upload file",function(){
         const renderToLayerWrapper = getRenderToLayerWrapper(wrapper);
         expect(renderToLayerWrapper).to.have.exactly(2).descendants('MenuItem');
         const firstMenuItemWrapper = renderToLayerWrapper.find('MenuItem').first();
@@ -305,7 +305,7 @@ describe("FilesList.jsx ", () => {
         expect(firstMenuItemWrapper).to.have.prop('primaryText', 'New Folder')
         expect(SecondMenuItemWrapper).to.have.prop('primaryText', 'Upload File')
       })
-      it.skip('click first menuItem will call method createFolder', ()=>{
+      it.skip('click first menuItem will call method createFolder', function(){
         const createFolderToDriveMock = sinon.spy();
         let mockActions = assign({}, props.actions, {createFolderToDrive : createFolderToDriveMock});
         wrapper.setProps({actions: mockActions});
@@ -363,7 +363,7 @@ describe("FilesList.jsx ", () => {
 
       });
     })
-    describe.skip("user could perform file operations via iconButton", ()=>{
+    describe.skip("user could perform file operations via iconButton", function(){
       it('navigate');
       it('preview');
       it('rename');

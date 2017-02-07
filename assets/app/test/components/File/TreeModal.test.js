@@ -9,8 +9,8 @@ import FlatButton from 'material-ui/FlatButton';
 import {mountWithContext} from '../../testUtils.js';
 import TreeModal from './../../../js/components/File/TreeModal.jsx';
 
-describe("TreeModal.jsx ", () => {
-  describe("render without explosion and static testing", ()=>{
+describe("TreeModal.jsx ", function() {
+  describe("render without explosion and static testing", function(){
     const props = {
       treeNode: {
         name: 'folder',
@@ -22,23 +22,23 @@ describe("TreeModal.jsx ", () => {
       onDialogSubmit: sinon.spy(),
     }
     const wrapper = shallow(<TreeModal {...props} />);
-    it('render with exactly one dialog/TreeBeard', ()=> {
+    it('render with exactly one dialog/TreeBeard', function() {
       expect(wrapper).to.have.exactly(1).descendants('Dialog');
       expect(wrapper).to.have.exactly(1).descendants('TreeBeard');
     });
-    it('contains single FormsyText as the hidden input', ()=> {
+    it('contains single FormsyText as the hidden input', function() {
       expect(wrapper).to.have.exactly(1).descendants('FormsyText');
       expect(wrapper.find('FormsyText')).to.have.className('invisible')
     });
-    it('default state for cursor is null', ()=> {
+    it('default state for cursor is null', function() {
       expect(wrapper).to.have.state('cursor', null)
     });
-    it('default state for canSubmit is false', ()=> {
+    it('default state for canSubmit is false', function() {
       expect(wrapper).to.have.state('canSubmit', false)
     });
   });
 
-  describe("renders with a list of treeNodes", ()=>{
+  describe("renders with a list of treeNodes", function(){
     const handleCloseSpy = sinon.spy();
     const onDialogSubmitSpy = sinon.spy();
     const props = {
@@ -63,12 +63,12 @@ describe("TreeModal.jsx ", () => {
       onDialogSubmit: onDialogSubmitSpy,
     };
     const wrapper = shallow(<TreeModal {...props} />);
-    it('pass correct value to TreeBeard', ()=> {
+    it('pass correct value to TreeBeard', function() {
       expect(wrapper.find('TreeBeard').first()).to.have.prop('data').deep.equal(props.treeNode)
     });
   });
 
-  describe("mount with a list of treeNodes", ()=>{
+  describe("mount with a list of treeNodes", function(){
     const handleCloseSpy = sinon.spy();
     const onDialogSubmitSpy = sinon.spy();
     const props = {
@@ -93,7 +93,7 @@ describe("TreeModal.jsx ", () => {
       onDialogSubmit: onDialogSubmitSpy,
     };
     const wrapper = mountWithContext(<TreeModal {...props}/>);
-    it('contains two action button', ()=> {
+    it('contains two action button', function() {
       // console.log(wrapper.debug());
       // console.log(wrapper.html());
       // expect(wrapper.find('FlatButton')).to.have.length(2);
