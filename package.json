@@ -10,7 +10,7 @@
     "start": "cross-env NODE_ENV=production node server/server.js",
     "build": "webpack -p --progress --optimize-minimize",
     "dev": "concurrently --raw --kill-others \"webpack --progress --color --watch \" \"cross-env NODE_ENV=dev nodemon server/server.js\"",
-    "test": "mocha --compilers js:babel-core/register --recursive  test",
+    "test": "cross-env NODE_ENV=test mocha --require babel-core/register --recursive 'tests/setup.js' 'tests/**/*.spec.js'",
     "testF": "mocha --require ./assets/app/test/.setup.js --compilers js:babel-core/register \"./assets/app/test\" --recursive -w",
     "coverageB": "istanbul cover _mocha -- -R spec",
     "coverageF": "gulp front_end_test;",
