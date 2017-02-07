@@ -54,7 +54,6 @@ describe("RenameModal.jsx ", function() {
       wrapper.update();
     })
     wrapper.first().simulate('submit');
-    debugWrapper(wrapper);
     // wrapper.find({label:'Submit'}).first().simulate('touchTap');
     it('should tigger the `onInvalid` callback to disable the button', function(){
 
