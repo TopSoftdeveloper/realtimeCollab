@@ -4,8 +4,8 @@ import chaiEnzyme from 'chai-enzyme';
 import sinon from 'sinon';
 import assign from 'object-assign';
 chai.use(chaiEnzyme());
+import ReactTestUtils from 'react-addons-test-utils'
 
-import IconMenu from 'material-ui/IconMenu';
 import {debugWrapper, mountWithContext} from '../../testUtils.js';
 import FilesList from './../../../js/components/File/FilesList.jsx';
 
@@ -44,6 +44,7 @@ const props = {
       mimeType: "text/plain",
       lastModifyingUser: {me:false,displayName:"JJ Zhang"},
       modifiedTime: "2017-02-04T08:29:45.123Z",
+      webViewLink: "www.abc.com/bbq.txt"
     },
     {
       id: "0B6AfgueBZ9TMYWlLZXl5UVJzd00",
@@ -80,8 +81,6 @@ const props = {
   rootFolderId: "0B6AfgueBZ9TMcTUwNmYyZ1FRNGc",
 };
 describe("FilesList.jsx ", () => {
-
-
   describe("render without explosion and static testing on default behavior", ()=>{
     const wrapper = mountWithContext(<FilesList {...props} />);
     // console.log(wrapper.debug());
@@ -282,20 +281,96 @@ describe("FilesList.jsx ", () => {
         expect(wrapper).to.have.exactly(1).descendants('.drive-create-button');
 
       });
-
-      it('create button contains two menuItem: one to create folder one to upload file', ()=>{
-        let appStatus = assign({}, props.app, {is_linked_to_drive : true, files:{loading:false}});
-        wrapper.setProps({app: appStatus});
-        wrapper.setProps({rootFolderId: "notnull"});
-        const res = wrapper.instance().renderCreateButton();
-        const createButtonWrapper = mountWithContext(res);
-        expect(createButtonWrapper.type()).to.equal(IconMenu);
-        //TODO test case failed as menuItem are not rendered in static context
-        // expect(createButtonWrapper).to.have.exactly(2).descendants('MenuItem');
-      });
     });
-
-
-
   });
+  describe("Behaves correctly for user operation", ()=>{
+    let wrapper;
+    beforeEach("wrapper initialization", ()=>{
+      wrapper = mountWithContext(<FilesList {...props} />);
+    });
+    describe("user could create a new folder/file", ()=>{
+      const getRenderToLayerWrapper = (wrapper)=> {
+        const renderToLayer = wrapper.find('RenderToLayer').first();
+        // console.log(renderToLayer);
+        const renderToLayerWrapper = mountWithContext(renderToLayer.prop('render')());
+        // const renderToLayerWrapper = renderToLayer.mount()
+        // debugWrapper(renderToLayerWrapper);
+        return renderToLayerWrapper;
+      }
+      it("click on create button renders two menuItem: one to create folder one to upload file",()=>{
+        const renderToLayerWrapper = getRenderToLayerWrapper(wrapper);
+        expect(renderToLayerWrapper).to.have.exactly(2).descendants('MenuItem');
+        const firstMenuItemWrapper = renderToLayerWrapper.find('MenuItem').first();
+        const SecondMenuItemWrapper = renderToLayerWrapper.find('MenuItem').at(1);
+        expect(firstMenuItemWrapper).to.have.prop('primaryText', 'New Folder')
+        expect(SecondMenuItemWrapper).to.have.prop('primaryText', 'Upload File')
+      })
+      it.skip('click first menuItem will call method createFolder', ()=>{
+        const createFolderToDriveMock = sinon.spy();
+        let mockActions = assign({}, props.actions, {createFolderToDrive : createFolderToDriveMock});
+        wrapper.setProps({actions: mockActions});
+        const createFolderMock = sinon.spy();
+        wrapper.instance().createFolder = createFolderMock;
+        wrapper.update();
+
+        const renderToLayerWrapper = getRenderToLayerWrapper(wrapper);
+        const firstMenuItemWrapper = renderToLayerWrapper.find('MenuItem').first();
+        firstMenuItemWrapper.simulate('touchTap');
+
+        expect(createFolderMock.calledOnce).to.equal(true);
+        expect(createFolderToDriveMock.calledOnce).to.equal(true);
+
+
+      })
+      it.skip('click second menuItem will call method onFileUploadButtonClick');
+    });
+    describe('user could directly click the file/folder', function(){
+
+      it('should call navigate & window.open when click the standard file to open', function(){
+        if(typeof window.open.restore === 'function') {
+          // restore if this method is already spied
+          window.open.restore();
+        }
+
+        const windowsOpenMock = sinon.spy(window, 'open');
+        const navigateMock = sinon.spy(wrapper.instance(), 'navigate');
+        wrapper.update();
+        // find third card header which is a standard file
+        wrapper.find('CardHeader').at(2).parent().simulate('click')
+        expect(window.open.calledOnce).to.equal(true);
+        expect(windowsOpenMock.calledWith(props.files[0].webViewLink)).to.equal(true);
+        expect(navigateMock.calledOnce).to.equal(true);
+        expect(navigateMock.calledWith(props.files[0].id)).to.equal(true);
+        navigateMock.restore();
+        windowsOpenMock.restore();
+      });
+      it('should call navigate & initChildrenFiles when click the standard folder to navigate', function(){
+        const initChildrenFilesMock = sinon.spy();
+        const mockActions = assign({}, props.actions, {
+          initChildrenFiles : initChildrenFilesMock
+        });
+        wrapper.setProps({actions: mockActions});
+        const navigateMock = sinon.spy(wrapper.instance(), 'navigate');
+        wrapper.update();
+        // find second card header which is a standard folder
+        wrapper.find('CardHeader').at(1).parent().simulate('click')
+
+        expect(initChildrenFilesMock.calledOnce).to.equal(true);
+        expect(initChildrenFilesMock.calledWith(props.projectId, props.files[1].id, props.files[1].name)).to.equal(true);
+        expect(navigateMock.calledOnce).to.equal(true);
+        expect(navigateMock.calledWith(props.files[1].id)).to.equal(true);
+        navigateMock.restore();
+
+      });
+    })
+    describe.skip("user could perform file operations via iconButton", ()=>{
+      it('navigate');
+      it('preview');
+      it('rename');
+      it('copy');
+      it('remove');
+      it('navigate');
+    });
+  });
+
 });

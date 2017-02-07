@@ -1,7 +1,8 @@
 
 require('babel-register')();
 var jsdom = require('jsdom').jsdom;
-
+let injectTapEventPlugin = require("react-tap-event-plugin")
+injectTapEventPlugin();
 global.document = jsdom('');
 global.window = document.defaultView;
 Object.keys(document.defaultView).forEach((property) => {

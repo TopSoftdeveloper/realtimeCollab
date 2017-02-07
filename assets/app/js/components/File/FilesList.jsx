@@ -78,7 +78,7 @@ class FilesList extends Component {
     if (isFolder(selectedFile)) {
       this.props.actions.initChildrenFiles(this.props.projectId, selectedFile.id, selectedFile.name)
     } else {
-      window.open(targetFile.webViewLink, '_newtab')
+      window.open(selectedFile.webViewLink, '_newtab')
     }
   }
 
