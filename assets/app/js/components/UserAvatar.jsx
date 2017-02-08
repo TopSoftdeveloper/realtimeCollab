@@ -1,23 +1,37 @@
-import React, {PropTypes } from 'react'
+import React, { PropTypes } from 'react';
 import Avatar from 'material-ui/Avatar';
-import {Tooltip, OverlayTrigger} from 'react-bootstrap'
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
-const UserAvatar = ({imgSrc, displayName, enableTooltip, isSquare, memberColour}) => {
-  let image = null
-  let className = isSquare ? "square-avatar" : ""
-  let styles = {}
+const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour }) => {
+  let image = null;
+  const className = isSquare ? 'square-avatar' : '';
+  let styles = {};
   if (memberColour) {
     styles = {
       borderBottomStyle: 'solid',
       borderBottomColor: memberColour,
-      borderBottomWidth: '7px'
-    }
+      borderBottomWidth: '7px',
+    };
   }
 
   if (imgSrc && imgSrc !== 'undefined') {
-    image = <Avatar size={36} src={imgSrc} className={className} style={styles}/>
+    image = (
+      <Avatar
+        size={36}
+        src={imgSrc}
+        className={className}
+        style={styles}
+      />
+    );
   } else {
-    image = <Avatar size={36} style={styles}>{displayName[0]}</Avatar>
+    image = (
+      <Avatar
+        size={36}
+        style={styles}
+      >
+        {displayName[0]}
+      </Avatar>
+    );
   }
 
   if (enableTooltip) {
@@ -28,20 +42,20 @@ const UserAvatar = ({imgSrc, displayName, enableTooltip, isSquare, memberColour}
       <OverlayTrigger placement="bottom" overlay={tooltip}>
         {image}
       </OverlayTrigger>
-    )
+    );
   }
-  return image
-}
+  return image;
+};
 
 UserAvatar.proptypes = {
   imgSrc: PropTypes.string.isRequired,
-  displayName:PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
   enableTooltip: PropTypes.bool,
   isSquare: PropTypes.bool,
   memberColour: PropTypes.string,
-}
+};
 UserAvatar.defaultProps = {
   enableTooltip: false,
-  isSquare: false
+  isSquare: false,
 };
-export default UserAvatar
+export default UserAvatar;
