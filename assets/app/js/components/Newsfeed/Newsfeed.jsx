@@ -17,7 +17,6 @@ class Newsfeed extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
   render() {
-    console.log('Newsfeed::render()');
     const { events, users } = this.props;
     return (
       <div>
