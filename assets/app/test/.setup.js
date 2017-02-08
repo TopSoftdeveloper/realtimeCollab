@@ -1,5 +1,3 @@
-
-require('babel-register')();
 var jsdom = require('jsdom').jsdom;
 let injectTapEventPlugin = require("react-tap-event-plugin")
 injectTapEventPlugin();
