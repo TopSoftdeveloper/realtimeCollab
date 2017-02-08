@@ -72,8 +72,6 @@ class Project extends Component {
                          value={AppConstants.PATH.newsfeed}
                          onActive={this.changeTab.bind(this, AppConstants.PATH.newsfeed)}>
                         <ProjectNewsfeedView
-                            project={currentProject}
-                            app={app}
                             users={activeUsers}
                         />
                     </Tab>
