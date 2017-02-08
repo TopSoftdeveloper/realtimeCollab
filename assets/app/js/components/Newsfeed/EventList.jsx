@@ -10,38 +10,39 @@ const propTypes = {
 };
 
 const EventList = ({ events, users }) => {
-  let eventItems = events.map(event => {
-    if (!event.data) return null;
-    const data = JSON.parse(event.data);
-    let targetUser = users.filter(user => user.id === data.user_id);
-    if (!_.isEmpty(targetUser)) {
-      targetUser = _.first(targetUser);
-      data.displayName = targetUser.display_name;
-    } else {
-      return null;
-    }
+  let content = (
+    <div className="no-items">
+      <h3>No recent activity!</h3>
+    </div>
+  );
+  const eventItems = [];
+  events.forEach(event => {
+    if (event.data) {
+      const data = JSON.parse(event.data);
+      let targetUser = users.filter(user => user.id === data.user_id);
+      if (targetUser.length > 0) {
+        targetUser = _.first(targetUser);
+        data.displayName = targetUser.display_name;
 
-    const item = {
-      message: templates.getMessage(event.template, data),
-      created_at: event.created_at,
-      displayName: targetUser.display_name,
-      avatarUrl: targetUser.display_image,
-    };
-    return <EventItem key={event.id} event={item} />;
+        const item = {
+          message: templates.getMessage(event.template, data),
+          created_at: event.created_at,
+          displayName: targetUser.display_name,
+          avatarUrl: targetUser.display_image,
+        };
+        eventItems.push(<EventItem key={event.id} event={item} />);
+      }
+    }
   });
 
-  if (_.isEmpty(eventItems)) {
-    eventItems = (
-      <div className="no-items">
-        <h3>No recent activity!</h3>
-      </div>
-    );
+  if (eventItems.length > 0) {
+    content = eventItems;
   }
 
   return (
     <div className="event-list">
       <ul>
-        {eventItems}
+        {content}
       </ul>
     </div>
   );

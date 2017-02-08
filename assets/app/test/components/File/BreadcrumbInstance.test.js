@@ -10,6 +10,7 @@ chai.use(chaiEnzyme());
 
 const shallowWrapperWithProps = (props) => shallow(<BreadcrumbInstance {...props} />);
 
+/* eslint-disable func-names, prefer-arrow-callback */
 describe('BreadcrumbInstance.jsx', function () {
   describe('Able to render', function () {
     it('renders without explosion', function () {
@@ -26,7 +27,7 @@ describe('BreadcrumbInstance.jsx', function () {
         ],
         changeDirectory: () => null,
       };
-      expect(shallowWrapperWithProps(props)).to.exist;
+      expect(shallowWrapperWithProps(props)).be.present();
     });
   });
   describe('renders with empty directories', function () {
