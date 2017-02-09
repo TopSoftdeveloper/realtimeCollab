@@ -6,8 +6,8 @@ import socket from '../server/controller/socket/handlers';
 import constants from '../server/constants';
 import server from '../server/server';
 
-describe('Newsfeed', () => {
-  it('should save newsfeed post to disk and broadcast to project', (done) => {
+describe('Newsfeed', function() {
+  it('should save newsfeed post to disk and broadcast to project', function(done) {
     const storageStub = sinon.stub(storage, 'saveNewsfeed');
     const data = { ref_type: 'branch', ref: 'helloworld', user_id: 'NysSbasYe' };
     const template = templates.GITHUB_CREATE;
@@ -36,7 +36,7 @@ describe('Newsfeed', () => {
       });
   });
 
-  it('should get newsfeed posts', (done) => {
+  it('should get newsfeed posts', function(done) {
     const storageGetProjectsOfUser = sinon.stub(storage, 'getProjectsOfUser');
     const storageGetNewsfeed = sinon.stub(storage, 'getNewsfeed');
     const data = { ref_type: 'branch', ref: 'helloworld', user_id: 'NysSbasYe' };

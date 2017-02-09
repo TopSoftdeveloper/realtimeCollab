@@ -1,0 +1,9 @@
+# Mocha discourages arrow callbacks. Here we override some of the rules to
+# allow for regular function callbacks.
+{
+  "rules": {
+    "prefer-arrow-callback": 0,
+    "func-names": 0,
+    "space-before-function-paren": 0,
+  },
+}

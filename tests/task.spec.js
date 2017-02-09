@@ -8,8 +8,8 @@ import constants from '../server/constants';
 import server from '../server/server';
 import models from '../server/data/models/modelManager';
 
-describe('Task', () => {
-  beforeEach((done) => {
+describe('Task', function() {
+  beforeEach(function(done) {
     let user = null;
     models.User
       .create({ id: 'user1' })
@@ -34,7 +34,7 @@ describe('Task', () => {
       });
   });
 
-  it('should get existing tasks', (done) => {
+  it('should get existing tasks', function(done) {
     storage.getTask('task1').then((task1) => {
       expect(task1.id).to.equal('task1');
       done();
