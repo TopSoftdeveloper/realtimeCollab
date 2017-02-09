@@ -125,10 +125,6 @@ function getTask(request, reply) {
     var user_id = request.auth.credentials.user_id
 
     storage.findProjectOfTask(task_id).then(function(result) {
-        if (!result) {
-            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-            return
-        }
         var project = result.project
         accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
             if (!isPartOf) {
@@ -139,7 +135,9 @@ function getTask(request, reply) {
                 reply(task);
             });
         })
-    })
+    }).catch(function(err) {
+        reply(Boom.badRequest(err));
+    });
 }
 
 function createTask(request, reply) {

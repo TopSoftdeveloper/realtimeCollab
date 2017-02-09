@@ -1,6 +1,8 @@
-# Mocha discourages arrow callbacks. Here we override some of the rules to
-# allow for regular function callbacks.
+# Include a .eslintrc for the tests directory, unless someone
+# is willing to refactor and lint the rest of the codebase.
+# Mocha discourages arrow callbacks. Override some rules to allow regular function callbacks.
 {
+  "extends": "airbnb",
   "rules": {
     "prefer-arrow-callback": 0,
     "func-names": 0,

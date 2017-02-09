@@ -34,10 +34,42 @@ describe('Task', function() {
       });
   });
 
-  it('should get existing tasks', function(done) {
-    storage.getTask('task1').then((task1) => {
-      expect(task1.id).to.equal('task1');
-      done();
+  describe('Get Tasks', function() {
+    it('should return 400 if task does not exist', function(done) {
+      server.select('api').inject({
+        method: 'GET',
+        url: '/task/task999',
+        credentials: { user_id: 'user1', password: 'password1' },
+      }, (res) => {
+        expect(res.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return 403 if user is not authorized to view task\'s project', function(done) {
+      server.select('api').inject({
+        method: 'GET',
+        url: '/task/task1',
+        credentials: { user_id: 'user2', password: 'password1' },
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should get task', function(done) {
+      server.select('api').inject({
+        method: 'GET',
+        url: '/task/task1',
+        credentials: { user_id: 'user1', password: 'password1' },
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.be.a('object');
+        expect(res.result.id).to.equal('task1');
+        expect(res.result.project_id).to.equal('project1');
+        expect(res.result.milestone_id).to.equal('milestone1');
+        done();
+      });
     });
   });
 });
