@@ -1,61 +1,41 @@
-import React, { Component, PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
+import React, { PropTypes } from 'react';
 
 import UserAvatar from '../UserAvatar.jsx';
-import { acceptProject, declineProject } from '../../actions/ReduxTaskActions';
 
-class NotificationItem extends Component {
-  acceptProject() {
-    const notifId = this.props.id;
-    const projectId = this.props.meta.project_id;
-    this.props.dispatch(acceptProject(projectId, notifId));
+const propTypes = {
+  text: PropTypes.string.isRequired,
+  read: PropTypes.bool.isRequired,
+  time: PropTypes.string.isRequired,
+  user: PropTypes.object,
+  actionButtons: PropTypes.object,
+};
+
+const NotificationItem = ({ text, read, time, user, actionButtons }) => {
+  let notifClassName = 'notif-item';
+  if (read) {
+    notifClassName += ' notif-read';
+  } else {
+    notifClassName += ' notif-unread';
   }
 
-  declineProject() {
-    const notifId = this.props.id;
-    const projectId = this.props.meta.project_id;
-    this.props.dispatch(declineProject(projectId, notifId));
-  }
+  return (
+    <li className={notifClassName}>
+      <div className="notif-photo">
+        {user &&
+          <UserAvatar
+            imgSrc={user.display_image}
+            displayName={user.display_name}
+          />
+        }
+      </div>
+      <div>
+        <span className="notif-text">{text}</span>
+      </div>
+      <span className="notif-fuzzy-time">{time}</span>
+      {actionButtons}
+    </li>
+  );
+};
 
-  render() {
-    let buttons = null
-    if (this.props.type === 'INVITE_TO_PROJECT') {
-      buttons = (
-        <div className="notif-buttons">
-          <Button onClick={this.acceptProject.bind(this)}>Accept</Button>
-          <Button onClick={this.declineProject.bind(this)}>Decline</Button>
-        </div>
-      );
-    }
-    let notifClassName = 'notif-item';
-    if (this.props.read) {
-      notifClassName += ' notif-read';
-    } else {
-      notifClassName += ' notif-unread';
-    }
-
-    let image = null;
-    if (this.props.user) {
-      image = (
-        <UserAvatar
-          imgSrc={this.props.user.display_image}
-          displayName={this.props.user.display_name}
-        />
-      );
-    }
-
-    return (
-      <li className={notifClassName}>
-        <div className="notif-photo">
-          {image}
-        </div>
-        <div>
-          <span className="notif-text">{this.props.text}</span>
-        </div>
-        <span className="notif-fuzzy-time">{this.props.fuzzyTime}</span>
-        {buttons}
-      </li>
-    );
-  }
-}
+NotificationItem.propTypes = propTypes;
 export default NotificationItem;
