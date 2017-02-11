@@ -2,7 +2,7 @@ import React from 'react';
 import chai, { expect } from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 import { shallow } from 'enzyme';
-import AvatarList from './../../js/components/AvatarList.jsx';
+import AvatarList from './../../../js/components/Common/AvatarList.jsx';
 
 chai.use(chaiEnzyme());
 

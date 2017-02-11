@@ -22,7 +22,7 @@ import { CardHeader } from 'material-ui/Card';
 import BreadcrumbInstance from './BreadcrumbInstance.jsx';
 import { getFileIcon, toFuzzyTime } from '../../utils/general';
 import { insertFile, deleteFile, updateFile } from '../../actions/ReduxTaskActions';
-import LoadingIndicator from '../LoadingIndicator.jsx';
+import LoadingIndicator from '../Common/LoadingIndicator.jsx';
 import TreeModal from './TreeModal.jsx';
 import RenameModal from './RenameModal.jsx';
 

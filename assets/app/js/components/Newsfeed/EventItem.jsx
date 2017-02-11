@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 
-import UserAvatar from '../UserAvatar.jsx';
+import UserAvatar from '../Common/UserAvatar.jsx';
 import { toFuzzyTime } from '../../utils/general';
 
 

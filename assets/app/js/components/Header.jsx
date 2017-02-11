@@ -12,7 +12,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MyRawTheme from '../myTheme'
 import Code from '../icons/Code.jsx'
 import {logout} from '../utils/auth.js'
-import UserAvatar from './UserAvatar.jsx'
+import UserAvatar from './Common/UserAvatar.jsx'
 
 let RATE_LIMIT_MS = 900
 let MIN_SEARCH_CHARS = 3

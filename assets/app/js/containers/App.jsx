@@ -11,8 +11,8 @@ import {matchesUrl, getCurrentProject, isItemPresent} from '../utils/general'
 import {isProjectPresent} from '../utils/collection'
 import LeftPanel from '../components/LeftPanel.jsx'
 import {Grid, Row, Col } from 'react-bootstrap'
-import LoadingIndicator from '../components/LoadingIndicator.jsx'
-import Snackbar from './Snackbar.jsx';
+import LoadingIndicator from '../components/Common/LoadingIndicator.jsx'
+import SnackbarView from './SnackbarView.jsx';
 import {refreshTokens} from '../utils/apiUtil'
 var AppConstants = require('../AppConstants');
 
@@ -137,7 +137,7 @@ class App extends Component {
                         {children}
                     </div>
                 </Sidebar>
-                <Snackbar />
+                <SnackbarView />
               </Row>
             </Grid>
         );

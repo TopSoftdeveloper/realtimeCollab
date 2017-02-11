@@ -2,7 +2,7 @@ import React from 'react';
 import chai, { expect } from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 import { shallow } from 'enzyme';
-import _404 from './../../js/components/_404.jsx';
+import _404 from './../../../js/components/Common/_404.jsx';
 
 chai.use(chaiEnzyme());
 /* eslint-disable func-names, prefer-arrow-callback */

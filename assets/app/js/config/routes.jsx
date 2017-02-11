@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
 import App from '../containers/App.jsx';
 import Project from '../containers/Project.jsx';
-import _404 from '../components/_404.jsx';
+import _404 from '../components/Common/_404.jsx';
 import NotificationView from '../containers/NotificationView.jsx';
 import SearchResults from '../components/SearchResults.jsx';
 import Dashboard from '../components/Dashboard.jsx';

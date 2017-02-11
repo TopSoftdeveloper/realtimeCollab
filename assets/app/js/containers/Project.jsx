@@ -10,7 +10,7 @@ import ProjectMilestoneView from './ProjectMilestoneView.jsx'
 import ProjectFileView from './ProjectFileView.jsx'
 import ProjectNewsfeedView from './ProjectNewsfeedView.jsx'
 import ProjectSettingView from './ProjectSettingView.jsx'
-import _404 from '../components/_404.jsx'
+import _404 from '../components/Common/_404.jsx'
 import {getCurrentTab, getProjectRoot, isItemPresent} from '../utils/general'
 import {getCurrentProject, getProjectActiveUsers, getProjectPendingUsers} from '../selector'
 import * as AppConstants from '../AppConstants';

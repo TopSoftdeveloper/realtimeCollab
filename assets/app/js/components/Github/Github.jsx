@@ -9,7 +9,7 @@ import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import RepoList from './../Github/RepoList.jsx'
-import LoadingIndicator from '../LoadingIndicator.jsx'
+import LoadingIndicator from '../Common/LoadingIndicator.jsx'
 
 class Github extends Component {
     constructor(props, context) {

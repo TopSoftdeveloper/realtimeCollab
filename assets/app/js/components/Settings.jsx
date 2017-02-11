@@ -9,7 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import {getGithubAuthCode} from '../utils/general'
 import {githubOAuth} from '../utils/apiUtil'
 import {APP_ROOT_URL, PATH, GITHUB_CLIENT_ID, INVITED_TO_PROJECT, USER_ALREADY_EXISTS, USER_NOT_FOUND} from '../AppConstants';
-import LoadingIndicator from './LoadingIndicator.jsx'
+import LoadingIndicator from './Common/LoadingIndicator.jsx'
 import Github from './Github/Github.jsx'
 
 

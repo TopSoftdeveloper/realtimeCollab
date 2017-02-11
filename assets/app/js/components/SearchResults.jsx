@@ -14,7 +14,7 @@ import * as Actions from '../actions/ReduxTaskActions'
 import Code from '../icons/Code.jsx'
 import CodeFragment from './CodeFragment.jsx'
 import {toFuzzyTime} from '../utils/general'
-import LoadingIndicator from '../components/LoadingIndicator.jsx'
+import LoadingIndicator from '../components/Common/LoadingIndicator.jsx'
 
 class SearchResults extends Component {
     constructor() {

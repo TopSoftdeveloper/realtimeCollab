@@ -2,8 +2,8 @@ import React from 'react';
 import chai, { expect } from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 
-import { mountWithContext } from '../testUtils.js';
-import UserAvatar from './../../js/components/UserAvatar.jsx';
+import { mountWithContext } from '../../testUtils.js';
+import UserAvatar from './../../../js/components/Common/UserAvatar.jsx';
 
 chai.use(chaiEnzyme());
 

@@ -6,7 +6,7 @@ import {Grid, Row, Col} from 'react-bootstrap'
 import Checkbox from 'material-ui/Checkbox'
 import Divider from 'material-ui/Divider';
 
-import AvatarList from './AvatarList.jsx'
+import AvatarList from './Common/AvatarList.jsx'
 import TaskModal from './TaskModal.jsx'
 
 
