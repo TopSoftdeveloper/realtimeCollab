@@ -12,11 +12,7 @@ const propTypes = {
 
 const NotificationItem = ({ text, read, time, user, actionButtons }) => {
   let notifClassName = 'notif-item';
-  if (read) {
-    notifClassName += ' notif-read';
-  } else {
-    notifClassName += ' notif-unread';
-  }
+  notifClassName += read ? ' notif-read' : ' notif-unread';
 
   return (
     <li className={notifClassName}>
