@@ -1,33 +1,38 @@
-import * as Cookies from "js-cookie";
+import * as Cookies from 'js-cookie';
+
 const base64json = require('base64json');
 
-var config_encoded = Cookies.getJSON('config')
+const configEncoded = Cookies.getJSON('config');
+
 const defaultConfig = {
-  "hostname": "http://localhost:8080",
-  "app_root_url": "http://localhost:8080/app",
-  "api_base_url": "http://localhost:8080",
-  "google_client_id": "251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com",
-  "github_client_id": "d530a5d9c552e390d942"
-}
-const client_config = config_encoded != null ? JSON.parse(base64json.parse(config_encoded)) : defaultConfig;
+  hostname: 'http://localhost:8080',
+  app_root_url: 'http://localhost:8080/app',
+  api_base_url: 'http://localhost:8080',
+  google_client_id: '251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com',
+  github_client_id: 'd530a5d9c552e390d942',
+};
+
+const clientConfig = configEncoded != null ?
+  JSON.parse(base64json.parse(configEncoded)) : defaultConfig;
+
 export const PATH = {
   milestones: 'milestones',
   files: 'files',
   newsfeed: 'newsfeed',
-  settings: 'settings'
+  settings: 'settings',
 };
 export const MULTIPART_BOUNDARY = '-------314159265358979323846';
 export const SNACKBAR_MESSAGE = 'SNACKBAR_MESSAGE';
 export const ADD_RESULTS = 'ADD_RESULTS';
 export const INIT_RESULTS = 'INIT_RESULTS';
 export const INIT_GITHUB_REPOS = 'INIT_GITHUB_REPOS';
-export const GITHUB_CLIENT_ID = client_config.github_client_id;
-export const GOOGLE_CLIENT_ID = client_config.google_client_id;
+export const GITHUB_CLIENT_ID = clientConfig.github_client_id;
+export const GOOGLE_CLIENT_ID = clientConfig.google_client_id;
 export const UPDATE_APP_STATUS = 'UPDATE_APP_STATUS';
 export const SET_DIRECTORY_AS_ROOT = 'SET_DIRECTORY_AS_ROOT';
 export const SET_GITHUB_REPO = 'SET_GITHUB_REPO';
 export const ADD_EVENT = 'ADD_EVENT';
-export const UPDATE_PROJECT ='UPDATE_PROJECT';
+export const UPDATE_PROJECT = 'UPDATE_PROJECT';
 export const JOIN_PROJECT = 'JOIN_PROJECT';
 export const ADD_DIRECTORY = 'ADD_DIRECTORY';
 export const GO_TO_DIRECTORY = 'GO_TO_DIRECTORY';
@@ -68,8 +73,8 @@ export const INVITED_TO_PROJECT = 'INVITED_TO_PROJECT';
 export const INVITATION_ERROR = 'INVITATION_ERROR';
 export const USER_NOT_FOUND = 'USER_NOT_FOUND';
 export const USER_ALREADY_EXISTS = 'USER_ALREADY_EXISTS';
-export const INIT_SNACKBAR ='INIT_SNACKBAR';
-export const UPDATE_SNACKBAR ='UPDATE_SNACKBAR';
+export const INIT_SNACKBAR = 'INIT_SNACKBAR';
+export const UPDATE_SNACKBAR = 'UPDATE_SNACKBAR';
 export const INIT_APP = 'INIT_APP';
 export const INIT_MILESTONES = 'INIT_MILESTONES';
 export const INIT_NOTIFICATIONS = 'INIT_NOTIFICATIONS';
@@ -77,9 +82,9 @@ export const INIT_PROJECTS = 'INIT_PROJECTS';
 export const INIT_TASKS = 'INIT_TASKS';
 export const INIT_USERS = 'INIT_USERS';
 export const INIT_FILES = 'INIT_FILES';
-export const APP_ROOT_URL = client_config.app_root_url;
-export const HOSTNAME = client_config.hostname;
-export const API_BASE_URL = client_config.api_base_url;
+export const APP_ROOT_URL = clientConfig.app_root_url;
+export const HOSTNAME = clientConfig.hostname;
+export const API_BASE_URL = clientConfig.api_base_url;
 export const INIT_MESSAGES = 'INIT_MESSAGES';
 export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const DELETE_MESSAGE = 'DELETE_MESSAGE';

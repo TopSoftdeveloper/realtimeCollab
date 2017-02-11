@@ -1,11 +1,12 @@
-import {cyan500, cyan700, white, pink200, grey100, grey300, grey500, blueGrey900} from 'material-ui/styles/colors.js';
-import {fade} from 'material-ui/utils/colorManipulator.js';
+import { cyan500, cyan700, white, pink200,
+  grey100, grey300, grey500, blueGrey900 } from 'material-ui/styles/colors.js';
+import { fade } from 'material-ui/utils/colorManipulator.js';
 import Spacing from 'material-ui/styles/spacing';
 import zIndex from 'material-ui/styles/zIndex';
 
-let MyRawTheme = {
+const MyRawTheme = {
   spacing: Spacing,
-  zIndex: zIndex,
+  zIndex,
   fontFamily: 'Roboto, sans-serif',
   palette: {
     primary1Color: cyan500,
@@ -19,8 +20,8 @@ let MyRawTheme = {
     canvasColor: blueGrey900,
     borderColor: grey300,
     disabledColor: fade(white, 0.3),
-    pickerHeaderColor: cyan500
-  }
+    pickerHeaderColor: cyan500,
+  },
 };
 
-export default MyRawTheme
+export default MyRawTheme;
