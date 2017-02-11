@@ -20,18 +20,17 @@ const NotificationList = ({ notifications, users, dispatch }) => {
   const dispatchAcceptProject = (projectId, notifId) => {
     dispatch(acceptProject(projectId, notifId));
   };
-
   const dispatchDeclineProject = (projectId, notifId) => {
     dispatch(declineProject(projectId, notifId));
   };
   const notifsSortedByTime = notifications.sort((a, b) => (a.time < b.time));
   const notificationItems = notifsSortedByTime.map(notif => {
     const matchingUsers = users.filter(user => user.id === notif.meta.user_id);
-    let user = null;
+    let user;
     if (matchingUsers.length > 0) {
       user = matchingUsers[0];
     }
-    let buttons = null;
+    let buttons;
     if (notif.type === 'INVITE_TO_PROJECT') {
       buttons = (
         <div className="notif-buttons">
@@ -39,13 +38,13 @@ const NotificationList = ({ notifications, users, dispatch }) => {
             style={styles.button}
             label="Accept"
             primary
-            onTouchTap = {dispatchAcceptProject.bind(null, notif.meta.project_id, notif.id)}
+            onTouchTap={dispatchAcceptProject.bind(null, notif.meta.project_id, notif.id)}
           />
           <RaisedButton
             style={styles.button}
             label="Decline"
             secondary
-            onTouchTap = {dispatchDeclineProject.bind(null, notif.meta.project_id, notif.id)}
+            onTouchTap={dispatchDeclineProject.bind(null, notif.meta.project_id, notif.id)}
           />
         </div>
       );

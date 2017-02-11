@@ -11,12 +11,11 @@ const shallowWrapperWithProps = (props) => shallow(<NotificationItem {...props} 
 /* eslint-disable func-names, prefer-arrow-callback */
 describe('NotificationItem.jsx', function () {
   const expectBasicStructure = (wrapper) => {
-    expect(wrapper).to.have.exactly(1).descendants('li');
-    expect(wrapper.find('li')).to.have.className('notif-item');
+    expect(wrapper).to.have.exactly(1).descendants('li.notif-item');
     expect(wrapper).to.have.exactly(2).descendants('span');
     expect(wrapper.find('span').first()).to.have.className('notif-text');
     expect(wrapper.find('span').at(1)).to.have.className('notif-fuzzy-time');
-    expect(wrapper).to.have.exactly(1).descendants('.notif-photo');
+    expect(wrapper).to.have.exactly(1).descendants('div.notif-photo');
   };
   const props = {
     text: 'You have a new message',
