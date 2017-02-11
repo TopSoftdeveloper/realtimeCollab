@@ -1,9 +1,8 @@
-import React, {Component, PropTypes} from 'react';
-import FlatButton from 'material-ui/FlatButton'
+import React, { Component, PropTypes } from 'react';
+import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
-import Paper from 'material-ui/Paper';
-import { Form } from 'formsy-react'
-import FormsyText from 'formsy-material-ui/lib/FormsyText'
+import { Form } from 'formsy-react';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
 const propTypes = {
   handleClose: PropTypes.func.isRequired,
@@ -20,7 +19,7 @@ class RenameModal extends Component {
     this.disableButton = this.disableButton.bind(this);
     this.state = {
       canSubmit: false,
-    }
+    };
   }
   onDialogSubmit() {
     this.props.onDialogSubmit(this.textInput.getValue().trim());
@@ -37,21 +36,21 @@ class RenameModal extends Component {
     });
   }
   render() {
-    const {inputValue} = this.props;
+    const { inputValue } = this.props;
     const renameModalActions = [
-        <FlatButton
-          key={13}
-          label="Cancel"
-          secondary={true}
-          onTouchTap={this.handleClose}
-        />,
-        <FlatButton
-          key={23}
-          label="Submit"
-          primary={true}
-          onTouchTap={this.onDialogSubmit}
-          disabled={!this.state.canSubmit}
-        />
+      <FlatButton
+        key={13}
+        label="Cancel"
+        secondary
+        onTouchTap={this.handleClose}
+      />,
+      <FlatButton
+        key={23}
+        label="Submit"
+        primary
+        onTouchTap={this.onDialogSubmit}
+        disabled={!this.state.canSubmit}
+      />,
     ];
     return (
       <Dialog
@@ -59,7 +58,7 @@ class RenameModal extends Component {
         actions={renameModalActions}
         onRequestClose={this.handleClose}
         open
-        onClick={()=>{this.textInput.focus()}}
+        onClick={() => { this.textInput.focus(); }}
       >
         <Form
           onValid={this.enableButton}
@@ -68,14 +67,14 @@ class RenameModal extends Component {
         >
           <FormsyText
             required
-            value = {inputValue}
+            value={inputValue}
             name="File Name"
             floatingLabelText="New File Name(required)"
             ref={(input) => { this.textInput = input; }}
           />
         </Form>
       </Dialog>
-    )
+    );
   }
 }
 RenameModal.propTypes = propTypes;
