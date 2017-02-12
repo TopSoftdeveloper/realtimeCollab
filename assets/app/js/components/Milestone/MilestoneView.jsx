@@ -15,8 +15,7 @@ import {Alert, Tooltip, OverlayTrigger} from 'react-bootstrap'
 import MilestoneModal from './MilestoneModal.jsx'
 import MilestoneRow from './MilestoneRow.jsx'
 import AssigneeRow from './AssigneeRow.jsx'
-import Remove from './../icons/Remove.jsx'
-import AvatarList from './Common/AvatarList.jsx'
+import AvatarList from '../Common/AvatarList.jsx'
 
 
 class MilestoneView extends Component {

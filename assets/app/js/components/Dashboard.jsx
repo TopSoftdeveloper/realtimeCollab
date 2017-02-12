@@ -16,9 +16,9 @@ import MenuItem from 'material-ui/MenuItem'
 import ClearIcon from 'material-ui/svg-icons/content/clear'
 import {Alert, Tooltip, OverlayTrigger} from 'react-bootstrap'
 
-import MilestoneModal from './MilestoneModal.jsx'
-import MilestoneRow from './MilestoneRow.jsx'
-import AssigneeRow from './AssigneeRow.jsx'
+import MilestoneModal from './Milestone/MilestoneModal.jsx'
+import MilestoneRow from './Milestone/MilestoneRow.jsx'
+import AssigneeRow from './Milestone/AssigneeRow.jsx'
 
 
 

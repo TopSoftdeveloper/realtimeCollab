@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
-import * as SocketActions from '../actions/SocketActions'
 import { connect } from 'react-redux'
 import {Grid, Row, Col} from 'react-bootstrap'
 import Checkbox from 'material-ui/Checkbox'
 import Divider from 'material-ui/Divider';
 
-import AvatarList from './Common/AvatarList.jsx'
+import * as SocketActions from '../../actions/SocketActions'
+import AvatarList from '../Common/AvatarList.jsx'
 import TaskModal from './TaskModal.jsx'
 
 

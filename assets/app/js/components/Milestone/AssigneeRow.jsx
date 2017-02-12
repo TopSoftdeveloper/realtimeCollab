@@ -1,5 +1,4 @@
 import React, { Component,PropTypes } from 'react'
-import * as SocketActions from '../actions/SocketActions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
@@ -20,6 +19,7 @@ import TaskRow from './TaskRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
 import TaskModal from './TaskModal.jsx'
 import MilestoneModal from './MilestoneModal.jsx'
+import * as SocketActions from '../../actions/SocketActions'
 
 class AssigneeRow extends Component {
 

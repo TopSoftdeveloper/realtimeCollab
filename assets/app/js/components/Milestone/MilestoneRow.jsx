@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import * as SocketActions from '../actions/SocketActions'
+
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Paper from 'material-ui/Paper'
@@ -18,7 +18,7 @@ import TaskRow from './TaskRow.jsx'
 import CompletedRow from './CompletedRow.jsx'
 import TaskModal from './TaskModal.jsx'
 import MilestoneModal from './MilestoneModal.jsx'
-
+import * as SocketActions from '../../actions/SocketActions'
 
 
 
