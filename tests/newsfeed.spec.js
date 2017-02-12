@@ -7,6 +7,16 @@ import constants from '../server/constants';
 import server from '../server/server';
 
 describe('Newsfeed', function() {
+  beforeEach(function(done) {
+    this.socketMock = sinon.mock(socket);
+    done();
+  });
+
+  afterEach(function(done) {
+    this.socketMock.restore();
+    done();
+  });
+
   it('should save newsfeed post to disk and broadcast to project', function(done) {
     const storageStub = sinon.stub(storage, 'saveNewsfeed');
     const data = { ref_type: 'branch', ref: 'helloworld', user_id: 'NysSbasYe' };
@@ -23,8 +33,7 @@ describe('Newsfeed', function() {
     storageStub.withArgs(JSON.stringify(data), template, projectId)
       .returns(Promise.resolve(newsfeedPost));
 
-    const socketMock = sinon.mock(socket);
-    socketMock
+    this.socketMock
       .expects('sendMessageToProject')
       .once()
       .withExactArgs(projectId, 'newsfeed_post', newsfeedPost);
