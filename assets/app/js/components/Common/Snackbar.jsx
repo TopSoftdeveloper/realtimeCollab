@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
-import MSnackbar from 'material-ui/Snackbar';
+import Snackbar from 'material-ui/Snackbar';
 
 const propTypes = {
   snackbar: PropTypes.object.isRequired,
   onRequestClose: PropTypes.func.isRequired,
 };
-const Snackbar = ({ snackbar, onRequestClose }) => (
-  <MSnackbar
+const ISnackbar = ({ snackbar, onRequestClose }) => (
+  <Snackbar
     open={snackbar.isOpen}
     message={snackbar.message}
     autoHideDuration={3500}
@@ -14,6 +14,6 @@ const Snackbar = ({ snackbar, onRequestClose }) => (
     onRequestClose={onRequestClose}
   />
 );
-Snackbar.propTypes = propTypes;
+ISnackbar.propTypes = propTypes;
 
-export default Snackbar;
+export default ISnackbar;
