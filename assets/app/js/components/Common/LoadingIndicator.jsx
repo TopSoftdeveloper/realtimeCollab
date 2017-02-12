@@ -1,15 +1,22 @@
-import React, { Component } from 'react'
+import React, { PropTypes } from 'react';
 import CircularProgress from 'material-ui/CircularProgress';
 
-class LoadingIndicator extends Component {
-    render() {
-        let size = 40
-        if (this.props.size) size = this.props.size
-        return (
-        <div className={this.props.className}>
-            <CircularProgress size={size}/>
-        </div>);
-    }
-}
+const propTypes = {
+  size: PropTypes.number,
+  className: PropTypes.string,
+};
 
+const defaultProps = {
+  size: 40,
+  className: '',
+};
+
+const LoadingIndicator = ({ size, className }) => (
+  <div className={className}>
+    <CircularProgress size={size} />
+  </div>
+);
+
+LoadingIndicator.defaultProps = defaultProps;
+LoadingIndicator.propTypes = propTypes;
 export default LoadingIndicator;

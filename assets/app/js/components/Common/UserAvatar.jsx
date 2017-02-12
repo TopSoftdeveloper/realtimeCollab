@@ -4,7 +4,6 @@ import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour }) => {
   let image = null;
-  const className = isSquare ? 'square-avatar' : '';
   let styles = {};
   if (memberColour) {
     styles = {
@@ -19,7 +18,7 @@ const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour
       <Avatar
         size={36}
         src={imgSrc}
-        className={className}
+        className={isSquare ? 'square-avatar' : ''}
         style={styles}
       />
     );

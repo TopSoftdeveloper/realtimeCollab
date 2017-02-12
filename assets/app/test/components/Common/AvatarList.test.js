@@ -36,7 +36,7 @@ describe('AvatarList.jsx ', function () {
     },
   ];
   it('render with no memeber', function () {
-    expect(shallow(<AvatarList />)).to.be.present();
+    expect(shallow(<AvatarList members={[]} />)).to.be.present();
   });
 
   describe('with one member and rest prop empty', function () {
