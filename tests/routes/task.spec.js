@@ -1,14 +1,15 @@
-/* global sinon, expect, beforeEach, afterEach, it, describe */
-import github from '../server/controller/githubController';
-import socket from '../server/controller/socket/handlers';
-import constants from '../server/constants';
-import server from '../server/server';
-import models from '../server/data/models/modelManager';
+/* global sinon, expect, beforeEach, afterEach, it, describe, context */
+import github from '../../server/controller/githubController';
+import socket from '../../server/controller/socket/handlers';
+import constants from '../../server/constants';
+import server from '../../server/server';
+import models from '../../server/data/models/modelManager';
 
 describe('Task', function() {
   beforeEach(function(done) {
-    this.socketMock = sinon.mock(socket);
-    this.githubMock = sinon.mock(github);
+    this.sandbox = sinon.sandbox.create();
+    this.socketMock = this.sandbox.mock(socket);
+    this.githubMock = this.sandbox.mock(github);
 
     models.User
       .create({
@@ -47,12 +48,11 @@ describe('Task', function() {
   });
 
   afterEach(function(done) {
-    this.socketMock.restore();
-    this.githubMock.restore();
+    this.sandbox.restore();
     done();
   });
 
-  describe('Get Tasks', function() {
+  context('getting tasks', function() {
     it('should return 400 if task does not exist', function(done) {
       server.select('api').inject({
         method: 'GET',
@@ -91,7 +91,7 @@ describe('Task', function() {
     });
   });
 
-  describe('Create Task', function() {
+  describe('creating tasks', function() {
     beforeEach(function(done) {
       this.payload = {
         content: 'task content',

@@ -1,10 +1,10 @@
-/* global sinon, expect, beforeEach, afterEach, it, describe */
-import newsfeed from '../server/controller/newsfeedController';
-import storage from '../server/data/storage';
-import templates from '../server/templates';
-import socket from '../server/controller/socket/handlers';
-import constants from '../server/constants';
-import server from '../server/server';
+/* global sinon, expect, beforeEach, afterEach, it, describe, context */
+import newsfeed from '../../server/controller/newsfeedController';
+import storage from '../../server/data/storage';
+import templates from '../../server/templates';
+import socket from '../../server/controller/socket/handlers';
+import constants from '../../server/constants';
+import server from '../../server/server';
 
 describe('Newsfeed', function() {
   beforeEach(function(done) {
