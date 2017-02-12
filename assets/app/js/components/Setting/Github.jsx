@@ -8,7 +8,7 @@ import $ from 'jquery'
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import RepoList from './../Github/RepoList.jsx'
+import RepoList from './RepoList.jsx'
 import LoadingIndicator from '../Common/LoadingIndicator.jsx'
 
 class Github extends Component {
