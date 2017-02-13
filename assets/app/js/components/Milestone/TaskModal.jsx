@@ -1,80 +1,92 @@
-import React, { Component } from 'react'
-import MoreVert from 'material-ui/svg-icons/navigation/more-vert'
-import { IconButton, IconMenu, Dialog, TextField, FlatButton } from 'material-ui'
-import MenuItem from 'material-ui/MenuItem'
+import React, { Component, PropTypes } from 'react';
+import { Dialog, TextField, FlatButton } from 'material-ui';
+import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 
+const propTypes = {
+  title: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+  assignee: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  taskMethod: PropTypes.func.isRequired,
+  users: PropTypes.array.isRequired,
+};
 class TaskModal extends Component {
-
-    constructor(props, context) {
-        super(props, context);
-        if (this.props.assignee) {
-            this.state = {
-                assignee: this.props.assignee
-            }
-        } else {
-            this.state = {
-                assignee: ''
-            }
-        }
+  constructor(props, context) {
+    super(props, context);
+    if (this.props.assignee) {
+      this.state = {
+        assignee: this.props.assignee,
+      };
+    } else {
+      this.state = {
+        assignee: '',
+      };
     }
-
-    onDialogSubmit() {
-        let content = this.refs.taskField.getValue().trim()
-        if (content !== '') {
-            this.props.taskMethod(content, this.state.assignee)
-        }
-        this.props.handleClose()
+    this.onDialogSubmit = this.onDialogSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  onDialogSubmit() {
+    const content = this.taskInputField.getValue().trim();
+    if (content !== '') {
+      this.props.taskMethod(content, this.state.assignee);
     }
+    this.props.handleClose();
+  }
 
-    handleChange(event, index, value) {
-        this.setState({assignee: value});
-    }
+  handleChange(event, index, value) {
+    this.setState({ assignee: value });
+  }
 
-    render() {
-        let actions = [
-            <FlatButton
-                key={1}
-                label="Cancel"
-                secondary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />,
-            <FlatButton
-                key={2}
-                label="Submit"
-                primary={true}
-                onTouchTap={this.onDialogSubmit.bind(this)} />
-        ]
+  render() {
+    const actions = [
+      <FlatButton
+        key={1}
+        label="Cancel"
+        secondary
+        onTouchTap={this.onDialogSubmit}
+      />,
+      <FlatButton
+        key={2}
+        label="Submit"
+        primary
+        onTouchTap={this.onDialogSubmit}
+      />,
+    ];
 
 
-        let possibleAssignees = this.props.users.map(user => {
-            return <MenuItem value={user.id} key={user.id} primaryText={user.display_name}/>
-        })
+    const possibleAssignees = this.props.users.map(user => (
+      <MenuItem value={user.id} key={user.id} primaryText={user.display_name} />
+    ));
 
-        possibleAssignees.unshift(<MenuItem key={0} primaryText="None"/>)
+    possibleAssignees.unshift(<MenuItem key={0} primaryText="None" />);
 
-        return (
-            <Dialog
-                autoScrollBodyContent
-                title={this.props.title}
-                actions={actions}
-                onRequestClose={this.props.handleClose}
-                open={this.props.open}>
-                <TextField
-                    hintText="Task name"
-                    onEnterKeyDown={this.onDialogSubmit.bind(this)}
-                    ref="taskField"
-                    defaultValue={this.props.content}
-                />
-                <br/>
-                <SelectField
-                    value={this.state.assignee}
-                    onChange={this.handleChange.bind(this)}
-                    floatingLabelText="Assign to">
-                    {possibleAssignees}
-                </SelectField>
-            </Dialog>
-        )
-    }
+    return (
+      <Dialog
+        autoScrollBodyContent
+        title={this.props.title}
+        actions={actions}
+        onRequestClose={this.props.handleClose}
+        open={this.props.open}
+      >
+        <TextField
+          hintText="Task name"
+          onEnterKeyDown={this.onDialogSubmit}
+          ref={(input) => { this.taskInputField = input; }}
+          defaultValue={this.props.content}
+        />
+        <br />
+        <SelectField
+          value={this.state.assignee}
+          onChange={this.handleChange}
+          floatingLabelText="Assign to"
+        >
+          {possibleAssignees}
+        </SelectField>
+      </Dialog>
+    );
+  }
 }
-
-export default TaskModal
+TaskModal.propTypes = propTypes;
+export default TaskModal;
