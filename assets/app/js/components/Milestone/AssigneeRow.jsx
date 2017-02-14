@@ -10,7 +10,7 @@ import FlatButton from 'material-ui/FlatButton';
 import { Grid, Row, Col } from 'react-bootstrap';
 
 import TaskRow from './TaskRow.jsx';
-import CompletedRow from './CompletedRow.jsx';
+import CompletedTask from './CompletedTask.jsx';
 import TaskModal from './TaskModal.jsx';
 
 const propTypes = {
@@ -36,6 +36,12 @@ class AssigneeRow extends Component {
     this.handleClose = this.handleClose.bind(this);
     this.addTask = this.addTask.bind(this);
     this.openModal = this.openModal.bind(this);
+    this.toggleOngoing = this.toggleOngoing.bind(this);
+    this.toggleCompleted = this.toggleCompleted.bind(this);
+    this.markDone = this.markDone.bind(this);
+    this.editTask = this.editTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
+    this.reopenTask = this.reopenTask.bind(this);
   }
 
   toggleOngoing() {
@@ -77,14 +83,51 @@ class AssigneeRow extends Component {
   editTask(taskId, content, assignee) {
     this.props.actions.editTask(taskId, content, assignee);
   }
-
-
-  render() {
-    const { users, user, actions, tasks } = this.props;
+  reopenTask(taskId) {
+    this.props.actions.reopenTask(taskId);
+  }
+  renderTaskModal() {
+    return (
+      <TaskModal
+        title="Add Task"
+        open={this.state.isDialogOpen}
+        handleClose={this.handleClose}
+        assignee={this.props.user.id}
+        taskMethod={this.addTask}
+        users={this.props.users}
+      />
+    );
+  }
+  renderMilestoneInfo(ongoingTasks, completedTasks) {
+    const ongoingText = `${ongoingTasks.length} Ongoing`;
+    const completedTask = `${completedTasks.length} Completed`;
+    const ongoingLabelStyle = {
+      opacity: this.state.showOngoing ? 1 : 0.5,
+    };
+    const completedLabelStyle = {
+      opacity: this.state.showCompleted ? 1 : 0.5,
+    };
+    return (
+      <div className="milestone-row-info">
+        <FlatButton
+          labelStyle={ongoingLabelStyle}
+          label={ongoingText}
+          primary
+          onTouchTap={this.toggleOngoing}
+        />
+        <FlatButton
+          labelStyle={completedLabelStyle}
+          label={completedTask}
+          secondary
+          onTouchTap={this.toggleCompleted}
+        />
+      </div>
+    );
+  }
+  renderTaskList(ongoingTasks, completedTasks) {
     const taskList = [];
-    const ongoingTasks = this.props.tasks.filter(task => !task.completed_on && !task.dirty);
-    ongoingTasks.forEach(task => {
-      if (this.state.showOngoing) {
+    if (this.state.showOngoing) {
+      ongoingTasks.forEach(task => {
         // Only show non-completed tasks and non-dirtied tasks
         const assignees = this.props.users.filter(u => u.id === task.assignee_id);
         const highlightId = this.context.location.query.highlight;
@@ -97,51 +140,38 @@ class AssigneeRow extends Component {
             key={_.uniqueId('task')}
             task={task}
             assignees={assignees}
-            onCheck={this.markDone.bind(this, task.id)}
-            onEdit={this.editTask.bind(this, task.id)}
-            onDelete={this.deleteTask.bind(this, task.id)}
-            users={users}
+            onCheck={this.markDone}
+            onEdit={this.editTask}
+            onDelete={this.deleteTask}
+            users={this.props.users}
             highlight={highlight}
           />
         );
-      }
-    }); // task forEach
-    const completedTasks = tasks.filter(task => task.completed_on);
-    if (this.state.showCompleted && completedTasks.length > 0) {
-      taskList.push(
-        <CompletedRow
-          key={_.uniqueId('completed')}
-          completedTasks={completedTasks}
-          actions={actions}
-          highlightId={this.context.location.query.highlight}
-        />
-      );
+      });
     }
-
-    const ongoingText = `${ongoingTasks.length} Ongoing`;
-    const completedTask = `${completedTasks.length} Completed`;
-    const ongoingLabelStyle = {
-      opacity: this.state.showOngoing ? 1 : 0.5,
-    };
-    const completedLabelStyle = {
-      opacity: this.state.showCompleted ? 1 : 0.5,
-    };
-    const milestoneInfo = (
-      <div className="milestone-row-info">
-        <FlatButton
-          labelStyle={ongoingLabelStyle}
-          label={ongoingText}
-          primary
-          onTouchTap={this.toggleOngoing.bind(this)}
-        />
-        <FlatButton
-          labelStyle={completedLabelStyle}
-          label={completedTask}
-          secondary
-          onTouchTap={this.toggleCompleted.bind(this)}
-        />
-      </div>
-    );
+    if (this.state.showCompleted) {
+      completedTasks.forEach(task => {
+        const highlightId = this.context.location.query.highlight;
+        let highlight = false;
+        if (highlightId === task.id) {
+          highlight = true;
+        }
+        taskList.push(
+          <CompletedTask
+            key={task.id}
+            task={task}
+            reopenTask={this.reopenTask}
+            highlight={highlight}
+          />
+        );
+      });
+    }
+    return taskList;
+  }
+  render() {
+    const { user, tasks } = this.props;
+    const ongoingTasks = this.props.tasks.filter(task => !task.completed_on && !task.dirty);
+    const completedTasks = tasks.filter(task => task.completed_on);
 
     return (
       <Paper zDepth={0}>
@@ -149,39 +179,30 @@ class AssigneeRow extends Component {
           <div className="milestone-row">
             <Divider />
             <div className="milestone-row-header">
-              <Grid fluid>
-                <Row>
-                  <Col xs={10}>
-                    <div className="milestone-title">
-                      {user.display_name}
-                      {milestoneInfo}
-                    </div>
-                  </Col>
-                  <Col xs={2}>
-                    <div className="pull-right">
-                      <IconButton
-                        tooltip="new task"
-                        tooltipPosition="top-right"
-                        onClick={this.openModal}
-                      >
-                        <AddIcon />
-                      </IconButton>
-                    </div>
-                  </Col>
-                </Row>
-              </Grid>
+              <Row>
+                <Col xs={10}>
+                  <div className="milestone-title">
+                    {user.display_name}
+                    {this.renderMilestoneInfo(ongoingTasks, completedTasks)}
+                  </div>
+                </Col>
+                <Col xs={2}>
+                  <div className="pull-right">
+                    <IconButton
+                      tooltip="new task"
+                      tooltipPosition="top-right"
+                      onClick={this.openModal}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  </div>
+                </Col>
+              </Row>
             </div>
             <div>
-              {taskList}
+              {this.renderTaskList(ongoingTasks, completedTasks)}
             </div>
-            <TaskModal
-              title="Add Task"
-              open={this.state.isDialogOpen}
-              handleClose={this.handleClose}
-              assignee={user.id}
-              taskMethod={this.addTask}
-              users={users}
-            />
+            {this.renderTaskModal()}
           </div>
         </Grid >
       </Paper>

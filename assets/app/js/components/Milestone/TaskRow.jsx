@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-bootstrap';
@@ -8,6 +8,16 @@ import * as SocketActions from '../../actions/SocketActions';
 import AvatarList from '../Common/AvatarList.jsx';
 import TaskModal from './TaskModal.jsx';
 
+const propTypes = {
+  task: PropTypes.object.isRequired,
+  assignees: PropTypes.array.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  users: PropTypes.array.isRequired,
+  highlight: PropTypes.bool.isRequired,
+  dispatch: PropTypes.func.isRequired,
+};
 class TaskRow extends Component {
   constructor(props, context) {
     super(props, context);
@@ -15,36 +25,47 @@ class TaskRow extends Component {
       hidden: true,
       isDialogOpen: false,
     };
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.onEdit = this.onEdit.bind(this);
+    this.onCheck = this.onCheck.bind(this);
+    this.onDelete = this.onDelete.bind(this);
   }
-  onEdit(content, assigneeId) {
-    this.props.onEdit(content, assigneeId);
-  }
-  openModal(id) {
-    this.setState({
-      isDialogOpen: true,
-    });
-    const socketActions = bindActionCreators(SocketActions, this.props.dispatch);
-    socketActions.userIsEditing('task', id);
-  }
-
-  handleClose(id) {
-    this.setState({
-      isDialogOpen: false,
-    });
-    const socketActions = bindActionCreators(SocketActions, this.props.dispatch);
-    socketActions.userStopsEditing('task', id);
-  }
-
   onMouseEnter() {
     this.setState({
       hidden: false,
     });
   }
-
   onMouseLeave() {
     this.setState({
       hidden: true,
     });
+  }
+  onEdit(content, assigneeId) {
+    this.props.onEdit(this.props.task.id, content, assigneeId);
+  }
+  onCheck() {
+    this.props.onCheck(this.props.task.id);
+  }
+  onDelete() {
+    this.props.onDelete(this.props.task.id);
+  }
+  openModal() {
+    this.setState({
+      isDialogOpen: true,
+    });
+    const socketActions = bindActionCreators(SocketActions, this.props.dispatch);
+    socketActions.userIsEditing('task', this.props.task.id);
+  }
+
+  handleClose() {
+    this.setState({
+      isDialogOpen: false,
+    });
+    const socketActions = bindActionCreators(SocketActions, this.props.dispatch);
+    socketActions.userStopsEditing('task', this.props.task.id);
   }
 
   render() {
@@ -58,48 +79,60 @@ class TaskRow extends Component {
     }
 
     // EDITING INDICATOR
-    let editIndicator = null
-    let listStyle = {}
+    let editIndicator = null;
+    let listStyle = {};
 
     if (this.props.task.editing) {
-      let editor = this.props.users.filter(user => user.id === this.props.task.edited_by)[0]
+      const editor = this.props.users.filter(user => user.id === this.props.task.edited_by)[0];
       if (editor && editor.online) {
-        let divStyle = {
+        const divStyle = {
           float: 'right',
           fontSize: 'smaller',
           color: 'white',
           background: editor.colour,
-          fontWeight: 'bold'
-        }
+          fontWeight: 'bold',
+        };
 
-        editIndicator =
-        <div style={divStyle}>{editor.display_name} is editing</div>
+        editIndicator = (
+          <div style={divStyle}>{editor.display_name} is editing</div>
+        );
         listStyle = {
           borderStyle: 'solid',
-          borderColor: editor.colour
-        }
+          borderColor: editor.colour,
+        };
       }
     }
 
     return (
-
-      <div className="task-row"
-        onMouseEnter={this.onMouseEnter.bind(this)}
-        onMouseLeave={this.onMouseLeave.bind(this)}
-        style={listStyle}>
-        <Grid fluid={true}>
+      <div
+        className="task-row"
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        style={listStyle}
+      >
+        <Grid fluid>
           <Row>
             <Col xs={1}>
-              <div className='task-checkbox'>
-                <Checkbox onClick={this.props.onCheck}/>
+              <div className="task-checkbox">
+                <Checkbox onClick={this.onCheck} />
               </div>
             </Col>
             <Col xs={10}>
               <div className={taskContentClass}>
                 {this.props.task.content}
                 <div className={taskActionClass}>
-                  <i className="material-icons edit-task" onClick={this.openModal.bind(this, this.props.task.id)}>mode_edit</i>
-                  <i className="material-icons delete-task" onClick={this.props.onDelete}>delete</i>
+                  <i
+                    className="material-icons edit-task"
+                    onClick={this.openModal}
+                  >
+                    mode_edit
+                  </i>
+                  <i
+                    className="material-icons delete-task"
+                    onClick={this.onDelete}
+                  >
+                    delete
+                  </i>
                 </div>
               </div>
             </Col>
@@ -107,7 +140,6 @@ class TaskRow extends Component {
               <AvatarList className="assignee-avatar" members={this.props.assignees} />
               {editIndicator}
             </Col>
-
           </Row>
         </Grid>
         <TaskModal
@@ -115,13 +147,13 @@ class TaskRow extends Component {
           content={this.props.task.content}
           assignee={this.props.task.assignee_id}
           open={this.state.isDialogOpen}
-          handleClose={this.handleClose.bind(this, this.props.task.id)}
-          taskMethod={this.onEdit.bind(this)}
+          handleClose={this.handleClose}
+          taskMethod={this.onEdit}
           users={this.props.users}
-          />
-
+        />
       </div>
-    )
+    );
   }
 }
-export default connect()(TaskRow)
+TaskRow.propTypes = propTypes;
+export default connect()(TaskRow);

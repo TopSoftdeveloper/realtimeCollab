@@ -45,7 +45,7 @@ class TaskModal extends Component {
         key={1}
         label="Cancel"
         secondary
-        onTouchTap={this.onDialogSubmit}
+        onTouchTap={this.props.handleClose}
       />,
       <FlatButton
         key={2}
@@ -57,7 +57,11 @@ class TaskModal extends Component {
 
 
     const possibleAssignees = this.props.users.map(user => (
-      <MenuItem value={user.id} key={user.id} primaryText={user.display_name} />
+      <MenuItem
+        value={user.id}
+        key={user.id}
+        primaryText={user.display_name}
+      />
     ));
 
     possibleAssignees.unshift(<MenuItem key={0} primaryText="None" />);

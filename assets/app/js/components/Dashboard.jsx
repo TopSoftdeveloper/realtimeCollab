@@ -1,209 +1,179 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as Actions from '../actions/ReduxTaskActions';
-import _ from 'lodash'
-import $ from 'jquery'
-import theme from '../myTheme.js'
-import FontIcon from 'material-ui/FontIcon';
-import {Toolbar, ToolbarGroup, ToolbarSeparator} from 'material-ui/Toolbar';
-import {Card, CardActions, CardHeader, CardTitle, CardText} from 'material-ui/Card';
+
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from 'material-ui/Toolbar';
+import { Card, CardTitle, CardText } from 'material-ui/Card';
 import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import MenuItem from 'material-ui/MenuItem'
-import ClearIcon from 'material-ui/svg-icons/content/clear'
-import {Alert, Tooltip, OverlayTrigger} from 'react-bootstrap'
 
-import MilestoneModal from './Milestone/MilestoneModal.jsx'
-import MilestoneRow from './Milestone/MilestoneRow.jsx'
-import AssigneeRow from './Milestone/AssigneeRow.jsx'
-
-
+import theme from '../myTheme.js';
+import * as Actions from '../actions/ReduxTaskActions';
+import MilestoneRow from './Milestone/MilestoneRow.jsx';
 
 class Dashboard extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
       sortByDeadlineDescending: true,
-    }
+    };
+    this.toggleSortByDeadline = this.toggleSortByDeadline.bind(this);
   }
-
   toggleSortByDeadline() {
     this.setState({
-      sortByDeadlineDescending: !this.state.sortByDeadlineDescending
-    })
-  };
-
-
+      sortByDeadlineDescending: !this.state.sortByDeadlineDescending,
+    });
+  }
+  renderEmptyArea(projectRows) {
+    return (projectRows.length === 0 &&
+      <div className="no-items todo-empty">
+        <h3>Your to-do list is clear!</h3>
+      </div>
+    );
+  }
   render() {
-    console.log('Dashboard::render()')
     const {
       users,
       milestones,
       tasks,
       projects,
-      dispatch
-    } = this.props
-    const actions = bindActionCreators(Actions, dispatch)
-    const editMilestone = (milestone_id, content, deadline) => {actions.editMilestone(milestone_id, content, deadline)}
-    const deleteMilestone= (milestone_id, projectId) => {actions.deleteMilestone(milestone_id, projectId)}
+      dispatch,
+    } = this.props;
+    const actions = bindActionCreators(Actions, dispatch);
+    const editMilestone = (milestoneId, content, deadline) => {
+      actions.editMilestone(milestoneId, content, deadline);
+    };
+    const deleteMilestone = (projectId, milestoneId) => {
+      actions.deleteMilestone(milestoneId, projectId);
+    };
     // only show task assigned to me and unassigned task
-    const currentUserId = localStorage.getItem('user_id')
-    const filterByAssignee = (task) => (task.assignee_id === '' || task.assignee_id === null || task.assignee_id === currentUserId)
-
-    // deadline sorting function
-    // milestones without a deadline should be always be put in bottom
-    const sortByDeadline = (milestoneA, milestoneB) => {
-      let deadlineA = milestoneA.deadline
-      let deadlineB = milestoneB.deadline
-      let scala = this.state.sortByDeadlineDescending?1:-1
-      if (deadlineA != null) {
-        deadlineA = new Date(deadlineA).getTime() * scala
-      } else {
-        deadlineA = Number.MAX_VALUE
-      }
-      if (deadlineB != null) {
-        deadlineB = new Date(deadlineB).getTime() * scala
-      } else {
-        deadlineB = Number.MAX_VALUE
-      }
-      let result = deadlineA - deadlineB
-      return result
-    }
-
-    let milestonesByProject = {}
-    let filteredTasks = tasks.filter(filterByAssignee)
-    let projectRows = []
-
+    /* global localStorage */
+    const currentUserId = localStorage.getItem('user_id');
+    const filterByAssignee = (task) => (
+      task.assignee_id === '' || task.assignee_id === null || task.assignee_id === currentUserId
+    );
+    const milestonesByProject = {};
+    const filteredTasks = tasks.filter(filterByAssignee);
+    const projectRows = [];
     // group milestone by project
     milestones.forEach(milestone => {
-      let projectId = milestone.project_id
-      if(milestonesByProject.projectId) {
-        milestonesByProject[projectId] = [milestone, ...milestonesByProject.projectId]
+      const projectId = milestone.project_id;
+      if (milestonesByProject.projectId) {
+        milestonesByProject[projectId] = [milestone, ...milestonesByProject.projectId];
       } else {
-        milestonesByProject[projectId] = [milestone]
+        milestonesByProject[projectId] = [milestone];
       }
-    })
-
-    Object.keys(milestonesByProject).forEach(projectId=> {
-      milestonesByProject[projectId].push({  // Just a placeholder milestone for tasks without milestones
+    });
+    Object.keys(milestonesByProject).forEach(projectId => {
+      // Just a placeholder milestone for tasks without milestones
+      milestonesByProject[projectId].push({
         content: 'Default Milestone',
         deadline: null,
-        key: projectId+'uncategorized-tasks',
-        id: null
-      })
-
-    })
-    Object.keys(milestonesByProject).forEach(projectId=> {
-      let milestoneRows = []
-      milestonesByProject[projectId].forEach(milestone=>{
+        key: projectId + 'uncategorized-tasks',
+        id: null,
+      });
+    });
+    Object.keys(milestonesByProject).forEach(projectId => {
+      const milestoneRows = [];
+      milestonesByProject[projectId].forEach(milestone => {
         // console.log(milestone)
-        let onDelete = false
-        let onEdit = false
+        let onDelete = null;
+        let onEdit = null;
         if (milestone.id) {
-          onDelete = deleteMilestone.bind(this, milestone.id, projectId)
-          onEdit = editMilestone.bind(this, milestone.id)
+          onDelete = deleteMilestone.bind(this, projectId);
+          onEdit = editMilestone.bind(this);
         }
-        let taskList = filteredTasks.filter(task => task.project_id === projectId && task.milestone_id === milestone.id)
-
-        if(taskList.length>0 || true) {
-          let milestoneView = <MilestoneRow
-            milestone={milestone}
-            onEditMilestone={onEdit}
-            onDeleteMilestone={onDelete}
-            projectId={projectId}
-            key={milestone.id}
-            users={users}
-            actions={actions}
-            tasks ={taskList}
+        const taskList = filteredTasks.filter(task =>
+          task.project_id === projectId && task.milestone_id === milestone.id
+        );
+        if (taskList.length > 0 || true) {
+          const milestoneView = (
+            <MilestoneRow
+              milestone={milestone}
+              onEditMilestone={onEdit}
+              onDeleteMilestone={onDelete}
+              projectId={projectId}
+              key={milestone.id}
+              users={users}
+              actions={actions}
+              tasks={taskList}
             />
-          milestoneRows.push(milestoneView)
+          );
+          milestoneRows.push(milestoneView);
         }
-      })
-      let projectName = projects.filter(project=>project.id===projectId)[0].content
+      });
+      const projectName = projects.filter(project => project.id === projectId)[0].content;
       let projectRow = (
-        <Paper key={projectId} zDepth={1} className='project-panel milestone-menu-view'>
+        <Paper
+          key={projectId}
+          zDepth={1}
+          className="project-panel milestone-menu-view"
+        >
           <h2>{projectName}</h2>
           <div>{milestoneRows}</div>
-        </Paper>)
+        </Paper>
+      );
       projectRow = (
         <Card
-          className ='project-panel'
+          className="project-panel"
           key={projectId}
-          initiallyExpanded = {true}
-
+          initiallyExpanded
         >
-         <CardTitle
-           title={projectName}
-           showExpandableButton = {true}
-           style = {{'backgroundColor':theme.palette.primary1Color}}
-           titleColor={'white'}
-           actAsExpander = {true}/>
-          <CardText expandable={true}>
+          <CardTitle
+            title={projectName}
+            showExpandableButton
+            style={{ backgroundColor: theme.palette.primary1Color }}
+            titleColor={'white'}
+            actAsExpander
+          />
+          <CardText expandable>
             {milestoneRows}
           </CardText>
         </Card>
-      )
-
-        if(milestoneRows.length>0 || true) {
-          projectRows.push(projectRow)
-        }
-
-      })
-
-      if (projectRows.length === 0) {
-        var empty = (
-          <div className="no-items todo-empty">
-            <h3>Your to-do list is clear!</h3>
-          </div>
-        )
-      }
-
-      return (
-        <Paper zDepth={0} className='main-content'>
-          <Toolbar
-            >
-            <ToolbarGroup firstChild={true}>
-            </ToolbarGroup>
-            <ToolbarGroup>
-              <ToolbarSeparator />
-              <FlatButton
-
-                label={this.state.sortByDeadlineDescending?'Earliest':'Oldest'}
-                onTouchTap={this.toggleSortByDeadline.bind(this)}
-                primary={false}
-                />
-            </ToolbarGroup>
-          </Toolbar>
-
-          {projectRows}
-          <div className='container'>
-            <div className='task-list'>
-              {empty}
-            </div>
-          </div>
-        </Paper>
       );
-    }
+      if (milestoneRows.length > 0 || true) {
+        projectRows.push(projectRow);
+      }
+    });
+    return (
+      <Paper zDepth={0} className="main-content">
+        <Toolbar>
+          <ToolbarGroup firstChild />
+          <ToolbarGroup>
+            <ToolbarSeparator />
+            <FlatButton
+              label={this.state.sortByDeadlineDescending ? 'Earliest' : 'Oldest'}
+              onTouchTap={this.toggleSortByDeadline}
+              primary={false}
+            />
+          </ToolbarGroup>
+        </Toolbar>
+        {projectRows}
+        <div className="container">
+          <div className="task-list">
+            {this.renderEmptyArea(projectRows)}
+          </div>
+        </div>
+      </Paper>
+    );
   }
+}
 
-  Dashboard.propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    milestones: PropTypes.array.isRequired,
-    projects: PropTypes.array.isRequired,
-    tasks: PropTypes.array.isRequired,
-    users: PropTypes.array.isRequired,
-  };
+Dashboard.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  milestones: PropTypes.array.isRequired,
+  projects: PropTypes.array.isRequired,
+  tasks: PropTypes.array.isRequired,
+  users: PropTypes.array.isRequired,
+};
 
-  const mapStateToProps = (state) => {
-    return {
-      milestones: state.milestones,
-      projects: state.projects,
-      tasks: state.tasks,
-      users: state.users,
-    };
+const mapStateToProps = (state) => (
+  {
+    milestones: state.milestones,
+    projects: state.projects,
+    tasks: state.tasks,
+    users: state.users,
   }
+);
 
-  export default connect(mapStateToProps)(Dashboard)
+export default connect(mapStateToProps)(Dashboard);
