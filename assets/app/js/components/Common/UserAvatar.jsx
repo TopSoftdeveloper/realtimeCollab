@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import Avatar from 'material-ui/Avatar';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
-const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour }) => {
+const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour, size }) => {
   let image = null;
   let styles = {};
   if (memberColour) {
@@ -16,7 +16,7 @@ const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour
   if (imgSrc && imgSrc !== 'undefined') {
     image = (
       <Avatar
-        size={36}
+        size={size}
         src={imgSrc}
         className={isSquare ? 'square-avatar' : ''}
         style={styles}
@@ -25,7 +25,7 @@ const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour
   } else {
     image = (
       <Avatar
-        size={36}
+        size={size}
         style={styles}
       >
         {displayName[0]}
@@ -52,9 +52,11 @@ UserAvatar.proptypes = {
   enableTooltip: PropTypes.bool,
   isSquare: PropTypes.bool,
   memberColour: PropTypes.string,
+  size: PropTypes.number,
 };
 UserAvatar.defaultProps = {
   enableTooltip: false,
   isSquare: false,
+  size: 36,
 };
 export default UserAvatar;

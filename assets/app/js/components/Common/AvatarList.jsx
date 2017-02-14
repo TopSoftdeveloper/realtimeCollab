@@ -8,6 +8,7 @@ const propTypes = {
   colour: PropTypes.bool,
   isSquare: PropTypes.bool,
   className: PropTypes.string,
+  size: PropTypes.number,
 };
 const defaultProps = {
   colour: false,
@@ -15,7 +16,7 @@ const defaultProps = {
   className: '',
 };
 
-const AvatarList = ({ members, colour, isSquare, className }) => {
+const AvatarList = ({ members, colour, isSquare, className, size }) => {
   const avatars = members.map(member => {
     const memberColour = colour ? member.colour : false;
     const image = (
@@ -25,6 +26,7 @@ const AvatarList = ({ members, colour, isSquare, className }) => {
         enableTooltip
         isSquare={isSquare}
         memberColour={memberColour}
+        size={size}
       />
     );
     return (

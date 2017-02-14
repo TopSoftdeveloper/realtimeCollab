@@ -30,9 +30,12 @@ describe('UserAvatar.jsx ', function () {
     it('Avatar has no square-avatar class by default', function () {
       expect(this.wrapper.find('Avatar').hasClass('square-avatar')).to.equal(false);
     });
+    it('Avatar has size 36 by default', function () {
+      expect(this.wrapper.find('Avatar')).to.have.prop('size', 36);
+    });
   });
 
-  describe('with all props', function () {
+  describe('when render with all props', function () {
     beforeEach(function () {
       this.customProps = {
         imgSrc: 'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50',
@@ -40,6 +43,7 @@ describe('UserAvatar.jsx ', function () {
         enableTooltip: true,
         isSquare: true,
         memberColour: '6efa39',
+        size: 20,
       };
       this.wrapper = mountWithContext(<UserAvatar {...this.customProps} />);
     });
@@ -57,6 +61,9 @@ describe('UserAvatar.jsx ', function () {
     });
     it('Avatar has square-avatar class', function () {
       expect(this.wrapper.find('Avatar').hasClass('square-avatar')).to.equal(true);
+    });
+    it('should pass prop `size` correctly', function () {
+      expect(this.wrapper.find('Avatar')).to.have.prop('size', this.customProps.size);
     });
   });
 });

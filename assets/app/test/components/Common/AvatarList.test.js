@@ -35,11 +35,13 @@ describe('AvatarList.jsx ', function () {
       colour: '#4fff50',
     },
   ];
-  it('render with no memeber', function () {
-    expect(shallow(<AvatarList members={[]} />)).to.be.present();
+  describe('when render with empty member', function () {
+    it('should not explode', function () {
+      expect(shallow(<AvatarList members={[]} />)).to.be.present();
+    });
   });
 
-  describe('with one member and rest prop empty', function () {
+  describe('when render with one member and rest prop empty', function () {
     beforeEach(function () {
       this.customProps = {
         members: MEMBERS.slice(0, 1),
@@ -47,11 +49,9 @@ describe('AvatarList.jsx ', function () {
       this.wrapper = shallow(<AvatarList {...this.customProps} />);
     });
 
-    it('renders without explosion', function () {
+    it('should not explode', function () {
       expect(this.wrapper).to.be.present();
     });
-
-
     it('div has avatar-list-wrapper class', function () {
       expect(this.wrapper.find('div').hasClass('avatar-list-wrapper')).to.equal(true);
     });
@@ -121,6 +121,7 @@ describe('AvatarList.jsx ', function () {
         colour: true,
         isSquare: true,
         className: 'specialClass',
+        size: 23,
       };
       this.wrapper = shallow(<AvatarList {...this.customProps} />);
     });
@@ -143,28 +144,20 @@ describe('AvatarList.jsx ', function () {
 
     it('first avatar follows all props', function () {
       const firstMember = this.customProps.members[0];
-      expect(this.wrapper.find('UserAvatar').first().props().imgSrc).to
-        .equal(firstMember.display_image);
-      expect(this.wrapper.find('UserAvatar').first().props().displayName).to
-        .equal(firstMember.display_name);
-      expect(this.wrapper.find('UserAvatar').first().props().enableTooltip).to.equal(true);
-      expect(this.wrapper.find('UserAvatar').first().props().isSquare).to
-        .equal(this.customProps.isSquare);
-      expect(this.wrapper.find('UserAvatar').first().props().memberColour).to
-        .equal(this.customProps.colour ? firstMember.colour : false);
+      expect(this.wrapper.find('UserAvatar').first()).to.have
+        .props(['imgSrc', 'displayName', 'enableTooltip', 'isSquare', 'memberColour', 'size'])
+        .deep.equal([firstMember.display_image, firstMember.display_name, true,
+          this.customProps.isSquare, this.customProps.colour ? firstMember.colour : false,
+          this.customProps.size]);
     });
 
     it('last avatar follows all props', function () {
       const lastMember = this.customProps.members[this.customProps.members.length - 1];
-      expect(this.wrapper.find('UserAvatar').last().props().imgSrc).to
-        .equal(lastMember.display_image);
-      expect(this.wrapper.find('UserAvatar').last().props().displayName).to
-        .equal(lastMember.display_name);
-      expect(this.wrapper.find('UserAvatar').last().props().enableTooltip).to.equal(true);
-      expect(this.wrapper.find('UserAvatar').last().props().isSquare).to
-        .equal(this.customProps.isSquare);
-      expect(this.wrapper.find('UserAvatar').last().props().memberColour).to
-        .equal(this.customProps.colour ? lastMember.colour : false);
+      expect(this.wrapper.find('UserAvatar').last()).to.have
+        .props(['imgSrc', 'displayName', 'enableTooltip', 'isSquare', 'memberColour', 'size'])
+        .deep.equal([lastMember.display_image, lastMember.display_name, true,
+          this.customProps.isSquare, this.customProps.colour ? lastMember.colour : false,
+          this.customProps.size]);
     });
   });
 });
