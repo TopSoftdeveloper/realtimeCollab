@@ -39,6 +39,7 @@ describe('Task', function() {
           id: 'task1',
           project_id: 'project1',
           milestone_id: 'milestone1',
+          github_token: 'github_token1',
         });
       })
       .then((newTask) => {
@@ -213,6 +214,156 @@ describe('Task', function() {
           );
         models.Task.findById('task1').then(createdTask => {
           expect(createdTask).to.not.be.a('null');
+          done();
+        });
+      });
+    });
+  });
+
+  describe('updating tasks', function() {
+    beforeEach(function(done) {
+      this.payload = {
+        content: 'new content',
+        project_id: this.task.project_id,
+      };
+      done();
+    });
+
+    it('should return 400 if task does not exist', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/task/task999',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return 403 if user is not authorized', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/task/task1',
+        credentials: { user_id: 'user22', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should update a task', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/task/task1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        models.Task.findById('task1').then(fetchedTask => {
+          expect(fetchedTask).to.not.be.a('null');
+          expect(fetchedTask.content).to.be.equal(this.payload.content);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('deleting tasks', function() {
+    beforeEach(function(done) {
+      this.payload = {
+        project_id: this.task.project_id,
+      };
+      done();
+    });
+
+    it('should return 400 if task does not exist', function(done) {
+      server.select('api').inject({
+        method: 'DELETE',
+        url: '/task/task999',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return 403 if user is not authorized', function(done) {
+      server.select('api').inject({
+        method: 'DELETE',
+        url: '/task/task1',
+        credentials: { user_id: 'user22', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should delete a task', function(done) {
+      server.select('api').inject({
+        method: 'DELETE',
+        url: '/task/task1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        models.Task.findById('task1').then(fetchedTask => {
+          expect(fetchedTask).to.be.a('null');
+          done();
+        });
+      });
+    });
+  });
+
+  describe('marking task as done', function() {
+    beforeEach(function(done) {
+      this.payload = {
+        task_id: this.task.id,
+        project_id: this.task.project_id,
+        github_token: this.task.github_token,
+      };
+      done();
+    });
+
+    it('should return 400 if task does not exist', function(done) {
+      this.payload.task_id = 'task999';
+      server.select('api').inject({
+        method: 'POST',
+        url: '/mark_completed',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return 403 if user is not authorized', function(done) {
+      server.select('api').inject({
+        method: 'POST',
+        url: '/mark_completed',
+        credentials: { user_id: 'user22', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should delete a task', function(done) {
+      server.select('api').inject({
+        method: 'POST',
+        url: '/mark_completed',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        models.Task.findById('task1').then(fetchedTask => {
+          expect(fetchedTask).to.not.be.a('null');
+          expect(fetchedTask.completed_on).to.not.be.a('null');
           done();
         });
       });
