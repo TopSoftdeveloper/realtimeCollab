@@ -268,7 +268,7 @@ class MilestoneView extends Component {
     const AssignesMenuItems = users.map(user => (
       <MenuItem value={user.id} key={user.id} primaryText={user.display_name} />
     ));
-    AssignesMenuItems.unshift(<MenuItem value={null} key={''} primaryText="None" />);
+    AssignesMenuItems.unshift(<MenuItem value={''} key={''} primaryText="None" />);
     AssignesMenuItems.unshift(<MenuItem value={'all'} key={'all'} primaryText="All" />);
 
     const assigneeFilterTooltip = <Tooltip id="assignee">filter by asssignees</Tooltip>;

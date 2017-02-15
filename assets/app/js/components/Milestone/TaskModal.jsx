@@ -15,15 +15,9 @@ const propTypes = {
 class TaskModal extends Component {
   constructor(props, context) {
     super(props, context);
-    if (this.props.assignee) {
-      this.state = {
-        assignee: this.props.assignee,
-      };
-    } else {
-      this.state = {
-        assignee: '',
-      };
-    }
+    this.state = {
+      assignee: this.props.assignee ? this.props.assignee : '',
+    };
     this.onDialogSubmit = this.onDialogSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
@@ -64,7 +58,7 @@ class TaskModal extends Component {
       />
     ));
 
-    possibleAssignees.unshift(<MenuItem key={0} primaryText="None" />);
+    possibleAssignees.unshift(<MenuItem key={0} value={''} primaryText="None" />);
 
     return (
       <Dialog
@@ -89,6 +83,7 @@ class TaskModal extends Component {
         <SelectField
           value={this.state.assignee}
           onChange={this.handleChange}
+          floatingLabelFixed
           floatingLabelText="Assign to"
         >
           {possibleAssignees}
