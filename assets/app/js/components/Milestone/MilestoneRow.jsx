@@ -377,10 +377,10 @@ class MilestoneRow extends Component {
             <div>
               {this.renderTaskList(ongoingTasks, completedTasks)}
             </div>
-            {this.renderTaskModal()}
-            {this.renderMilestoneModal()}
-            {this.renderConfirmDeleteModal(ongoingTasks)}
           </div>
+          {this.renderTaskModal()}
+          {this.renderMilestoneModal()}
+          {this.renderConfirmDeleteModal(ongoingTasks)}
         </Grid >
       </Paper>
     );

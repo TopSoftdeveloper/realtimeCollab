@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import Checkbox from 'material-ui/Checkbox';
 
 import * as SocketActions from '../../actions/SocketActions';
@@ -67,13 +67,22 @@ class TaskRow extends Component {
     const socketActions = bindActionCreators(SocketActions, this.props.dispatch);
     socketActions.userStopsEditing('task', this.props.task.id);
   }
-
+  renderActionButton() {
+    return (!this.state.hidden &&
+      <div className="task-actions">
+        <i
+          className="material-icons edit-task"
+          onClick={this.openModal}
+        >mode_edit</i>
+        <i
+          className="material-icons delete-task"
+          onClick={this.onDelete}
+        >delete</i>
+      </div>
+    );
+  }
   render() {
-    let taskActionClass = 'task-actions';
     let taskContentClass = 'task-content';
-    if (this.state.hidden) {
-      taskActionClass = `${taskActionClass} invisible`;
-    }
     if (this.props.highlight) {
       taskContentClass = `${taskContentClass} highlight-yellow`;
     }
@@ -110,38 +119,26 @@ class TaskRow extends Component {
         onMouseLeave={this.onMouseLeave}
         style={listStyle}
       >
-        <Grid fluid>
-          <Row>
-            <Col xs={1}>
-              <div className="task-checkbox">
-                <Checkbox onClick={this.onCheck} />
-              </div>
-            </Col>
-            <Col xs={10}>
-              <div className={taskContentClass}>
-                {this.props.task.content}
-                <div className={taskActionClass}>
-                  <i
-                    className="material-icons edit-task"
-                    onClick={this.openModal}
-                  >
-                    mode_edit
-                  </i>
-                  <i
-                    className="material-icons delete-task"
-                    onClick={this.onDelete}
-                  >
-                    delete
-                  </i>
-                </div>
-              </div>
-            </Col>
-            <Col xs={1}>
-              <AvatarList className="assignee-avatar" members={this.props.assignees} />
-              {editIndicator}
-            </Col>
-          </Row>
-        </Grid>
+        <Row>
+          <Col xs={11}>
+            <div className="task-checkbox">
+              <Checkbox onTouchTap={this.onCheck} />
+            </div>
+            <div className={taskContentClass}>
+              {this.props.task.content}
+              {this.renderActionButton()}
+            </div>
+          </Col>
+          <Col xs={1}>
+            <AvatarList
+              className="assignee-avatar"
+              isSquare
+              size={24}
+              members={this.props.assignees}
+            />
+            {editIndicator}
+          </Col>
+        </Row>
         <TaskModal
           title="Edit Task"
           content={this.props.task.content}

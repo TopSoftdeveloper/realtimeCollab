@@ -98,31 +98,43 @@ html, body{
 .task-row {
   /*margin-left: -40px;*/
   /*min-height: 40px;*/
-  margin: 5px 10px 0px 10px;
+  margin: 3px 10px 0px 10px;
+  font-size: 19px;
 }
 .completed-task-row {
   color: #757575;
 }
 
 .task-content{
+  margin-left: 30px;
   display: inline-block;
-  word-break: break-all;
-  font-size: large;
+  vertical-align: top;
+  line-height: 1.2;
 }
 
+.completed-content {
+  margin-left: 30px;
+  display: inline-block;
+  vertical-align: top;
+  line-height: 1.2;
+  text-decoration: line-through;
+
+}
 .task-checkbox {
-  padding-top: 8px;
+  display: table;
+  position: absolute;
+  height: 100%;
 }
 
 .task-actions {
   display: inline-block;
-  padding-left: 20px;
-  margin-top: 3px;
+  padding-left: 10px;
 }
 
 
 .reopen-task, .edit-task, .delete-task {
   opacity: 0.5;
+  font-size: 18px;
 }
 
 .reopen-task:hover, .edit-task:hover, .delete-task:hover {
@@ -137,17 +149,9 @@ html, body{
 
 
 
-.completed-content {
-  word-break: break-all;
-  text-decoration: line-through;
-  position: relative;
-  bottom: 5px;
-  font-size: large;
-  margin-top: 14px;
-}
 
 .completed-task-list {
-    /*color: #757575;*/
+  /*color: #757575;*/
 }
 
 /************************ Project list *******************/
@@ -389,6 +393,8 @@ html, body{
 
 .avatar-list {
   list-style: none;
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
 .avatar-list li {
@@ -417,7 +423,9 @@ html, body{
 .invisible {
   visibility: hidden;
 }
-
+.none-display {
+  display: none;
+}
 .highlight-yellow {
   background-color: rgba(242, 255, 86, 0.83);
 }

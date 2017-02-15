@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Checkbox from 'material-ui/Checkbox';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 
 const propTypes = {
@@ -36,20 +36,16 @@ class CompletedTask extends Component {
     }
     return (
       <div className="task-row completed-task-row">
-        <Grid fluid>
-          <Row>
-            <Col xs={1}>
-              <div className="task-checkbox" onClick={this.reopen}>
-                <Checkbox checked />
-              </div>
-            </Col>
-            <Col xs={10}>
-              <div className={taskContentClass}>
-                {this.props.task.content}
-              </div>
-            </Col>
-          </Row>
-        </Grid>
+        <Row>
+          <Col xs={11}>
+            <div className="task-checkbox" onClick={this.reopen}>
+              <Checkbox checked />
+            </div>
+            <div className={taskContentClass}>
+              {this.props.task.content}
+            </div>
+          </Col>
+        </Row>
       </div>
     );
   }
