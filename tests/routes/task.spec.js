@@ -353,7 +353,7 @@ describe('Task', function() {
       });
     });
 
-    it('should delete a task', function(done) {
+    it('should mark a task as done', function(done) {
       server.select('api').inject({
         method: 'POST',
         url: '/mark_completed',
