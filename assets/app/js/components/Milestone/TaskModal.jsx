@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { Dialog, TextField, FlatButton } from 'material-ui';
+import { Dialog, FlatButton } from 'material-ui';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
-import Subheader from 'material-ui/Subheader';
+import { Form } from 'formsy-react';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
 const propTypes = {
   title: PropTypes.string.isRequired,
@@ -17,10 +18,14 @@ class TaskModal extends Component {
     super(props, context);
     this.state = {
       assignee: this.props.assignee ? this.props.assignee : '',
+      canSubmit: false,
     };
     this.onDialogSubmit = this.onDialogSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.enableButton = this.enableButton.bind(this);
+    this.disableButton = this.disableButton.bind(this);
   }
+
   onDialogSubmit() {
     const content = this.taskInputField.getValue().trim();
     if (content !== '') {
@@ -28,7 +33,16 @@ class TaskModal extends Component {
     }
     this.props.handleClose();
   }
-
+  enableButton() {
+    this.setState({
+      canSubmit: true,
+    });
+  }
+  disableButton() {
+    this.setState({
+      canSubmit: false,
+    });
+  }
   handleChange(event, index, value) {
     this.setState({ assignee: value });
   }
@@ -46,6 +60,7 @@ class TaskModal extends Component {
         label="Submit"
         primary
         onTouchTap={this.onDialogSubmit}
+        disabled={!this.state.canSubmit}
       />,
     ];
 
@@ -63,31 +78,38 @@ class TaskModal extends Component {
     return (
       <Dialog
         autoScrollBodyContent
-        title={<Subheader>{this.props.title}</Subheader>}
+        title={this.props.title}
         actions={actions}
         onRequestClose={this.props.handleClose}
         open
         titleClassName="borderless"
         actionsContainerClassName="borderless"
       >
-        <TextField
-          autoFocus
-          fullWidth
-          multiLine
-          hintText="Task name"
-          onEnterKeyDown={this.onDialogSubmit}
-          ref={(input) => { this.taskInputField = input; }}
-          defaultValue={this.props.content}
-        />
-        <br />
-        <SelectField
-          value={this.state.assignee}
-          onChange={this.handleChange}
-          floatingLabelFixed
-          floatingLabelText="Assign to"
+        <Form
+          onValid={this.enableButton}
+          onInvalid={this.disableButton}
+          onValidSubmit={this.onDialogSubmit}
         >
-          {possibleAssignees}
-        </SelectField>
+          <FormsyText
+            required
+            autoFocus
+            fullWidth
+            multiLine
+            name="Task name"
+            floatingLabelText="Task Name (required)"
+            ref={(input) => { this.taskInputField = input; }}
+            value={this.props.content}
+          />
+          <br />
+          <SelectField
+            value={this.state.assignee}
+            onChange={this.handleChange}
+            floatingLabelFixed
+            floatingLabelText="Assign to"
+          >
+            {possibleAssignees}
+          </SelectField>
+        </Form>
       </Dialog>
     );
   }
