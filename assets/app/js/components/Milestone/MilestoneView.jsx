@@ -117,7 +117,6 @@ class MilestoneView extends Component {
       <MilestoneModal
         key="add-milestone-modal"
         title="Add Milestone"
-        open
         handleClose={this.handleClose}
         method={this.addMilestone}
       />

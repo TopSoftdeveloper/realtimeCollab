@@ -8,7 +8,6 @@ const propTypes = {
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   assignee: PropTypes.string.isRequired,
-  open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   taskMethod: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
@@ -73,11 +72,12 @@ class TaskModal extends Component {
         title={<Subheader>{this.props.title}</Subheader>}
         actions={actions}
         onRequestClose={this.props.handleClose}
-        open={this.props.open}
+        open
         titleClassName="borderless"
         actionsContainerClassName="borderless"
       >
         <TextField
+          autoFocus
           fullWidth
           multiLine
           hintText="Task name"

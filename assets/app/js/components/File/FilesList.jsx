@@ -195,6 +195,7 @@ class FilesList extends Component {
   renderRenameModal() {
     return (this.state.isRenameModalOpen &&
       <RenameModal
+        open={this.state.isRenameModalOpen}
         handleClose={this.handleRenameModalClose}
         onDialogSubmit={this.renameFile.bind(this, this.state.targetFile.id)}
         inputValue={this.state.targetFile.name}

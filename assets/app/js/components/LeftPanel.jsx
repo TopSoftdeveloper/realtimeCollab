@@ -96,6 +96,7 @@ class LeftPanel extends Component {
                       >
                         <FormsyText
                           autoFocus
+                          fullWidth
                           name="Project name"
                           validations="isWords"
                           validationError={"Please use only letters"}

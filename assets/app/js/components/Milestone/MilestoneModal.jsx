@@ -8,7 +8,6 @@ import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
 const propTypes = {
   title: PropTypes.string.isRequired,
-  open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   method: PropTypes.func.isRequired,
   deadline: PropTypes.string.isRequired,
@@ -107,7 +106,7 @@ class MilestoneModal extends Component {
         title={this.props.title}
         actions={actions}
         onRequestClose={this.props.handleClose}
-        open={this.props.open}
+        open
         titleClassName="borderless"
         actionsContainerClassName="borderless"
       >
@@ -117,6 +116,7 @@ class MilestoneModal extends Component {
           onValidSubmit={this.onDialogSubmit}
         >
           <FormsyText
+            fullWidth
             autoFocus
             value={this.props.content}
             required

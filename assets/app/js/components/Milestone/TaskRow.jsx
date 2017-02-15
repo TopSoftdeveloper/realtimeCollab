@@ -81,6 +81,18 @@ class TaskRow extends Component {
       </div>
     );
   }
+  renderTaskModal() {
+    return (this.state.isDialogOpen &&
+      <TaskModal
+        title="Edit Task"
+        content={this.props.task.content}
+        assignee={this.props.task.assignee_id}
+        handleClose={this.handleClose}
+        taskMethod={this.onEdit}
+        users={this.props.users}
+      />
+    );
+  }
   render() {
     let taskContentClass = 'task-content';
     if (this.props.highlight) {
@@ -139,15 +151,7 @@ class TaskRow extends Component {
             {editIndicator}
           </Col>
         </Row>
-        <TaskModal
-          title="Edit Task"
-          content={this.props.task.content}
-          assignee={this.props.task.assignee_id}
-          open={this.state.isDialogOpen}
-          handleClose={this.handleClose}
-          taskMethod={this.onEdit}
-          users={this.props.users}
-        />
+        {this.renderTaskModal()}
       </div>
     );
   }

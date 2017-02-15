@@ -13,13 +13,13 @@ const propTypes = {
 class RenameModal extends Component {
   constructor(props, context) {
     super(props, context);
+    this.state = {
+      canSubmit: false,
+    };
     this.handleClose = this.props.handleClose;
     this.onDialogSubmit = this.onDialogSubmit.bind(this);
     this.enableButton = this.enableButton.bind(this);
     this.disableButton = this.disableButton.bind(this);
-    this.state = {
-      canSubmit: false,
-    };
   }
   onDialogSubmit() {
     this.props.onDialogSubmit(this.textInput.getValue().trim());
@@ -58,7 +58,6 @@ class RenameModal extends Component {
         actions={renameModalActions}
         onRequestClose={this.handleClose}
         open
-        onClick={() => { this.textInput.focus(); }}
         titleClassName="borderless"
         actionsContainerClassName="borderless"
       >
@@ -68,10 +67,12 @@ class RenameModal extends Component {
           onValidSubmit={this.onDialogSubmit}
         >
           <FormsyText
+            autoFocus
             required
+            fullWidth
             value={inputValue}
             name="File Name"
-            floatingLabelText="New File Name(required)"
+            floatingLabelText="New File Name (required)"
             ref={(input) => { this.textInput = input; }}
           />
         </Form>
