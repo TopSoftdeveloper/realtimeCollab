@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Dialog, TextField, FlatButton } from 'material-ui';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
+import Subheader from 'material-ui/Subheader';
 
 const propTypes = {
   title: PropTypes.string.isRequired,
@@ -69,12 +70,16 @@ class TaskModal extends Component {
     return (
       <Dialog
         autoScrollBodyContent
-        title={this.props.title}
+        title={<Subheader>{this.props.title}</Subheader>}
         actions={actions}
         onRequestClose={this.props.handleClose}
         open={this.props.open}
+        titleClassName="borderless"
+        actionsContainerClassName="borderless"
       >
         <TextField
+          fullWidth
+          multiLine
           hintText="Task name"
           onEnterKeyDown={this.onDialogSubmit}
           ref={(input) => { this.taskInputField = input; }}

@@ -59,6 +59,8 @@ class RenameModal extends Component {
         onRequestClose={this.handleClose}
         open
         onClick={() => { this.textInput.focus(); }}
+        titleClassName="borderless"
+        actionsContainerClassName="borderless"
       >
         <Form
           onValid={this.enableButton}

@@ -9,7 +9,7 @@ html, body{
 }
 /*********************** TreeNode *******************/
 .borderless {
-  border: none;
+  border: none !important;
 }
 .node-title {
   height: auto;

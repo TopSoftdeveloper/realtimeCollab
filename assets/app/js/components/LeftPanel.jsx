@@ -81,6 +81,8 @@ class LeftPanel extends Component {
                   <Paper>
 
                     <Dialog
+                        titleClassName="borderless"
+                        actionsContainerClassName="borderless"
                         autoScrollBodyContent
                         title="Add Project"
                         actions={actions}

@@ -108,6 +108,8 @@ class MilestoneModal extends Component {
         actions={actions}
         onRequestClose={this.props.handleClose}
         open={this.props.open}
+        titleClassName="borderless"
+        actionsContainerClassName="borderless"
       >
         <Form
           onValid={this.enableButton}
