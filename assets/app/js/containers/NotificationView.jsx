@@ -1,13 +1,10 @@
-import React, { Component, PropTypes } from 'react'
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 
-import Notification from '../components/Notification/Notification.jsx'
+import Notification from '../components/Notification/Notification.jsx';
 
-const mapStateToProps = (state) => {
-  return {
-      notifications: state.notifications,
-      users: state.users
-  };
-}
+const mapStateToProps = (state) => ({
+  notifications: state.notifications,
+  users: state.users,
+});
 
-export default connect(mapStateToProps)(Notification)
+export default connect(mapStateToProps)(Notification);
