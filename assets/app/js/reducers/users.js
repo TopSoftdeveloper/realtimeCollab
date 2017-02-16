@@ -1,6 +1,6 @@
-import * as AppConstants from '../AppConstants';
 import assign from 'object-assign';
-import {filterUnique} from '../utils/general'
+import * as AppConstants from '../AppConstants';
+import { filterUnique } from '../utils/general';
 
 // Example state tree:
 // [
@@ -21,30 +21,31 @@ import {filterUnique} from '../utils/general'
 //         colour: '#FFFFFF'
 //     }
 // ]
+const users = (state = [], action) => {
+  switch (action.type) {
+    case AppConstants.INIT_USERS:
+      return filterUnique(action.users);
+    case AppConstants.USER_ONLINE:
+      return state.map(user => (
+        user.id === action.id ? assign({}, user, { online: true }) : user
+      ));
+    case AppConstants.USER_OFFLINE:
+      return state.map(user => (
+        user.id === action.id ? assign({}, user, { online: false }) : user
+      ));
+    case AppConstants.ADD_USERS:
+      const newUsers = filterUnique(action.users);
+      const usersToAdd = [];
+      for (let i = 0; i < newUsers.length; ++i) {
+        const matchingUsers = state.filter(user => user.id === newUsers[i].id);
+        if (matchingUsers.length === 0) {
+          usersToAdd.push(newUsers[i]);
+        }
+      }
+      return [...state, ...usersToAdd];
+    default:
+      return state;
+  }
+};
 
-export default function users(state=[], action) {
-    switch (action.type) {
-        case AppConstants.INIT_USERS:
-            return filterUnique(action.users);
-        case AppConstants.USER_ONLINE:
-        	return state.map(user =>
-        		user.id === action.id ?
-        		assign({}, user, {online: true}): user);
-        case AppConstants.USER_OFFLINE:
-        	return state.map(user =>
-        		user.id === action.id ?
-        		assign({}, user, {online: false}): user);
-        case AppConstants.ADD_USERS:
-            let users = filterUnique(action.users)
-            let usersToAdd = []
-            for (let i=0; i<users.length; ++i) {
-                let matchingUsers = state.filter(user => user.id === users[i].id)
-                if (matchingUsers.length === 0) {
-                    usersToAdd.push(users[i])
-                }
-            }
-            return [...state, ...usersToAdd]
-        default:
-            return state;
-    }
-}
+export default users;
