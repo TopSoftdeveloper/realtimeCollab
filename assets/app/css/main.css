@@ -1,6 +1,9 @@
 /*********************** Global *******************/
 /*Set content width to full screen*/
 html, body{
+  max-width: 100%;
+  margin: auto;
+  padding: auto;
   position:relative;
   height: 100%;
   min-width:1024px; /* suppose you want minimun width of 1000px */
@@ -317,6 +320,7 @@ html, body{
 .search-box {
   margin-left: 10%;
   width: 100%;
+  color: white;
   /*min-width: 400px;*/
 }
 
@@ -387,10 +391,6 @@ html, body{
 .block {
   display: block;
 }
-.filter-by {
-  float: right;
-}
-
 .avatar-list {
   list-style: none;
   margin-bottom: 0;
