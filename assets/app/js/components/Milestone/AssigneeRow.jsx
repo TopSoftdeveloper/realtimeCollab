@@ -87,10 +87,10 @@ class AssigneeRow extends Component {
     this.props.actions.reopenTask(taskId);
   }
   renderTaskModal() {
-    return (
+    return (this.isDialogOpen &&
       <TaskModal
         title="Add Task"
-        open={this.state.isDialogOpen}
+        open
         handleClose={this.handleClose}
         assignee={this.props.user.id}
         taskMethod={this.addTask}

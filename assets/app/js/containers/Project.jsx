@@ -26,7 +26,7 @@ class Project extends Component {
   }
 
   changeTab(newTab) {
-    browserHistory.push(`${getProjectRoot()}/${newTab}}`);
+    browserHistory.push(`${getProjectRoot()}/${newTab}`);
   }
 
 

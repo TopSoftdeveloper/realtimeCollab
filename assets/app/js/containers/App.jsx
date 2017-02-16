@@ -26,6 +26,7 @@ const propTypes = {
   socketActions: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   children: PropTypes.any.isRequired,
+  location: PropTypes.object.isRequired,
 };
 /* global  window  localStorage */
 class App extends Component {
@@ -39,6 +40,11 @@ class App extends Component {
     socketActions.monitorProjectChanges();
     socketActions.monitorNotifications();
     socketActions.monitorEditStatus();
+  }
+  getChildContext() {
+    return {
+      location: this.props.location,
+    };
   }
   shouldComponentUpdate() {
     const { projects } = this.props;
@@ -74,9 +80,8 @@ class App extends Component {
 
   render() {
     const { notifications, projects, users, app, search, actions } = this.props;
-    const currentProjectId = getCurrentProject();
-
     let currentProject = null;
+    const currentProjectId = getCurrentProject();
 
     if (users.length === 0) {
       // First initialization of app
@@ -98,7 +103,7 @@ class App extends Component {
     if (app.loading) {
       children = (
         <div className="main-content">
-          <LoadingIndicator className="loading-indicator" />;
+          <LoadingIndicator className="loading-indicator" />
         </div>
       );
     }
@@ -123,18 +128,17 @@ class App extends Component {
             app={app}
           />
           <Sidebar
+            open
+            docked
             sidebarClassName="left-panel"
             sidebar={
               <LeftPanel
                 currentProject={currentProject}
                 projects={projects}
-                app={app}
                 actions={actions}
                 onCreateProject={actions.createProject}
               />
             }
-            open
-            docked
           >
             <div className="body-wrapper">
               {children}

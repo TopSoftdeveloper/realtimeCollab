@@ -5,7 +5,6 @@ import ProjectModal from './ProjectModal.jsx';
 const propTypes = {
   currentProject: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
-  apps: PropTypes.object.isRequired,
   projects: PropTypes.array.isRequired,
   onCreateProject: PropTypes.func.isRequired,
 };
