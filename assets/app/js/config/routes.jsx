@@ -4,7 +4,7 @@ import App from '../containers/App.jsx';
 import Project from '../containers/Project.jsx';
 import _404 from '../components/Common/_404.jsx';
 import NotificationView from '../containers/NotificationView.jsx';
-import SearchResults from '../components/SearchResults.jsx';
+import SearchResults from '../components/Search/SearchResults.jsx';
 import Dashboard from '../components/Dashboard.jsx';
 import * as AppConstants from '../AppConstants';
 

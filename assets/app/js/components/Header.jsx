@@ -1,15 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router';
 import $ from 'jquery';
-import MenuItem from 'material-ui/MenuItem';
-import Avatar from 'material-ui/Avatar';
-import AutoComplete from 'material-ui/AutoComplete';
-import Code from '../icons/Code.jsx';
 import { logout } from '../utils/auth.js';
 import UserAvatar from './Common/UserAvatar.jsx';
-
-const RATE_LIMIT_MS = 900;
-const MIN_SEARCH_CHARS = 3;
+import SearchBar from './Search/SearchBar.jsx';
 
 const propTypes = {
   actions: PropTypes.object.isRequired,
@@ -18,50 +12,14 @@ const propTypes = {
   app: PropTypes.object.isRequired,
   search: PropTypes.array.isRequired,
 };
-const styles = {
-  autoCompleteStyle: {
-    color: 'white',
-  },
-  listStyle: {
-    width: '100%',
-    minWidth: 300,
-    fontSize: 10,
-    overflowX: 'hidden',
-    textOverflow: 'ellipsis',
-  },
-  textFieldStyle: {
-    minWidth: 300,
-    width: '100%',
-    color: 'white',
-  },
-  menuStyle: {
-    background: '#263238',
-    maxWidth: 400,
-    overflowX: 'hidden',
-    textOverflow: 'ellipsis',
-  },
-  menuItemStyle: {
-    textOverflow: 'ellipsis',
-    minWidth: '100%',
-    width: '100%',
-    maxWidth: 400,
-    color: 'white',
-    fontSize: 12,
-    marginLeft: -15,
-  },
-};
+
 /* global gapi window document localStorage */
 class Header extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
       isHangoutBtnRendered: false,
-      lastQueryTime: new Date().getTime(),
-      lastQueryString: '',
-      queryString: '',
     };
-    this.newRequest = this.newRequest.bind(this);
-    this.updateQuery = this.updateQuery.bind(this);
   }
   componentDidMount() {
     if (!this.state.isHangoutBtnRendered && $('#hangouts-btn-placeholder').length) {
@@ -77,50 +35,6 @@ class Header extends Component {
     }
   }
 
-  executeQuery(queryString) {
-    if (queryString.trim()) {
-      this.props.actions.queryIntegrations(queryString);
-      this.setState({
-        lastQueryTime: new Date().getTime(),
-        lastQueryString: queryString,
-      });
-    }
-  }
-
-  updateQuery(queryString) {
-    this.setState({
-      queryString,
-    });
-    if (queryString.length < MIN_SEARCH_CHARS) {
-      return;
-    }
-    const elapsedTime = new Date().getTime() - this.state.lastQueryTime;
-    if (elapsedTime < RATE_LIMIT_MS) {
-      setTimeout(() => {
-        if (this.state.queryString !== this.state.lastQueryString) {
-          this.executeQuery(this.state.queryString);
-        }
-      }, RATE_LIMIT_MS);
-    } else {
-      this.executeQuery(queryString);
-    }
-  }
-
-  newRequest() {
-    if (this.state.queryString !== this.state.lastQueryString) {
-      this.executeQuery(this.state.queryString);
-    }
-    this.setState({
-      queryString: '',
-    });
-    browserHistory.push('/app/search');
-  }
-
-  goToResult(link, e) {
-    e.preventDefault();
-    window.open(link, '_newtab');
-  }
-
   renderNotifsCount() {
     return (this.props.unreadCount > 0 &&
       <span className="badge">
@@ -129,61 +43,13 @@ class Header extends Component {
     );
   }
   render() {
+    const { actions, app, search, displayName } = this.props;
     const image = (
       <UserAvatar
         imgSrc={localStorage.getItem('display_image')}
         displayName={this.props.displayName}
       />
     );
-    let searchResults = null;
-    if (this.props.search.length === 0 && this.state.queryString.length >= MIN_SEARCH_CHARS) {
-      let text = 'Could not find any results';
-      if (this.props.app.queriesInProgress) {
-        text = 'Searching...';
-      }
-      searchResults = [{
-        text: '',
-        value: (
-          <MenuItem
-            primaryText={
-              <span style={styles.menuItemStyle}>
-                {text}
-              </span>
-            }
-            disabled
-          />
-        ),
-      }];
-    } else {
-      searchResults = this.props.search.map(result => {
-        let avatar = <Avatar backgroundColor="#263238" size={12} src={result.thumbnail} />;
-        if (result.type === 'github') {
-          avatar = (
-            <Avatar
-              backgroundColor="#263238"
-              size={12}
-              icon={<Code style={{ margin: '0px' }} />}
-            />
-          );
-        }
-        return {
-          text: result.primaryText,
-          value: (
-            <MenuItem
-              leftIcon={avatar}
-              primaryText={
-                <span style={styles.menuItemStyle}>
-                  {result.primaryText}
-                </span>
-              }
-              onTouchTap={this.goToResult.bind(this, result.link)}
-            />
-          ),
-        };
-      });
-    }
-
-
     return (
       <nav className="navbar navbar-default navbar-fixed-top">
         <div className="container-fluid">
@@ -205,19 +71,10 @@ class Header extends Component {
           <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul className="nav navbar-nav navbar-left header-left">
               <li className="search-box" id="search">
-                <AutoComplete
-                  hintText={<span style={{ color: 'grey' }}>{ 'Search Collab' }</span>}
-                  filter={AutoComplete.noFilter}
-                  dataSource={searchResults}
-                  onUpdateInput={this.updateQuery}
-                  onNewRequest={this.newRequest}
-                  searchText={this.state.queryString}
-                  listStyle={styles.listStyle}
-                  textFieldStyle={styles.textFieldStyle}
-                  menuStyle={styles.menuStyle}
-                  style={styles.autoCompleteStyle}
-                  inputStyle={styles.textFieldStyle}
-                  maxSearchResults={6}
+                <SearchBar
+                  actions={actions}
+                  app={app}
+                  search={search}
                 />
               </li>
             </ul>
@@ -239,7 +96,7 @@ class Header extends Component {
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  {this.props.displayName}
+                  {displayName}
                   <span className="caret" />
                 </a>
                 <ul className="dropdown-menu">

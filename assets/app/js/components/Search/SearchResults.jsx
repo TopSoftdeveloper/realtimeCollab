@@ -9,12 +9,12 @@ import Avatar from 'material-ui/Avatar';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-import { darkBlack } from '../UserColours.js';
-import * as Actions from '../actions/ReduxTaskActions';
-import Code from '../icons/Code.jsx';
+import { darkBlack } from '../../UserColours.js';
+import * as Actions from '../../actions/ReduxTaskActions';
+import Code from '../../icons/Code.jsx';
 import CodeFragment from './CodeFragment.jsx';
-import { toFuzzyTime } from '../utils/general';
-import LoadingIndicator from '../components/Common/LoadingIndicator.jsx';
+import { toFuzzyTime } from '../../utils/general';
+import LoadingIndicator from '../Common/LoadingIndicator.jsx';
 
 const propTypes = {
   search: PropTypes.array.isRequired,
@@ -143,7 +143,7 @@ class SearchResults extends Component {
         </div>
       );
     });
-    return (githubResults.length>0 && (this.props.app.searchFilter === 'code'
+    return (githubResults.length > 0 && (this.props.app.searchFilter === 'code'
     || this.props.app.searchFilter === 'all') &&
     <List>
       <Subheader>Code</Subheader>
@@ -179,13 +179,14 @@ class SearchResults extends Component {
     if (filterByList.length > 1) {
       filterByList.unshift(<MenuItem value={'all'} primaryText="All" key="ta" />);
       filterMenu = (
-          <SelectField className="pull-right"
-            floatingLabelText="Filter"
-            value={this.props.app.searchFilter}
-            onChange={this.handleChange}
-          >
-            {filterByList}
-          </SelectField>
+        <SelectField
+          className="pull-right"
+          floatingLabelText="Filter"
+          value={this.props.app.searchFilter}
+          onChange={this.handleChange}
+        >
+          {filterByList}
+        </SelectField>
       );
     }
     return (
