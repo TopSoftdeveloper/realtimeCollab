@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {Tooltip, OverlayTrigger} from 'react-bootstrap'
 import vagueTime from 'vague-time'
-
+import UserColours from '../UserColours';
 
 export const getFileIcon = type => {
 	const IMG_ROOT = '../../../images/'
@@ -124,3 +124,18 @@ export function dumpList(list, separator = ',') {
 		}
 		return output
 }
+
+// Returns a random integer between min (inclusive) and max (inclusive)
+export const getRandomInt = (min, max) => (
+  Math.floor(Math.random() * (max - min + 1)) + min
+);
+
+export const getNewColour = (usedColours) => {
+  // Returns an unused colour from the predefined colour palette.
+  // If all colours are used, returns a random colour
+  const coloursLeft = UserColours.filter(colour => usedColours.indexOf(colour) <= -1);
+  if (coloursLeft.length > 0) {
+    return coloursLeft[getRandomInt(0, coloursLeft.length - 1)];
+  }
+  return UserColours[getRandomInt(0, UserColours.length - 1)];
+};

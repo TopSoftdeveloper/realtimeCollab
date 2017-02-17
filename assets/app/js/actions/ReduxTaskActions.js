@@ -1,4 +1,9 @@
-import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkDone,
+import assign from 'object-assign';
+import _ from 'lodash';
+import Fuse from 'fuse.js';
+import Promise from 'bluebird';
+
+import { serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkDone,
   serverPopulate, serverCreateMilestone, serverCreateProject, serverCreatePost,
   serverInviteToProject, serverGetNotifications, serverAcceptProject,
   serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
@@ -6,238 +11,221 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
   syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
   queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile,
   createFolder, moveFile,
-  serverGetNewesfeed, refreshTokens, listRepoEvents} from '../utils/apiUtil'
-  import {getCurrentProject} from '../utils/general'
-  import {isObjectPresent, filterUnique} from '../utils/general'
-  import assign from 'object-assign';
-  import _ from 'lodash'
-  import Fuse from 'fuse.js'
-  import UserColours from '../UserColours';
-  import Promise from "bluebird"
-  import {userIsOnline} from './SocketActions'
-  import {logout} from '../utils/auth'
-  import * as AppConstants from '../AppConstants';
-  let ServerConstants = require('../../../../server/constants');
-  let templates = require('../../../../server/templates');
+  serverGetNewesfeed, refreshTokens, listRepoEvents,
+} from '../utils/apiUtil';
+import { isObjectPresent, filterUnique, getCurrentProject, getNewColour } from '../utils/general';
+import { userIsOnline } from './SocketActions';
+import { logout } from '../utils/auth';
+import * as AppConstants from '../AppConstants';
 
-  function makeActionCreator(type, ...argNames) {
-    return function(...args) {
-      let action = { type };
-      argNames.forEach((arg, index) => {
-        action[argNames[index]] = args[index];
-      });
-      return action;
-    }
+const ServerConstants = require('../../../../server/constants');
+const templates = require('../../../../server/templates');
+
+const makeActionCreator = (type, ...argNames) => (
+  (...args) => {
+    const action = { type };
+    argNames.forEach((arg, index) => {
+      action[argNames[index]] = args[index];
+    });
+    return action;
   }
-
-  /**
-  * Reducers listen for action types (the first parameter, referenced through AppConstants)
-  * emitted by dispatched actionCreators. Note: the first parameter of the action creator is already
-  * named "type". So DO NOT name other parameters as "type".
-  */
-  export const _updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app')
-  export const snackbarMessage = makeActionCreator(AppConstants.SNACKBAR_MESSAGE, 'message', 'kind');
-  export const updateSnackbar = makeActionCreator(AppConstants.UPDATE_SNACKBAR, 'snackbar');
-  export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original', 'replacement');
-  export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID, 'original', 'replacement');
-  export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
-  export const _editTask = makeActionCreator(AppConstants.EDIT_TASK, 'id', 'task');
-  export const _deleteTask = makeActionCreator(AppConstants.DELETE_TASK, 'id');
-  export const markAsDirty = makeActionCreator(AppConstants.MARK_AS_DIRTY, 'id');
-  export const unmarkDirty = makeActionCreator(AppConstants.UNMARK_DIRTY, 'id');
-  export const _markDone = makeActionCreator(AppConstants.MARK_DONE, 'id');
-  export const _unmarkDone = makeActionCreator(AppConstants.UNMARK_DONE, 'id');
-  export const _createMilestone = makeActionCreator(AppConstants.CREATE_MILESTONE, 'milestone');
-  export const _deleteMilestone = makeActionCreator(AppConstants.DELETE_MILESTONE, 'id');
-  export const _editMilestone = makeActionCreator(AppConstants.EDIT_MILESTONE, 'id', 'milestone');
-
-  export const _createProject = makeActionCreator(AppConstants.CREATE_PROJECT, 'project');
-  export const _deleteProject = makeActionCreator(AppConstants.DELETE_PROJECT, 'id');
-  export const replaceProjectId = makeActionCreator(AppConstants.REPLACE_PROJECT_ID, 'original', 'replacement');
-  export const _switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
-  export const projectAlert = makeActionCreator(AppConstants.PROJECT_INVITATION_ALERT, 'alert');
-  export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id', 'payload');
-  export const joinProject = makeActionCreator(AppConstants.JOIN_PROJECT, 'id', 'user_id');
-
-  export const initSearchResults = makeActionCreator(AppConstants.INIT_RESULTS, 'results');
-  export const addSearchResults = makeActionCreator(AppConstants.ADD_RESULTS, 'results');
-  export const queryProcessing = makeActionCreator(AppConstants.QUERY_PROCESSING);
-  export const queryDone = makeActionCreator(AppConstants.QUERY_DONE);
-
-  export const initSnackbar = makeActionCreator(AppConstants.INIT_SNACKBAR, 'snackbar')
-  export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
-  export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
-  export const initNotifications = makeActionCreator(AppConstants.INIT_NOTIFICATIONS, 'notifications');
-  export const initProjects = makeActionCreator(AppConstants.INIT_PROJECTS, 'projects');
-  export const initTasks = makeActionCreator(AppConstants.INIT_TASKS, 'tasks');
-  export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
-  export const initFiles= makeActionCreator(AppConstants.INIT_FILES, 'files');
-  export const initMessages = makeActionCreator(AppConstants.INIT_MESSAGES, 'messages');
-  export const _initGithubRepos = makeActionCreator(AppConstants.INIT_GITHUB_REPOS, 'repos');
-
-  export const addNewsfeedEvents = makeActionCreator(AppConstants.ADD_EVENT, 'events');
-
-  export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
-  export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
-
-  export const insertFile = makeActionCreator(AppConstants.INSERT_FILE, 'file');
-  export const addFiles = makeActionCreator(AppConstants.ADD_FILES, 'files');
-  export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
-  export const updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'payload');
-  export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'id', 'directory');
-  export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'projectId', 'dirId');
-  export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT, 'projectId', 'dirId');
-
-  export const _setDefaultGithubRepo = makeActionCreator(AppConstants.SET_GITHUB_REPO, 'projectId', 'repoName', 'repoOwner');
-
-  export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message')
-
-  export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
-  export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
-  export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
-  export const userEditing = makeActionCreator(AppConstants.USER_EDITING, 'kind', 'id', 'user_id');
-  export const userStopEditing = makeActionCreator(AppConstants.USER_STOP_EDITING, 'kind', 'id', 'user_id');
-
-  export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
-  export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
+);
 
 
-  export function addUser(user) {
-    return function(dispatch, getState) {
-      user.colour = getNewColour(getState().users.map(k => k.colour))
-      dispatch(addUsers([user]))
-    }
+/* eslint no-underscore-dangle: "off" */
+/* global localStorage FileReader*/
+/**
+* Reducers listen for action types (the first parameter, referenced through AppConstants)
+* emitted by dispatched actionCreators. Note: the first parameter of the action creator is already
+* named "type". So DO NOT name other parameters as "type".
+*/
+export const _updateAppStatus = makeActionCreator(AppConstants.UPDATE_APP_STATUS, 'app');
+export const snackbarMessage = makeActionCreator(AppConstants.SNACKBAR_MESSAGE, 'message', 'kind');
+export const updateSnackbar = makeActionCreator(AppConstants.UPDATE_SNACKBAR, 'snackbar');
+export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'original',
+  'replacement');
+export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID,
+  'original', 'replacement');
+export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
+export const _editTask = makeActionCreator(AppConstants.EDIT_TASK, 'id', 'task');
+export const _deleteTask = makeActionCreator(AppConstants.DELETE_TASK, 'id');
+export const markAsDirty = makeActionCreator(AppConstants.MARK_AS_DIRTY, 'id');
+export const unmarkDirty = makeActionCreator(AppConstants.UNMARK_DIRTY, 'id');
+export const _markDone = makeActionCreator(AppConstants.MARK_DONE, 'id');
+export const _unmarkDone = makeActionCreator(AppConstants.UNMARK_DONE, 'id');
+export const _createMilestone = makeActionCreator(AppConstants.CREATE_MILESTONE, 'milestone');
+export const _deleteMilestone = makeActionCreator(AppConstants.DELETE_MILESTONE, 'id');
+export const _editMilestone = makeActionCreator(AppConstants.EDIT_MILESTONE, 'id', 'milestone');
+
+export const _createProject = makeActionCreator(AppConstants.CREATE_PROJECT, 'project');
+export const _deleteProject = makeActionCreator(AppConstants.DELETE_PROJECT, 'id');
+export const replaceProjectId = makeActionCreator(AppConstants.REPLACE_PROJECT_ID, 'original',
+  'replacement');
+export const _switchToProject = makeActionCreator(AppConstants.SWITCH_TO_PROJECT, 'project_id');
+export const projectAlert = makeActionCreator(AppConstants.PROJECT_INVITATION_ALERT, 'alert');
+export const _updateProject = makeActionCreator(AppConstants.UPDATE_PROJECT, 'id', 'payload');
+export const joinProject = makeActionCreator(AppConstants.JOIN_PROJECT, 'id', 'user_id');
+
+export const initSearchResults = makeActionCreator(AppConstants.INIT_RESULTS, 'results');
+export const addSearchResults = makeActionCreator(AppConstants.ADD_RESULTS, 'results');
+export const queryProcessing = makeActionCreator(AppConstants.QUERY_PROCESSING);
+export const queryDone = makeActionCreator(AppConstants.QUERY_DONE);
+
+export const initSnackbar = makeActionCreator(AppConstants.INIT_SNACKBAR, 'snackbar');
+export const initApp = makeActionCreator(AppConstants.INIT_APP, 'app');
+export const initMilestones = makeActionCreator(AppConstants.INIT_MILESTONES, 'milestones');
+export const initNotifications = makeActionCreator(AppConstants.INIT_NOTIFICATIONS,
+  'notifications');
+export const initProjects = makeActionCreator(AppConstants.INIT_PROJECTS, 'projects');
+export const initTasks = makeActionCreator(AppConstants.INIT_TASKS, 'tasks');
+export const initUsers = makeActionCreator(AppConstants.INIT_USERS, 'users');
+export const initFiles = makeActionCreator(AppConstants.INIT_FILES, 'files');
+export const initMessages = makeActionCreator(AppConstants.INIT_MESSAGES, 'messages');
+export const _initGithubRepos = makeActionCreator(AppConstants.INIT_GITHUB_REPOS, 'repos');
+
+export const addNewsfeedEvents = makeActionCreator(AppConstants.ADD_EVENT, 'events');
+
+export const loggedOutGoogle = makeActionCreator(AppConstants.LOGGED_OUT_GOOGLE);
+export const loggedIntoGoogle = makeActionCreator(AppConstants.LOGGED_INTO_GOOGLE);
+
+export const insertFile = makeActionCreator(AppConstants.INSERT_FILE, 'file');
+export const addFiles = makeActionCreator(AppConstants.ADD_FILES, 'files');
+export const deleteFile = makeActionCreator(AppConstants.DELETE_FILE, 'id');
+export const updateFile = makeActionCreator(AppConstants.UPDATE_FILE, 'id', 'payload');
+export const addDirectory = makeActionCreator(AppConstants.ADD_DIRECTORY, 'id', 'directory');
+export const goToDirectory = makeActionCreator(AppConstants.GO_TO_DIRECTORY, 'projectId', 'dirId');
+export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_AS_ROOT,
+  'projectId', 'dirId');
+export const _setDefaultGithubRepo = makeActionCreator(AppConstants.SET_GITHUB_REPO, 'projectId',
+  'repoName', 'repoOwner');
+export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message');
+export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
+export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
+export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
+export const userEditing = makeActionCreator(AppConstants.USER_EDITING, 'kind', 'id', 'user_id');
+export const userStopEditing = makeActionCreator(AppConstants.USER_STOP_EDITING, 'kind',
+  'id', 'user_id');
+export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
+export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
+
+export const addUser = (user) => (
+  (dispatch, getState) => {
+    const copy = assign({}, user);
+    copy.colour = getNewColour(getState().users.map(k => k.colour));
+    dispatch(addUsers([copy]));
   }
+);
 
-  export function moveFileToDrive(fileId, oldParents, newParents) {
-    return function(dispatch) {
-      moveFile(fileId, oldParents, newParents).then(
-        (newFile) => {
-          dispatch(deleteFile(fileId))
-          dispatch(insertFile(newFile))
-          dispatch(snackbarMessage(newFile.name+' moved successfully', 'default'))
-        },function(err) {
-          console.log(err)
-        })
-    }
+export const moveFileToDrive = (fileId, oldParents, newParents) => (
+  (dispatch) => {
+    moveFile(fileId, oldParents, newParents).then(
+      (newFile) => {
+        dispatch(deleteFile(fileId));
+        dispatch(insertFile(newFile));
+        dispatch(snackbarMessage(`${newFile.name} moved successfully`, 'default'));
+      }, (err) => { console.log(err); }
+    );
   }
+);
+export const createFolderToDrive = (directory) => (
+  (dispatch) => {
+    const boundary = AppConstants.MULTIPART_BOUNDARY;
+    const delimiter = `\r\n--${boundary}\r\n`;
+    const closeDelimiter = `\r\n--${boundary}--`;
 
-  export function createFolderToDrive(directory) {
-    return function(dispatch) {
-      const boundary = AppConstants.MULTIPART_BOUNDARY
-      const delimiter = "\r\n--" + boundary + "\r\n";
-      const close_delim = "\r\n--" + boundary + "--";
+    const contentType = 'application/vnd.google-apps.folder';
+    const metadata = {
+      name: 'New Folder',
+      mimeType: contentType,
+    };
+    metadata.parents = [directory];
+    const multipartRequestBody = `${delimiter}Content-Type:application/json\r\n\r\n\
+${JSON.stringify(metadata)}${delimiter}Content-Type:${contentType}\r\n\
+Content-Transfer-Encoding: base64\r\n\r\n${closeDelimiter}`;
+    createFolder(multipartRequestBody).then(
+      (newFile) => {
+        dispatch(insertFile(newFile));
+        dispatch(snackbarMessage(`${newFile.name} created successfully`, 'default'));
+      }, (err) => { console.log(err); }
+    );
+  }
+);
+export const renameFileToDrive = (fileId, newName) => (
+  (dispatch) => {
+    renameFile(fileId, newName).then(
+      (newFile) => {
+        dispatch(deleteFile(fileId));
+        dispatch(insertFile(newFile));
+        dispatch(snackbarMessage(`${newFile.name} renamed successfully`, 'default'));
+      }, (err) => { console.log(err); }
+    );
+  }
+);
 
-        var contentType = 'application/vnd.google-apps.folder'
-        var metadata = {
-          'name': "New Folder",
-          'mimeType': contentType,
+export const copyFileToDrive = (fileId) => (
+  (dispatch) => {
+    copyFile(fileId).then(
+      (newFile) => {
+        dispatch(insertFile(newFile));
+        dispatch(snackbarMessage(`${newFile.name} copied successfully`, 'default'));
+      }, (err) => { console.log(err); }
+    );
+  }
+);
+export const removeFileFromDrive = (fileId) => (
+  (dispatch) => {
+    removeFile(fileId).then(
+      () => {
+        dispatch(deleteFile(fileId));
+        dispatch(snackbarMessage('File deleted successfully', 'default'));
+      }, (err) => { console.log(err); }
+    );
+  }
+);
+
+export const uploadFileToDrive = (file, directory, projectId) => (
+  (dispatch) => {
+    const fileData = file.data;
+    const boundary = AppConstants.MULTIPART_BOUNDARY;
+    const delimiter = `\r\n--${boundary}\r\n`;
+    const closeDelimiter = `\r\n--${boundary}--`;
+    const reader = new FileReader();
+    reader.readAsDataURL(fileData);
+    reader.onload = () => {
+      const contentType = fileData.type || 'application/octect-stream';
+      const metadata = {
+        name: file.name,
+        mimeType: contentType,
+      };
+      metadata.parents = [directory];
+
+      const base64Data = (reader.result).split(',')[1];
+      const multipartRequestBody = `${delimiter}Content-Type:\
+application/json\r\n\r\n${JSON.stringify(metadata)}${delimiter}Content-Type:${contentType}\r\n\
+Content-Transfer-Encoding:base64\r\n\r\n${base64Data}${closeDelimiter}`;
+
+      uploadFile(multipartRequestBody).then(newFile => {
+        dispatch(deleteFile(file.id));
+        dispatch(insertFile(newFile));
+        dispatch(snackbarMessage(`${newFile.name} uploaded successfully`, 'default'));
+        const payload = {
+          user_id: localStorage.getItem('user_id'),
+          fileName: file.name,
         };
-        metadata.parents = [directory]
-        var multipartRequestBody = delimiter + 'Content-Type: application/json\r\n\r\n' +
-        JSON.stringify(metadata) + delimiter + 'Content-Type: ' + contentType + '\r\n' +
-        'Content-Transfer-Encoding: base64\r\n' + '\r\n' +close_delim;
-
-      createFolder(multipartRequestBody).then(
-        (newFile) => {
-          dispatch(insertFile(newFile))
-          dispatch(snackbarMessage(newFile.name+' created successfully', 'default'))
-        },function(err) {
-          console.log(err)
-        })
-    }
+        serverCreatePost({
+          template: templates.DRIVE_UPLOAD,
+          data: JSON.stringify(payload),
+          source: ServerConstants.GOOGLE_DRIVE,
+        }, projectId);
+      }, (err) => { console.log(err); });
+    };
   }
-
-  export function renameFileToDrive(fileId, newName) {
-    return function(dispatch) {
-      renameFile(fileId, newName).then(
-        (newFile) => {
-          dispatch(deleteFile(fileId))
-          dispatch(insertFile(newFile))
-          dispatch(snackbarMessage(newFile.name+' renamed successfully', 'default'))
-        },function(err) {
-          console.log(err)
-        })
-    }
+);
+export const updateGithubLogin = (token) => (
+  (dispatch) => {
+    serverUpdateGithubLogin(token);
   }
-
-  export function copyFileToDrive(fileId) {
-    return function(dispatch) {
-      copyFile(fileId).then(
-        (newFile) => {
-          dispatch(insertFile(newFile))
-          dispatch(snackbarMessage(newFile.name+' copied successfully', 'default'))
-        },function(err) {
-          console.log(err)
-        })
-    }
-  }
-
-  export function removeFileFromDrive(fileId) {
-    return function(dispatch) {
-      removeFile(fileId).then(
-        () => {
-          dispatch(deleteFile(fileId));
-          dispatch(snackbarMessage('File deleted successfully', 'default'))
-        },function(err) {
-          console.log(err)
-        })
-    }
-  }
-  export function uploadFileToDrive(file, directory, projectId) {
-    return function(dispatch) {
-      let fileData = file.data
-      const boundary = AppConstants.MULTIPART_BOUNDARY
-      const delimiter = "\r\n--" + boundary + "\r\n";
-      const close_delim = "\r\n--" + boundary + "--";
-
-      var reader = new FileReader();
-      reader.readAsBinaryString(fileData);
-      reader.onload = function(e) {
-        var contentType = fileData.type || 'application/octect-stream';
-        var metadata = {
-          'name': fileData.name,
-          'mimeType': contentType
-        };
-        metadata.parents = [directory]
-
-        var base64Data = btoa(reader.result);
-        var multipartRequestBody =
-        delimiter +
-        'Content-Type: application/json\r\n\r\n' +
-        JSON.stringify(metadata) +
-        delimiter +
-        'Content-Type: ' + contentType + '\r\n' +
-        'Content-Transfer-Encoding: base64\r\n' +
-        '\r\n' +
-        base64Data +
-        close_delim;
-
-        uploadFile(multipartRequestBody).then(newFile => {
-          dispatch(deleteFile(file.id))
-          dispatch(insertFile(newFile))
-          dispatch(snackbarMessage('Uploaded ' + fileData.name, 'default'))
-          let payload = {
-            user_id: localStorage.getItem('user_id'),
-            fileName: fileData.name
-          }
-          serverCreatePost({
-            template: templates.DRIVE_UPLOAD,
-            data: JSON.stringify(payload),
-            source: ServerConstants.GOOGLE_DRIVE
-          }, projectId)
-        }, function (err) {
-          console.log(err)
-        })
-      }
-    }
-  }
-
-  export function updateGithubLogin(token) {
-    return function(dispatch) {
-      serverUpdateGithubLogin(token)
-    }
-  }
+);
 
   function testGithubRepos(projects) {
     // Tests whether user can successfully call a repo's API
@@ -380,73 +368,70 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
       )
     })
   }
-
-  export function initGithubRepos() {
-    return function(dispatch) {
+export const initGithubRepos = () => (
+  (dispatch) => {
+    dispatch(_updateAppStatus({
+      github: {
+        loading: true,
+      },
+    }));
+    getGithubRepos().then(res => {
       dispatch(_updateAppStatus({
         github: {
-          loading: true
-        }
-      }))
-      getGithubRepos().done(res => {
-        dispatch(_updateAppStatus({
-          github: {
-            loading: false,
-            repo_fetched: true
-          }
-        }))
-        dispatch(_initGithubRepos(res))
-      }).fail(e => {
-        dispatch(_updateAppStatus({
-          github: {
-            loading: false
-          }
-        }))
-        if (e.statusText === "Unauthorized") {
-          dispatch(_updateAppStatus({github_token: ''}))
-        } else {
-          console.log(e)
-        }
-      })
-    }
+          loading: false,
+          repo_fetched: true,
+        },
+      }));
+      dispatch(_initGithubRepos(res));
+    }).catch(e => {
+      dispatch(_updateAppStatus({
+        github: {
+          loading: false,
+        },
+      }));
+      if (e.statusText === 'Unauthorized') {
+        dispatch(_updateAppStatus({ github_token: '' }));
+      } else {
+        console.log(e);
+      }
+    });
   }
+);
+export const updateAppStatus = (obj) => (
+  (dispatch) => {
+    dispatch(_updateAppStatus(obj));
+  }
+);
+export const dismissProjectAlert = () => (
+  (dispatch) => {
+    dispatch(projectAlert(null));
+  }
+);
 
-  export function updateAppStatus(obj) {
-    return function(dispatch) {
-      dispatch(_updateAppStatus(obj))
-    }
+export const declineProject = (projectId, notificationId) => (
+  (dispatch) => {
+    serverDeclineProject(projectId).then(() => {
+      dispatch(snackbarMessage('Project declined', 'default'));
+      serverDeleteNotification(notificationId).then(() => {
+        dispatch(_deleteNotification(notificationId));
+      }).catch(e => {
+        console.log(e);
+      });
+    }).catch(e => {
+      console.log(e);
+    });
   }
-
-  export function dismissProjectAlert() {
-    return function(dispatch) {
-      dispatch(projectAlert(null))
-    }
-  }
-
-  export function declineProject(projectId, notificationId) {
-    return function(dispatch) {
-      serverDeclineProject(projectId).done(res => {
-        dispatch(snackbarMessage('Project declined', 'default'))
-        serverDeleteNotification(notificationId).done(res => {
-          dispatch(_deleteNotification(notificationId))
-        }).fail(e => {
-          console.log(e)
-        })
-      }).fail(e => {
-        console.log(e)
-      })
-    }
-  }
+);
 
   export function acceptProject(projectId, notificationId) {
     return function(dispatch) {
-      serverAcceptProject(projectId).done(res => {
+      serverAcceptProject(projectId).then(res => {
         dispatch(snackbarMessage('Project accepted', 'default'))
         dispatch(_updateAppStatus({
           loading: true
         }));
         dispatch(userIsOnline()) // send online signal again to join the project's socket
-        serverPopulate().done(res => {
+        serverPopulate().then(res => {
           if (res.projects.length > 0) {
             let normalizedTables = normalize(res.projects);
             dispatch(initMilestones(normalizedTables.milestones));
@@ -471,30 +456,16 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
 
         serverDeleteNotification(notificationId).done(res => {
           dispatch(_deleteNotification(notificationId))
-        }).fail(e => {
+        }).catch(e => {
           console.log(e)
         })
-      }).fail(e => {
+      }).catch(e => {
         console.log(e)
       })
     }
   }
 
-  function getNewColour(usedColours) {
-    // Returns an unused colour from the predefined colour palette.
-    // If all colours are used, returns a random colour
-    let coloursLeft = UserColours.filter(colour => usedColours.indexOf(colour) <= -1)
-    if (coloursLeft.length > 0) {
-      return coloursLeft[getRandomInt(0, coloursLeft.length-1)]
-    } else {
-      return UserColours[getRandomInt(0, UserColours.length-1)]
-    }
-  }
 
-  function getRandomInt(min, max) {
-    // Returns a random integer between min (inclusive) and max (inclusive)
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
 
   function hasProjectWithoutGithub(projects) {
     for (let i=0; i<projects.length; ++i) {
@@ -522,17 +493,17 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         display_image: localStorage.getItem('display_image'),
         online: true,
         colour: getNewColour([]),
-        me: true
+        me: true,
       }]));
       dispatch(initApp({
         is_linked_to_drive: true,
         is_top_level_folder_loaded: false,
         github: {
           loading: false,
-          repo_fetched: false
+          repo_fetched: false,
         },
         files: {
-          loading: false
+          loading: false,
         },
         queriesInProgress: 0,
         loading: true,
@@ -542,8 +513,8 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
       dispatch(initSnackbar({
         isOpen: false,
         message: '',
-        background: ''
-      }))
+        background: '',
+      }));
 
       serverPopulate().done(res => {
         if (res.projects.length > 0) {
@@ -1097,7 +1068,8 @@ import {serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkD
         //s: script
         e = d.createElement(s);
         e.async = 1;
-        e.src = (location.protocol === "https:" ? "https:" : "http:") + "//scrollback.io/client.min.js";
+        e.src = (location.protocol === "https:" ? "https:" : "http:") +
+          "//scrollback.io/client.min.js";
         d.getElementsByTagName(s)[0].parentNode.appendChild(e);
       }(document, "script"));
     }

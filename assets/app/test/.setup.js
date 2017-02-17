@@ -12,3 +12,11 @@ Object.keys(document.defaultView).forEach((property) => {
 global.navigator = {
   userAgent: 'node.js'
 };
+
+// mock localStorage 
+if (!global.window.localStorage) {
+  global.window.localStorage = {
+    getItem() { return '{}'; },
+    setItem() {}
+  };
+}

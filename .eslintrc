@@ -10,6 +10,19 @@
       "import/no-extraneous-dependencies": [
         "error", {"devDependencies": ["**/*.test.js", "**/*.spec.js"]}
       ],
+      "no-mixed-operators": [
+        "error",
+        {
+          "groups": [
+          ["+", "-", "*", "/", "%", "**"],
+          ["&", "|", "^", "~", "<<", ">>", ">>>"],
+          ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
+          ["&&", "||"],
+          ["in", "instanceof"]
+          ],
+          "allowSamePrecedence": true
+        }
+      ],
     },
     "env": {
       "mocha": true

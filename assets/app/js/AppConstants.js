@@ -21,13 +21,16 @@ export const PATH = {
   newsfeed: 'newsfeed',
   settings: 'settings',
 };
+export const GITHUB_CLIENT_ID = clientConfig.github_client_id;
+export const GOOGLE_CLIENT_ID = clientConfig.google_client_id;
+export const APP_ROOT_URL = clientConfig.app_root_url;
+export const HOSTNAME = clientConfig.hostname;
+export const API_BASE_URL = clientConfig.api_base_url;
 export const MULTIPART_BOUNDARY = '-------314159265358979323846';
 export const SNACKBAR_MESSAGE = 'SNACKBAR_MESSAGE';
 export const ADD_RESULTS = 'ADD_RESULTS';
 export const INIT_RESULTS = 'INIT_RESULTS';
 export const INIT_GITHUB_REPOS = 'INIT_GITHUB_REPOS';
-export const GITHUB_CLIENT_ID = clientConfig.github_client_id;
-export const GOOGLE_CLIENT_ID = clientConfig.google_client_id;
 export const UPDATE_APP_STATUS = 'UPDATE_APP_STATUS';
 export const SET_DIRECTORY_AS_ROOT = 'SET_DIRECTORY_AS_ROOT';
 export const SET_GITHUB_REPO = 'SET_GITHUB_REPO';
@@ -82,9 +85,6 @@ export const INIT_PROJECTS = 'INIT_PROJECTS';
 export const INIT_TASKS = 'INIT_TASKS';
 export const INIT_USERS = 'INIT_USERS';
 export const INIT_FILES = 'INIT_FILES';
-export const APP_ROOT_URL = clientConfig.app_root_url;
-export const HOSTNAME = clientConfig.hostname;
-export const API_BASE_URL = clientConfig.api_base_url;
 export const INIT_MESSAGES = 'INIT_MESSAGES';
 export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const DELETE_MESSAGE = 'DELETE_MESSAGE';
