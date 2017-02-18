@@ -14,6 +14,7 @@ describe('User', function() {
     models.User
       .create({
         id: 'user1',
+        email: 'email1',
         github_login: 'github_login1',
       })
       .then((newUser) => {
@@ -81,6 +82,64 @@ describe('User', function() {
         expect(res.result.projects[0].milestones.length).to.equal(1);
         expect(res.result.projects[0].tasks.length).to.equal(1);
         done();
+      });
+    });
+  });
+
+  context('updating user', function() {
+    beforeEach(function(done) {
+      this.payload = {
+        display_name: 'new display name',
+        email: 'new email',
+        google_id: 'new google id',
+        github_login: 'new github login',
+      };
+      done();
+    });
+
+    it('should return 200 without updating if no payload', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/user/user1',
+        credentials: { user_id: 'user1', password: 'password1' },
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        models.User.findById('user1').then(result => {
+          expect(result).to.not.be.a('null');
+          expect(result.email).to.be.equal(this.user.email);
+          done();
+        });
+      });
+    });
+
+    it('should return 404 if user does not exist', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/user/user2',
+        credentials: { user_id: 'user2', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(404);
+        done();
+      });
+    });
+
+    it('should update a user', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/user/user1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        models.User.findById('user1').then(result => {
+          expect(result).to.not.be.a('null');
+          expect(result.display_name).to.be.equal(this.payload.display_name);
+          expect(result.email).to.be.equal(this.payload.email);
+          expect(result.google_id).to.be.equal(this.payload.google_id);
+          expect(result.github_login).to.be.equal(this.payload.github_login);
+          done();
+        });
       });
     });
   });

@@ -60,29 +60,38 @@ function updateGithubLogin(request, reply) {
 }
 
 function updateInfo(request, reply) {
-    var user_id = request.params.user_id;
-    var payload = {}
-    if (request.payload.display_name) {
-        payload.display_name = request.payload.display_name
-    }
-    if (request.payload.display_image) {
-        payload.display_image = request.payload.display_image
-    }
-    if (request.payload.email) {
-        payload.email = request.payload.email
-    }
-    if (request.payload.google_id) {
-        payload.google_id = request.payload.google_id
-    }
-    if (request.payload.github_login) {
-        payload.github_login = request.payload.github_login
+  const userId = request.params.user_id;
+  storage.findUserById(userId).then((user) => {
+    if (!user) {
+      reply(Boom.notFound());
+      return;
+    } if (request.payload === null) {
+      // Do nothing if no payload sent
+      reply({ status: constants.STATUS_OK });
+      return;
     }
 
-    storage.updateUser(user_id, payload).then(function() {
-        reply({
-            status: constants.STATUS_OK
-        });
-    })
+    const payload = {};
+    if (request.payload.display_name) {
+      payload.display_name = request.payload.display_name;
+    }
+    if (request.payload.display_image) {
+      payload.display_image = request.payload.display_image;
+    }
+    if (request.payload.email) {
+      payload.email = request.payload.email;
+    }
+    if (request.payload.google_id) {
+      payload.google_id = request.payload.google_id;
+    }
+    if (request.payload.github_login) {
+      payload.github_login = request.payload.github_login;
+    }
+
+    storage.updateUser(userId, payload).then(() => {
+      reply({ status: constants.STATUS_OK });
+    });
+  });
 }
 
 function normalize(projectsData) {
