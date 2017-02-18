@@ -142,6 +142,8 @@ function createMilestone(request, reply) {
             reply(Boom.internal(error));
         }); //storage.createMilestone
 
+    }).catch(function(err) {
+        reply(Boom.notFound(err));
     }) // getProjectsOfUser
 }
 
