@@ -1,5 +1,4 @@
 /* global sinon, expect, beforeEach, afterEach, it, describe, context */
-import request from 'request';
 import github from '../../server/controller/githubController';
 import socket from '../../server/controller/socket/handlers';
 import constants from '../../server/constants';
@@ -56,7 +55,7 @@ describe('User', function() {
     done();
   });
 
-  context('creating milestone', function() {
+  context('creating milestones', function() {
     beforeEach(function(done) {
       this.payload = {
         content: 'created milestone content',
@@ -131,7 +130,7 @@ describe('User', function() {
     });
   });
 
-  context('updating milestone', function() {
+  context('updating milestones', function() {
     beforeEach(function(done) {
       this.payload = {
         content: 'new milestone content',
@@ -183,6 +182,7 @@ describe('User', function() {
     });
 
     it('should update github milestone if github_token is provided', function(done) {
+      this.payload.github_token = 'github_token1';
       server.select('api').inject({
         method: 'PUT',
         url: '/milestone/milestone1',
@@ -198,7 +198,7 @@ describe('User', function() {
           .then((result) => {
             expect(result).is.not.a('null');
             expect(result.content).is.equal(this.payload.content);
-            this.githubMock.expects('createGithubMilestone')
+            this.githubMock.expects('updateGithubMilestone')
               .once()
               .withExactArgs(
                 this.project.github_repo_owner,
@@ -206,6 +206,79 @@ describe('User', function() {
                 this.payload.github_token,
                 this.milestone.github_number,
                 githubPayload
+              );
+            done();
+          });
+      });
+    });
+  });
+
+  context('deleting milestones', function() {
+    beforeEach(function(done) {
+      this.payload = {};
+      done();
+    });
+
+    it('should return 400 if milestone does not exist', function(done) {
+      server.select('api').inject({
+        method: 'DELETE',
+        url: '/milestone/milestone2',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return 403 if user is not authorized', function(done) {
+      server.select('api').inject({
+        method: 'DELETE',
+        url: '/milestone/milestone1',
+        credentials: { user_id: 'user2', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should delete milestone', function(done) {
+      server.select('api').inject({
+        method: 'DELETE',
+        url: '/milestone/milestone1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        this.githubMock.expects('deleteGithubMilestone').never();
+        models.Milestone.findById(this.milestone.id)
+          .then((result) => {
+            expect(result).is.a('null');
+            done();
+          });
+      });
+    });
+
+    it('should delete github milestone if github_token is provided', function(done) {
+      this.payload.github_token = 'github_token1';
+      server.select('api').inject({
+        method: 'DELETE',
+        url: '/milestone/milestone1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        models.Milestone.findById(this.milestone.id)
+          .then((result) => {
+            expect(result).is.a('null');
+            this.githubMock.expects('deleteGithubMilestone')
+              .once()
+              .withExactArgs(
+                this.project.github_repo_owner,
+                this.project.github_repo_name,
+                this.payload.github_token,
+                this.milestone.github_number
               );
             done();
           });
