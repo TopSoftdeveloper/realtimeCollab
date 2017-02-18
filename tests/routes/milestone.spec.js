@@ -92,8 +92,8 @@ describe('User', function() {
           .then((result) => {
             expect(result).is.not.a('null');
             expect(result.content).is.equal(this.payload.content);
+            done();
           });
-        done();
       });
     });
 
@@ -125,8 +125,90 @@ describe('User', function() {
                 this.project.github_repo_name,
                 this.payload.github_token
               );
+            done();
           });
+      });
+    });
+  });
+
+  context('updating milestone', function() {
+    beforeEach(function(done) {
+      this.payload = {
+        content: 'new milestone content',
+        deadline: '2016-01-01 00:00:00',
+      };
+      done();
+    });
+
+    it('should return 400 if milestone does not exist', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/milestone/milestone2',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(400);
         done();
+      });
+    });
+
+    it('should return 403 if user is not authorized', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/milestone/milestone1',
+        credentials: { user_id: 'user2', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should update milestone only locally if no github_token is provided', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/milestone/milestone1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        this.githubMock.expects('updateGithubMilestone').never();
+        models.Milestone.findById(this.milestone.id)
+          .then((result) => {
+            expect(result).is.not.a('null');
+            expect(result.content).is.equal(this.payload.content);
+            done();
+          });
+      });
+    });
+
+    it('should update github milestone if github_token is provided', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/milestone/milestone1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        const githubPayload = {
+          title: this.payload.content,
+          due_on: this.payload.deadline,
+        };
+        models.Milestone.findById(this.milestone.id)
+          .then((result) => {
+            expect(result).is.not.a('null');
+            expect(result.content).is.equal(this.payload.content);
+            this.githubMock.expects('createGithubMilestone')
+              .once()
+              .withExactArgs(
+                this.project.github_repo_owner,
+                this.project.github_repo_name,
+                this.payload.github_token,
+                this.milestone.github_number,
+                githubPayload
+              );
+            done();
+          });
       });
     });
   });

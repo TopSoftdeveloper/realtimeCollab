@@ -46,10 +46,6 @@ function updateMilestone(request, reply) {
     }
 
     storage.findProjectOfMilestone(milestone_id).then(function(result) {
-        if (!result) {
-            reply(Boom.badRequest(format(constants.MILESTONE_NOT_EXIST, milestone_id)));
-            return
-        }
         var project = result.project
         var github_num = result.milestone.github_number
 
@@ -91,7 +87,9 @@ function updateMilestone(request, reply) {
                 reply(Boom.internal(error));
             });
         })
-    })
+    }).catch(() => {
+        reply(Boom.badRequest(format(constants.MILESTONE_NOT_EXIST, milestone_id)));
+    });
 }
 
 function createMilestone(request, reply) {
