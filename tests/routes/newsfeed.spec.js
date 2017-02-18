@@ -8,17 +8,18 @@ import server from '../../server/server';
 
 describe('Newsfeed', function() {
   beforeEach(function(done) {
-    this.socketMock = sinon.mock(socket);
+    this.sandbox = sinon.sandbox.create();
+    this.socketMock = this.sandbox.mock(socket);
     done();
   });
 
   afterEach(function(done) {
-    this.socketMock.restore();
+    this.sandbox.restore();
     done();
   });
 
   it('should save newsfeed post to disk and broadcast to project', function(done) {
-    const storageStub = sinon.stub(storage, 'saveNewsfeed');
+    const storageStub = this.sandbox.stub(storage, 'saveNewsfeed');
     const data = { ref_type: 'branch', ref: 'helloworld', user_id: 'NysSbasYe' };
     const template = templates.GITHUB_CREATE;
     const projectId = '4yGslGste';
@@ -46,8 +47,8 @@ describe('Newsfeed', function() {
   });
 
   it('should get newsfeed posts', function(done) {
-    const storageGetProjectsOfUser = sinon.stub(storage, 'getProjectsOfUser');
-    const storageGetNewsfeed = sinon.stub(storage, 'getNewsfeed');
+    const storageGetProjectsOfUser = this.sandbox.stub(storage, 'getProjectsOfUser');
+    const storageGetNewsfeed = this.sandbox.stub(storage, 'getNewsfeed');
     const data = { ref_type: 'branch', ref: 'helloworld', user_id: 'NysSbasYe' };
     const userId = 'user1';
     const projectId = 'project1';

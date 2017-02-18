@@ -132,5 +132,7 @@ function populate(request, reply) {
             })
             reply({projects: projectsData})
         });
+    }).catch(function(err) {
+        reply(Boom.badRequest(err));
     });
 }
