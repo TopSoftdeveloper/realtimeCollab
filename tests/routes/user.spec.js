@@ -1,4 +1,5 @@
 /* global sinon, expect, beforeEach, afterEach, it, describe, context */
+import request from 'request';
 import github from '../../server/controller/githubController';
 import socket from '../../server/controller/socket/handlers';
 import constants from '../../server/constants';
@@ -138,6 +139,67 @@ describe('User', function() {
           expect(result.email).to.be.equal(this.payload.email);
           expect(result.google_id).to.be.equal(this.payload.google_id);
           expect(result.github_login).to.be.equal(this.payload.github_login);
+          done();
+        });
+      });
+    });
+  });
+
+  context('updating github login', function() {
+    beforeEach(function(done) {
+      this.payload = {
+        token: 'abcd1234',
+      };
+      this.githubResponse = {
+        login: 'new github login',
+      };
+      done();
+    });
+
+    it('should return 400 if invalid params', function(done) {
+      delete this.payload.token;
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/user/github/user1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return 400 if external error', function(done) {
+      this.sandbox
+        .stub(request, 'get')
+        .yields(true, { statusCode: 400 }, JSON.stringify(this.githubResponse));
+
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/user/github/user1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it('should update user\'s github login', function(done) {
+      this.sandbox
+        .stub(request, 'get')
+        .yields(null, { statusCode: 200 }, JSON.stringify(this.githubResponse));
+
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/user/github/user1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        models.User.findById('user1').then(result => {
+          expect(result).to.not.be.a('null');
+          expect(result.github_login).to.be.equal(this.githubResponse.login);
           done();
         });
       });

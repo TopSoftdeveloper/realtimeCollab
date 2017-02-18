@@ -15,25 +15,28 @@ var req = require("request")
 var _ = require('lodash');
 
 module.exports = {
-    getInfo: {
-        handler: populate
-    },
-    updateInfo: {
-        handler: updateInfo,
-        validate: {
-            params: {
-                user_id: Joi.string().required()
-            }
-        }
-    },
-    updateGithubLogin: {
-        handler: updateGithubLogin,
-        validate: {
-            params: {
-                user_id: Joi.string().required()
-            }
-        }
+  getInfo: {
+    handler: populate
+  },
+  updateInfo: {
+    handler: updateInfo,
+    validate: {
+      params: {
+        user_id: Joi.string().required()
+      }
     }
+  },
+  updateGithubLogin: {
+    handler: updateGithubLogin,
+    validate: {
+      params: {
+        user_id: Joi.string().required(),
+      },
+      payload: {
+        token: Joi.string().required(),
+      },
+    },
+  },
 };
 
 function updateGithubLogin(request, reply) {
