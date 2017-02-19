@@ -128,6 +128,13 @@ describe('Task', function() {
     });
 
     it('should create a task without github milestone/assignee', function(done) {
+      this.socketMock
+        .expects('sendMessageToProject')
+        .once()
+        .withArgs(this.payload.project_id, 'new_task');
+      const githubStub = this.sandbox.stub(github, 'createGithubIssue');
+      githubStub.returns(Promise.resolve());
+
       server.select('api').inject({
         method: 'POST',
         url: '/tasks',
@@ -135,22 +142,29 @@ describe('Task', function() {
         payload: JSON.stringify(this.payload),
       }, (res) => {
         expect(res.statusCode).to.equal(200);
-        this.socketMock
-          .expects('sendMessageToProject')
-          .once()
-          .withArgs(this.payload.project_id, 'new_task');
-        this.githubMock
-          .expects('createGithubIssue')
-          .once();
+        this.socketMock.verify();
+        this.githubMock.verify();
         models.Task.findById('task1').then(createdTask => {
           expect(createdTask).to.not.be.a('null');
-          done();
+          // Github issue is created asynchronously from the response,
+          // hence we have to wait till a while, even after getting a response.
+          setTimeout(() => {
+            expect(githubStub.called).to.equal(false);
+            done();
+          }, 200);
         });
       });
     });
 
     it('should create a task with github milestone', function(done) {
       this.payload.milestone_id = 'milestone1';
+      this.payload.github_token = 'github_token1';
+      this.socketMock
+        .expects('sendMessageToProject')
+        .once()
+        .withArgs(this.payload.project_id, 'new_task');
+      const githubStub = this.sandbox.stub(github, 'createGithubIssue');
+      githubStub.returns(Promise.resolve());
 
       server.select('api').inject({
         method: 'POST',
@@ -159,26 +173,15 @@ describe('Task', function() {
         payload: JSON.stringify(this.payload),
       }, (res) => {
         expect(res.statusCode).to.equal(200);
-        this.socketMock
-          .expects('sendMessageToProject')
-          .once()
-          .withArgs(this.payload.project_id, 'new_task');
-        const issue = {
-          title: this.payload.content,
-          milestone: this.milestone.github_number,
-        };
-        this.githubMock
-          .expects('createGithubIssue')
-          .once()
-          .withArgs(
-            this.project.github_repo_owner,
-            this.project.github_repo_name,
-            this.payload.request_token,
-            issue
-          );
+        this.socketMock.verify();
         models.Task.findById('task1').then(createdTask => {
           expect(createdTask).to.not.be.a('null');
-          done();
+          // Github issue is created asynchronously from the response,
+          // hence we have to wait till a while, even after getting a response.
+          setTimeout(() => {
+            expect(githubStub.called).to.equal(true);
+            done();
+          }, 200);
         });
       });
     });
@@ -186,6 +189,13 @@ describe('Task', function() {
     it('should create a task with github milestone and assignee', function(done) {
       this.payload.milestone_id = 'milestone1';
       this.payload.assignee_id = 'user1';
+      this.payload.github_token = 'github_token1';
+      this.socketMock
+        .expects('sendMessageToProject')
+        .once()
+        .withArgs(this.payload.project_id, 'new_task');
+      const githubStub = this.sandbox.stub(github, 'createGithubIssue');
+      githubStub.returns(Promise.resolve());
 
       server.select('api').inject({
         method: 'POST',
@@ -194,27 +204,15 @@ describe('Task', function() {
         payload: JSON.stringify(this.payload),
       }, (res) => {
         expect(res.statusCode).to.equal(200);
-        this.socketMock
-          .expects('sendMessageToProject')
-          .once()
-          .withArgs(this.payload.project_id, 'new_task');
-        const issue = {
-          title: this.payload.content,
-          milestone: this.milestone.github_number,
-          assignee: this.user.github_login,
-        };
-        this.githubMock
-          .expects('createGithubIssue')
-          .once()
-          .withArgs(
-            this.project.github_repo_owner,
-            this.project.github_repo_name,
-            this.payload.request_token,
-            issue
-          );
+        this.socketMock.verify();
         models.Task.findById('task1').then(createdTask => {
           expect(createdTask).to.not.be.a('null');
-          done();
+          // Github issue is created asynchronously from the response,
+          // hence we have to wait till a while, even after getting a response.
+          setTimeout(() => {
+            expect(githubStub.called).to.equal(true);
+            done();
+          }, 200);
         });
       });
     });
