@@ -10,6 +10,7 @@ import models from '../../server/data/models/modelManager';
 describe('Project', function() {
   beforeEach(function(done) {
     this.sandbox = sinon.sandbox.create();
+    this.notificationsMock = this.sandbox.mock(notifications);
     this.socketMock = this.sandbox.mock(socket);
     this.githubMock = this.sandbox.mock(github);
 
@@ -117,7 +118,6 @@ describe('Project', function() {
 
   context('inviting user to project', function() {
     beforeEach(function(done) {
-      this.notificationsMock = this.sandbox.mock(notifications);
       this.invitedEmail = 'invited@example.com';
       this.payload = {
         project_id: this.project.id,
@@ -175,6 +175,16 @@ describe('Project', function() {
     });
 
     it('should invite a user to the project', function(done) {
+      const notificationData = {
+        user_id: 'user1',
+        project_id: this.project.id,
+      };
+      this.notificationsMock.expects('newUserNotification')
+        .once()
+        .withExactArgs(
+          notificationData, templates.INVITE_TO_PROJECT, this.user2.id
+        );
+
       server.select('api').inject({
         method: 'POST',
         url: '/invite_to_project',
@@ -182,14 +192,7 @@ describe('Project', function() {
         payload: JSON.stringify(this.payload),
       }, (res) => {
         expect(res.statusCode).to.equal(200);
-        const notificationData = {
-          user_id: 'user1',
-          project_id: this.project.id,
-        };
-        this.notificationsMock.expects('newUserNotification')
-          .withExactArgs(
-            notificationData, templates.INVITE_TO_PROJECT, this.user2.id
-          );
+        this.notificationsMock.verify();
         models.UserProject.findOne({
           where: {
             user_id: this.user2.id,
@@ -200,6 +203,113 @@ describe('Project', function() {
           expect(result).to.not.be.a('null');
           done();
         });
+      });
+    });
+  });
+
+  context('accepting invitations', function() {
+    beforeEach(function(done) {
+      models.User
+        .create({
+          id: 'user2',
+          email: this.invitedEmail,
+          github_login: 'github_login2',
+        })
+        .then((newUser) => {
+          this.user2 = newUser;
+          return models.UserProject.create({
+            user_id: this.user2.id,
+            project_id: this.project.id,
+            role: constants.ROLE_PENDING,
+          });
+        }).then(() => {
+          done();
+        });
+    });
+
+    it('should return 403 if user is unauthorized', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/join_project/project1',
+        credentials: { user_id: 'user3', password: 'password1' },
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should accept the invitation and join the project', function(done) {
+      const notificationData = {
+        user_id: this.user2.id,
+        project_id: this.project.id,
+      };
+      this.notificationsMock.expects('newProjectNotification')
+        .once()
+        .withExactArgs(
+          notificationData, templates.JOINED_PROJECT, this.project.id, this.user2.id
+        );
+
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/join_project/project1',
+        credentials: { user_id: 'user2', password: 'password1' },
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        this.notificationsMock.verify();
+        done();
+      });
+    });
+  });
+
+  context('declining invitations', function() {
+    beforeEach(function(done) {
+      models.User
+        .create({
+          id: 'user2',
+          email: this.invitedEmail,
+          github_login: 'github_login2',
+        })
+        .then((newUser) => {
+          this.user2 = newUser;
+          return models.UserProject.create({
+            user_id: this.user2.id,
+            project_id: this.project.id,
+            role: constants.ROLE_PENDING,
+          });
+        }).then(() => {
+          done();
+        });
+    });
+
+    it('should return 403 if user is unauthorized', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/decline_project/project1',
+        credentials: { user_id: 'user3', password: 'password1' },
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should decline the invitation and be removed from the project', function(done) {
+      const notificationData = {
+        user_id: this.user2.id,
+        project_id: this.project.id,
+      };
+      this.notificationsMock.expects('newProjectNotification')
+        .withExactArgs(
+          notificationData, templates.DECLINED_PROJECT, this.project.id, this.user2.id
+        );
+
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/decline_project/project1',
+        credentials: { user_id: 'user2', password: 'password1' },
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        this.notificationsMock.verify();
+        done();
       });
     });
   });
