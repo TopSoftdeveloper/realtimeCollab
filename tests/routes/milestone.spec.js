@@ -5,7 +5,7 @@ import constants from '../../server/constants';
 import server from '../../server/server';
 import models from '../../server/data/models/modelManager';
 
-describe('User', function() {
+describe('Milestone', function() {
   beforeEach(function(done) {
     this.sandbox = sinon.sandbox.create();
     this.socketMock = this.sandbox.mock(socket);
