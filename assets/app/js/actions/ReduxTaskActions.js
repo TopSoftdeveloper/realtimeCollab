@@ -383,7 +383,7 @@ export const initGithubRepos = () => (
         },
       }));
       dispatch(_initGithubRepos(res));
-    }).catch(e => {
+    }, e => {
       dispatch(_updateAppStatus({
         github: {
           loading: false,
@@ -414,10 +414,10 @@ export const declineProject = (projectId, notificationId) => (
       dispatch(snackbarMessage('Project declined', 'default'));
       serverDeleteNotification(notificationId).then(() => {
         dispatch(_deleteNotification(notificationId));
-      }).catch(e => {
+      }, e => {
         console.log(e);
       });
-    }).catch(e => {
+    }, e => {
       console.log(e);
     });
   }
