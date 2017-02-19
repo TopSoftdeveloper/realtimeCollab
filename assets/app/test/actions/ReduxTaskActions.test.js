@@ -1461,3 +1461,94 @@ describe('thunk action - `declineProject`', function () {
     expectDeepEqual(store.getActions(), expectedAction);
   });
 });
+
+describe.skip('thunk action - `acceptProject`', function () {
+});
+describe.skip('thunk action - `initializeApp`', function () {
+});
+describe.skip('thunk action - `initializeFiles`', function () {
+});
+describe.skip('thunk action - `markDone`', function () {
+});
+describe.skip('thunk action - `addTask`', function () {
+});
+describe.skip('thunk action - `deleteTask`', function () {
+});
+describe.skip('thunk action - `editTask`', function () {
+});
+describe.skip('thunk action - `editMilestone`', function () {
+});
+describe.skip('thunk action - `createMilestone`', function () {
+});
+describe.skip('thunk action - `deleteMilestone`', function () {
+});
+describe.skip('thunk action - `createProject`', function () {
+});
+describe.skip('thunk action - `inviteToProject`', function () {
+});
+describe.skip('thunk action - `reopenTask`', function () {
+});
+describe.skip('thunk action - `initTopLevelFolders`', function () {
+});
+describe.skip('thunk action - `initChildrenFiles`', function () {
+});
+describe.skip('thunk action - `initTopLevelFolders`', function () {
+});
+describe.skip('thunk action - `initUpperLevelFolder`', function () {
+});
+describe.skip('thunk action - `setDirectoryAsRoot`', function () {
+});
+describe.skip('thunk action - `syncWithGithub`', function () {
+});
+describe.skip('thunk action - `updateProject`', function () {
+});
+describe.skip('thunk action - `renameProject`', function () {
+});
+describe.skip('thunk action - `switchToProject`', function () {
+  const project = {
+    id: 'Vyb7JRXuf',
+    content: 'project',
+    milestones: [
+      '4JeJBs0dz',
+      'V1BBAPyKz',
+      '4JqP7Kt_f',
+      'Eyz0rITuG',
+    ],
+    tasks: [
+      '4169puFOf',
+      '41JNzgidG',
+    ],
+    creator: 'EkD69ORwf',
+    basic: [
+      'Nk89qOUdM',
+    ],
+    pending: [],
+    root_folder: null,
+    directory_structure: [],
+    files_loaded: false,
+    github_repo_name: null,
+    github_repo_owner: 'a135766066825',
+    chatroom: null,
+  };
+  it('should call initGithubRepos() if repo_fetched and project has undefined github_repo_name',
+  function () {
+    const expectedAction = [
+    ];
+    const customState = assign({}, initialState, {
+      app: {
+        github: {
+          repo_fetched: false,
+        },
+      },
+    });
+    const store = mockStore(customState);
+    store.dispatch(actions.switchToProject(project));
+    expectDeepEqual(store.getActions(), expectedAction);
+  });
+});
+describe.skip('thunk action - `changeChatRoom`', function () {
+});
+describe.skip('thunk action - `switchChatRoom`', function () {
+});
+describe.skip('thunk action - `loadChatRoom`', function () {
+});
