@@ -12,7 +12,7 @@
     "dev": "concurrently --raw --kill-others \"webpack --progress --color --watch \" \"cross-env NODE_ENV=dev nodemon server/server.js\"",
     "test": "cross-env NODE_ENV=test mocha --require babel-core/register --recursive 'tests/setup.js' 'tests/**/*.spec.js'",
     "testF": "mocha --require ./assets/app/test/.setup.js --compilers js:babel-core/register \"./assets/app/test\" --recursive -w",
-    "testFF": "mocha --require ./assets/app/test/.setup.js --compilers js:babel-core/register \"./assets/app/test/actions/\" --recursive -w",
+    "testFF": "mocha --require ./assets/app/test/.setup.js --compilers js:babel-core/register \"./assets/app/test/reducers/\" --recursive -w",
     "coverageB": "istanbul cover _mocha -- -R spec",
     "coverageF": "gulp front_end_test;",
     "coverage": "gulp front_end_test_subset;"
@@ -96,6 +96,7 @@
     "concurrently": "^2.2.0",
     "cross-env": "^2.0.0",
     "css-loader": "0.18.0",
+    "deep-freeze": "0.0.1",
     "enzyme": "^2.7.0",
     "eslint": "^3.2.0",
     "eslint-config-airbnb": "^10.0.0",
