@@ -1,16 +1,21 @@
 import * as AppConstants from '../AppConstants';
-// Example state tree:
-// [
-//     {
-//         id: 'notif-1',
-//         text: 'Cristina invited you to the project CS3201',
-//         time: new Date().toISOString(),
-//         link: 'http://www.nus.edu.sg/',
-//         read: false,
-//         type: 'INVITE_TO_PROJECT',
-//         meta: {meta data here}
-//     }
-// ]
+/*
+Example state tree:
+const notifications = [
+  {
+    id: '4Jdne0IOf',
+    text: 'Ge Hu has joined the project b',
+    time: '2017-02-10T15:51:51.000Z',
+    read: false,
+    link: '',
+    type: 'JOINED_PROJECT',
+    meta: {
+      user_id: 'Nk89qOUdM',
+      project_id: 'Vyb7JRXuf',
+    },
+  },
+]
+*/
 
 const notifications = (state = [], action) => {
   switch (action.type) {

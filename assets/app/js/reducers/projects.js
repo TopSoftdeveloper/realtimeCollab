@@ -1,24 +1,30 @@
 import assign from 'object-assign';
 import _ from 'lodash';
 import * as AppConstants from '../AppConstants';
-// Example state tree:
-// [
-//     {
-//         id: 'NJ-5My0Jg',
-//         content: 'FYP',
-//         creator: 'uid1',
-//         basic: ['uid2'],
-//         pending: ['user_who_was_invited'],
-//         milestones: ['mid1', 'mid2'],
-//         tasks: [],
-//         root_folder: folderId,
-//         directory_structure: [{name: 'upper level directory', id: 123},
-//          {name: 'curr directory', id: 999}],
-//         files_loaded: true,
-//         github_repo_name : 'repoName',
-//         github_repo_owner: 'repoOwner'
-//     }
-// ]
+/*
+Example state tree:
+
+const projects = [
+  {
+    id: 'NJ-5My0Jg',
+    content: 'FYP',
+    creator: 'uid1',
+    basic: ['uid2'],
+    pending: ['user_who_was_invited'],
+    milestones: ['mid1', 'mid2'],
+    tasks: [],
+    root_folder: 'folderId',
+    directory_structure: [
+      { name: 'upper level directory', id: 123 },
+      { name: 'curr directory', id: 999 },
+    ],
+    files_loaded: true,
+    github_repo_name: 'repoName',
+    github_repo_owner: 'repoOwner',
+  },
+];
+*/
+
 
 const projects = (state = [], action) => {
   switch (action.type) {
@@ -37,13 +43,17 @@ const projects = (state = [], action) => {
         project.id === action.id ? assign({}, project, action.payload) : project
       ));
     case AppConstants.JOIN_PROJECT:
-      const p = state.filter(project => project.id === action.id)[0];
-      p.pending = p.pending.filter(id => id !== action.user_id);
-      p.basic.push(action.user_id);
-      return state.map(project => (
-        project.id === action.id ?
-            assign({}, project, p) : project
-      ));
+      return state.map(project => {
+        if (project.id === action.id) {
+          const pending = project.pending.filter(id => id !== action.user_id);
+          const basic = [...project.basic, action.user_id];
+          return assign({}, project, {
+            pending,
+            basic,
+          });
+        }
+        return project;
+      });
     case AppConstants.ADD_DIRECTORY:
       return state.map(project => {
         // avoid adding duplicate directory
@@ -60,12 +70,13 @@ const projects = (state = [], action) => {
       return state.map(project => {
         if (project.id === action.projectId) {
           const directoryStructure = project.directory_structure;
-          let i = directoryStructure.length - 1;
-          while (directoryStructure[i].id !== action.dirId && i >= 0) {
-            directoryStructure.pop();
-            i--;
+          const matchIndex = _.findLastIndex(project.directory_structure,
+            dir => dir.id === action.dirId
+          );
+          if (matchIndex >= 0) {
+            const newDirectoryStructure = directoryStructure.slice(0, matchIndex + 1);
+            return assign({}, project, { directory_structure: newDirectoryStructure });
           }
-          return assign({}, project, { directory_structure: directoryStructure });
         }
         return project;
       });
