@@ -1,18 +1,24 @@
 import assign from 'object-assign';
 import * as AppConstants from '../AppConstants';
 
-// Example state tree:
-// [
-//     {
-//         id: 'mid1',
-//         content: 'Do user surveys',
-//         deadline: null,
-//         tasks: ['taskid1', 'taskid2'],
-//         project_id: 'NJ-5My0Jg',
-//         editing: true,
-//         edited_by: 'NysSbasYe'
-//     }
-// ]
+/*
+ Example state tree:
+[
+  {
+    id: 'mid1',
+    content: 'Do user surveys',
+    deadline: null,
+    tasks: ['taskid1', 'taskid2'],
+    project_id: 'NJ-5My0Jg',
+    github_id: null,
+    github_number: null,
+    created_at: '2017-02-16T14:22:55.000Z',
+    updated_at: '2017-02-16T14:23:01.000Z',
+    editing: true,
+    edited_by: 'NysSbasYe'
+  },
+]
+*/
 const milestones = (state = [], action) => {
   switch (action.type) {
     case AppConstants.INIT_MILESTONES:
