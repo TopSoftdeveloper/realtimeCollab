@@ -301,7 +301,6 @@ describe('Project', function() {
         .withExactArgs(
           notificationData, templates.DECLINED_PROJECT, this.project.id, this.user2.id
         );
-
       server.select('api').inject({
         method: 'PUT',
         url: '/decline_project/project1',
@@ -310,6 +309,52 @@ describe('Project', function() {
         expect(res.statusCode).to.equal(200);
         this.notificationsMock.verify();
         done();
+      });
+    });
+  });
+
+  context('updating projects', function() {
+    beforeEach(function(done) {
+      this.payload = {
+        content: 'new content',
+      };
+      done();
+    });
+
+    it('should return 403 if user is unauthorized', function(done) {
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/project/project1',
+        credentials: { user_id: 'user2', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+
+    it('should update a project', function(done) {
+      this.socketMock.expects('sendMessageToProject')
+        .once()
+        .withArgs(this.project.id, 'update_project', {
+          project_id: this.project.id,
+          sender: this.user.id,
+          project: this.payload,
+        });
+
+      server.select('api').inject({
+        method: 'PUT',
+        url: '/project/project1',
+        credentials: { user_id: 'user1', password: 'password1' },
+        payload: JSON.stringify(this.payload),
+      }, (res) => {
+        expect(res.statusCode).to.equal(200);
+        models.Project.findById(this.project.id).then((result) => {
+          expect(result).to.not.be.a('null');
+          expect(result.content).to.be.equal(this.payload.content);
+          this.socketMock.verify();
+          done();
+        });
       });
     });
   });
