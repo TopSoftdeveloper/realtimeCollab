@@ -1,11 +1,24 @@
 import assign from 'object-assign';
 import * as AppConstants from '../AppConstants';
 
-// Example state tree:
-// {
-//     current_project: 'NJ-5My0Jg',
-//     is_linked_to_drive: true,
-// }
+/* Example state tree:
+const app = {
+  is_linked_to_drive: true,
+  is_top_level_folder_loaded: false,
+  github: {
+    loading: false,
+    repo_fetched: false,
+  },
+  files: {
+    loading: false,
+  },
+  queriesInProgress: 0,
+  loading: true,
+  current_project: 'EkTq9OUdG',
+  queryString: '',
+  searchFilter: 'all',
+};
+*/
 const app = (state = {}, action) => {
   switch (action.type) {
     case AppConstants.INIT_APP:
