@@ -85,7 +85,7 @@ class Header extends Component {
                 </div>
               </li>
               <li className="notif-li"><Link to="/app/notifications"><span>Notifs  &nbsp;
-                {this.renderNotifsCount}</span></Link></li>
+                {this.renderNotifsCount()}</span></Link></li>
               <li className="display-pic-li">{image}</li>
               <li className="dropdown">
                 <a

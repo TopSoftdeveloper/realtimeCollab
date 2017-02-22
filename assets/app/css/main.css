@@ -52,7 +52,6 @@ html, body{
 .event-list {
   list-style: none;
   overflow-y: auto;
-  max-height: 53vh;
 }
 
 .event-list  .event-item {
@@ -480,7 +479,6 @@ html, body{
 
 .notification-list {
   list-style: none;
-  max-height: 300px;
   overflow-y: auto;
 }
 
