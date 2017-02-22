@@ -10,6 +10,7 @@ const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour
       borderBottomStyle: 'solid',
       borderBottomColor: memberColour,
       borderBottomWidth: '7px',
+      width: size,
     };
   }
 
@@ -20,6 +21,7 @@ const UserAvatar = ({ imgSrc, displayName, enableTooltip, isSquare, memberColour
         src={imgSrc}
         className={isSquare ? 'square-avatar' : ''}
         style={styles}
+        alt={displayName[0]}
       />
     );
   } else {
