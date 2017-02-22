@@ -264,7 +264,8 @@ class MilestoneRow extends Component {
     );
   }
   renderMilestoneActions() {
-    return (this.props.milestone.id && this.state.showActionButton &&
+    return (this.props.milestone.id && this.state.showActionButton
+      && !this.props.milestone.editing &&
       <div className="milestone-actions">
         <i
           className="material-icons edit-task"
@@ -344,6 +345,7 @@ class MilestoneRow extends Component {
           <div style={divStyle}>{editor.display_name} is editing</div>
         );
         listStyle = {
+          borderWidth: 1,
           borderStyle: 'solid',
           borderColor: editor.colour,
         };

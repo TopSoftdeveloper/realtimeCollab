@@ -68,7 +68,7 @@ class TaskRow extends Component {
     socketActions.userStopsEditing('task', this.props.task.id);
   }
   renderActionButton() {
-    return (!this.state.hidden &&
+    return (!this.state.hidden && !this.props.task.editing &&
       <div className="task-actions">
         <i
           key="edit-task"
@@ -111,7 +111,7 @@ class TaskRow extends Component {
       if (editor && editor.online) {
         const divStyle = {
           float: 'right',
-          fontSize: 'smaller',
+          fontSize: 10,
           color: 'white',
           background: editor.colour,
           fontWeight: 'bold',
@@ -121,6 +121,7 @@ class TaskRow extends Component {
           <div style={divStyle}>{editor.display_name} is editing</div>
         );
         listStyle = {
+          borderWidth: 1,
           borderStyle: 'solid',
           borderColor: editor.colour,
         };
