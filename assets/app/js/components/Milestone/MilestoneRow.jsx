@@ -313,7 +313,7 @@ class MilestoneRow extends Component {
         <IconButton
           tooltip="new task"
           tooltipPosition="top-right"
-          onClick={this.openTaskModal}
+          onTouchTap={this.openTaskModal}
         >
           <AddIcon />
         </IconButton>

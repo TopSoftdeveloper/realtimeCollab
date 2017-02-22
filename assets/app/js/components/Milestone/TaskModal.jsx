@@ -7,8 +7,8 @@ import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
 const propTypes = {
   title: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
-  assignee: PropTypes.string.isRequired,
+  content: PropTypes.string,
+  assignee: PropTypes.string,
   handleClose: PropTypes.func.isRequired,
   taskMethod: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,

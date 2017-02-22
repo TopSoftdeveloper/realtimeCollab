@@ -87,8 +87,9 @@ class AssigneeRow extends Component {
     this.props.actions.reopenTask(taskId);
   }
   renderTaskModal() {
-    return (this.isDialogOpen &&
+    return (this.state.isDialogOpen &&
       <TaskModal
+        key="TaskModalInAssigneeView"
         title="Add Task"
         open
         handleClose={this.handleClose}
@@ -98,7 +99,7 @@ class AssigneeRow extends Component {
       />
     );
   }
-  renderMilestoneInfo(ongoingTasks, completedTasks) {
+  renderAssigneeInfo(ongoingTasks, completedTasks) {
     const ongoingText = `${ongoingTasks.length} Ongoing`;
     const completedTask = `${completedTasks.length} Completed`;
     const ongoingLabelStyle = {
@@ -183,7 +184,7 @@ class AssigneeRow extends Component {
                 <Col xs={10}>
                   <div className="milestone-title">
                     {user.display_name}
-                    {this.renderMilestoneInfo(ongoingTasks, completedTasks)}
+                    {this.renderAssigneeInfo(ongoingTasks, completedTasks)}
                   </div>
                 </Col>
                 <Col xs={2}>
@@ -191,7 +192,7 @@ class AssigneeRow extends Component {
                     <IconButton
                       tooltip="new task"
                       tooltipPosition="top-right"
-                      onClick={this.openModal}
+                      onTouchTap={this.openModal}
                     >
                       <AddIcon />
                     </IconButton>
