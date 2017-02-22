@@ -285,8 +285,8 @@ class FilesList extends Component {
     const lastModified = `Modified ${toFuzzyTime(file.modifiedTime)} by ${lastModifyingUser}`;
 
     return (
-      <tr className="table-row-file" key={file.id}>
-        <td onClick={this.navigate.bind(this, file.id)} >
+      <tr  className="table-row-file" key={file.id}>
+        <td onClick={this.navigate.bind(this, file.id)}>
           <CardHeader
             style={{ padding: 5, height: 'inherit' }}
             title={file.name}

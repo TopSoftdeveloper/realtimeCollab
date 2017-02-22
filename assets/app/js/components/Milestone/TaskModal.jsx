@@ -17,7 +17,7 @@ class TaskModal extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      assignee: this.props.assignee ? this.props.assignee : '',
+      assignee: this.props.assignee || '',
       canSubmit: false,
     };
     this.onDialogSubmit = this.onDialogSubmit.bind(this);

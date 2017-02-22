@@ -3,7 +3,7 @@ import ProjectList from './ProjectList.jsx';
 import ProjectModal from './ProjectModal.jsx';
 
 const propTypes = {
-  currentProject: PropTypes.object.isRequired,
+  currentProject: PropTypes.object,
   actions: PropTypes.object.isRequired,
   projects: PropTypes.array.isRequired,
   onCreateProject: PropTypes.func.isRequired,

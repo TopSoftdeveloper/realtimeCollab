@@ -71,10 +71,12 @@ class TaskRow extends Component {
     return (!this.state.hidden &&
       <div className="task-actions">
         <i
+          key="edit-task"
           className="material-icons edit-task"
           onClick={this.openModal}
         >mode_edit</i>
         <i
+          key="delete-task"
           className="material-icons delete-task"
           onClick={this.onDelete}
         >delete</i>
@@ -84,6 +86,7 @@ class TaskRow extends Component {
   renderTaskModal() {
     return (this.state.isDialogOpen &&
       <TaskModal
+        key={`${this.props.task.id}_taskmodal`}
         title="Edit Task"
         content={this.props.task.content}
         assignee={this.props.task.assignee_id}

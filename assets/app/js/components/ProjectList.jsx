@@ -4,7 +4,7 @@ import { getCurrentTab } from '../utils/general';
 import theme from '../myTheme.js';
 
 const propTypes = {
-  currentProject: PropTypes.object.isRequired,
+  currentProject: PropTypes.object,
   actions: PropTypes.object.isRequired,
   items: PropTypes.array.isRequired,
   subheader: PropTypes.string.isRequired,

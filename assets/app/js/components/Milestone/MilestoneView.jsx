@@ -36,13 +36,13 @@ class MilestoneView extends Component {
       isFilterApplied: false,
       viewBy: 'milestone',
     };
+    this.toggleSortByDeadline = this.toggleSortByDeadline.bind(this);
     this.changeViewModeToMilestone = this.changeViewMode.bind(this, 'milestone');
     this.clearFilterAndSort = this.clearFilterAndSort.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.addMilestone = this.addMilestone.bind(this);
     this.changeViewModeToAssignee = this.changeViewMode.bind(this, 'assignee');
     this.applyAssigneeFilter = this.applyAssigneeFilter.bind(this);
-    this.toggleSortByDeadline = this.toggleSortByDeadline.bind(this);
     this.openModal = this.openModal.bind(this);
     this.deleteMilestone = this.deleteMilestone.bind(this);
     this.editMilestone = this.editMilestone.bind(this);
@@ -224,19 +224,17 @@ class MilestoneView extends Component {
     };
 
     const milestoneRows = [];
-    if (milestones.length === 0 || (milestones[0].id !== null)) {
-      milestones.unshift({  // Just a placeholder milestone for tasks without milestones
-        content: 'Default Milestone',
-        deadline: null,
-        key: 'uncategorized-tasks',
-        id: null,
-      });
-    }
+    const fullMilestones = [{
+      content: 'Default Milestone',
+      deadline: null,
+      key: 'uncategorized-tasks',
+      id: null,
+    }, ...milestones]; // Just a placeholder milestone for tasks without milestones
     let filteredTasks = tasks;
     if (this.state.isFilterApplied) {
       filteredTasks = tasks.filter(filterByAssignee);
     }
-    milestones.sort(sortByDeadline).forEach(milestone => {
+    fullMilestones.sort(sortByDeadline).forEach(milestone => {
       // console.log(milestone)
       let onDelete = null;
       let onEdit = null;
@@ -252,7 +250,7 @@ class MilestoneView extends Component {
             onEditMilestone={onEdit}
             onDeleteMilestone={onDelete}
             projectId={projectId}
-            key={milestone.id}
+            key={milestone.id || 'defaultMilestone'}
             users={users}
             actions={actions}
             tasks={taskList}
@@ -262,7 +260,7 @@ class MilestoneView extends Component {
       }
     }); // milestones.forEach
     let buttonClassName = 'add-milestone-btn';
-    if (milestones.length === 1 && tasks.length === 0) {
+    if (fullMilestones.length === 1 && tasks.length === 0) {
       buttonClassName += 'animated infinite pulse';
     }
     const AssignesMenuItems = users.map(user => (
@@ -277,7 +275,7 @@ class MilestoneView extends Component {
       <Paper zDepth={1} className="milestone-menu-view">
         <div key="resetButton">{this.renderResetButton()}</div>
         <Toolbar>
-          <ToolbarGroup firstChild>
+          <ToolbarGroup firstChild key="firstToolbarGroup">
             <OverlayTrigger placement="bottom" overlay={assigneeFilterTooltip}>
               <DropDownMenu
                 maxHeight={300}
@@ -294,11 +292,11 @@ class MilestoneView extends Component {
               colour
             />
           </ToolbarGroup>
-          <ToolbarGroup>
+          <ToolbarGroup key="secondToolbarGroup">
             <OverlayTrigger placement="bottom" overlay={sortByDeadlineTooltip}>
               <FlatButton
                 label={this.state.sortByDeadlineDescending ? 'Earliest' : 'Oldest'}
-                onTouchTap={this.toggleSortByDeadline}
+                onClick={this.toggleSortByDeadline}
                 primary={false}
               />
             </OverlayTrigger>

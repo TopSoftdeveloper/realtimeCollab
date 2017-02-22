@@ -10,8 +10,8 @@ const propTypes = {
   title: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   method: PropTypes.func.isRequired,
-  deadline: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
+  deadline: PropTypes.string,
+  content: PropTypes.string,
 };
 
 class MilestoneModal extends Component {
