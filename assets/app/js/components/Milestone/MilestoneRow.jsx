@@ -12,7 +12,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 
 import TaskRow from './TaskRow.jsx';
 import CompletedTask from './CompletedTask.jsx';
-import TaskModal from './TaskModal.jsx';
+import TaskModalView from '../../containers/TaskModalView.jsx';
 import MilestoneModal from './MilestoneModal.jsx';
 import * as SocketActions from '../../actions/SocketActions';
 
@@ -127,12 +127,12 @@ class MilestoneRow extends Component {
     this.props.onEditMilestone(this.props.milestone.id, content, deadline);
   }
 
-  addTask(content, assigneeId) {
+  addTask(content, assigneeId, milestoneId) {
     const task = {
       id: _.uniqueId('task'), // temp id
       content,
       project_id: this.props.projectId,
-      milestone_id: this.props.milestone.id,
+      milestone_id: milestoneId,
       assignee_id: assigneeId,
     };
     this.props.actions.addTask(task);
@@ -181,12 +181,13 @@ class MilestoneRow extends Component {
   }
   renderTaskModal() {
     return (this.state.isTaskModalOpen &&
-      <TaskModal
+      <TaskModalView
         key={`${this.props.milestone.id}_taskModal`}
         title="Add Task"
         open={this.state.isTaskModalOpen}
         handleClose={this.handleTaskModalClose}
         taskMethod={this.addTask}
+        milestoneId={this.props.milestone.id}
       />
     );
   }

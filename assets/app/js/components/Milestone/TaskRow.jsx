@@ -6,7 +6,7 @@ import Checkbox from 'material-ui/Checkbox';
 
 import * as SocketActions from '../../actions/SocketActions';
 import AvatarList from '../Common/AvatarList.jsx';
-import TaskModal from './TaskModal.jsx';
+import TaskModalView from '../../containers/TaskModalView.jsx';
 
 const propTypes = {
   task: PropTypes.object.isRequired,
@@ -85,12 +85,12 @@ class TaskRow extends Component {
   }
   renderTaskModal() {
     return (this.state.isDialogOpen &&
-      <TaskModal
+      <TaskModalView
         key={`${this.props.task.id}_taskmodal`}
         title="Edit Task"
         content={this.props.task.content}
         milestoneId={this.props.task.milestone_id}
-        assignee={this.props.task.assignee_id}
+        assigneeId={this.props.task.assignee_id}
         handleClose={this.handleClose}
         taskMethod={this.onEdit}
       />

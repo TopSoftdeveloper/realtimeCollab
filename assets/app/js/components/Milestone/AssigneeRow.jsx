@@ -11,7 +11,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 
 import TaskRow from './TaskRow.jsx';
 import CompletedTask from './CompletedTask.jsx';
-import TaskModal from './TaskModal.jsx';
+import TaskModalView from '../../containers/TaskModalView.jsx';
 
 const propTypes = {
   projectId: PropTypes.string.isRequired,
@@ -64,12 +64,12 @@ class AssigneeRow extends Component {
       isDialogOpen: false,
     });
   }
-  addTask(content, assigneeId) {
+  addTask(content, assigneeId, milestoneId) {
     const task = {
       id: _.uniqueId('task'), // temp id
       content,
       project_id: this.props.projectId,
-      milestone_id: null,
+      milestone_id: milestoneId,
       assignee_id: assigneeId,
     };
     this.props.actions.addTask(task);
@@ -88,13 +88,13 @@ class AssigneeRow extends Component {
   }
   renderTaskModal() {
     return (this.state.isDialogOpen &&
-      <TaskModal
+      <TaskModalView
         key="TaskModalInAssigneeView"
         title="Add Task"
         open
         handleClose={this.handleClose}
-        assignee={this.props.user.id}
         taskMethod={this.addTask}
+        assigneeId={this.props.user.id}
       />
     );
   }

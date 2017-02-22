@@ -108,6 +108,7 @@ describe('action - `_editTask`', function () {
     const task = {
       content: 'come on',
       assignee_id: '',
+      milestone_id: 'sajl13',
     };
     const expectedAction = {
       type: types.EDIT_TASK,
