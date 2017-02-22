@@ -80,8 +80,8 @@ class AssigneeRow extends Component {
   markDone(taskId) {
     this.props.actions.markDone(taskId, this.props.projectId);
   }
-  editTask(taskId, content, assignee) {
-    this.props.actions.editTask(taskId, content, assignee);
+  editTask(taskId, content, assignee, milestoneId) {
+    this.props.actions.editTask(taskId, content, assignee, milestoneId);
   }
   reopenTask(taskId) {
     this.props.actions.reopenTask(taskId);
@@ -95,7 +95,6 @@ class AssigneeRow extends Component {
         handleClose={this.handleClose}
         assignee={this.props.user.id}
         taskMethod={this.addTask}
-        users={this.props.users}
       />
     );
   }

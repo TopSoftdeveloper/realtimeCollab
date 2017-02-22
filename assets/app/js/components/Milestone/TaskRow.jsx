@@ -43,8 +43,8 @@ class TaskRow extends Component {
       hidden: true,
     });
   }
-  onEdit(content, assigneeId) {
-    this.props.onEdit(this.props.task.id, content, assigneeId);
+  onEdit(content, assigneeId, milestoneId) {
+    this.props.onEdit(this.props.task.id, content, assigneeId, milestoneId);
   }
   onCheck() {
     this.props.onCheck(this.props.task.id);
@@ -89,10 +89,10 @@ class TaskRow extends Component {
         key={`${this.props.task.id}_taskmodal`}
         title="Edit Task"
         content={this.props.task.content}
+        milestoneId={this.props.task.milestone_id}
         assignee={this.props.task.assignee_id}
         handleClose={this.handleClose}
         taskMethod={this.onEdit}
-        users={this.props.users}
       />
     );
   }

@@ -1,17 +1,21 @@
+import { connect } from 'react-redux';
 import React, { Component, PropTypes } from 'react';
 import { Dialog, FlatButton } from 'material-ui';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import { Form } from 'formsy-react';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
+import { getProjectMilestones, getProjectActiveUsers, getCurrentProject } from '../../selector';
 
 const propTypes = {
   title: PropTypes.string.isRequired,
   content: PropTypes.string,
   assignee: PropTypes.string,
+  milestoneId: PropTypes.string,
   handleClose: PropTypes.func.isRequired,
   taskMethod: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
+  milestones: PropTypes.array.isRequired,
 };
 class TaskModal extends Component {
   constructor(props, context) {
@@ -19,8 +23,10 @@ class TaskModal extends Component {
     this.state = {
       assignee: this.props.assignee || '',
       canSubmit: false,
+      milestoneId: this.props.milestoneId,
     };
     this.onDialogSubmit = this.onDialogSubmit.bind(this);
+    this.handleMilestoneIdChange = this.handleMilestoneIdChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.enableButton = this.enableButton.bind(this);
     this.disableButton = this.disableButton.bind(this);
@@ -29,7 +35,7 @@ class TaskModal extends Component {
   onDialogSubmit() {
     const content = this.taskInputField.getValue().trim();
     if (content !== '') {
-      this.props.taskMethod(content, this.state.assignee);
+      this.props.taskMethod(content, this.state.assignee, this.state.milestoneId);
     }
     this.props.handleClose();
   }
@@ -46,7 +52,9 @@ class TaskModal extends Component {
   handleChange(event, index, value) {
     this.setState({ assignee: value });
   }
-
+  handleMilestoneIdChange(event, index, value) {
+    this.setState({ milestoneId: value });
+  }
   render() {
     const actions = [
       <FlatButton
@@ -72,7 +80,13 @@ class TaskModal extends Component {
         primaryText={user.display_name}
       />
     ));
-
+    const possibleMilestones = this.props.milestones.map(milestone => (
+      <MenuItem
+        value={milestone.id}
+        key={milestone.id}
+        primaryText={milestone.content}
+      />
+  ));
     possibleAssignees.unshift(<MenuItem key={0} value={''} primaryText="None" />);
 
     return (
@@ -102,6 +116,15 @@ class TaskModal extends Component {
           />
           <br />
           <SelectField
+            value={this.state.milestoneId}
+            onChange={this.handleMilestoneIdChange}
+            floatingLabelFixed
+            floatingLabelText="Milestone"
+          >
+            {possibleMilestones}
+          </SelectField>
+          <br />
+          <SelectField
             value={this.state.assignee}
             onChange={this.handleChange}
             floatingLabelFixed
@@ -115,4 +138,11 @@ class TaskModal extends Component {
   }
 }
 TaskModal.propTypes = propTypes;
-export default TaskModal;
+const mapStateToProps = (state) => ({
+  milestones: getProjectMilestones(state),
+  users: getProjectActiveUsers(state),
+  currentProject: getCurrentProject(state),
+});
+
+// export default TaskModal;
+export default connect(mapStateToProps)(TaskModal);

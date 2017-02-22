@@ -47,7 +47,7 @@ export const replaceTaskId = makeActionCreator(AppConstants.REPLACE_TASK_ID, 'or
 export const replaceMilestoneId = makeActionCreator(AppConstants.REPLACE_MILESTONE_ID,
   'original', 'replacement');
 export const _addTask = makeActionCreator(AppConstants.ADD_TASK, 'task');
-export const _editTask = makeActionCreator(AppConstants.EDIT_TASK, 'id', 'task');
+export const _editTask = makeActionCreator(AppConstants.EDIT_TASK, 'id', 'task', 'milestone_id');
 export const _deleteTask = makeActionCreator(AppConstants.DELETE_TASK, 'id');
 export const markAsDirty = makeActionCreator(AppConstants.MARK_AS_DIRTY, 'id');
 export const unmarkDirty = makeActionCreator(AppConstants.UNMARK_DIRTY, 'id');
@@ -651,15 +651,16 @@ export const declineProject = (projectId, notificationId) => (
     }
   }
 
-  export function editTask(task_id, content, assignee_id) {
-    let task = {
-      content: content,
-      assignee_id: assignee_id
+  export function editTask(task_id, content, assignee_id, milestone_id) {
+    const task = {
+      content,
+      assignee_id,
+      milestone_id,
     }
     return function(dispatch) {
       serverEditTask(task_id, task)
       .done(res => {
-        dispatch(_editTask(task_id, task));
+        dispatch(_editTask(task_id, task, milestone_id));
         dispatch(snackbarMessage('Task updated', 'default'))
       }).fail(e => {
         console.log(e);
