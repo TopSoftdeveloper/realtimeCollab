@@ -64,7 +64,7 @@
     * `(collab-analytics) $ sudo npm install`
     * `(collab-analytics) $ sudo npm link`
   * npm install & link on collab:
-    * `(collab) $ sudo npm link collab-db-analytics collab-db-application`
+    * `(collab) $ sudo npm link collab-analytics collab-db-application`
     * `(collab) $ sudo npm install`
   * Find more details about npm link [here](https://docs.npmjs.com/cli/link)
 
