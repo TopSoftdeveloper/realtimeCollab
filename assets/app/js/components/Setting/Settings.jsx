@@ -35,6 +35,16 @@ class Settings extends Component {
       chatName: '',
       fetchedRepos: false,
     };
+    this.inviteMember = this.inviteMember.bind(this);
+    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
+    this.selectNewRepo = this.selectNewRepo.bind(this);
+    this.authorize = this.authorize.bind(this);
+    this.selectRootFolder = this.selectRootFolder.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.changeChatRoom = this.changeChatRoom.bind(this);
+    this.chatNameChange = this.chatNameChange.bind(this);
+    this.renameProject = this.renameProject.bind(this);
+    this.projectNameChange = this.projectNameChange.bind(this);
   }
 
   componentDidMount() {
@@ -145,7 +155,7 @@ class Settings extends Component {
       alertPanel = (
         <Alert
           bsStyle="success"
-          onDismiss={this.handleAlertDismiss.bind(this)}
+          onDismiss={this.handleAlertDismiss}
         >
           Successfully invited!
         </Alert>
@@ -154,7 +164,7 @@ class Settings extends Component {
       alertPanel = (
         <Alert
           bsStyle="warning"
-          onDismiss={this.handleAlertDismiss.bind(this)}
+          onDismiss={this.handleAlertDismiss}
         >
           User already invited!
         </Alert>
@@ -163,7 +173,7 @@ class Settings extends Component {
       alertPanel = (
         <Alert
           bsStyle="danger"
-          onDismiss={this.handleAlertDismiss.bind(this)}
+          onDismiss={this.handleAlertDismiss}
         >
           User not found!
         </Alert>
@@ -185,7 +195,7 @@ class Settings extends Component {
       githubRepo = `${project.github_repo_owner}/${project.github_repo_name}`;
       selectNewRepoBtn = (
         <Button
-          onClick={this.selectNewRepo.bind(this)}
+          onClick={this.selectNewRepo}
           className="settings-btn"
         >
           Select new repository
@@ -205,7 +215,7 @@ class Settings extends Component {
               actions={this.props.actions}
               app={this.props.app}
               repos={this.props.repos}
-              authorize={this.authorize.bind(this)}
+              authorize={this.authorize}
             />
           </CardText>
         </Card>
@@ -225,7 +235,7 @@ class Settings extends Component {
             <b>Root folder: {rootFolderName}</b>
           </span>
           <Button
-            onClick={this.selectRootFolder.bind(this)}
+            onClick={this.selectRootFolder}
             className="settings-btn"
           >
             Select new root folder
@@ -259,7 +269,7 @@ class Settings extends Component {
           <br />
           <RaisedButton
             label="Authorize Github"
-            onTouchTap={this.authorize.bind(this)}
+            onTouchTap={this.authorize}
             primary
             icon={<FontIcon className="fa fa-github" />}
           />
@@ -279,14 +289,14 @@ class Settings extends Component {
           {listGroups}
           <ListGroupItem>
             {alertPanel}
-            <form onSubmit={this.inviteMember.bind(this)}>
-              <ControlLabel>Search by email</ControlLabel>
+            <form onSubmit={this.inviteMember}>
+              <ControlLabel>Invite by email</ControlLabel>
               <InputGroup>
                 <FormControl
                   type="email"
                   inputRef={ref => { this.addMemberInput = ref; }}
                   value={this.state.inputEmail}
-                  onChange={this.handleChange.bind(this)}
+                  onChange={this.handleChange}
                 />
                 <InputGroup.Button>
                   <Button type="submit">Invite member</Button>
@@ -305,7 +315,7 @@ class Settings extends Component {
         </Panel>
 
         <Panel header="Chat Room" bsStyle="info">
-          <form onSubmit={this.changeChatRoom.bind(this)}>
+          <form onSubmit={this.changeChatRoom}>
             <FormGroup>
               <ControlLabel>{chatLabel}</ControlLabel>
               <InputGroup>
@@ -314,7 +324,7 @@ class Settings extends Component {
                   inputRef={ref => { this.chatNameInput = ref; }}
                   value={this.state.chatName}
                   placeholder="Chat room name"
-                  onChange={this.chatNameChange.bind(this)}
+                  onChange={this.chatNameChange}
                 />
                 <InputGroup.Button>
                   <Button type="submit">Join</Button>
@@ -325,7 +335,7 @@ class Settings extends Component {
         </Panel>
 
         <Panel header="Options" bsStyle="info">
-          <form onSubmit={this.renameProject.bind(this)}>
+          <form onSubmit={this.renameProject}>
             <ControlLabel>
               {`Project name: ${this.props.project.content}`}
             </ControlLabel>
@@ -336,7 +346,7 @@ class Settings extends Component {
                 inputRef={ref => { this.projectNameInput = ref; }}
                 value={this.state.inputProjectName}
                 placeholder="New project name"
-                onChange={this.projectNameChange.bind(this)}
+                onChange={this.projectNameChange}
               />
               <InputGroup.Button>
                 <Button type="submit">Rename</Button>
