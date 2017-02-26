@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Steps from 'rc-steps';
 import _ from 'lodash';
 import RaisedButton from 'material-ui/RaisedButton';
-
+import { Alert } from 'react-bootstrap';
 import FilesList from './FilesList.jsx';
 
 require('rc-steps/assets/index.css');
@@ -26,6 +26,14 @@ class FileView extends Component {
 
   render() {
     const { app, project, actions, files, dispatch } = this.props;
+    if (project.folder_error) {
+      return (
+        <Alert bsStyle="danger">
+          <h4>Oh, error occurs when trying to connect to the drive!</h4>
+          <p>Please make sure root folder exists and access privilege has been granted.</p>
+        </Alert>
+      );
+    }
     const filesList = (
       <FilesList
         directoryStructure={project.directory_structure}
