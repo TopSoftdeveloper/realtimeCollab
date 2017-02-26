@@ -87,7 +87,7 @@ class TaskModal extends Component {
         primaryText={milestone.content}
       />
   ));
-    possibleMilestones.unshift(<MenuItem key={0} value={null} primaryText="Default Milestone" />);
+    possibleMilestones.unshift(<MenuItem key={0} value={null} primaryText="Task without milestone" />);
 
     return (
       <Dialog

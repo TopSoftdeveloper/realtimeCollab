@@ -67,7 +67,7 @@ class Dashboard extends Component {
     Object.keys(milestonesByProject).forEach(projectId => {
       // Just a placeholder milestone for tasks without milestones
       milestonesByProject[projectId].push({
-        content: 'Default Milestone',
+        content: 'Task without milestone',
         deadline: null,
         key: projectId + 'uncategorized-tasks',
         id: null,

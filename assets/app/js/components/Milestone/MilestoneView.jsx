@@ -225,7 +225,7 @@ class MilestoneView extends Component {
 
     const milestoneRows = [];
     const fullMilestones = [{
-      content: 'Default Milestone',
+      content: 'Task without milestone',
       deadline: null,
       key: 'uncategorized-tasks',
       id: null,
