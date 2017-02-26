@@ -87,10 +87,6 @@ class TaskModal extends Component {
         primaryText={milestone.content}
       />
   ));
-    possibleMilestones.unshift(
-      <MenuItem key={0} value={null} primaryText="Task without milestone" />
-    );
-
     return (
       <Dialog
         autoScrollBodyContent
@@ -118,6 +114,7 @@ class TaskModal extends Component {
           />
           <br />
           <SelectField
+            required
             value={this.state.milestoneId}
             onChange={this.handleMilestoneIdChange}
             floatingLabelFixed

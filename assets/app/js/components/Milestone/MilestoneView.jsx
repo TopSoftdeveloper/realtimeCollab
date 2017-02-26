@@ -224,12 +224,7 @@ class MilestoneView extends Component {
     };
 
     const milestoneRows = [];
-    const fullMilestones = [{
-      content: 'Task without milestone',
-      deadline: null,
-      key: 'uncategorized-tasks',
-      id: null,
-    }, ...milestones]; // Just a placeholder milestone for tasks without milestones
+    const fullMilestones = [...milestones];
     let filteredTasks = tasks;
     if (this.state.isFilterApplied) {
       filteredTasks = tasks.filter(filterByAssignee);
