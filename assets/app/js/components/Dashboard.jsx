@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import Paper from 'material-ui/Paper';
 import { Table, TableBody } from 'material-ui/Table';
 import Subheader from 'material-ui/Subheader';
@@ -105,10 +104,4 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = propTypes;
 
-
-const mapStateToProps = (state) => ({
-  milestones: state.milestones,
-  projects: state.projects,
-  tasks: state.tasks,
-});
-export default connect(mapStateToProps)(Dashboard);
+export default Dashboard;

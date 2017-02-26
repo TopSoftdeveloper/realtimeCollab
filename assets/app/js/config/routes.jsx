@@ -5,7 +5,7 @@ import Project from '../containers/Project.jsx';
 import _404 from '../components/Common/_404.jsx';
 import NotificationView from '../containers/NotificationView.jsx';
 import SearchResults from '../components/Search/SearchResults.jsx';
-import Dashboard from '../components/Dashboard.jsx';
+import DashboardView from '../containers/DashboardView.jsx';
 import * as AppConstants from '../AppConstants';
 
 export default (
@@ -19,7 +19,7 @@ export default (
     </Route>
     <Route path="notifications" component={NotificationView} />
     <Route path="search" component={SearchResults} />
-    <Route path="dashboard" component={Dashboard} />
+    <Route path="dashboard" component={DashboardView} />
     <Route path="*" component={_404} />
   </Route>
 );
