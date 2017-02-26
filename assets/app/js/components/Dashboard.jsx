@@ -12,7 +12,6 @@ const propTypes = {
   milestones: PropTypes.array.isRequired,
   projects: PropTypes.array.isRequired,
   tasks: PropTypes.array.isRequired,
-  users: PropTypes.array.isRequired,
 };
 
 class Dashboard extends Component {
@@ -41,10 +40,33 @@ class Dashboard extends Component {
     /* global localStorage */
     const currentUserId = localStorage.getItem('user_id');
     // only show ongoing task assigned to me and unassigned
-    const filterByAssignee = (task) => (task.completed_on === null && (
+    const filterByAssignee = (task) => (!task.completed_on && (
       task.assignee_id === '' || task.assignee_id === null || task.assignee_id === currentUserId
     ));
-    const tasksList = tasks.filter(filterByAssignee);
+
+    const compareStr = (s1, s2) => {
+      if (!s1) {
+        return -1;
+      }
+      if (!s2) {
+        return 1;
+      }
+      const min = Math.min(s1.length, s2.length);
+      for (let i = 0; i < min; i++) {
+        if (s1.charCodeAt(i) !== s2.charCodeAt(i)) {
+          return s1.charCodeAt(i) - s2.charCodeAt(i);
+        }
+      }
+      return 0;
+    };
+
+    const sortByProjectMilestone = (taskA, taskB) => {
+      if (taskA.project_id === taskB.project_id) {
+        return compareStr(taskA.milestone_id, taskB.milestone_id);
+      }
+      return compareStr(taskA.project_id, taskB.project_id);
+    };
+    const tasksList = tasks.filter(filterByAssignee).sort(sortByProjectMilestone);
     const projectNameMap = {};
     projects.forEach(project => {
       projectNameMap[project.id] = project.content;

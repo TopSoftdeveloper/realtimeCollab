@@ -22,10 +22,10 @@ const DashboardItem = ({ task, projectId, projectName, milestoneName, onCheck })
   let kind = projectName;
   if (milestoneName) {
     kind += ` • ${milestoneName}`;
-    const maxSize = 23;
+    const maxSize = 25;
     const ellipis = '...';
     if (kind.length > maxSize) {
-      kind = `${kind.slice(0, maxSize - ellipis.length - 1)}${ellipis}`;
+      kind = `${kind.slice(0, maxSize - ellipis.length)}${ellipis}`;
     }
   }
   return (
