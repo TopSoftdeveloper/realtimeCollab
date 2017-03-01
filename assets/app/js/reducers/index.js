@@ -11,6 +11,7 @@ import githubRepos from './githubRepos';
 import newsfeed from './newsfeed';
 import search from './search';
 import snackbar from './snackbar';
+import messages from './messages';
 
 export default combineReducers({
   milestones,
@@ -25,4 +26,5 @@ export default combineReducers({
   newsfeed,
   search,
   snackbar,
+  messages,
 });

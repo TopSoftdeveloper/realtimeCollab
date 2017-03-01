@@ -10,9 +10,8 @@ import { serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMark
   getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
   syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
   queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile,
-  createFolder, moveFile,
-  serverGetNewesfeed, refreshTokens, listRepoEvents,
-} from '../utils/apiUtil';
+  createFolder, moveFile, serverCreateMessage,
+  serverGetNewesfeed, refreshTokens, listRepoEvents, } from '../utils/apiUtil';
 import { isObjectPresent, filterUnique, getCurrentProject, getNewColour } from '../utils/general';
 import { userIsOnline } from './SocketActions';
 import { logout } from '../utils/auth';
@@ -526,6 +525,7 @@ export const declineProject = (projectId, notificationId) => (
           dispatch(initMilestones(normalizedTables.milestones));
           dispatch(initProjects(normalizedTables.projects));
           dispatch(initTasks(normalizedTables.tasks));
+          dispatch(initMessages(normalizedTables.messages));
           dispatch(initSearchResults([]));
           let u = normalizedTables.users.map(user => {
             user.colour = getNewColour(normalizedTables.users.map(k => k.colour))
@@ -782,6 +782,7 @@ export const declineProject = (projectId, notificationId) => (
     let milestoneState = [];
     let taskState = [];
     let userState = [];
+    const messageState = [];
 
     projects.forEach(project => {
       // project table
@@ -806,6 +807,10 @@ export const declineProject = (projectId, notificationId) => (
         milestoneState.push(milestone)
       });
 
+      project.messages.forEach(message => {
+        messageState.push(message);
+      });
+
       project.tasks.forEach(task => {
         taskState.push(task)
         // append taskid to milestoneState
@@ -819,6 +824,7 @@ export const declineProject = (projectId, notificationId) => (
 
       currProj.milestones = milestoneState.map(milestone => milestone.id);
       currProj.tasks = taskState.map(task => task.id)
+      currProj.messages = messageState.map(message => message.id);
 
       // fill in user table and update project table
       project.users.forEach(user => {
@@ -836,7 +842,6 @@ export const declineProject = (projectId, notificationId) => (
         if (!isItemPresent(userState, user.id)) {
           userState.push(user);
         }
-
       });
 
       projectState.push(currProj);
@@ -844,8 +849,9 @@ export const declineProject = (projectId, notificationId) => (
     return {
       projects: projectState,
       milestones: milestoneState,
-      tasks:taskState,
-      users: userState
+      tasks: taskState,
+      users: userState,
+      messages: messageState,
     };
   }
 
@@ -1074,4 +1080,19 @@ export const declineProject = (projectId, notificationId) => (
         d.getElementsByTagName(s)[0].parentNode.appendChild(e);
       }(document, "script"));
     }
+  }
+
+  export function createMessage(message) {
+    return function(dispatch) {
+      // dispatch(_addTask(task));
+      // delete task.id
+      serverCreateMessage(message).done(res => {
+        // update the stores with the actual id
+        console.log("yeah, message is created!");
+        console.log(res);
+      }).fail(e => {
+        console.log(e);
+        // dispatch(_deleteTask(task.id));
+      });
+    };
   }

@@ -2,6 +2,7 @@ let CREATE_TASK_ENDPOINT = '/tasks';
 let COMPLETE_TASK_ENDPOINT = '/mark_completed';
 let CREATE_MILESTONE_ENDPOINT = '/milestones';
 let CREATE_PROJECT_ENDPOINT = '/projects';
+const CREATE_MESSAGE_ENDPOINT = '/messages';
 let INVITE_TO_PROJECT_ENDPOINT = '/invite_to_project';
 let POPULATE_ENDPOINT = '/user/populate';
 let GET_NOTIFICATION_ENDPOINT = '/notifications'
@@ -323,3 +324,7 @@ export function serverMarkDone(task_id, project_id) {
 export function refreshTokens() {
     return ajaxPost('/refresh_google_token');
 }
+
+export const serverCreateMessage = (payload) => (
+  ajaxPost(CREATE_MESSAGE_ENDPOINT, payload)
+);
