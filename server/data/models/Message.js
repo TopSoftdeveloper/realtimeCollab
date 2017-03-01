@@ -1,7 +1,7 @@
 var constants = require('../../constants');
 
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define(constants.MILESTONE_COMMENT_MODEL_NAME, {
+  return sequelize.define(constants.MESSAGE_MODEL_NAME, {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
@@ -17,7 +17,7 @@ module.exports = function (sequelize, DataTypes) {
           return instance !== null;
         });
       },
-      getComment: function(id) {
+      getMessage: function(id) {
         return this.findById(id);
       },
     },

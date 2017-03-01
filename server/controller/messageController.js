@@ -15,7 +15,7 @@ var analytics = require('collab-analytics')(config.database, config.logging_data
 
 module.exports = {
   createMilestoneComment: {
-    handler: createMilestoneComment,
+    handler: createMessage,
     payload: {
       parse: true,
     },
@@ -23,15 +23,18 @@ module.exports = {
       payload: {
         content: Joi.string().required(),
         project_id: Joi.string().required(),
-        milestone_id: Joi.string().required(),
+        milestone_id: Joi.default(null),
         author_id: Joi.default(null),
         pinned: Joi.boolean(),
       },
     },
   },
+  getMessageOfProject: {
+      handler: getMessageOfProject,
+  },
 };
 
-function createMilestoneComment(request, reply) {
+function createMessage(request, reply) {
   var user_id = request.auth.credentials.user_id;
   var projectId = request.payload.project_id;
   accessControl.isUserPartOfProject(user_id, projectId).then(function (isPartOf) {
@@ -40,10 +43,12 @@ function createMilestoneComment(request, reply) {
       return;
     }
 
-    storage.createMilestoneComment(request.payload).then(function(newMilestoneComment) {
-      reply(newMilestoneComment);
+    storage.createMessage(request.payload).then(function(newMessage) {
+      reply(newMessage);
     }, function(error) {
       reply(Boom.badRequest(error));
     });
   });
 }
+
+function getMessageOfProject(request, reply) {}

@@ -131,7 +131,7 @@ function populate(request, reply) {
             // Some tasks do not have milestones and vice versa, so we have to get both separately
             promises.push(storage.getMilestonesWithCondition({project_id: project.id}))
             promises.push(storage.getTasksWithCondition({project_id: project.id}))
-            promises.push(storage.getMilestoneCommentsWithCondition({project_id: project.id}));
+            promises.push(storage.getMessagesWithCondition({project_id: project.id}));
             return Sequelize.Promise.all(promises)
         }).then(function(tasksAndMilestones) {
             var projectsData = normalize(JSON.parse(JSON.stringify(filteredProjects)))
@@ -142,7 +142,7 @@ function populate(request, reply) {
                 }, {
                     tasks: tasksAndMilestones[i][1]
                 }, {
-                  milestoneComments: tasksAndMilestones[i][2],
+                  messages: tasksAndMilestones[i][2],
                 })
             })
             reply({projects: projectsData})

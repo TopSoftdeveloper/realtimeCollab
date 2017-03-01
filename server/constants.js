@@ -7,7 +7,7 @@ module.exports = {
   TASK_MODEL_NAME: 'tasks',
   USER_MODEL_NAME: 'users',
   MILESTONE_MODEL_NAME: 'milestones',
-  MILESTONE_COMMENT_MODEL_NAME: 'milestone_comment',
+  MESSAGE_MODEL_NAME: 'messages',
   DUPLICATE_PRIMARY_KEY: 'PRIMARY must be unique',
   MILESTONE_NOT_EXIST: 'Milestone id {} does not exist',
   TASK_NOT_EXIST: 'Task id {} does not exist',
