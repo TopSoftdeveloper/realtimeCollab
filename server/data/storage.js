@@ -11,6 +11,7 @@ var Project = models.Project;
 var UserProject = models.UserProject;
 var Notification = models.Notification;
 var Newsfeed = models.Newsfeed;
+var MilestoneComment = models.MilestoneComment;
 var analytics = require('collab-analytics')(config.database, config.logging_database);
 var format = require('string-format');
 
@@ -424,5 +425,19 @@ module.exports = {
                 id: milestone_id
             }
         });
-    }
+    },
+    createMilestoneComment: function(comment) {
+      return Milestone.isExist(comment.milestone_id).then(function(exists) {
+          if (!exists) {
+              return Promise.reject(format(constants.MILESTONE_NOT_EXIST, comment.milestone_id));
+          }
+          comment.id = shortid.generate()
+          return MilestoneComment.create(comment)
+      });
+    },
+    getMilestoneCommentsWithCondition: function(condition) {
+        return MilestoneComment.findAll({
+            where: condition
+        })
+    },
 };

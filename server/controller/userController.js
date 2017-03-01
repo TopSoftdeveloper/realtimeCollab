@@ -100,9 +100,9 @@ function updateInfo(request, reply) {
 function normalize(projectsData) {
     // removes the nested 'user_project' and just retains 'role' attribute
     projectsData.forEach(function(project) {
-        project.users.forEach(function(user) {            
+        project.users.forEach(function(user) {
             _.assign(user, {'role': user.user_project.role});
-            delete user['user_project'];            
+            delete user['user_project'];
         });
     });
     return projectsData;
@@ -111,14 +111,14 @@ function normalize(projectsData) {
 function filterPending(projects, userId) {
     return projects.filter(function(project) {
         var pending = false;
-        project.users.forEach(function(user) {    
+        project.users.forEach(function(user) {
             if (user.id === userId && user.user_project.role === constants.ROLE_PENDING) {
                 pending = true;
-            }       
-        });       
+            }
+        });
         if (!pending) {
             return true;
-        }         
+        }
     });
 }
 
@@ -131,6 +131,7 @@ function populate(request, reply) {
             // Some tasks do not have milestones and vice versa, so we have to get both separately
             promises.push(storage.getMilestonesWithCondition({project_id: project.id}))
             promises.push(storage.getTasksWithCondition({project_id: project.id}))
+            promises.push(storage.getMilestoneCommentsWithCondition({project_id: project.id}));
             return Sequelize.Promise.all(promises)
         }).then(function(tasksAndMilestones) {
             var projectsData = normalize(JSON.parse(JSON.stringify(filteredProjects)))
@@ -140,6 +141,8 @@ function populate(request, reply) {
                     milestones: tasksAndMilestones[i][0]
                 }, {
                     tasks: tasksAndMilestones[i][1]
+                }, {
+                  milestoneComments: tasksAndMilestones[i][2],
                 })
             })
             reply({projects: projectsData})

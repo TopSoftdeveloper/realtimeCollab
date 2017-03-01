@@ -21,7 +21,8 @@ var modelFiles = [
     'Project',
     'UserProject',
     'Notification',
-    'Newsfeed'
+    'Newsfeed',
+    'MilestoneComment',
 ];
 
 modelFiles.forEach(function(model) {
@@ -29,6 +30,9 @@ modelFiles.forEach(function(model) {
 });
 
 (function(m) {
+    m.MilestoneComment.belongsTo(m.Milestone);
+    m.MilestoneComment.belongsTo(m.Project);
+
     m.Task.belongsTo(m.Milestone);
     m.Task.belongsTo(m.Project);
 

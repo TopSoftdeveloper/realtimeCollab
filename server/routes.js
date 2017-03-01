@@ -8,6 +8,7 @@ var Notification = require('./controller/notificationController');
 var Github = require('./controller/githubController')
 var WebHook = require('./controller/webhookController')
 var Newsfeed = require('./controller/newsfeedController')
+var MilestoneComment = require('./controller/MilestoneCommentController')
 
 module.exports.endpoints = [
     { method: 'GET',  path: '/{param*}', config: Static.getPublic },
@@ -52,5 +53,7 @@ module.exports.endpoints = [
     { method: 'POST',  path: '/webhook/drive', config: WebHook.googleDriveWebhook },
 
     { method: 'POST',  path: '/newsfeed/{project_id}', config: Newsfeed.createPost },
-    { method: 'GET',  path: '/newsfeed', config: Newsfeed.getNewsfeed }
+    { method: 'GET',  path: '/newsfeed', config: Newsfeed.getNewsfeed },
+
+    { method: 'POST', path: '/milestone_comment', config: MilestoneComment.createMilestoneComment },
 ];
