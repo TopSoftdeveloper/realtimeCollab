@@ -4,7 +4,6 @@ import MessageList from './MessageList.jsx';
 const propTypes = {
   // props passed by parents
   milestoneId: PropTypes.string,
-  projectId: PropTypes.string.isRequired,
   // props passed by container
   users: PropTypes.array.isRequired,
   messages: PropTypes.array.isRequired,
@@ -20,7 +19,7 @@ class Message extends Component {
       <div>
         <br />
         <MessageList
-          events={events}
+          messages={messages}
           users={users}
         />
       </div>

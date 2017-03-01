@@ -12,7 +12,7 @@ const SystemMssage = ({ message }) => (
   <li className="event-item">
     <div className="notif-photo">
       <UserAvatar
-        displayName={'system'}
+        displayName="system"
       />
     </div>
     <div>

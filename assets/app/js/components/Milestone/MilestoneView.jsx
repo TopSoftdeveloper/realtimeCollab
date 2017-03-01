@@ -14,6 +14,7 @@ import MilestoneModal from './MilestoneModal.jsx';
 import MilestoneRow from './MilestoneRow.jsx';
 import AssigneeRow from './AssigneeRow.jsx';
 import AvatarList from '../Common/AvatarList.jsx';
+import ProjectMessageView from '../../containers/ProjectMessageView.jsx';
 
 const propTypes = {
   // props passed by parents
@@ -255,7 +256,7 @@ class MilestoneView extends Component {
       }
     }); // milestones.forEach
     let buttonClassName = 'add-milestone-btn';
-    if (fullMilestones.length === 1 && tasks.length === 0) {
+    if (fullMilestones.length === 0 && tasks.length === 0) {
       buttonClassName += 'animated infinite pulse';
     }
     const AssignesMenuItems = users.map(user => (
@@ -267,56 +268,61 @@ class MilestoneView extends Component {
     const assigneeFilterTooltip = <Tooltip id="assignee">filter by asssignees</Tooltip>;
     const sortByDeadlineTooltip = <Tooltip id="deadline">sort by deadline</Tooltip>;
     return (
-      <Paper zDepth={1} className="milestone-menu-view">
-        <div key="resetButton">{this.renderResetButton()}</div>
-        <Toolbar>
-          <ToolbarGroup firstChild key="firstToolbarGroup">
-            <OverlayTrigger placement="bottom" overlay={assigneeFilterTooltip}>
-              <DropDownMenu
-                maxHeight={300}
-                value={this.state.assigneeFilter}
-                onChange={this.applyAssigneeFilter}
-              >
-                {AssignesMenuItems}
-              </DropDownMenu>
-            </OverlayTrigger>
-            <AvatarList
-              className="milestone-online-users"
-              members={users.filter(user => user.online && !user.me)}
-              isSquare
-              colour
-            />
-          </ToolbarGroup>
-          <ToolbarGroup key="secondToolbarGroup">
-            <OverlayTrigger placement="bottom" overlay={sortByDeadlineTooltip}>
-              <FlatButton
-                label={this.state.sortByDeadlineDescending ? 'Earliest' : 'Oldest'}
-                onClick={this.toggleSortByDeadline}
-                primary={false}
-              />
-            </OverlayTrigger>
-            <RaisedButton
-              key="add-milestone-btn"
-              label="Add Milestone"
-              className={buttonClassName}
-              onTouchTap={this.openModal}
-              primary
-            />
+      <div>
 
-            <ToolbarSeparator />
-            <RaisedButton
-              key="switch-assignee-mode-btn"
-              label="View by assignee"
-              className={buttonClassName}
-              onTouchTap={this.changeViewModeToAssignee}
-              secondary
-            />
-          </ToolbarGroup>
-          {this.renderMilestoneModal()}
-        </Toolbar>
-        {milestoneRows}
-        {this.renderEmptyArea()}
-      </Paper>
+          <Paper zDepth={1} className="milestone-menu-view">
+            <div key="resetButton">{this.renderResetButton()}</div>
+            <Toolbar>
+              <ToolbarGroup firstChild key="firstToolbarGroup">
+                <OverlayTrigger placement="bottom" overlay={assigneeFilterTooltip}>
+                  <DropDownMenu
+                    maxHeight={300}
+                    value={this.state.assigneeFilter}
+                    onChange={this.applyAssigneeFilter}
+                  >
+                    {AssignesMenuItems}
+                  </DropDownMenu>
+                </OverlayTrigger>
+                <AvatarList
+                  className="milestone-online-users"
+                  members={users.filter(user => user.online && !user.me)}
+                  isSquare
+                  colour
+                />
+              </ToolbarGroup>
+              <ToolbarGroup key="secondToolbarGroup">
+                <OverlayTrigger placement="bottom" overlay={sortByDeadlineTooltip}>
+                  <FlatButton
+                    label={this.state.sortByDeadlineDescending ? 'Earliest' : 'Oldest'}
+                    onClick={this.toggleSortByDeadline}
+                    primary={false}
+                  />
+                </OverlayTrigger>
+                <RaisedButton
+                  key="add-milestone-btn"
+                  label="Add Milestone"
+                  className={buttonClassName}
+                  onTouchTap={this.openModal}
+                  primary
+                />
+
+                <ToolbarSeparator />
+                <RaisedButton
+                  key="switch-assignee-mode-btn"
+                  label="View by assignee"
+                  className={buttonClassName}
+                  onTouchTap={this.changeViewModeToAssignee}
+                  secondary
+                />
+              </ToolbarGroup>
+              {this.renderMilestoneModal()}
+            </Toolbar>
+            {milestoneRows}
+            {this.renderEmptyArea()}
+          </Paper>
+          <ProjectMessageView />
+      </div>
+
     );
   }
 }

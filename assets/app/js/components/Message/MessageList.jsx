@@ -25,17 +25,18 @@ const MessageList = ({ messages, users }) => {
           pinned: message.pinned,
           content: message.content,
           created_at: message.created_at,
-          displayName: targetUser.display_name,
-          avatarUrl: targetUser.display_image,
+          authorName: targetUser.display_name,
+          authorAvatarUrl: targetUser.display_image,
         };
-        messageItems.push(<SystemMessage key={message.id} message={messageItem} />);
+        messageItems.push(<UserMessage key={message.id} message={messageItem} />);
       }
+    } else {
+      const messageItem = {
+        content: message.content,
+        created_at: message.created_at,
+      };
+      messageItems.push(<SystemMessage key={message.id} message={messageItem} />);
     }
-    const messageItem = {
-      content: message.content,
-      created_at: message.created_at,
-    };
-    messageItems.push(<UserMessage key={message.id} message={messageItem} />);
   });
 
   if (messageItems.length > 0) {

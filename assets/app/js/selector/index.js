@@ -7,6 +7,7 @@ const getTasks = (state) => state.tasks;
 const getProjectId = (state) => state.app.current_project;
 const getNewsfeeds = (state) => state.newsfeed;
 const getUsers = (state) => state.users;
+const getMessages = (state) => state.messages;
 const getProjects = (state) => state.projects;
 
 export const getCurrentProject = createSelector(
@@ -59,6 +60,10 @@ export const getProjectTasks = createSelector(
 export const getProjectEvents = createSelector(
   [getNewsfeeds, getProjectId],
   (events, projectId) => (events.filter(event => event.project_id === projectId))
+);
+export const getProjectMessages = createSelector(
+  [getMessages, getProjectId],
+  (messages, projectId) => (messages.filter(message => message.project_id === projectId))
 );
 
 // export const getActiveUsers =
