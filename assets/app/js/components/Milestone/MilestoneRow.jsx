@@ -25,6 +25,8 @@ const propTypes = {
   actions: PropTypes.object.isRequired,
   tasks: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
+  showOngoing: PropTypes.bool,
+  showCompleted: PropTypes.bool,
 };
 
 const contextTypes = {
@@ -37,8 +39,6 @@ class MilestoneRow extends Component {
     this.state = {
       isTaskModalOpen: false,
       isMilestoneModalOpen: false,
-      showOngoing: true,
-      showCompleted: false,
       showActionButton: false,
       isDeleteConfirmationOpen: false,
     };
@@ -59,6 +59,12 @@ class MilestoneRow extends Component {
     this.editTask = this.editTask.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
     this.reopenTask = this.reopenTask.bind(this);
+  }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      showOngoing: nextProps.showOngoing,
+      showCompleted: nextProps.showCompleted,
+    });
   }
   onMouseEnter() {
     this.setState({
@@ -287,9 +293,11 @@ class MilestoneRow extends Component {
     const completedText = `${completedTasks.length} Completed`;
     const ongoingLabelStyle = {
       opacity: this.state.showOngoing ? 1 : 0.5,
+      fontSize: 12,
     };
     const completedLabelStyle = {
       opacity: this.state.showCompleted ? 1 : 0.5,
+      fontSize: 12,
     };
     return (
       <div className="milestone-row-info">
