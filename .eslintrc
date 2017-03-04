@@ -4,7 +4,12 @@
         "react",
         "jsx-a11y"
     ],
-
+    "parserOptions":{
+      "ecmaVersion": 6,
+      "ecmaFeatures": {
+        "experimentalObjectRestSpread": true,
+      },
+    },
     "rules": {
       "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
       "import/no-extraneous-dependencies": [

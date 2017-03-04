@@ -447,12 +447,6 @@ html, body{
   color: white;
 }
 
-.left-panel {
-  background-color: #37474f;
-  color: white;
-  min-width: 204px;
-}
-
 .collab-logo {
   margin-left: 60px;
   font-size: large;

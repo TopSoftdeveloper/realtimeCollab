@@ -1,5 +1,5 @@
 import { cyan500, cyan700, white, pink200,
-  grey100, grey300, grey500, blueGrey900 } from 'material-ui/styles/colors.js';
+  grey100, grey300, grey500, blueGrey900, black } from 'material-ui/styles/colors.js';
 import { fade } from 'material-ui/utils/colorManipulator.js';
 import Spacing from 'material-ui/styles/spacing';
 import zIndex from 'material-ui/styles/zIndex';
@@ -25,3 +25,7 @@ const MyRawTheme = {
 };
 
 export default MyRawTheme;
+export const Color = {
+  leftPanelItemHightColor: fade(black, 0.4),
+  leftPanelBackgroundColor: '#37474f',
+};

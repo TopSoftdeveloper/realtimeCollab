@@ -4,7 +4,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Sidebar from 'react-sidebar';
 import { Grid, Row } from 'react-bootstrap';
+import assign from 'object-assign';
 
+import { Color } from '../myTheme.js'
 import * as Actions from '../actions/ReduxTaskActions';
 import * as SocketActions from '../actions/SocketActions';
 import Header from '../components/Header.jsx';
@@ -28,6 +30,26 @@ const propTypes = {
   children: PropTypes.any.isRequired,
   location: PropTypes.object.isRequired,
 };
+
+const styles = {
+  floatingSidebarIconContainer: {
+    position: 'fixed',
+    top: 80,
+    left: 195,
+    backgroundColor: Color.leftPanelBackgroundColor,
+  },
+  floatingSidebarIcon: {
+    color: 'white',
+    fontSize: 20,
+    lineHeight: 'inherit',
+  },
+  sidebar: {
+    backgroundColor: Color.leftPanelBackgroundColor,
+    color: 'white',
+    width: 200,
+    maxWidth: 200,
+  },
+};
 /* global  window  localStorage */
 class App extends Component {
   constructor(props, context) {
@@ -40,6 +62,10 @@ class App extends Component {
     socketActions.monitorProjectChanges();
     socketActions.monitorNotifications();
     socketActions.monitorEditStatus();
+    this.state = {
+      showSidebar: true,
+    };
+    this.toggleSidebar = this.toggleSidebar.bind(this);
   }
   getChildContext() {
     return {
@@ -77,17 +103,13 @@ class App extends Component {
     const checkingIntervalMs = 300000; // 5 mins
     setInterval(this.checkTokenExpiry, checkingIntervalMs);
   }
-
-  render() {
-    const { notifications, projects, users, app, search, actions } = this.props;
-    let currentProject = null;
-    const currentProjectId = getCurrentProject();
-
-    if (users.length === 0) {
-      // First initialization of app
-      return <div className="main-content" />;
-    }
-
+  toggleSidebar() {
+    this.setState({
+      showSidebar: !this.state.showSidebar,
+    });
+  }
+  renderMainContent() {
+    const { app, projects } = this.props;
     let children = this.props.children;
     if (projects.length === 0 && matchesUrl(window.location.href, APP_ROOT_URL) && !app.loading) {
       children = (
@@ -99,7 +121,6 @@ class App extends Component {
         </div>
       );
     }
-
     if (app.loading) {
       children = (
         <div className="main-content">
@@ -107,7 +128,17 @@ class App extends Component {
         </div>
       );
     }
+    return children;
+  }
+  render() {
+    const { notifications, projects, users, app, search, actions } = this.props;
+    let currentProject = null;
+    const currentProjectId = getCurrentProject();
 
+    if (users.length === 0) {
+      // First initialization of app
+      return <div className="main-content" />;
+    }
     const displayName = users.filter(user =>
       user.id === localStorage.getItem('user_id')
     )[0].display_name;
@@ -128,9 +159,15 @@ class App extends Component {
             app={app}
           />
           <Sidebar
-            open
+            shadow={false}
+            transitions={false}
             docked
-            sidebarClassName="left-panel"
+            open
+            styles={{
+              sidebar: assign({}, styles.sidebar, !this.state.showSidebar && {
+                display: 'none',
+              }),
+            }}
             sidebar={
               <LeftPanel
                 currentProject={currentProject}
@@ -141,7 +178,22 @@ class App extends Component {
             }
           >
             <div className="body-wrapper">
-              {children}
+              <div
+                style={
+                  assign({}, styles.floatingSidebarIconContainer, !this.state.showSidebar && {
+                    left: 0,
+                  })
+                }
+                onClick={this.toggleSidebar}
+              >
+                <i
+                  style={styles.floatingSidebarIcon}
+                  className="material-icons"
+                >
+                  {this.state.showSidebar ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
+                </i>
+              </div>
+              {this.renderMainContent()}
             </div>
           </Sidebar>
           <SnackbarView />
