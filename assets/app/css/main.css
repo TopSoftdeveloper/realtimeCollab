@@ -351,7 +351,7 @@ html, body{
   display: inline-block;
 }
 .milestone-menu-view {
-  height: auto;
+  height: 100%;
   margin-top: 5px;
   margin-bottom: 5px;
   padding-bottom: 10px;
@@ -455,7 +455,8 @@ html, body{
 }
 
 .body-wrapper {
-  width: 95%;
+  width: 99%;
+  min-height: 85%;
   margin-top: 70px;
 }
 

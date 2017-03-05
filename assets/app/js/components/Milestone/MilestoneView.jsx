@@ -38,6 +38,7 @@ const styles = {
     fontSize: 20,
   },
 };
+// predefined views
 const VIEWS = {
   ongoingTasks: {
     value: 'ongoingTasks',
@@ -67,8 +68,7 @@ class MilestoneView extends Component {
     super(props, context);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
     this.state = {
-      isDialogOpen: false,
-      assigneeFilter: 'all',
+      isMilestoneModalOpen: false,
       view: VIEWS.ongoingTasks,
       showMessageView: false,
       selectedMilestoneId: null,
@@ -81,7 +81,9 @@ class MilestoneView extends Component {
     this.changeView = this.changeView.bind(this);
     this.matchCurrentView = this.matchCurrentView.bind(this);
   }
-
+  matchCurrentView(viewValue) {
+    return this.state.view.value === VIEWS[viewValue].value;
+  }
   changeView(event, target) {
     // skip if view is changed to be `tasksAssignedTo`
     if (target.key !== VIEWS.tasksAssignedTo.value) {
@@ -90,6 +92,7 @@ class MilestoneView extends Component {
       });
     }
   }
+  // handler for change view to be `tasksAssignedTo`
   changeViewAsTasksAssignedTo(assigneeId, assigneeName) {
     this.setState({
       view: assign({}, VIEWS.tasksAssignedTo, {
@@ -100,37 +103,15 @@ class MilestoneView extends Component {
   }
   handleMilestoneModalClose() {
     this.setState({
-      isDialogOpen: false,
+      isMilestoneModalOpen: false,
     });
   }
 
   openMilestoneModal() {
     this.setState({
-      isDialogOpen: true,
+      isMilestoneModalOpen: true,
     });
   }
-  applyAssigneeFilter(event, index, value) {
-    this.setState({
-      assigneeFilter: value,
-      showResetButton: true,
-      isFilterApplied: true,
-    });
-  }
-  toggleSortByDeadline() {
-    this.setState({
-      sortByDeadlineDescending: !this.state.sortByDeadlineDescending,
-      showResetButton: true,
-    });
-  }
-  clearFilterAndSort() {
-    this.setState({
-      showResetButton: false,
-      assigneeFilter: 'all',
-      sortByDeadlineDescending: true,
-      isFilterApplied: false,
-    });
-  }
-
   addMilestone(content, deadline) {
     this.props.actions.createMilestone({
       id: _.uniqueId('milestone'),
@@ -148,7 +129,7 @@ class MilestoneView extends Component {
     this.props.actions.deleteMilestone(milestoneId, this.props.projectId);
   }
   renderMilestoneModal() {
-    return (this.state.isDialogOpen &&
+    return (this.state.isMilestoneModalOpen &&
       <MilestoneModal
         key="add-milestone-modal"
         title="Add Milestone"
@@ -207,13 +188,17 @@ class MilestoneView extends Component {
   renderViewMenu() {
     const assigneMenuItems = this.props.users.map(user => (
       <MenuItem
-        value={user.id} key={user.id} primaryText={user.display_name}
+        value={user.id}
+        key={user.id}
+        primaryText={user.display_name}
         onTouchTap={this.changeViewAsTasksAssignedTo.bind(this, user.id, user.display_name)}
       />
     ));
     assigneMenuItems.unshift(
       <MenuItem
-        value={''} key={'Unassign'} primaryText="nobody"
+        value={''}
+        key={'Unassign'}
+        primaryText="nobody"
         onTouchTap={this.changeViewAsTasksAssignedTo.bind(this, '', 'nobody')}
       />
     );
@@ -280,12 +265,9 @@ class MilestoneView extends Component {
       />
     );
   }
-  matchCurrentView(viewValue) {
-    return this.state.view.value === VIEWS[viewValue].value;
-  }
   render() {
     const { users, tasks, projectId, actions, milestones } = this.props;
-    let content = this.renderEmptyArea();
+    let content = null;
     // condition for assignee mode
     if (this.matchCurrentView('tasksByAssignee')) {
       content = this.renderAssigneeRows();
@@ -350,12 +332,12 @@ class MilestoneView extends Component {
           milestoneRows.push(milestoneView);
         }
       }); // milestones.forEach
-      content = milestoneRows;
+      content = milestoneRows.length === 0 ? this.renderEmptyArea() : milestoneRows;
     }
     return (
-      <Row className="milestone-menu-view">
+      <Row >
         <Col md={8}>
-          <Paper zDepth={1}>
+          <Paper className="milestone-menu-view" zDepth={1}>
             <Toolbar>
               <ToolbarGroup firstChild key="firstToolbarGroup">
                 {this.renderCreateMilestoneButton()}
@@ -372,11 +354,10 @@ class MilestoneView extends Component {
               {this.renderMilestoneModal()}
             </Toolbar>
             {content}
-            {this.renderEmptyArea()}
           </Paper>
         </Col>
         <Col md={4}>
-          <Paper zDepth={1} className="milestone-menu-view">
+          <Paper zDepth={1} className="">
             <ProjectMessageView />
           </Paper>
         </Col>

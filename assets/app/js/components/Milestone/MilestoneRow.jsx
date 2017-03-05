@@ -41,6 +41,8 @@ class MilestoneRow extends Component {
       isMilestoneModalOpen: false,
       showActionButton: false,
       isDeleteConfirmationOpen: false,
+      showOngoing: props.showOngoing,
+      showCompleted: props.showCompleted,
     };
     this.openMilestoneModal = this.openMilestoneModal.bind(this);
     this.handleMilestoneModalClose = this.handleMilestoneModalClose.bind(this);
@@ -304,13 +306,13 @@ class MilestoneRow extends Component {
         <FlatButton
           labelStyle={ongoingLabelStyle}
           label={ongoingText}
-          primary
+          secondary
           onTouchTap={this.toggleOngoing}
         />
         <FlatButton
           labelStyle={completedLabelStyle}
           label={completedText}
-          secondary
+          primary
           onTouchTap={this.toggleCompleted}
         />
       </div>
