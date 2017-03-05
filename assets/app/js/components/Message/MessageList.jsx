@@ -8,11 +8,17 @@ const propTypes = {
   messages: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
 };
-
+const styles = {
+  emptyContainer: {
+    color: '#aaaaaa',
+    left: '50%',
+    textAlign: 'center',
+  },
+};
 const MessageList = ({ messages, users }) => {
   let content = (
-    <div className="no-items">
-      <h3>No Messages availabe!</h3>
+    <div style={styles.emptyContainer}>
+      <h3>Post some messages!</h3>
     </div>
   );
   const messageItems = [];

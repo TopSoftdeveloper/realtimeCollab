@@ -70,8 +70,9 @@ class MilestoneView extends Component {
     this.state = {
       isMilestoneModalOpen: false,
       view: VIEWS.ongoingTasks,
-      showMessageView: false,
-      selectedMilestoneId: null,
+      messageView: {
+        show: true,
+      },
     };
     this.handleMilestoneModalClose = this.handleMilestoneModalClose.bind(this);
     this.addMilestone = this.addMilestone.bind(this);
@@ -80,6 +81,8 @@ class MilestoneView extends Component {
     this.editMilestone = this.editMilestone.bind(this);
     this.changeView = this.changeView.bind(this);
     this.matchCurrentView = this.matchCurrentView.bind(this);
+    this.showMessageView = this.showMessageView.bind(this);
+    this.dismissMessageView = this.dismissMessageView.bind(this);
   }
   matchCurrentView(viewValue) {
     return this.state.view.value === VIEWS[viewValue].value;
@@ -91,6 +94,22 @@ class MilestoneView extends Component {
         view: VIEWS[target.key],
       });
     }
+  }
+  showMessageView(milestone) {
+    this.setState({
+      messageView: {
+        show: true,
+        messageMilestoneId: milestone.id,
+        messageMilestoneName: milestone.content,
+      },
+    });
+  }
+  dismissMessageView() {
+    this.setState({
+      messageView: {
+        show: false,
+      },
+    });
   }
   // handler for change view to be `tasksAssignedTo`
   changeViewAsTasksAssignedTo(assigneeId, assigneeName) {
@@ -265,6 +284,19 @@ class MilestoneView extends Component {
       />
     );
   }
+  renderMessageView() {
+    return (this.state.messageView.show &&
+      <Col md={6}>
+        <Paper zDepth={1} className="milestone-message-view">
+          <ProjectMessageView
+            milestoneId={this.state.messageView.messageMilestoneId}
+            title={this.state.messageView.messageMilestoneName}
+            onDismiss={this.dismissMessageView}
+          />
+        </Paper>
+      </Col>
+    );
+  }
   render() {
     const { users, tasks, projectId, actions, milestones } = this.props;
     let content = null;
@@ -318,6 +350,7 @@ class MilestoneView extends Component {
           const milestoneView = (
             <MilestoneRow
               milestone={milestone}
+              onSelect={this.showMessageView}
               onEditMilestone={onEdit}
               onDeleteMilestone={onDelete}
               projectId={projectId}
@@ -336,7 +369,12 @@ class MilestoneView extends Component {
     }
     return (
       <Row >
-        <Col md={8}>
+        <Col
+          style={assign({}, this.state.messageView.show && {
+            paddingRight: 5,
+          })}
+          md={this.state.messageView.show ? 6 : 12}
+        >
           <Paper className="milestone-menu-view" zDepth={1}>
             <Toolbar>
               <ToolbarGroup firstChild key="firstToolbarGroup">
@@ -356,11 +394,7 @@ class MilestoneView extends Component {
             {content}
           </Paper>
         </Col>
-        <Col md={4}>
-          <Paper zDepth={1} className="">
-            <ProjectMessageView />
-          </Paper>
-        </Col>
+        {this.renderMessageView()}
       </Row>
 
     );

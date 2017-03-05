@@ -25,6 +25,7 @@ const propTypes = {
   actions: PropTypes.object.isRequired,
   tasks: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
+  onSelect: PropTypes.func.isRequired,
   showOngoing: PropTypes.bool,
   showCompleted: PropTypes.bool,
 };
@@ -52,6 +53,7 @@ class MilestoneRow extends Component {
     this.handleDeleteConfirmationClose = this.handleDeleteConfirmationClose.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.onSelect = this.onSelect.bind(this);
     this.handleTaskModalClose = this.handleTaskModalClose.bind(this);
     this.addTask = this.addTask.bind(this);
     this.openTaskModal = this.openTaskModal.bind(this);
@@ -77,6 +79,9 @@ class MilestoneRow extends Component {
     this.setState({
       showActionButton: false,
     });
+  }
+  onSelect() {
+    this.props.onSelect(this.props.milestone);
   }
   toggleOngoing() {
     this.setState({
@@ -374,7 +379,7 @@ class MilestoneRow extends Component {
                     onMouseEnter={this.onMouseEnter}
                     onMouseLeave={this.onMouseLeave}
                   >
-                    {milestone.content}
+                    <span onClick={this.onSelect}>{milestone.content}</span>
                     {this.renderMilestoneActions()}
                     {this.renderMilestoneInfo(ongoingTasks, completedTasks)}
                   </div>

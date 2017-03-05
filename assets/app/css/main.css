@@ -7,9 +7,9 @@ html, body{
   position:relative;
   height: 100%;
   min-height: 100%;
-  min-width:1024px; /* suppose you want minimun width of 1000px */
-  width: auto !important;  /* Firefox will set width as auto */
-  width:1024px;             /* As IE ignores !important it will set width as 1000px; */
+  min-width:1100px; /* suppose you want minimun width of 1000px */
+  width: auto !important; /* Firefox will set width as auto */
+  width:1100px; /* As IE ignores !important it will set width as 1000px; */
 }
 /*********************** TreeNode *******************/
 .borderless {
@@ -357,6 +357,12 @@ html, body{
   padding-bottom: 10px;
   border-radius: 1px;
 }
+.milestone-message-view {
+  height: 100%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 1px;
+}
 .milestone-content-view {
   height: auto;
   margin-top: 5px;
@@ -418,7 +424,7 @@ html, body{
   color: #aaaaaa;
   left: 50%;
   text-align: center;
-  margin-top: 150px;
+  margin-top: 100px;
 }
 
 .invisible {
