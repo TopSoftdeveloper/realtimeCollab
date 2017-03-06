@@ -1084,15 +1084,10 @@ export const declineProject = (projectId, notificationId) => (
 
   export function createMessage(message) {
     return function(dispatch) {
-      // dispatch(_addTask(task));
-      // delete task.id
       serverCreateMessage(message).done(res => {
-        // update the stores with the actual id
-        console.log("yeah, message is created!");
-        console.log(res);
+        dispatch(addMessage(res));
       }).fail(e => {
         console.log(e);
-        // dispatch(_deleteTask(task.id));
       });
     };
   }

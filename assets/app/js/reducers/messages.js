@@ -25,6 +25,8 @@ const messages = (state = [], action) => {
   switch (action.type) {
     case AppConstants.INIT_MESSAGES:
       return [...action.messages];
+    case AppConstants.ADD_MESSAGE:
+      return [...state, action.message];
     default:
       return state;
   }
