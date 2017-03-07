@@ -3,10 +3,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { FormControl, FormGroup } from 'react-bootstrap';
 
 const propTypes = {
-  milestoneId: PropTypes.string,
-  projectId: PropTypes.string.isRequired,
-  authorId: PropTypes.string.isRequired,
-  onPostNewMessage: PropTypes.func.isRequired,
+  contentValue: PropTypes.string,
+  onSubmitMethod: PropTypes.func.isRequired,
 };
 const styles = {
   textarea: {
@@ -22,25 +20,23 @@ const styles = {
     marginTop: 5,
   },
 };
-class PostMessageInput extends Component {
+class MessageModal extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      inputText: '',
+      inputText: props.contentValue || '',
     };
     this.onSubmitButtonClick = this.onSubmitButtonClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      inputText: nextProps.contentValue || '',
+    });
+  }
   onSubmitButtonClick() {
     if (this.state.inputText.trim()) {
-      const message = {
-        pinned: false,
-        content: this.state.inputText,
-        author_id: this.props.authorId,
-        project_id: this.props.projectId,
-        milestone_id: this.props.milestoneId,
-      };
-      this.props.onPostNewMessage(message);
+      this.props.onSubmitMethod(this.state.inputText);
       this.setState({ inputText: '' });
     }
   }
@@ -69,5 +65,5 @@ class PostMessageInput extends Component {
   }
 }
 
-PostMessageInput.propTypes = propTypes;
-export default PostMessageInput;
+MessageModal.propTypes = propTypes;
+export default MessageModal;

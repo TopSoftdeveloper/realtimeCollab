@@ -1,23 +1,28 @@
+import assign from 'object-assign';
 import * as AppConstants from '../AppConstants';
 /*
 Example state tree:
 const messages = [
   {
-    id: 'NkgjBKgCx',
-    data: "{\"ref_type\":\"branch\",\"ref\":\"helloworld\",\"user_id\":\"NysSbasYe\"}",
-    template: "GITHUB_CREATE",
-    created_at: "2016-03-27T08:14:55.000Z",
-    updated_at: "2016-03-27T08:14:55.000Z",
-    project_id: "4yGslGste",
+    id: '41PYdlLcG',
+    content: 'This could be a very very very long comment!',
+    author_id: 'EkD69ORwf',
+    pinned: true,
+    created_at: '2017-03-06T07:01:58.000Z',
+    updated_at: '2017-03-06T07:01:58.000Z',
+    milestone_id: 'V1BBAPyKz',
+    project_id: '4JjOdFAdz'
   },
   {
-    id: '4JPGvKe0e',
-    data: '{\"user_id\":\"NysSbasYe\",\"commitSize\":2}',
-    template: 'GITHUB_PUSH',
-    created_at: '2016-03-27T08:21:10.000Z',
-    updated_at: '2016-03-27T08:21:10.000Z',
-    project_id: 'Ny2XGGjKl',
-  }
+    id: '41T-d8rcz',
+    content: '123',
+    author_id: 'EkD69ORwf',
+    pinned: false,
+    created_at: '2017-03-05T19:37:16.000Z',
+    updated_at: '2017-03-05T19:37:16.000Z',
+    milestone_id: 'V1BBAPyKz',
+    project_id: '4JjOdFAdz'
+  },
 ]
 */
 
@@ -27,6 +32,18 @@ const messages = (state = [], action) => {
       return [...action.messages];
     case AppConstants.ADD_MESSAGE:
       return [...state, action.message];
+    case AppConstants.PIN_MESSAGE:
+      return state.map(message => (
+        message.id === action.id ? assign({}, message, { pinned: true }) : message
+      ));
+    case AppConstants.UNPIN_MESSAGE:
+      return state.map(message => (
+        message.id === action.id ? assign({}, message, { pinned: false }) : message
+      ));
+    case AppConstants.EDIT_MESSAGE_CONTENT:
+      return state.map(message => (
+        message.id === action.id ? assign({}, message, { content: action.content }) : message
+      ));
     default:
       return state;
   }

@@ -2,8 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
 
-import PostMessageInput from './PostMessageInput.jsx';
+import MessageModal from './MessageModal.jsx';
 import MessageList from './MessageList.jsx';
 
 const propTypes = {
@@ -11,7 +12,12 @@ const propTypes = {
   users: PropTypes.array.isRequired,
   messages: PropTypes.array.isRequired,
   currentProject: PropTypes.object.isRequired,
-  onPostNewMessage: PropTypes.func.isRequired,
+  actions: React.PropTypes.shape({
+    onPostNewMessage: PropTypes.func.isRequired,
+    onPinMessage: PropTypes.func.isRequired,
+    onUnpinMessage: PropTypes.func.isRequired,
+    onEditMessageContent: PropTypes.func.isRequired,
+  }),
   // props passed by parents
   milestoneId: PropTypes.string,
   onDismiss: PropTypes.func.isRequired,
@@ -31,19 +37,121 @@ const styles = {
   inputContainer: {
     padding: 10,
   },
+  contentContainer: {
+  },
+  emptyContainer: {
+    color: '#aaaaaa',
+    left: '50%',
+    textAlign: 'center',
+  },
 };
 class Message extends Component {
   constructor(props, context) {
     super(props, context);
+    this.state = {
+      showSystemActivity: true,
+      showUserMessage: true,
+    };
     this.onClickDismissButton = this.onClickDismissButton.bind(this);
+    this.toggleSystemActivity = this.toggleSystemActivity.bind(this);
+    this.toggleUserMessage = this.toggleUserMessage.bind(this);
+    this.postNewMessage = this.postNewMessage.bind(this);
   }
   onClickDismissButton() {
     this.props.onDismiss();
   }
+  toggleUserMessage() {
+    this.setState({
+      showUserMessage: !this.state.showUserMessage,
+    });
+  }
+  toggleSystemActivity() {
+    this.setState({
+      showSystemActivity: !this.state.showSystemActivity,
+    });
+  }
+  postNewMessage(content) {
+    const message = {
+      pinned: false,
+      content,
+      author_id: this.props.users.filter(user => user.me)[0].id,
+      project_id: this.props.currentProject.id,
+      milestone_id: this.props.milestoneId,
+    };
+    this.props.actions.onPostNewMessage(message);
+  }
+  renderInfoButtons(milestoneMessages) {
+    const userMessages = milestoneMessages.filter(message => message.author_id);
+    const systemActivity = milestoneMessages.filter(message => !message.author_id);
+    const userMessagesText =
+      `${userMessages.length} ${userMessages.length > 1 ? 'Messages' : 'Message'}`;
+    const systemActivityText =
+      `${systemActivity.length} ${systemActivity.length > 1 ? 'Activities' : 'Activity'}`;
+    const messageLabelStyle = {
+      opacity: this.state.showUserMessage ? 1 : 0.5,
+      fontSize: 12,
+    };
+    const activityLabelStyle = {
+      opacity: this.state.showSystemActivity ? 1 : 0.5,
+      fontSize: 12,
+    };
+    return (
+      <div>
+        <FlatButton
+          labelStyle={messageLabelStyle}
+          label={userMessagesText}
+          secondary
+          onTouchTap={this.toggleUserMessage}
+        />
+        <FlatButton
+          labelStyle={activityLabelStyle}
+          label={systemActivityText}
+          primary
+          onTouchTap={this.toggleSystemActivity}
+        />
+      </div>
+    );
+  }
+  renderMessageList(milestoneMessages) {
+    const filteredMessages = milestoneMessages.filter(message => (
+      (this.state.showSystemActivity && !message.author_id) ||
+        (this.state.showUserMessage && message.author_id)
+    ));
+    if (milestoneMessages.length > 0) {
+      return (
+        <div style={styles.contentContainer}>
+          <MessageList
+            actions={this.props.actions}
+            messages={filteredMessages}
+            users={this.props.users}
+          />
+        </div>
+      );
+    }
+    return (
+      <div style={styles.emptyContainer}>
+        <h3>Post some messages!</h3>
+      </div>
+    );
+  }
+  renderPinnedMessageList(milestoneMessages) {
+    const pinnedMessages = milestoneMessages.filter(message => message.pinned);
+    return (pinnedMessages.length > 0 &&
+      <div>
+        <Subheader>Pinned Messages: </Subheader>
+        <MessageList
+          actions={this.props.actions}
+          messages={pinnedMessages}
+          users={this.props.users}
+        />
+      </div>
+
+    );
+  }
   render() {
-    const { messages, users, milestoneId } = this.props;
-    const filteredMessages = messages.filter(message =>
-      milestoneId === null || message.milestone_id === milestoneId);
+    const { messages, milestoneId } = this.props;
+    const milestoneMessages = messages.filter(message =>
+      message.milestone_id === milestoneId);
     return (
       <div>
         <Subheader style={styles.titleContainer}>
@@ -55,19 +163,13 @@ class Message extends Component {
             <i className="material-icons">clear</i>
           </IconButton>
         </Subheader>
-        <div style={styles.contentContainer}>
-          <MessageList
-            messages={filteredMessages}
-            users={users}
-          />
-        </div>
+        {this.renderPinnedMessageList(milestoneMessages)}
+        {this.renderInfoButtons(milestoneMessages)}
+        {this.renderMessageList(milestoneMessages)}
         <Divider />
         <div style={styles.inputContainer}>
-          <PostMessageInput
-            projectId={this.props.currentProject.id}
-            milestoneId={this.props.milestoneId}
-            authorId={this.props.users.filter(user => user.me)[0].id}
-            onPostNewMessage={this.props.onPostNewMessage}
+          <MessageModal
+            onSubmitMethod={this.postNewMessage}
           />
         </div>
       </div>

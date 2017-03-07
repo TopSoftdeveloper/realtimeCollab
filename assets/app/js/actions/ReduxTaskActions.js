@@ -10,7 +10,7 @@ import { serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMark
   getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
   syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
   queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile,
-  createFolder, moveFile, serverCreateMessage,
+  createFolder, moveFile, serverCreateMessage, serverEditMessage,
   serverGetNewesfeed, refreshTokens, listRepoEvents, } from '../utils/apiUtil';
 import { isObjectPresent, filterUnique, getCurrentProject, getNewColour } from '../utils/general';
 import { userIsOnline } from './SocketActions';
@@ -98,6 +98,10 @@ export const _setDirectoryAsRoot = makeActionCreator(AppConstants.SET_DIRECTORY_
 export const _setDefaultGithubRepo = makeActionCreator(AppConstants.SET_GITHUB_REPO, 'projectId',
   'repoName', 'repoOwner');
 export const addMessage = makeActionCreator(AppConstants.ADD_MESSAGE, 'message');
+export const _pinMessage = makeActionCreator(AppConstants.PIN_MESSAGE, 'id');
+export const _unpinMessage = makeActionCreator(AppConstants.UNPIN_MESSAGE, 'id');
+export const _editMessageContent = makeActionCreator(AppConstants.EDIT_MESSAGE_CONTENT,
+  'id', 'content');
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
 export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
@@ -1086,6 +1090,38 @@ export const declineProject = (projectId, notificationId) => (
     return function(dispatch) {
       serverCreateMessage(message).done(res => {
         dispatch(addMessage(res));
+      }).fail(e => {
+        console.log(e);
+      });
+    };
+  }
+  export function pinMessage(messageId) {
+    return function(dispatch) {
+      dispatch(_pinMessage(messageId));
+      serverEditMessage(messageId, { pinned: true }).done(res => {
+        dispatch(snackbarMessage('Messsage pinned', 'default'))
+      }).fail(e => {
+        dispatch(_unpinMessage(messageId));
+        console.log(e);
+      });
+    };
+  }
+  export function unpinMessage(messageId) {
+    return function(dispatch) {
+      dispatch(_unpinMessage(messageId));
+      serverEditMessage(messageId, { pinned: false }).done(res => {
+        dispatch(snackbarMessage('Messsage unpinned', 'default'))
+      }).fail(e => {
+        dispatch(_pinMessage(messageId));
+        console.log(e);
+      });
+    };
+  }
+  export function editMessageContent(messageId, content) {
+    return function(dispatch) {
+      serverEditMessage(messageId, { content }).done(res => {
+        dispatch(_editMessageContent(messageId, content));
+        dispatch(snackbarMessage('Messsage edited', 'default'));
       }).fail(e => {
         console.log(e);
       });

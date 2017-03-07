@@ -1,27 +1,24 @@
-import React, { Component } from 'react'
-import {Tooltip, OverlayTrigger} from 'react-bootstrap'
-import vagueTime from 'vague-time'
+import vagueTime from 'vague-time';
 import UserColours from '../UserColours';
 
 export const getFileIcon = type => {
-	const IMG_ROOT = '../../../images/'
-  if (type.includes('image/')) {
-    return IMG_ROOT + 'icon_11_image_list.png'
-  } else if (type.includes('spreadsheet')) {
-    return IMG_ROOT + 'icon_11_spreadsheet_list.png'
-  } else if (type.includes('presentation')) {
-    return IMG_ROOT + 'icon_11_presentation_list.png'
-  } else if (type.includes('pdf')) {
-    return IMG_ROOT + 'icon_12_pdf_list.png'
-  } else if (type.includes('zip') || type.includes('compressed')) {
-    return IMG_ROOT + 'icon_9_archive_list.png'
-  } else if (type.includes('word')) {
-    return IMG_ROOT + 'icon_11_document_list.png'
-  } else if (type.includes('text/')) {
-    return IMG_ROOT + 'icon_10_text_list.png'
-  } else {
-    return IMG_ROOT + 'generic_app_icon_16.png'
-  }
+	const IMG_ROOT = '../../../images/';
+	if (type.includes('image/')) {
+		return `${IMG_ROOT}icon_11_image_list.png`;
+	} else if (type.includes('spreadsheet')) {
+		return `${IMG_ROOT}icon_11_spreadsheet_list.png`;
+	} else if (type.includes('presentation')) {
+		return `${IMG_ROOT}icon_11_presentation_list.png`;
+	} else if (type.includes('pdf')) {
+		return `${IMG_ROOT}icon_12_pdf_list.png`;
+	} else if (type.includes('zip') || type.includes('compressed')) {
+		return `${IMG_ROOT}icon_9_archive_list.png`;
+	} else if (type.includes('word')) {
+		return `${IMG_ROOT}icon_11_document_list.png`;
+	} else if (type.includes('text/')) {
+		return `${IMG_ROOT}icon_10_text_list.png`;
+	}
+	return `${IMG_ROOT}generic_app_icon_16.png`;
 };
 
 export function toFuzzyTime(time) {
@@ -37,6 +34,14 @@ export function toFuzzyTime(time) {
 		units: 's'
 	})
 }
+/**
+ Convert epoch time to absolute fuzzy time
+ */
+export const toAbsoluteFuzzyTime = time => (
+	vagueTime.get({
+		to: new Date(time).getTime() / 1000,
+		units: 's',
+}));
 
 function hasTrailingSlash(urlString) {
 	return urlString[urlString.length-1] === '/';
@@ -88,7 +93,7 @@ function extractRegexGroup(re) {
 }
 
 export function getProjectRoot() {
-		return '/app/project/' + getCurrentProject()
+	return '/app/project/' + getCurrentProject()
 }
 
 export function isItemPresent(arr, id) {
@@ -115,27 +120,27 @@ export function filterUnique(arr) {
 // dump a list to string with separators.
 export function dumpList(list, separator = ',') {
 
-		var output = '';
-		while(list.length>0) {
-			output += list.shift()
-			if(list.length>0) {
-				output+=separator
-			}
+	var output = '';
+	while(list.length>0) {
+		output += list.shift()
+		if(list.length>0) {
+			output+=separator
 		}
-		return output
+	}
+	return output
 }
 
 // Returns a random integer between min (inclusive) and max (inclusive)
 export const getRandomInt = (min, max) => (
-  Math.floor(Math.random() * (max - min + 1)) + min
+	Math.floor(Math.random() * (max - min + 1)) + min
 );
 
 export const getNewColour = (usedColours) => {
-  // Returns an unused colour from the predefined colour palette.
-  // If all colours are used, returns a random colour
-  const coloursLeft = UserColours.filter(colour => usedColours.indexOf(colour) <= -1);
-  if (coloursLeft.length > 0) {
-    return coloursLeft[getRandomInt(0, coloursLeft.length - 1)];
-  }
-  return UserColours[getRandomInt(0, UserColours.length - 1)];
+	// Returns an unused colour from the predefined colour palette.
+	// If all colours are used, returns a random colour
+	const coloursLeft = UserColours.filter(colour => usedColours.indexOf(colour) <= -1);
+	if (coloursLeft.length > 0) {
+		return coloursLeft[getRandomInt(0, coloursLeft.length - 1)];
+	}
+	return UserColours[getRandomInt(0, UserColours.length - 1)];
 };

@@ -6,7 +6,7 @@ import Sidebar from 'react-sidebar';
 import { Grid, Row } from 'react-bootstrap';
 import assign from 'object-assign';
 
-import { Color } from '../myTheme.js'
+import { Color } from '../myTheme.js';
 import * as Actions from '../actions/ReduxTaskActions';
 import * as SocketActions from '../actions/SocketActions';
 import Header from '../components/Header.jsx';

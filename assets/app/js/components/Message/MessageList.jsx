@@ -1,48 +1,65 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
-
+import Divider from 'material-ui/Divider';
 import UserMessage from './UserMessage.jsx';
 import SystemMessage from './SystemMessage.jsx';
 
 const propTypes = {
   messages: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
+  actions: React.PropTypes.shape({
+    onPostNewMessage: PropTypes.func.isRequired,
+    onPinMessage: PropTypes.func.isRequired,
+    onUnpinMessage: PropTypes.func.isRequired,
+    onEditMessageContent: PropTypes.func.isRequired,
+  }),
 };
 const styles = {
-  emptyContainer: {
-    color: '#aaaaaa',
-    left: '50%',
-    textAlign: 'center',
+  container: {
+    overflowX: 'hidden',
   },
 };
-const MessageList = ({ messages, users }) => {
-  let content = (
-    <div style={styles.emptyContainer}>
-      <h3>Post some messages!</h3>
-    </div>
-  );
+const MessageList = ({ messages, users, actions }) => {
+  let content = null;
+  let previousMessageAuthor;
   const messageItems = [];
-  messages.forEach(message => {
+  messages.sort((messageA, messageB) => (
+    new Date(messageA.created_at).getTime() - new Date(messageB.created_at).getTime()
+  )).forEach(message => {
+    const currentMessageAuthor = message.author_id;
+    if (previousMessageAuthor !== undefined && previousMessageAuthor !== currentMessageAuthor) {
+      messageItems.push(<Divider style={{ marginTop: 10, marginBottom: 10 }} />);
+    }
     if (message.author_id) {
       let targetUser = users.filter(user => user.id === message.author_id);
       if (targetUser.length > 0) {
         targetUser = _.first(targetUser);
         const messageItem = {
+          id: message.id,
           pinned: message.pinned,
           content: message.content,
           created_at: message.created_at,
           authorName: targetUser.display_name,
           authorAvatarUrl: targetUser.display_image,
         };
-        messageItems.push(<UserMessage key={message.id} message={messageItem} />);
+        messageItems.push(
+          <UserMessage
+            key={message.id} message={messageItem}
+            onPinMessage={actions.onPinMessage}
+            onUnpinMessage={actions.onUnpinMessage}
+            onEditMessageContent={actions.onEditMessageContent}
+          />
+        );
       }
     } else {
       const messageItem = {
+        id: message.id,
         content: message.content,
         created_at: message.created_at,
       };
       messageItems.push(<SystemMessage key={message.id} message={messageItem} />);
     }
+    previousMessageAuthor = currentMessageAuthor;
   });
 
   if (messageItems.length > 0) {
@@ -50,10 +67,8 @@ const MessageList = ({ messages, users }) => {
   }
 
   return (
-    <div className="event-list">
-      <ul>
-        {content}
-      </ul>
+    <div style={styles.container}>
+      {content}
     </div>
   );
 };

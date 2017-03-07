@@ -28,4 +28,5 @@ export default MyRawTheme;
 export const Color = {
   leftPanelItemHightColor: fade(black, 0.4),
   leftPanelBackgroundColor: '#37474f',
+  messageViewPinBackgroundColor: fade('#fcf8e3', 1),
 };
