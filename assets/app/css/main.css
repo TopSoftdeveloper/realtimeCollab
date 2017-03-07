@@ -6,7 +6,7 @@ html, body{
   padding: auto;
   position:relative;
   height: 100%;
-  min-height: 100%;
+  min-height: 100% !important;
   min-width:1100px; /* suppose you want minimun width of 1000px */
   width: auto !important; /* Firefox will set width as auto */
   width:1100px; /* As IE ignores !important it will set width as 1000px; */
@@ -88,10 +88,6 @@ html, body{
   margin-bottom: 20px;
 }
 /********************* task table ************************/
-.main-content {
-  margin-top: 10px;
-  margin-left: 30px;
-}
 
 
 
@@ -355,13 +351,11 @@ html, body{
   margin-top: 5px;
   margin-bottom: 5px;
   padding-bottom: 10px;
-  border-radius: 1px;
 }
 .milestone-message-view {
   height: 100%;
   margin-top: 5px;
   margin-bottom: 5px;
-  border-radius: 1px;
 }
 .milestone-content-view {
   height: auto;
@@ -462,8 +456,13 @@ html, body{
 
 .body-wrapper {
   width: 99%;
-  min-height: 85%;
+  height: 80%;
   margin-top: 70px;
+}
+.main-content {
+  height: 100%;
+  margin-top: 10px;
+  margin-left: 30px;
 }
 
 .my-step-container {
@@ -514,6 +513,9 @@ html, body{
   margin-left: 43px;
 }
 
+.full-height {
+  height: 100%;
+}
 /************************ Settings **************************/
 .settings-btn {
   margin-left: 20px;

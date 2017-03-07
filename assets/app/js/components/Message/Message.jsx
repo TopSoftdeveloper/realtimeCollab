@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -24,18 +23,30 @@ const propTypes = {
   title: PropTypes.string,
 };
 const styles = {
+  container: {
+    display: 'flex',
+    flexFlow: 'column',
+    height: '100%',
+    overflowY: 'auto',
+  },
   titleContainer: {
+    flex: '0 1 auto',
     fontSize: 18,
     backgroundColor: 'rgb(232, 232, 232)',
+  },
+  messageListContainer: {
+    flex: '1 1 auto',
+    overflowY: 'auto',
+  },
+  inputContainer: {
+    flex: '0 1 40px',
+    padding: 10,
   },
   closeIconContainer: {
     fontSize: 20,
     paddingRight: 5,
     paddingTop: 5,
     float: 'right',
-  },
-  inputContainer: {
-    padding: 10,
   },
   contentContainer: {
   },
@@ -153,7 +164,7 @@ class Message extends Component {
     const milestoneMessages = messages.filter(message =>
       message.milestone_id === milestoneId);
     return (
-      <div>
+      <div style={styles.container}>
         <Subheader style={styles.titleContainer}>
           <span><b>{this.props.title}</b></span>
           <IconButton
@@ -163,10 +174,12 @@ class Message extends Component {
             <i className="material-icons">clear</i>
           </IconButton>
         </Subheader>
-        {this.renderPinnedMessageList(milestoneMessages)}
-        {this.renderInfoButtons(milestoneMessages)}
-        {this.renderMessageList(milestoneMessages)}
-        <Divider />
+        <div style={styles.messageListContainer}>
+          {this.renderPinnedMessageList(milestoneMessages)}
+          {this.renderInfoButtons(milestoneMessages)}
+          {this.renderMessageList(milestoneMessages)}
+        </div>
+
         <div style={styles.inputContainer}>
           <MessageModal
             onSubmitMethod={this.postNewMessage}

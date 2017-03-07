@@ -37,6 +37,24 @@ const styles = {
     verticalAlign: 'middle',
     fontSize: 20,
   },
+  milestoneContainer: {
+    overflowY: 'hidden',
+    overflowX: 'hidden',
+    maxHeight: '100%',
+    height: '100%',
+    display: 'flex',
+    flexFlow: 'column',
+  },
+  addMilestoneBtn: {
+    height: 30,
+  },
+  milestoneToolbarContainer: {
+    flex: '0 1 auto',
+  },
+  milestoneContentContainer: {
+    flex: '1 1 auto',
+    overflowY: 'auto',
+  },
 };
 // predefined views
 const VIEWS = {
@@ -293,12 +311,13 @@ class MilestoneView extends Component {
         className={this.props.milestones.length === 0 ? 'animated infinite pulse' : ''}
         onTouchTap={this.openMilestoneModal}
         secondary
+        style={styles.addMilestoneBtn}
       />
     );
   }
   renderMessageView() {
     return (this.state.messageView.show &&
-      <Col md={6}>
+      <Col md={6} className="full-height">
         <Paper zDepth={1} className="milestone-message-view">
           <ProjectMessageView
             milestoneId={this.state.messageView.messageMilestoneId}
@@ -380,15 +399,20 @@ class MilestoneView extends Component {
       content = milestoneRows.length === 0 ? this.renderEmptyArea() : milestoneRows;
     }
     return (
-      <Row >
+      <Row className="full-height">
         <Col
-          style={assign({}, this.state.messageView.show && {
+          style={assign({}, styles.milestoneColContainer, this.state.messageView.show && {
             paddingRight: 5,
           })}
           md={this.state.messageView.show ? 6 : 12}
+          className="full-height"
         >
-          <Paper className="milestone-menu-view" zDepth={1}>
-            <Toolbar>
+          <Paper
+            className="milestone-menu-view"
+            zDepth={this.state.messageView.show ? 1 : 0}
+            style={styles.milestoneContainer}
+          >
+            <Toolbar style={styles.milestoneToolbarContainer}>
               <ToolbarGroup firstChild key="firstToolbarGroup">
                 {this.renderCreateMilestoneButton()}
                 <AvatarList
@@ -403,7 +427,9 @@ class MilestoneView extends Component {
               </ToolbarGroup>
               {this.renderMilestoneModal()}
             </Toolbar>
-            {content}
+            <div style={styles.milestoneContentContainer}>
+              {content}
+            </div>
           </Paper>
         </Col>
         {this.renderMessageView()}

@@ -50,8 +50,14 @@ class Project extends Component {
 
     return (
       <div className="main-content">
-        <Tabs value={currentTab}>
+        <Tabs
+          value={currentTab}
+          contentContainerClassName="full-height"
+          className="full-height"
+          tabTemplateStyle={{ height: '100%' }}
+        >
           <Tab
+            className="full-height"
             label="Milestones"
             value={AppConstants.PATH.milestones}
             onActive={this.changeTabToMilestone}
