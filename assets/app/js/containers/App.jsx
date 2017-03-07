@@ -62,9 +62,6 @@ class App extends Component {
     socketActions.monitorProjectChanges();
     socketActions.monitorNotifications();
     socketActions.monitorEditStatus();
-    this.state = {
-      showSidebar: true,
-    };
     this.toggleSidebar = this.toggleSidebar.bind(this);
   }
   getChildContext() {
@@ -104,9 +101,7 @@ class App extends Component {
     setInterval(this.checkTokenExpiry, checkingIntervalMs);
   }
   toggleSidebar() {
-    this.setState({
-      showSidebar: !this.state.showSidebar,
-    });
+    this.props.actions.setSidebarVisibility(!this.props.app.showSidebar);
   }
   renderMainContent() {
     const { app, projects } = this.props;
@@ -164,7 +159,7 @@ class App extends Component {
             docked
             open
             styles={{
-              sidebar: assign({}, styles.sidebar, !this.state.showSidebar && {
+              sidebar: assign({}, styles.sidebar, !this.props.app.showSidebar && {
                 display: 'none',
               }),
             }}
@@ -180,7 +175,7 @@ class App extends Component {
             <div className="body-wrapper">
               <div
                 style={
-                  assign({}, styles.floatingSidebarIconContainer, !this.state.showSidebar && {
+                  assign({}, styles.floatingSidebarIconContainer, !this.props.app.showSidebar && {
                     left: 0,
                   })
                 }
@@ -190,7 +185,7 @@ class App extends Component {
                   style={styles.floatingSidebarIcon}
                   className="material-icons"
                 >
-                  {this.state.showSidebar ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
+                  {this.props.app.showSidebar ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
                 </i>
               </div>
               {this.renderMainContent()}

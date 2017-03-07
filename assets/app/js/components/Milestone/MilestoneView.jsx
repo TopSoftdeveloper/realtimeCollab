@@ -71,7 +71,7 @@ class MilestoneView extends Component {
       isMilestoneModalOpen: false,
       view: VIEWS.ongoingTasks,
       messageView: {
-        show: true,
+        show: false,
       },
     };
     this.handleMilestoneModalClose = this.handleMilestoneModalClose.bind(this);
@@ -83,6 +83,16 @@ class MilestoneView extends Component {
     this.matchCurrentView = this.matchCurrentView.bind(this);
     this.showMessageView = this.showMessageView.bind(this);
     this.dismissMessageView = this.dismissMessageView.bind(this);
+  }
+  componentWillReceiveProps(nextProps) {
+    // dismiss message view if swtich to a different project
+    if (this.props.projectId !== nextProps.projectId) {
+      this.setState({
+        messageView: {
+          show: false,
+        },
+      });
+    }
   }
   matchCurrentView(viewValue) {
     return this.state.view.value === VIEWS[viewValue].value;
@@ -103,6 +113,7 @@ class MilestoneView extends Component {
         messageMilestoneName: milestone.content,
       },
     });
+    this.props.actions.setSidebarVisibility(false);
   }
   dismissMessageView() {
     this.setState({
@@ -110,6 +121,7 @@ class MilestoneView extends Component {
         show: false,
       },
     });
+    this.props.actions.setSidebarVisibility(true);
   }
   // handler for change view to be `tasksAssignedTo`
   changeViewAsTasksAssignedTo(assigneeId, assigneeName) {

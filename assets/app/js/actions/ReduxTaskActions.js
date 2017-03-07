@@ -512,6 +512,7 @@ export const declineProject = (projectId, notificationId) => (
         loading: true,
         queryString: '',
         searchFilter: 'all',
+        showSidebar: true,
       }));
       dispatch(initSnackbar({
         isOpen: false,
@@ -1127,3 +1128,10 @@ export const declineProject = (projectId, notificationId) => (
       });
     };
   }
+  export const setSidebarVisibility = (isVisible) => (
+    (dispatch) => {
+      dispatch(_updateAppStatus({
+        showSidebar: isVisible,
+      }));
+    }
+  );
