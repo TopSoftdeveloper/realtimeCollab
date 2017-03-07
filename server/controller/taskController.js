@@ -65,10 +65,6 @@ function updateTask(request, reply) {
     request.payload.completed_on = request.payload.completed_on ? request.payload.completed_on : null // convert empty string to null
 
     storage.findProjectOfTask(task_id).then(function(result) {
-        if (!result) {
-            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-            return
-        }
         var project = result.project
         accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
             if (!isPartOf) {
@@ -117,6 +113,8 @@ function updateTask(request, reply) {
                 }
             })
         })
+    }).catch(function(err) {
+        reply(Boom.badRequest(err));
     })
 }
 
@@ -125,10 +123,6 @@ function getTask(request, reply) {
     var user_id = request.auth.credentials.user_id
 
     storage.findProjectOfTask(task_id).then(function(result) {
-        if (!result) {
-            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-            return
-        }
         var project = result.project
         accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
             if (!isPartOf) {
@@ -139,7 +133,9 @@ function getTask(request, reply) {
                 reply(task);
             });
         })
-    })
+    }).catch(function(err) {
+        reply(Boom.badRequest(err));
+    });
 }
 
 function createTask(request, reply) {
@@ -234,10 +230,6 @@ function markTaskAsDone(request, reply) {
     var user_id = request.auth.credentials.user_id
 
     storage.findProjectOfTask(task_id).then(function(result) {
-        if (!result) {
-            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-            return
-        }
         var project = result.project
         accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
             if (!isPartOf) {
@@ -267,17 +259,15 @@ function markTaskAsDone(request, reply) {
                 })
             });
         })
-    })
+    }).catch(function(err) {
+        reply(Boom.badRequest(err));
+    });
 }
 
 function deleteTask(request, reply) {
     var user_id = request.auth.credentials.user_id
     var task_id = request.params.task_id;
     storage.findProjectOfTask(task_id).then(function(result) {
-        if (!result) {
-            reply(Boom.badRequest(format(constants.TASK_NOT_EXIST, task_id)));
-            return
-        }
         var project = result.project
         accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
             if (!isPartOf) {
@@ -298,6 +288,8 @@ function deleteTask(request, reply) {
                     status: constants.STATUS_OK
                 });
             });
-        })
-    })
+        });
+    }).catch(function(err) {
+        reply(Boom.badRequest(err));
+    });
 }

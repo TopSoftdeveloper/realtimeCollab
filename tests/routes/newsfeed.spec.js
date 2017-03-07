@@ -1,14 +1,25 @@
-/* global sinon, expect, beforeEach, afterEach, it, describe */
-import newsfeed from '../server/controller/newsfeedController';
-import storage from '../server/data/storage';
-import templates from '../server/templates';
-import socket from '../server/controller/socket/handlers';
-import constants from '../server/constants';
-import server from '../server/server';
+/* global sinon, expect, beforeEach, afterEach, it, describe, context */
+import newsfeed from '../../server/controller/newsfeedController';
+import storage from '../../server/data/storage';
+import templates from '../../server/templates';
+import socket from '../../server/controller/socket/handlers';
+import constants from '../../server/constants';
+import server from '../../server/server';
 
-describe('Newsfeed', () => {
-  it('should save newsfeed post to disk and broadcast to project', (done) => {
-    const storageStub = sinon.stub(storage, 'saveNewsfeed');
+describe('Newsfeed', function() {
+  beforeEach(function(done) {
+    this.sandbox = sinon.sandbox.create();
+    this.socketMock = this.sandbox.mock(socket);
+    done();
+  });
+
+  afterEach(function(done) {
+    this.sandbox.restore();
+    done();
+  });
+
+  it('should save newsfeed post to disk and broadcast to project', function(done) {
+    const storageStub = this.sandbox.stub(storage, 'saveNewsfeed');
     const data = { ref_type: 'branch', ref: 'helloworld', user_id: 'NysSbasYe' };
     const template = templates.GITHUB_CREATE;
     const projectId = '4yGslGste';
@@ -23,8 +34,7 @@ describe('Newsfeed', () => {
     storageStub.withArgs(JSON.stringify(data), template, projectId)
       .returns(Promise.resolve(newsfeedPost));
 
-    const socketMock = sinon.mock(socket);
-    socketMock
+    this.socketMock
       .expects('sendMessageToProject')
       .once()
       .withExactArgs(projectId, 'newsfeed_post', newsfeedPost);
@@ -36,9 +46,9 @@ describe('Newsfeed', () => {
       });
   });
 
-  it('should get newsfeed posts', (done) => {
-    const storageGetProjectsOfUser = sinon.stub(storage, 'getProjectsOfUser');
-    const storageGetNewsfeed = sinon.stub(storage, 'getNewsfeed');
+  it('should get newsfeed posts', function(done) {
+    const storageGetProjectsOfUser = this.sandbox.stub(storage, 'getProjectsOfUser');
+    const storageGetNewsfeed = this.sandbox.stub(storage, 'getNewsfeed');
     const data = { ref_type: 'branch', ref: 'helloworld', user_id: 'NysSbasYe' };
     const userId = 'user1';
     const projectId = 'project1';

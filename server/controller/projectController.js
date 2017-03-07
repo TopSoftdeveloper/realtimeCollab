@@ -165,6 +165,8 @@ function inviteToProject(request, reply) {
                 return reply(Boom.badRequest(errorMessage))
             })
         })
+    }).catch((error) => {
+        reply(Boom.forbidden(constants.FORBIDDEN));
     });
 }
 

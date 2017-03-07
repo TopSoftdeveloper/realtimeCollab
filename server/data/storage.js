@@ -162,7 +162,7 @@ module.exports = {
         return new Promise(function(resolve, reject) {
             Task.findById(taskId).then(function (task) {
                 if (!task) {
-                    reject(taskId)
+                    reject(format(constants.TASK_NOT_EXIST, taskId))
                     return
                 }
                 Project.findById(task.project_id).then(function(project) {

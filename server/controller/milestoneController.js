@@ -46,10 +46,6 @@ function updateMilestone(request, reply) {
     }
 
     storage.findProjectOfMilestone(milestone_id).then(function(result) {
-        if (!result) {
-            reply(Boom.badRequest(format(constants.MILESTONE_NOT_EXIST, milestone_id)));
-            return
-        }
         var project = result.project
         var github_num = result.milestone.github_number
 
@@ -91,7 +87,9 @@ function updateMilestone(request, reply) {
                 reply(Boom.internal(error));
             });
         })
-    })
+    }).catch(() => {
+        reply(Boom.badRequest(format(constants.MILESTONE_NOT_EXIST, milestone_id)));
+    });
 }
 
 function createMilestone(request, reply) {
@@ -142,6 +140,8 @@ function createMilestone(request, reply) {
             reply(Boom.internal(error));
         }); //storage.createMilestone
 
+    }).catch(function(err) {
+        reply(Boom.notFound(err));
     }) // getProjectsOfUser
 }
 
@@ -151,11 +151,6 @@ function deleteMilestone(request, reply) {
     var user_id = request.auth.credentials.user_id
 
     storage.findProjectOfMilestone(milestone_id).then(function(result) {
-        if (!result) {
-            reply(Boom.badRequest(format(constants.MILESTONE_NOT_EXIST, milestone_id)));
-            return
-        }
-
         var project = result.project
         var milestone = result.milestone
 
@@ -181,5 +176,7 @@ function deleteMilestone(request, reply) {
                 github.deleteGithubMilestone(project.github_repo_owner, project.github_repo_name, token, milestone.github_number)
             });
         })
-    })
+    }).catch(function(err) {
+        reply(Boom.badRequest(format(constants.MILESTONE_NOT_EXIST, milestone_id)));
+    });
 }

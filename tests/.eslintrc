@@ -1,0 +1,17 @@
+# Include a .eslintrc for the tests directory.
+#
+# Mocha discourages arrow callbacks. Override some rules to allow regular function callbacks.
+# This allows us to use the `this` context to share variables between `beforeEach()` and `it()` blocks.
+#
+# The alternative is to use `let user;` in the root of the `describe()` block and assign
+# `user = 'something';` in inner blocks. This works well, but I find it tends to get messy.
+#
+# Having a `this.user` prefix is more obvious when scanning code.
+# Thus the decision to stick with `function()` callbacks is simply choosing the lesser evil.
+{
+  "rules": {
+    "prefer-arrow-callback": 0,
+    "func-names": 0,
+    "space-before-function-paren": 0,
+  },
+}
