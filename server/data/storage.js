@@ -440,4 +440,24 @@ module.exports = {
             where: condition
         })
     },
+    findProjectOfMessage:function(messageId) {
+      return new Promise(function(resolve, reject) {
+        Message.findById(messageId).then(function (message) {
+          if (!message) {
+            reject(messageId)
+            return
+          }
+          Project.findById(message.project_id).then(function(project) {
+            resolve({ project: project, message: message })
+          })
+        })
+      })
+    },
+    updateMessage: function(payload, messageId) {
+      return Message.update(payload, {
+        where: {
+          id: messageId,
+        },
+      });
+    },
 };

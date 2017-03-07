@@ -14,8 +14,8 @@ var accessControl = require('./accessControl');
 var analytics = require('collab-analytics')(config.database, config.logging_database);
 
 module.exports = {
-  createMilestoneComment: {
-    handler: createMessage,
+  createMessage: {
+    handler: createMessageHandler,
     payload: {
       parse: true,
     },
@@ -29,12 +29,15 @@ module.exports = {
       },
     },
   },
-  getMessageOfProject: {
-      handler: getMessageOfProject,
+  updateMessage: {
+    handler: updateMessageHandler,
+    payload: {
+      parse: true,
+    },
   },
 };
 
-function createMessage(request, reply) {
+function createMessageHandler(request, reply) {
   var user_id = request.auth.credentials.user_id;
   var projectId = request.payload.project_id;
   accessControl.isUserPartOfProject(user_id, projectId).then(function (isPartOf) {
@@ -51,4 +54,23 @@ function createMessage(request, reply) {
   });
 }
 
-function getMessageOfProject(request, reply) {}
+function updateMessageHandler(request, reply) {
+  var message_id = request.params.message_id;
+  var user_id = request.auth.credentials.user_id;
+  storage.findProjectOfMessage(message_id).then(function(result) {
+    if (!result) {
+      reply(Boom.badRequest(format(constants.MESSAGE_NOT_EXIST, message_id)));
+      return
+    }
+    var project = result.project;
+    accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
+      if (!isPartOf) {
+        reply(Boom.forbidden(constants.FORBIDDEN));
+        return;
+      }
+      storage.updateMessage(request.payload, message_id).then(function(t) {
+        reply({status: constants.STATUS_OK});
+      });
+    });
+  });
+}
