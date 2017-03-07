@@ -115,6 +115,7 @@ class UserMessage extends Component {
     return (this.state.isEditMode ?
       <MessageModal
         onSubmitMethod={this.editMessageContent}
+        onCloseMethod={this.leaveEditMode}
         contentValue={message.content}
       />
       : <div style={styles.content}>{message.content}</div>
@@ -139,7 +140,12 @@ class UserMessage extends Component {
         <Col xs={11}>
           <div>
             <span style={styles.header}>{message.authorName}</span>
-            <span style={styles.subHeader}>{toFuzzyTime(message.created_at)}</span>
+            <span style={styles.subHeader}>
+              {toFuzzyTime(message.createdAt)}
+              {message.createdAt !== message.updatedAt &&
+                ' • Edited'
+              }
+            </span>
             {this.renderOptionMenu()}
           </div>
 

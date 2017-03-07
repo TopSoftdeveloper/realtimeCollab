@@ -155,7 +155,7 @@ class Message extends Component {
     return (
       <div>
         <Subheader style={styles.titleContainer}>
-          <span>Discussion on <b>{this.props.title}</b></span>
+          <span><b>{this.props.title}</b></span>
           <IconButton
             style={styles.closeIconContainer}
             onTouchTap={this.onClickDismissButton}

@@ -21,15 +21,10 @@ const styles = {
 };
 const MessageList = ({ messages, users, actions }) => {
   let content = null;
-  let previousMessageAuthor;
   const messageItems = [];
   messages.sort((messageA, messageB) => (
     new Date(messageA.created_at).getTime() - new Date(messageB.created_at).getTime()
   )).forEach(message => {
-    const currentMessageAuthor = message.author_id;
-    if (previousMessageAuthor !== undefined && previousMessageAuthor !== currentMessageAuthor) {
-      messageItems.push(<Divider style={{ marginTop: 10, marginBottom: 10 }} />);
-    }
     if (message.author_id) {
       let targetUser = users.filter(user => user.id === message.author_id);
       if (targetUser.length > 0) {
@@ -38,7 +33,8 @@ const MessageList = ({ messages, users, actions }) => {
           id: message.id,
           pinned: message.pinned,
           content: message.content,
-          created_at: message.created_at,
+          createdAt: message.created_at,
+          updatedAt: message.updated_at,
           authorName: targetUser.display_name,
           authorAvatarUrl: targetUser.display_image,
         };
@@ -55,11 +51,10 @@ const MessageList = ({ messages, users, actions }) => {
       const messageItem = {
         id: message.id,
         content: message.content,
-        created_at: message.created_at,
+        createdAt: message.created_at,
       };
       messageItems.push(<SystemMessage key={message.id} message={messageItem} />);
     }
-    previousMessageAuthor = currentMessageAuthor;
   });
 
   if (messageItems.length > 0) {

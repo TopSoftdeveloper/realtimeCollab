@@ -16,7 +16,6 @@ const styles = {
     marginLeft: 10,
   },
   content: {
-    fontWeight: '100',
   },
 };
 const propTypes = {
@@ -29,7 +28,7 @@ const SystemMssage = ({ message }) => (
       <i style={styles.notifIcon} className="material-icons">notifications</i>
     </Col>
     <Col style={styles.content} xs={11}>
-      {message.content} {toAbsoluteFuzzyTime(message.created_at)}
+      {message.content} {toAbsoluteFuzzyTime(message.createdAt)}
     </Col>
   </Row>
 );

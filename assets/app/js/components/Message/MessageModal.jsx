@@ -5,19 +5,15 @@ import { FormControl, FormGroup } from 'react-bootstrap';
 const propTypes = {
   contentValue: PropTypes.string,
   onSubmitMethod: PropTypes.func.isRequired,
+  onCloseMethod: PropTypes.func,
 };
 const styles = {
   textarea: {
   },
-  textField: {
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderRadius: 2,
-    borderColor: 'black',
-    padding: 5,
-  },
-  postButton: {
+  actionButton: {
     marginTop: 5,
+    marginRight: 5,
+    height: 25,
   },
 };
 class MessageModal extends Component {
@@ -51,14 +47,22 @@ class MessageModal extends Component {
             value={this.state.inputText}
             onChange={this.handleChange}
             componentClass="textarea"
-            placeholder="Post your comment here"
+            placeholder="Leave your message here!"
           />
           <RaisedButton
             disabled={!this.state.inputText.trim()}
             primary
             label="Post" onTouchTap={this.onSubmitButtonClick}
-            buttonStyle={styles.postButton}
+            style={styles.actionButton}
           />
+          {this.props.onCloseMethod &&
+            <RaisedButton
+              secondary
+              label="Cancel" onTouchTap={this.props.onCloseMethod}
+              style={styles.actionButton}
+            />
+          }
+
         </FormGroup>
       </div>
     );
