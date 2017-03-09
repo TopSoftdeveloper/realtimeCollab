@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
-import { FormControl, FormGroup } from 'react-bootstrap';
+import { FormControl, FormGroup, Tabs, Tab } from 'react-bootstrap';
+import ReactMarkdown from 'react-markdown';
 
 const propTypes = {
   contentValue: PropTypes.string,
@@ -8,8 +9,6 @@ const propTypes = {
   onCloseMethod: PropTypes.func,
 };
 const styles = {
-  textarea: {
-  },
   actionButton: {
     marginTop: 5,
     marginRight: 5,
@@ -43,12 +42,23 @@ class MessageModal extends Component {
     return (
       <div>
         <FormGroup controlId="formControlsTextarea">
-          <FormControl
-            value={this.state.inputText}
-            onChange={this.handleChange}
-            componentClass="textarea"
-            placeholder="Leave your message here!"
-          />
+          <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+            <Tab eventKey={1} title="Write">
+              <FormControl
+                value={this.state.inputText}
+                onChange={this.handleChange}
+                componentClass="textarea"
+                style={{ height: 100, maxHeight: 200 }}
+                placeholder="Leave your message here!"
+              />
+            </Tab>
+            <Tab eventKey={2} title="Preview">
+              <ReactMarkdown
+                source={this.state.inputText}
+                className="messageModalInput"
+              />
+            </Tab>
+          </Tabs>
           <RaisedButton
             disabled={!this.state.inputText.trim()}
             primary

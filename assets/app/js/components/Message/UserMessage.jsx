@@ -4,6 +4,7 @@ import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import assign from 'object-assign';
+import ReactMarkdown from 'react-markdown';
 
 import UserAvatar from '../Common/UserAvatar.jsx';
 import { toFuzzyTime } from '../../utils/general';
@@ -117,8 +118,10 @@ class UserMessage extends Component {
         onSubmitMethod={this.editMessageContent}
         onCloseMethod={this.leaveEditMode}
         contentValue={message.content}
-      />
-      : <div style={styles.content}>{message.content}</div>
+      /> :
+      <div style={styles.content}>
+        <ReactMarkdown source={message.content} />
+      </div>
     );
   }
   render() {

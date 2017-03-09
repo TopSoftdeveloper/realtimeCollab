@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import MessageModal from './MessageModal.jsx';
 import MessageList from './MessageList.jsx';
@@ -38,7 +39,7 @@ const styles = {
     flex: '1 1 auto',
     overflowY: 'auto',
   },
-  inputContainer: {
+  bottomPanelContainer: {
     flex: '0 1 40px',
     padding: 10,
   },
@@ -62,14 +63,27 @@ class Message extends Component {
     this.state = {
       showSystemActivity: true,
       showUserMessage: true,
+      isPostNewMessageMode: false,
     };
     this.onClickDismissButton = this.onClickDismissButton.bind(this);
     this.toggleSystemActivity = this.toggleSystemActivity.bind(this);
     this.toggleUserMessage = this.toggleUserMessage.bind(this);
     this.postNewMessage = this.postNewMessage.bind(this);
+    this.onEnterEditMode = this.onEnterEditMode.bind(this);
+    this.onLeaveEditMode = this.onLeaveEditMode.bind(this);
   }
   onClickDismissButton() {
     this.props.onDismiss();
+  }
+  onEnterEditMode() {
+    this.setState({
+      isPostNewMessageMode: true,
+    });
+  }
+  onLeaveEditMode() {
+    this.setState({
+      isPostNewMessageMode: false,
+    });
   }
   toggleUserMessage() {
     this.setState({
@@ -159,6 +173,19 @@ class Message extends Component {
 
     );
   }
+  renderbottomPanel() {
+    return (!this.state.isPostNewMessageMode ?
+      <RaisedButton
+        secondary
+        label="New Comment"
+        onTouchTap={this.onEnterEditMode}
+      /> :
+      <MessageModal
+        onSubmitMethod={this.postNewMessage}
+        onCloseMethod={this.onLeaveEditMode}
+      />
+    );
+  }
   render() {
     const { messages, milestoneId } = this.props;
     const milestoneMessages = messages.filter(message =>
@@ -180,10 +207,8 @@ class Message extends Component {
           {this.renderMessageList(milestoneMessages)}
         </div>
 
-        <div style={styles.inputContainer}>
-          <MessageModal
-            onSubmitMethod={this.postNewMessage}
-          />
+        <div style={styles.bottomPanelContainer}>
+          {this.renderbottomPanel()}
         </div>
       </div>
     );

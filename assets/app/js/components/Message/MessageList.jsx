@@ -55,6 +55,7 @@ const MessageList = ({ messages, users, actions }) => {
       };
       messageItems.push(<SystemMessage key={message.id} message={messageItem} />);
     }
+    messageItems.push(<Divider />);
   });
 
   if (messageItems.length > 0) {
