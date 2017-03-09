@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
+import assign from 'object-assign';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Paper from 'material-ui/Paper';
-import Divider from 'material-ui/Divider';
 import AddIcon from 'material-ui/svg-icons/content/add';
 import Dialog from 'material-ui/Dialog';
 import IconButton from 'material-ui/IconButton';
@@ -28,6 +28,7 @@ const propTypes = {
   onSelect: PropTypes.func.isRequired,
   showOngoing: PropTypes.bool,
   showCompleted: PropTypes.bool,
+  isHighlight: PropTypes.bool,
 };
 
 const contextTypes = {
@@ -83,22 +84,26 @@ class MilestoneRow extends Component {
   onSelect() {
     this.props.onSelect(this.props.milestone);
   }
-  toggleOngoing() {
+  toggleOngoing(e) {
+    e.stopPropagation();
     this.setState({
       showOngoing: !this.state.showOngoing,
     });
   }
-  toggleCompleted() {
+  toggleCompleted(e) {
+    e.stopPropagation();
     this.setState({
       showCompleted: !this.state.showCompleted,
     });
   }
-  openTaskModal() {
+  openTaskModal(e) {
+    e.stopPropagation();
     this.setState({
       isTaskModalOpen: true,
     });
   }
-  openMilestoneModal() {
+  openMilestoneModal(e) {
+    e.stopPropagation();
     this.setState({
       isMilestoneModalOpen: true,
     });
@@ -118,7 +123,8 @@ class MilestoneRow extends Component {
       isTaskModalOpen: false,
     });
   }
-  handleDeleteConfirmationOpen() {
+  handleDeleteConfirmationOpen(e) {
+    e.stopPropagation();
     this.setState({
       isDeleteConfirmationOpen: true,
     });
@@ -269,10 +275,8 @@ class MilestoneRow extends Component {
       deadlineText = `Due by ${eventTime.toLocaleDateString('en-US', options)}`;
     }
     return (
-      <span className="">
-        <p className="text-muted">
-          {deadlineText}
-        </p>
+      <span className="text-muted">
+        {deadlineText}
       </span>
     );
   }
@@ -311,14 +315,13 @@ class MilestoneRow extends Component {
         <FlatButton
           labelStyle={ongoingLabelStyle}
           label={ongoingText}
-          secondary
-          onTouchTap={this.toggleOngoing}
+          primary
+          onClick={this.toggleOngoing}
         />
         <FlatButton
           labelStyle={completedLabelStyle}
           label={completedText}
-          primary
-          onTouchTap={this.toggleCompleted}
+          onClick={this.toggleCompleted}
         />
       </div>
     );
@@ -329,7 +332,7 @@ class MilestoneRow extends Component {
         <IconButton
           tooltip="new task"
           tooltipPosition="top-right"
-          onTouchTap={this.openTaskModal}
+          onClick={this.openTaskModal}
         >
           <AddIcon />
         </IconButton>
@@ -337,12 +340,19 @@ class MilestoneRow extends Component {
     );
   }
   render() {
-    const { tasks, milestone, users } = this.props;
+    const { tasks, milestone, users, isHighlight } = this.props;
     const ongoingTasks = tasks.filter(task => !task.completed_on && !task.dirty);
     const completedTasks = tasks.filter(task => task.completed_on);
     // EDITING INDICATOR
     let editIndicator = null;
-    let listStyle = {};
+    let listStyle = assign({}, {
+      marginTop: 10,
+      marginBottom: 10,
+      marginLeft: 5,
+      marginRight: 5,
+    }, isHighlight && {
+      backgroundColor: 'rgba(0, 188, 212, 0.1)',
+    });
 
     if (milestone.editing) {
       const editor = users.filter(user =>
@@ -359,17 +369,17 @@ class MilestoneRow extends Component {
         editIndicator = (
           <div style={divStyle}>{editor.display_name} is editing</div>
         );
-        listStyle = {
+        listStyle = assign({}, listStyle, {
           borderWidth: 1,
           borderStyle: 'solid',
           borderColor: editor.colour,
-        };
+        });
       }
     }
     return (
-      <Paper zDepth={0} style={listStyle}>
-        <Grid fluid>
-          <div className="milestone-row">
+      <Paper zDepth={1} style={listStyle} >
+        <Grid fluid className="milestone-row" onClick={this.onSelect}>
+          <div>
             {editIndicator}
             <div className="milestone-row-header">
               <Row>
@@ -379,18 +389,19 @@ class MilestoneRow extends Component {
                     onMouseEnter={this.onMouseEnter}
                     onMouseLeave={this.onMouseLeave}
                   >
-                    <span onClick={this.onSelect}>{milestone.content}</span>
+                    <span>{milestone.content}</span>
                     {this.renderMilestoneActions()}
                     {this.renderMilestoneInfo(ongoingTasks, completedTasks)}
                   </div>
-                  <smaill>{this.renderSubtitle()}</smaill>
+                  <smaill>
+                    {this.renderSubtitle()}
+                  </smaill>
                 </Col>
                 <Col xs={2}>
                   {this.renderAddTaskButton()}
                 </Col>
               </Row>
             </div>
-            <Divider style={{ marginTop: 0 }} />
             <div>
               {this.renderTaskList(ongoingTasks, completedTasks)}
             </div>

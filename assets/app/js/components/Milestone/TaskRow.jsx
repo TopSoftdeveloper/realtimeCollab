@@ -46,13 +46,16 @@ class TaskRow extends Component {
   onEdit(content, assigneeId, milestoneId) {
     this.props.onEdit(this.props.task.id, content, assigneeId, milestoneId);
   }
-  onCheck() {
+  onCheck(e) {
+    e.stopPropagation();
     this.props.onCheck(this.props.task.id);
   }
-  onDelete() {
+  onDelete(e) {
+    e.stopPropagation();
     this.props.onDelete(this.props.task.id);
   }
-  openModal() {
+  openModal(e) {
+    e.stopPropagation();
     this.setState({
       isDialogOpen: true,
     });

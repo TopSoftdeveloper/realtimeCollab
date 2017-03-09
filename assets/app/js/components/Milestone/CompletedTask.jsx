@@ -11,22 +11,10 @@ const propTypes = {
 class CompletedTask extends Component {
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      hidden: true,
-    };
     this.reopen = this.reopen.bind(this);
   }
-  onMouseEnter() {
-    this.setState({
-      hidden: false,
-    });
-  }
-  onMouseLeave() {
-    this.setState({
-      hidden: true,
-    });
-  }
-  reopen() {
+  reopen(e) {
+    e.stopPropagation();
     this.props.reopenTask(this.props.task.id);
   }
   render() {

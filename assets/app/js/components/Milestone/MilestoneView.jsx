@@ -90,6 +90,7 @@ class MilestoneView extends Component {
       view: VIEWS.ongoingTasks,
       messageView: {
         show: false,
+        messageMilestoneId: null,
       },
     };
     this.handleMilestoneModalClose = this.handleMilestoneModalClose.bind(this);
@@ -108,6 +109,7 @@ class MilestoneView extends Component {
       this.setState({
         messageView: {
           show: false,
+          messageMilestoneId: null,
         },
       });
     }
@@ -137,6 +139,7 @@ class MilestoneView extends Component {
     this.setState({
       messageView: {
         show: false,
+        messageMilestoneId: null,
       },
     });
     this.props.actions.setSidebarVisibility(true);
@@ -380,17 +383,18 @@ class MilestoneView extends Component {
         if (taskList.length > 0 || !this.state.isFilterApplied) {
           const milestoneView = (
             <MilestoneRow
-              milestone={milestone}
-              onSelect={this.showMessageView}
-              onEditMilestone={onEdit}
-              onDeleteMilestone={onDelete}
-              projectId={projectId}
               key={milestone.id || 'defaultMilestone'}
+              projectId={projectId}
               users={users}
               actions={actions}
               tasks={taskList}
               showOngoing={showOngoing}
               showCompleted={showCompleted}
+              isHighlight={milestone.id === this.state.messageView.messageMilestoneId}
+              milestone={milestone}
+              onSelect={this.showMessageView}
+              onEditMilestone={onEdit}
+              onDeleteMilestone={onDelete}
             />
           );
           milestoneRows.push(milestoneView);
@@ -409,7 +413,7 @@ class MilestoneView extends Component {
         >
           <Paper
             className="milestone-menu-view"
-            zDepth={this.state.messageView.show ? 1 : 0}
+            zDepth={0}
             style={styles.milestoneContainer}
           >
             <Toolbar style={styles.milestoneToolbarContainer}>

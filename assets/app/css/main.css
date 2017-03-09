@@ -363,9 +363,7 @@ html, body{
 
   border-radius: 1px;
 }
-.milestone-row {
 
-}
 .milestone-row-header {
   margin-top: 20px;
   padding-left: 5px;
@@ -376,7 +374,12 @@ html, body{
   font-size: x-large;
   font-weight: bold;
 }
-
+.milestone-row {
+}
+.milestone-row:hover {
+  background-color: rgba(0, 188, 212, 0.1);
+  cursor: pointer;
+}
 /************************ Project header ***************************/
 
 #hangouts-btn-wrapper {
@@ -519,4 +522,10 @@ html, body{
 /************************ Settings **************************/
 .settings-btn {
   margin-left: 20px;
+}
+
+.messageModalInput {
+  max-height: 200px;
+  height: 200px;
+  overflow-y: auto;
 }
