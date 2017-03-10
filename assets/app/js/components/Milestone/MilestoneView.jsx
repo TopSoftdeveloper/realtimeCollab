@@ -236,7 +236,7 @@ class MilestoneView extends Component {
       <div className="task-list">
         <div className="no-items todo-empty">
           <h3>Your to-do list is empty!</h3>
-          <p>Add something to get started</p>
+          <p>Add milestone to get started</p>
         </div>
       </div>
     );
