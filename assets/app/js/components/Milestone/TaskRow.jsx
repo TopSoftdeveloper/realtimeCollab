@@ -151,8 +151,7 @@ class TaskRow extends Component {
           <Col xs={1}>
             <AvatarList
               className="assignee-avatar"
-              isSquare
-              size={24}
+              size={20}
               members={this.props.assignees}
             />
             {editIndicator}

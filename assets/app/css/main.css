@@ -99,26 +99,18 @@ html, body{
   /*margin-left: -40px;*/
   /*min-height: 40px;*/
   margin: 3px 10px 3px 10px;
-  font-size: 19px;
+  font-size: 15px;
 }
 .completed-task-row {
   color: #757575;
 }
 
-.task-content{
+.task-content, .completed-content{
   margin-left: 30px;
   display: inline-block;
   vertical-align: top;
-  line-height: 1.2;
 }
 
-.completed-content {
-  margin-left: 30px;
-  display: inline-block;
-  vertical-align: top;
-  line-height: 1.2;
-
-}
 .task-checkbox {
   display: table;
   position: absolute;
@@ -133,7 +125,7 @@ html, body{
 
 .reopen-task, .edit-task, .delete-task {
   opacity: 0.5;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .reopen-task:hover, .edit-task:hover, .delete-task:hover {

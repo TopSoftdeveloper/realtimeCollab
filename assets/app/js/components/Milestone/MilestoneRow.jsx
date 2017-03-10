@@ -275,9 +275,9 @@ class MilestoneRow extends Component {
       deadlineText = `Due by ${eventTime.toLocaleDateString('en-US', options)}`;
     }
     return (
-      <span className="text-muted">
+      <p style={{ fontSize: 12, marginBottom: 0 }} className="text-muted">
         {deadlineText}
-      </span>
+      </p>
     );
   }
   renderMilestoneActions() {
@@ -329,15 +329,15 @@ class MilestoneRow extends Component {
   }
   renderAddTaskButton() {
     return (
-      <div className="pull-right">
+      <span style={{marginTop: -10}} className="pull-right">
         <IconButton
           tooltip="new task"
-          tooltipPosition="top-right"
+          tooltipPosition="bottom-center"
           onClick={this.openTaskModal}
         >
           <AddIcon />
         </IconButton>
-      </div>
+      </span>
     );
   }
   render() {
