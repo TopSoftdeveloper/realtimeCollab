@@ -13,6 +13,7 @@ const propTypes = {
     onPinMessage: PropTypes.func.isRequired,
     onUnpinMessage: PropTypes.func.isRequired,
     onEditMessageContent: PropTypes.func.isRequired,
+    onDeleteMessage: PropTypes.func.isRequired,
   }),
   onEnterEditMode: PropTypes.func.isRequired,
 };
@@ -47,6 +48,7 @@ const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
             onPinMessage={actions.onPinMessage}
             onUnpinMessage={actions.onUnpinMessage}
             onEditMessageContent={actions.onEditMessageContent}
+            onDeleteMessage={actions.onDeleteMessage}
             onEnterEditMode={onEnterEditMode}
           />
         );

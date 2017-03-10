@@ -16,6 +16,7 @@ const propTypes = {
   onPinMessage: PropTypes.func.isRequired,
   onUnpinMessage: PropTypes.func.isRequired,
   onEditMessageContent: PropTypes.func.isRequired,
+  onDeleteMessage: PropTypes.func.isRequired,
   onEnterEditMode: PropTypes.func.isRequired,
 };
 const styles = {
@@ -62,6 +63,7 @@ class UserMessage extends Component {
     this.unpinMessage = this.unpinMessage.bind(this);
     this.editMessageContent = this.editMessageContent.bind(this);
     this.enterEditMode = this.enterEditMode.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
   }
   pinMessage() {
     this.props.onPinMessage(this.props.message.id);
@@ -74,6 +76,9 @@ class UserMessage extends Component {
   }
   enterEditMode() {
     this.props.onEnterEditMode(this.props.message.content, this.editMessageContent);
+  }
+  deleteMessage() {
+    this.props.onDeleteMessage(this.props.message.id);
   }
   renderOptionMenu() {
     return (
@@ -96,6 +101,7 @@ class UserMessage extends Component {
           ? <MenuItem onTouchTap={this.unpinMessage} primaryText="Unpin from Top" />
           : <MenuItem onTouchTap={this.pinMessage} primaryText="Pin to Top" />}
         <MenuItem onTouchTap={this.enterEditMode} primaryText="Edit" />
+        <MenuItem onTouchTap={this.deleteMessage} primaryText="Delete" />
       </IconMenu>
     );
   }

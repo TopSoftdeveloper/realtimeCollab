@@ -333,3 +333,6 @@ export const serverCreateMessage = (payload) => (
 export const serverEditMessage = (messageId, payload) => (
   ajaxPut(`/message/${messageId}`, payload)
 );
+export const serverDeleteMessage = (messageId) => (
+  ajaxDelete(`/message/${messageId}`)
+);

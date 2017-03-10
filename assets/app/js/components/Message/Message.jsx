@@ -20,6 +20,7 @@ const propTypes = {
     onPinMessage: PropTypes.func.isRequired,
     onUnpinMessage: PropTypes.func.isRequired,
     onEditMessageContent: PropTypes.func.isRequired,
+    onDeleteMessage: PropTypes.func.isRequired,
   }),
   // props passed by parents
   milestoneId: PropTypes.string,

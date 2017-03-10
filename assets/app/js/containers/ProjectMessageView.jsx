@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { getProjectMessages, getProjectActiveUsers, getCurrentProject } from '../selector';
 import Message from '../components/Message/Message.jsx';
-import { createMessage, pinMessage, unpinMessage, editMessageContent }
+import { createMessage, pinMessage, unpinMessage, editMessageContent, deleteMessage }
   from '../actions/ReduxTaskActions.js';
 
 const mapStateToProps = (state) => ({
@@ -22,6 +22,9 @@ const mapDispatchToProps = (dispatch) => ({
     },
     onEditMessageContent: (messageId, content) => {
       editMessageContent(messageId, content)(dispatch);
+    },
+    onDeleteMessage: (messageId) => {
+      deleteMessage(messageId)(dispatch);
     },
   },
 });

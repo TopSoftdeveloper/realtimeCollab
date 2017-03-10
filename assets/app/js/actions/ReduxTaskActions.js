@@ -10,7 +10,7 @@ import { serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMark
   getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
   syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
   queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile,
-  createFolder, moveFile, serverCreateMessage, serverEditMessage,
+  createFolder, moveFile, serverCreateMessage, serverEditMessage, serverDeleteMessage,
   serverGetNewesfeed, refreshTokens, listRepoEvents, } from '../utils/apiUtil';
 import { isObjectPresent, filterUnique, getCurrentProject, getNewColour } from '../utils/general';
 import { userIsOnline } from './SocketActions';
@@ -102,6 +102,7 @@ export const _pinMessage = makeActionCreator(AppConstants.PIN_MESSAGE, 'id');
 export const _unpinMessage = makeActionCreator(AppConstants.UNPIN_MESSAGE, 'id');
 export const _editMessageContent = makeActionCreator(AppConstants.EDIT_MESSAGE_CONTENT,
   'id', 'content');
+export const _deleteMessage = makeActionCreator(AppConstants.DELETE_MESSAGE, 'id');
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');
 export const addUsers = makeActionCreator(AppConstants.ADD_USERS, 'users');
@@ -1123,6 +1124,16 @@ export const declineProject = (projectId, notificationId) => (
       serverEditMessage(messageId, { content }).done(res => {
         dispatch(_editMessageContent(messageId, content));
         dispatch(snackbarMessage('Messsage edited', 'default'));
+      }).fail(e => {
+        console.log(e);
+      });
+    };
+  }
+  export function deleteMessage(messageId) {
+    return function(dispatch) {
+      serverDeleteMessage(messageId).done(res => {
+        dispatch(_deleteMessage(messageId));
+        dispatch(snackbarMessage('Messsage deleted', 'default'));
       }).fail(e => {
         console.log(e);
       });
