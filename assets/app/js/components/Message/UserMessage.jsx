@@ -9,20 +9,21 @@ import ReactMarkdown from 'react-markdown';
 import UserAvatar from '../Common/UserAvatar.jsx';
 import { toFuzzyTime } from '../../utils/general';
 import { Color } from '../../myTheme.js';
-import MessageModal from './MessageModal.jsx';
 
 const propTypes = {
+  pinned: PropTypes.bool,
   message: PropTypes.object.isRequired,
   onPinMessage: PropTypes.func.isRequired,
   onUnpinMessage: PropTypes.func.isRequired,
   onEditMessageContent: PropTypes.func.isRequired,
+  onEnterEditMode: PropTypes.func.isRequired,
 };
 const styles = {
   content: {
   },
   avatarContainer: {
-    marginLeft: -10,
-    paddingRight: 10,
+    marginLeft: 5,
+    marginRight: 5,
     paddingTop: 2,
     display: 'inline-block',
   },
@@ -37,10 +38,9 @@ const styles = {
   },
   container: {
     display: 'block',
-    marginTop: 10,
-    marginBottom: 10,
     padding: 5,
-    marginLeft: 10,
+    marginLeft: 1,
+    marginRight: 0,
   },
   icon: {
     fontSize: 20,
@@ -58,14 +58,10 @@ const styles = {
 class UserMessage extends Component {
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      isEditMode: false,
-    };
     this.pinMessage = this.pinMessage.bind(this);
     this.unpinMessage = this.unpinMessage.bind(this);
     this.editMessageContent = this.editMessageContent.bind(this);
     this.enterEditMode = this.enterEditMode.bind(this);
-    this.leaveEditMode = this.leaveEditMode.bind(this);
   }
   pinMessage() {
     this.props.onPinMessage(this.props.message.id);
@@ -75,17 +71,9 @@ class UserMessage extends Component {
   }
   editMessageContent(content) {
     this.props.onEditMessageContent(this.props.message.id, content);
-    this.leaveEditMode();
   }
   enterEditMode() {
-    this.setState({
-      isEditMode: true,
-    });
-  }
-  leaveEditMode() {
-    this.setState({
-      isEditMode: false,
-    });
+    this.props.onEnterEditMode(this.props.message.content, this.editMessageContent);
   }
   renderOptionMenu() {
     return (
@@ -113,22 +101,22 @@ class UserMessage extends Component {
   }
   renderMainContent() {
     const { message } = this.props;
-    return (this.state.isEditMode ?
-      <MessageModal
-        onSubmitMethod={this.editMessageContent}
-        onCloseMethod={this.leaveEditMode}
-        contentValue={message.content}
-      /> :
+    return (
       <div style={styles.content}>
-        <ReactMarkdown source={message.content} />
+        <ReactMarkdown
+          source={message.content}
+          escapeHtml
+        />
       </div>
     );
   }
   render() {
-    const { message } = this.props;
+    const { message, pinned } = this.props;
     return (
       <Row
         style={assign({}, styles.container, message.pinned && {
+          borderLeft: '2px solid rgb(254, 209, 45)',
+        }, pinned && {
           backgroundColor: Color.messageViewPinBackgroundColor,
         })}
       >

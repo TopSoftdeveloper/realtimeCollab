@@ -2,10 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
+import { FormControl } from 'react-bootstrap';
+import Paper from 'material-ui/Paper';
+import assign from 'object-assign';
 
 import MessageModal from './MessageModal.jsx';
 import MessageList from './MessageList.jsx';
+import ClippedText from '../Common/ClippedText.jsx';
 
 const propTypes = {
   // props passed by container
@@ -32,8 +35,12 @@ const styles = {
   },
   titleContainer: {
     flex: '0 1 auto',
-    fontSize: 18,
+    fontSize: 15,
     backgroundColor: 'rgb(232, 232, 232)',
+    color: 'black',
+    height: 50,
+    maxHeight: 50,
+    fontWeight: 550,
   },
   messageListContainer: {
     flex: '1 1 auto',
@@ -42,6 +49,8 @@ const styles = {
   bottomPanelContainer: {
     flex: '0 1 40px',
     padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderTop: '1px solid lightgray',
   },
   closeIconContainer: {
     fontSize: 20,
@@ -50,11 +59,25 @@ const styles = {
     float: 'right',
   },
   contentContainer: {
+    marginTop: 20,
   },
   emptyContainer: {
     color: '#aaaaaa',
     left: '50%',
     textAlign: 'center',
+  },
+};
+const modes = {
+  editMode: {
+    type: 'editMode',
+    messageContent: null,
+    onSumbitCallback: null,
+  },
+  postMode: {
+    type: 'postMode',
+  },
+  initialMode: {
+    type: 'initialMode',
   },
 };
 class Message extends Component {
@@ -63,26 +86,38 @@ class Message extends Component {
     this.state = {
       showSystemActivity: true,
       showUserMessage: true,
-      isPostNewMessageMode: false,
+      mode: modes.initialMode,
     };
     this.onClickDismissButton = this.onClickDismissButton.bind(this);
     this.toggleSystemActivity = this.toggleSystemActivity.bind(this);
     this.toggleUserMessage = this.toggleUserMessage.bind(this);
     this.postNewMessage = this.postNewMessage.bind(this);
+    this.onEnterPostMode = this.onEnterPostMode.bind(this);
+    this.onLeavePostMode = this.onLeavePostMode.bind(this);
     this.onEnterEditMode = this.onEnterEditMode.bind(this);
     this.onLeaveEditMode = this.onLeaveEditMode.bind(this);
   }
   onClickDismissButton() {
     this.props.onDismiss();
   }
-  onEnterEditMode() {
+  onEnterPostMode() {
     this.setState({
-      isPostNewMessageMode: true,
+      mode: modes.postMode,
+    });
+  }
+  onLeavePostMode() {
+    this.setState({
+      mode: modes.initialMode,
+    });
+  }
+  onEnterEditMode(messageContent, onSumbitCallback) {
+    this.setState({
+      mode: assign(modes.editMode, { messageContent, onSumbitCallback }),
     });
   }
   onLeaveEditMode() {
     this.setState({
-      isPostNewMessageMode: false,
+      mode: modes.initialMode,
     });
   }
   toggleUserMessage() {
@@ -119,22 +154,23 @@ class Message extends Component {
     const activityLabelStyle = {
       opacity: this.state.showSystemActivity ? 1 : 0.5,
       fontSize: 12,
+      color: 'grey',
     };
     return (
-      <div>
+      <span>
         <FlatButton
           labelStyle={messageLabelStyle}
           label={userMessagesText}
-          secondary
+          primary
           onTouchTap={this.toggleUserMessage}
         />
         <FlatButton
           labelStyle={activityLabelStyle}
           label={systemActivityText}
-          primary
+
           onTouchTap={this.toggleSystemActivity}
         />
-      </div>
+      </span>
     );
   }
   renderMessageList(milestoneMessages) {
@@ -146,6 +182,7 @@ class Message extends Component {
       return (
         <div style={styles.contentContainer}>
           <MessageList
+            onEnterEditMode={this.onEnterEditMode}
             actions={this.props.actions}
             messages={filteredMessages}
             users={this.props.users}
@@ -163,8 +200,9 @@ class Message extends Component {
     const pinnedMessages = milestoneMessages.filter(message => message.pinned);
     return (pinnedMessages.length > 0 &&
       <div>
-        <Subheader>Pinned Messages: </Subheader>
         <MessageList
+          pinned
+          onEnterEditMode={this.onEnterEditMode}
           actions={this.props.actions}
           messages={pinnedMessages}
           users={this.props.users}
@@ -174,15 +212,27 @@ class Message extends Component {
     );
   }
   renderbottomPanel() {
-    return (!this.state.isPostNewMessageMode ?
-      <RaisedButton
-        secondary
-        label="New Comment"
-        onTouchTap={this.onEnterEditMode}
-      /> :
-      <MessageModal
-        onSubmitMethod={this.postNewMessage}
-        onCloseMethod={this.onLeaveEditMode}
+    if (this.state.mode.type === modes.postMode.type) {
+      return (
+        <MessageModal
+          onSubmitMethod={this.postNewMessage}
+          onCloseMethod={this.onLeavePostMode}
+        />
+      );
+    } else if (this.state.mode.type === modes.editMode.type && this.state.mode.messageContent) {
+      return (
+        <MessageModal
+          onSubmitMethod={this.state.mode.onSumbitCallback}
+          onCloseMethod={this.onLeaveEditMode}
+          contentValue={this.state.mode.messageContent}
+        />
+      );
+    }
+    return (
+      <FormControl
+        type="text"
+        onFocus={this.onEnterPostMode}
+        placeholder="Leave your messages here!"
       />
     );
   }
@@ -193,7 +243,8 @@ class Message extends Component {
     return (
       <div style={styles.container}>
         <Subheader style={styles.titleContainer}>
-          <span><b>{this.props.title}</b></span>
+          <ClippedText text={this.props.title} placement="bottom" limit={40} />
+          {this.renderInfoButtons(milestoneMessages)}
           <IconButton
             style={styles.closeIconContainer}
             onTouchTap={this.onClickDismissButton}
@@ -203,13 +254,12 @@ class Message extends Component {
         </Subheader>
         <div style={styles.messageListContainer}>
           {this.renderPinnedMessageList(milestoneMessages)}
-          {this.renderInfoButtons(milestoneMessages)}
           {this.renderMessageList(milestoneMessages)}
         </div>
 
-        <div style={styles.bottomPanelContainer}>
+        <Paper zDepth={3} style={styles.bottomPanelContainer}>
           {this.renderbottomPanel()}
-        </div>
+        </Paper>
       </div>
     );
   }

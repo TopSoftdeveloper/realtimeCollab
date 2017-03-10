@@ -5,6 +5,7 @@ import UserMessage from './UserMessage.jsx';
 import SystemMessage from './SystemMessage.jsx';
 
 const propTypes = {
+  pinned: PropTypes.bool,
   messages: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
   actions: React.PropTypes.shape({
@@ -13,13 +14,14 @@ const propTypes = {
     onUnpinMessage: PropTypes.func.isRequired,
     onEditMessageContent: PropTypes.func.isRequired,
   }),
+  onEnterEditMode: PropTypes.func.isRequired,
 };
 const styles = {
   container: {
     overflowX: 'hidden',
   },
 };
-const MessageList = ({ messages, users, actions }) => {
+const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
   let content = null;
   const messageItems = [];
   messages.sort((messageA, messageB) => (
@@ -40,10 +42,12 @@ const MessageList = ({ messages, users, actions }) => {
         };
         messageItems.push(
           <UserMessage
+            pinned={pinned}
             key={message.id} message={messageItem}
             onPinMessage={actions.onPinMessage}
             onUnpinMessage={actions.onUnpinMessage}
             onEditMessageContent={actions.onEditMessageContent}
+            onEnterEditMode={onEnterEditMode}
           />
         );
       }
@@ -55,7 +59,7 @@ const MessageList = ({ messages, users, actions }) => {
       };
       messageItems.push(<SystemMessage key={message.id} message={messageItem} />);
     }
-    messageItems.push(<Divider />);
+    messageItems.push(<Divider key={`Divider_${message.id}`} />);
   });
 
   if (messageItems.length > 0) {
