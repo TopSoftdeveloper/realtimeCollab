@@ -67,6 +67,7 @@ class RenameModal extends Component {
           onValidSubmit={this.onDialogSubmit}
         >
           <FormsyText
+            autoComplete="off"
             autoFocus
             required
             fullWidth

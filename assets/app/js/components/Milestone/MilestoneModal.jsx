@@ -116,6 +116,7 @@ class MilestoneModal extends Component {
           onValidSubmit={this.onDialogSubmit}
         >
           <FormsyText
+            autoComplete="off"
             fullWidth
             autoFocus
             value={this.props.content}

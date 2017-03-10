@@ -107,6 +107,7 @@ class TaskModal extends Component {
             autoFocus
             fullWidth
             multiLine
+            autoComplete="off"
             name="Task name"
             floatingLabelText="Task Name (required)"
             ref={(input) => { this.taskInputField = input; }}
