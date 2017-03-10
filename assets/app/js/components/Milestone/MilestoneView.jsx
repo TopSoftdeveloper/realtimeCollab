@@ -50,10 +50,14 @@ const styles = {
   },
   milestoneToolbarContainer: {
     flex: '0 1 auto',
+    borderRadius: 0,
+    minHeight: 50,
+    maxHeight: 50,
   },
   milestoneContentContainer: {
     flex: '1 1 auto',
     overflowY: 'auto',
+    overflowX: 'hidden',
   },
 };
 // predefined views
@@ -297,8 +301,8 @@ class MilestoneView extends Component {
             <i style={styles.viewMenuIcon} className="material-icons">arrow_drop_down</i>
           </div>
         }
-        anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-        targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'middle', vertical: 'top' }}
+        targetOrigin={{ horizontal: 'middle', vertical: 'bottom' }}
         onItemTouchTap={this.changeView}
       >
         {viewMenuItems}
@@ -320,7 +324,7 @@ class MilestoneView extends Component {
   }
   renderMessageView() {
     return (this.state.messageView.show &&
-      <Col md={6} className="full-height">
+      <Col xs={6} className="full-height">
         <Paper zDepth={1} className="milestone-message-view">
           <ProjectMessageView
             milestoneId={this.state.messageView.messageMilestoneId}
@@ -408,12 +412,13 @@ class MilestoneView extends Component {
           style={assign({}, styles.milestoneColContainer, this.state.messageView.show && {
             paddingRight: 5,
           })}
-          md={this.state.messageView.show ? 6 : 12}
+          xs={this.state.messageView.show ? 6 : 12}
           className="full-height"
         >
           <Paper
+            rounded={false}
             className="milestone-menu-view"
-            zDepth={0}
+            zDepth={1}
             style={styles.milestoneContainer}
           >
             <Toolbar style={styles.milestoneToolbarContainer}>

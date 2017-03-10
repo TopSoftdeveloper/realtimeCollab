@@ -11,6 +11,7 @@ import ProjectListItem from './ProjectListItem.jsx';
 const styles = {
   subheader: {
     color: 'rgba(255, 255, 255, 0.75)',
+    marginLeft: -4,
   },
   listItem: {
     fontSize: 16,

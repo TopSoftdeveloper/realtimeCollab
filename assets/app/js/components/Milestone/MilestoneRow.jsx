@@ -309,6 +309,7 @@ class MilestoneRow extends Component {
     const completedLabelStyle = {
       opacity: this.state.showCompleted ? 1 : 0.5,
       fontSize: 12,
+      color: 'grey',
     };
     return (
       <div className="milestone-row-info">
@@ -346,10 +347,7 @@ class MilestoneRow extends Component {
     // EDITING INDICATOR
     let editIndicator = null;
     let listStyle = assign({}, {
-      marginTop: 10,
-      marginBottom: 10,
-      marginLeft: 5,
-      marginRight: 5,
+      borderBottom: '1px solid rgba(0, 0, 0, 0.12)', // material standard
     }, isHighlight && {
       backgroundColor: 'rgba(0, 188, 212, 0.1)',
     });
@@ -377,7 +375,7 @@ class MilestoneRow extends Component {
       }
     }
     return (
-      <Paper zDepth={1} style={listStyle} >
+      <Paper zDepth={0} style={listStyle} >
         <Grid fluid className="milestone-row" onClick={this.onSelect}>
           <div>
             {editIndicator}

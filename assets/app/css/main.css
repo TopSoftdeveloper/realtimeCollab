@@ -117,7 +117,6 @@ html, body{
   display: inline-block;
   vertical-align: top;
   line-height: 1.2;
-  text-decoration: line-through;
 
 }
 .task-checkbox {
@@ -360,7 +359,6 @@ html, body{
 .milestone-content-view {
   height: auto;
   margin-top: 5px;
-
   border-radius: 1px;
 }
 
@@ -371,7 +369,7 @@ html, body{
 .milestone-title {
   display: block;
   word-break: break-all;
-  font-size: x-large;
+  font-size: large;
   font-weight: bold;
 }
 .milestone-row {
@@ -379,6 +377,9 @@ html, body{
 .milestone-row:hover {
   background-color: rgba(0, 188, 212, 0.1);
   cursor: pointer;
+}
+.assignee-row:hover {
+  background-color: rgba(0, 188, 212, 0.1);
 }
 /************************ Project header ***************************/
 
@@ -525,7 +526,9 @@ html, body{
 }
 
 .messageModalInput {
-  max-height: 200px;
-  height: 200px;
+  min-height: 150px;
+  max-height: 150px;
+  height: 150px;
   overflow-y: auto;
+  background-color: white;
 }

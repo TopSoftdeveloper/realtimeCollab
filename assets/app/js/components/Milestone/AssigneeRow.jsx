@@ -24,6 +24,11 @@ const contextTypes = {
   location: React.PropTypes.object,
 };
 
+const styles = {
+  container: {
+    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+  },
+};
 class AssigneeRow extends Component {
 
   constructor(props, context) {
@@ -103,9 +108,12 @@ class AssigneeRow extends Component {
     const completedTask = `${completedTasks.length} Completed`;
     const ongoingLabelStyle = {
       opacity: this.state.showOngoing ? 1 : 0.5,
+      fontSize: 12,
     };
     const completedLabelStyle = {
       opacity: this.state.showCompleted ? 1 : 0.5,
+      fontSize: 12,
+      color: 'grey',
     };
     return (
       <div className="milestone-row-info">
@@ -118,7 +126,6 @@ class AssigneeRow extends Component {
         <FlatButton
           labelStyle={completedLabelStyle}
           label={completedTask}
-          secondary
           onTouchTap={this.toggleCompleted}
         />
       </div>
@@ -174,36 +181,33 @@ class AssigneeRow extends Component {
     const completedTasks = tasks.filter(task => task.completed_on);
 
     return (
-      <Paper zDepth={0}>
-        <Grid fluid>
-          <div className="milestone-row">
-            <Divider />
-            <div className="milestone-row-header">
-              <Row>
-                <Col xs={10}>
-                  <div className="milestone-title">
-                    {user.display_name}
-                    {this.renderAssigneeInfo(ongoingTasks, completedTasks)}
-                  </div>
-                </Col>
-                <Col xs={2}>
-                  <div className="pull-right">
-                    <IconButton
-                      tooltip="new task"
-                      tooltipPosition="top-right"
-                      onTouchTap={this.openModal}
-                    >
-                      <AddIcon />
-                    </IconButton>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <div>
-              {this.renderTaskList(ongoingTasks, completedTasks)}
-            </div>
-            {this.renderTaskModal()}
+      <Paper zDepth={0} style={styles.container} >
+        <Grid fluid className="assignee-row">
+          <div className="milestone-row-header">
+            <Row>
+              <Col xs={10}>
+                <div className="milestone-title">
+                  {user.display_name}
+                  {this.renderAssigneeInfo(ongoingTasks, completedTasks)}
+                </div>
+              </Col>
+              <Col xs={2}>
+                <div className="pull-right">
+                  <IconButton
+                    tooltip="new task"
+                    tooltipPosition="top-right"
+                    onTouchTap={this.openModal}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </div>
+              </Col>
+            </Row>
           </div>
+          <div>
+            {this.renderTaskList(ongoingTasks, completedTasks)}
+          </div>
+          {this.renderTaskModal()}
         </Grid >
       </Paper>
     );
