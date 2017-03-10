@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
 import $ from 'jquery';
 import { logout } from '../utils/auth.js';
 import UserAvatar from './Common/UserAvatar.jsx';
@@ -8,7 +7,6 @@ import SearchBar from './Search/SearchBar.jsx';
 const propTypes = {
   actions: PropTypes.object.isRequired,
   displayName: PropTypes.string.isRequired,
-  unreadCount: PropTypes.number.isRequired,
   app: PropTypes.object.isRequired,
   search: PropTypes.array.isRequired,
 };
@@ -33,14 +31,6 @@ class Header extends Component {
         }
       }.bind(this), 1000);
     }
-  }
-
-  renderNotifsCount() {
-    return (this.props.unreadCount > 0 &&
-      <span className="badge">
-        {this.props.unreadCount}
-      </span>
-    );
   }
   render() {
     const { actions, app, search, displayName } = this.props;
@@ -84,8 +74,6 @@ class Header extends Component {
                   <div id="hangouts-btn-placeholder" />
                 </div>
               </li>
-              <li className="notif-li"><Link to="/app/notifications"><span>Notifs  &nbsp;
-                {this.renderNotifsCount()}</span></Link></li>
               <li className="display-pic-li">{image}</li>
               <li className="dropdown">
                 <a

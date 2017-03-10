@@ -3,6 +3,8 @@ import { List, ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import { browserHistory } from 'react-router';
 import assign from 'object-assign';
+import { Badge } from 'react-bootstrap';
+
 import { getCurrentTab } from '../utils/general';
 import { Color } from '../myTheme.js';
 import ProjectModal from './ProjectModal.jsx';
@@ -30,8 +32,11 @@ const styles = {
 const propTypes = {
   currentProject: PropTypes.object,
   actions: PropTypes.object.isRequired,
+  myTaskCount: PropTypes.number.isRequired,
+  notificationCount: PropTypes.number.isRequired,
   projects: PropTypes.array.isRequired,
   onCreateProject: PropTypes.func.isRequired,
+
 };
 const contextTypes = {
   location: React.PropTypes.object,
@@ -93,13 +98,33 @@ class LeftPanel extends Component {
       );
     });
   }
+  renderNotificationLink() {
+    const path = '/app/notifications';
+    const active = this.context.location.pathname === path;
+    const text = this.props.notificationCount ? (
+      <span>Notification <Badge>{this.props.notificationCount}</Badge></span>
+    ) : 'Notification';
+    return (
+      <ListItem
+        primaryText={text}
+        onTouchTap={() => { browserHistory.push(path); }}
+        innerDivStyle={assign({}, styles.listItem, active && {
+          backgroundColor: Color.leftPanelItemHightColor,
+        })}
+        hoverColor={Color.leftPanelItemHightColor}
+      />
+    );
+  }
   renderMyTasksLink() {
     const path = '/app/dashboard';
     const active = this.context.location.pathname === path;
+    const text = this.props.myTaskCount ? (
+      <span>My Task <Badge>{this.props.myTaskCount}</Badge></span>
+    ) : 'My Task';
     return (
       <ListItem
-        primaryText="My Tasks"
-        onTouchTap={() => { browserHistory.push('/app/dashboard'); }}
+        primaryText={text}
+        onTouchTap={() => { browserHistory.push(path); }}
         innerDivStyle={assign({}, styles.listItem, active && {
           backgroundColor: Color.leftPanelItemHightColor,
         })}
@@ -128,6 +153,7 @@ class LeftPanel extends Component {
         <List>
           <Subheader style={styles.subheader}>SHORTCUT</Subheader>
           {this.renderMyTasksLink()}
+          {this.renderNotificationLink()}
         </List>
         <List>
           <Subheader style={styles.subheader} >

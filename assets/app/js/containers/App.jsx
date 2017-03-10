@@ -23,6 +23,7 @@ const propTypes = {
   notifications: PropTypes.array.isRequired,
   projects: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
+  tasks: PropTypes.array.isRequired,
   app: PropTypes.object.isRequired,
   search: PropTypes.array.isRequired,
   socketActions: PropTypes.object.isRequired,
@@ -126,19 +127,24 @@ class App extends Component {
     return children;
   }
   render() {
-    const { notifications, projects, users, app, search, actions } = this.props;
+    const { notifications, projects, tasks, users, app, search, actions } = this.props;
     let currentProject = null;
     const currentProjectId = getCurrentProject();
+    const currentUserId = localStorage.getItem('user_id');
 
     if (users.length === 0) {
       // First initialization of app
       return <div className="main-content" />;
     }
-    const displayName = users.filter(user =>
-      user.id === localStorage.getItem('user_id')
-    )[0].display_name;
-    const unreadCount = notifications.reduce((total, notif) => (notif.read ? total : total + 1), 0);
-
+    const displayName = users.filter(user => user.id === currentUserId)[0].display_name;
+    const notificationCount = notifications.reduce((total, notif) => (
+      notif.read ? total : total + 1
+    ), 0);
+    // only show ongoing task assigned to me and unassigned
+    const myTaskFilter = (task) => (!task.completed_on && (
+      task.assignee_id === '' || task.assignee_id === null || task.assignee_id === currentUserId
+    ));
+    const myTaskCount = tasks.filter(myTaskFilter).length;
     if (isProjectPresent(projects, currentProjectId)) {
       currentProject = projects.filter(proj => proj.id === currentProjectId)[0];
     }
@@ -146,7 +152,6 @@ class App extends Component {
       <Grid>
         <Row>
           <Header
-            unreadCount={unreadCount}
             projects={projects}
             displayName={displayName}
             search={search}
@@ -165,6 +170,8 @@ class App extends Component {
             }}
             sidebar={
               <LeftPanel
+                notificationCount={notificationCount}
+                myTaskCount={myTaskCount}
                 currentProject={currentProject}
                 projects={projects}
                 actions={actions}
@@ -207,8 +214,10 @@ const mapStateToProps = (state) => ({
   notifications: state.notifications,
   projects: state.projects,
   users: state.users,
+  tasks: state.tasks,
   app: state.app,
   search: state.search,
+
 });
 const mapDispatchToProps = (dispatch) => ({
   actions: bindActionCreators(Actions, dispatch),
