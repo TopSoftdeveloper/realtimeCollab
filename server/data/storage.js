@@ -460,4 +460,11 @@ module.exports = {
         },
       });
     },
+    deleteMessage: function(messageId) {
+      return Message.destroy({
+        where: {
+          id: messageId,
+        },
+      });
+    },
 };

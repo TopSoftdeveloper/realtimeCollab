@@ -57,4 +57,5 @@ module.exports.endpoints = [
 
     { method: 'POST', path: '/messages', config: Message.createMessage },
     { method: 'PUT', path: '/message/{message_id}', config: Message.updateMessage },
+    { method: 'DELETE', path: '/message/{message_id}', config: Message.deleteMessage },
 ];
