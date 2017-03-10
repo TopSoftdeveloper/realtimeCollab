@@ -5,10 +5,12 @@ const propTypes = {
   text: PropTypes.string.isRequired,
   limit: PropTypes.number.isRequired,
   indicator: PropTypes.string,
+  placement: React.PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
   textStyle: PropTypes.object,
 };
 const defaultProps = {
   indicator: '...',
+  placement: 'right',
 };
 
 /**
@@ -16,7 +18,7 @@ const defaultProps = {
   shows tooltip for the clipped part
 */
 const ClippedText = (props) => {
-  const { text, limit, indicator, textStyle } = props;
+  const { text, limit, indicator, textStyle, placement } = props;
   if (text.length <= limit) {
     return (
       <span style={textStyle}>
@@ -26,7 +28,7 @@ const ClippedText = (props) => {
   }
   return (
     <OverlayTrigger
-      placement="right"
+      placement={placement}
       overlay={<Tooltip id={text}>{text.substring(limit - indicator.length - 1)}</Tooltip>}
     >
       <span style={textStyle}>
