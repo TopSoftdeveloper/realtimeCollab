@@ -13,6 +13,17 @@ const defaultProps = {
   placement: 'right',
 };
 
+const styles = {
+  tooltip: {
+  },
+  overlayTrigger: {
+  },
+  tooltipContent: {
+    width: 'auto',
+    maxWidth: 'none',
+    wordBreak: 'break-all',
+  },
+};
 /**
   renders clipped text with limit of text length and trailing indicator
   shows tooltip for the clipped part
@@ -28,8 +39,15 @@ const ClippedText = (props) => {
   }
   return (
     <OverlayTrigger
+      style={styles.overlayTrigger}
       placement={placement}
-      overlay={<Tooltip id={text}>{text.substring(limit - indicator.length - 1)}</Tooltip>}
+      overlay={
+        <Tooltip style={styles.tooltip} id={text}>
+          <span style={styles.tooltipContent}>
+            {text.substring(limit - indicator.length - 1)}
+          </span>
+        </Tooltip>
+      }
     >
       <span style={textStyle}>
         {`${text.substring(0, limit - indicator.length - 1)}${indicator}`}
