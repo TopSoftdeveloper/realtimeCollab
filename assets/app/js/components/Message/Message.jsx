@@ -132,14 +132,9 @@ class Message extends Component {
     });
   }
   postNewMessage(content) {
-    const message = {
-      pinned: false,
-      content,
-      author_id: localStorage.getItem('user_id'), /* global localStorage */
-      project_id: this.props.currentProject.id,
-      milestone_id: this.props.milestoneId,
-    };
-    this.props.actions.onPostNewMessage(message);
+    /* global localStorage */
+    this.props.actions.onPostNewMessage(content,
+      localStorage.getItem('user_id'), this.props.currentProject.id, this.props.milestoneId);
   }
   renderInfoButtons(milestoneMessages) {
     const userMessages = milestoneMessages.filter(message => message.author_id);

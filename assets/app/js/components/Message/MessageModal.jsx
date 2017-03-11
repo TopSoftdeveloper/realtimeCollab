@@ -58,7 +58,6 @@ class MessageModal extends Component {
           <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
             <Tab eventKey={1} title="Write">
               <FormControl
-                autofocus
                 value={this.state.inputText}
                 onChange={this.handleChange}
                 componentClass="textarea"

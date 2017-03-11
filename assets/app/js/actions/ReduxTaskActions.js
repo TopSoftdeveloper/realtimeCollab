@@ -11,7 +11,7 @@ import { serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMark
   syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
   queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile,
   createFolder, moveFile, serverCreateMessage, serverEditMessage, serverDeleteMessage,
-  serverGetNewesfeed, refreshTokens, listRepoEvents, } from '../utils/apiUtil';
+  serverGetNewesfeed, refreshTokens, listRepoEvents } from '../utils/apiUtil';
 import { isObjectPresent, filterUnique, getCurrentProject, getNewColour } from '../utils/general';
 import { userIsOnline } from './SocketActions';
 import { logout } from '../utils/auth';
@@ -1088,7 +1088,14 @@ export const declineProject = (projectId, notificationId) => (
     }
   }
 
-  export function createMessage(message) {
+  export function createUserMessage(content, authorId, projectId, milestoneId) {
+    const message = {
+      pinned: false,
+      content,
+      author_id: authorId,
+      project_id: projectId,
+      milestone_id: milestoneId,
+    };
     return function(dispatch) {
       serverCreateMessage(message).done(res => {
         dispatch(addMessage(res));

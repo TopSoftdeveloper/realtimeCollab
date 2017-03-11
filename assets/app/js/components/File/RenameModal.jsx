@@ -77,7 +77,7 @@ class RenameModal extends Component {
             value={inputValue}
             name="File Name"
             floatingLabelText="New File Name (required)"
-            ref={(input) => { this.textInput = input; }}
+            ref={input => { this.textInput = input; }}
           />
         </Form>
       </Dialog>
