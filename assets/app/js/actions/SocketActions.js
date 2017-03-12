@@ -152,6 +152,9 @@ export const monitorProjectChanges = () => (
       }
       dispatch(Actions.addNewsfeedEvents([event]));
     });
+    socket.on('add_discussion_Message', (data) => {
+      dispatch(Actions.addMessage(data));
+    });
   }
 );
 
