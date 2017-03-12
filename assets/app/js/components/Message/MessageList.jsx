@@ -58,10 +58,11 @@ const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
         id: message.id,
         content: message.content,
         createdAt: message.created_at,
+        data: message.data,
+
       };
       messageItems.push(<SystemMessage key={message.id} message={messageItem} />);
     }
-    messageItems.push(<Divider key={`Divider_${message.id}`} />);
   });
 
   if (messageItems.length > 0) {

@@ -42,6 +42,8 @@ const styles = {
     padding: 5,
     marginLeft: 1,
     marginRight: 0,
+    borderTop: '1px solid rgba(0,0,0,0.12)',
+    borderBottom: '1px solid rgba(0,0,0,0.12)',
   },
   icon: {
     fontSize: 20,

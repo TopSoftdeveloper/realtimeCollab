@@ -44,7 +44,7 @@ const ClippedText = (props) => {
       overlay={
         <Tooltip style={styles.tooltip} id={text}>
           <span style={styles.tooltipContent}>
-            {text.substring(limit - indicator.length - 1)}
+            {text}
           </span>
         </Tooltip>
       }

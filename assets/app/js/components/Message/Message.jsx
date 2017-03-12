@@ -60,7 +60,7 @@ const styles = {
     float: 'right',
   },
   contentContainer: {
-    marginTop: 20,
+    marginTop: 0,
   },
   emptyContainer: {
     color: '#aaaaaa',
