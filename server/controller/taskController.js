@@ -9,9 +9,11 @@ var helper = require('../utils/helper');
 var config = require('config');
 var camelcaseKeys = require('camelcase-keys');
 var Promise = require("bluebird");
+var assign = require('object-assign');
 var github = require('./githubController');
 var accessControl = require('./accessControl');
 var analytics = require('collab-analytics')(config.database, config.logging_database);
+
 
 module.exports = {
     createTask: {
@@ -57,7 +59,6 @@ module.exports = {
         }
     }
 };
-
 function updateTask(request, reply) {
     var task_id = request.params.task_id;
     var token = request.payload.github_token
@@ -74,15 +75,134 @@ function updateTask(request, reply) {
             var project = result.project
             var github_num = result.task.github_number
 
-            storage.updateTask(request.payload, task_id).then(function(t) {
+            // keep a copy of previous taskValus
+            var originalTaskValues = assign({}, result.task.get());
+            result.task.update(request.payload).then(function(t) {
                 analytics.task.logTaskActivity(
                     analytics.task.constants.ACTIVITY_UPDATE,
                     moment().format('YYYY-MM-DD HH:mm:ss'),
                     user_id,
                     camelcaseKeys(result.task.toJSON())
                 )
-
                 reply({status: constants.STATUS_OK});
+
+                // compare orignial value and update value manually to initiate system message by different attributes
+                storage.findUserById(user_id).then(function(user) {
+                  var updatedTaskValues = result.task.get();
+                  // compare milestone Id
+                  if (originalTaskValues.milestone_id !== updatedTaskValues.milestone_id) {
+                    var originalMilestone = {
+                      id: originalTaskValues.milestone_id,
+                    };
+                    var updatedMilestone = {
+                      id: updatedTaskValues.milestone_id,
+                    };
+                    storage.findMilestoneById(originalTaskValues.milestone_id).then(function(originalMilestoneResult) {
+                      if (originalMilestoneResult !== null) {
+                        originalMilestone.content = originalMilestoneResult.content;
+                      }
+                      storage.findMilestoneById(updatedTaskValues.milestone_id).then(function(updatedMilestoneResult) {
+                        if (updatedMilestoneResult !== null) {
+                          updatedMilestone.content = updatedMilestoneResult.content;
+                        }
+                        storage.createSystemMessage(updatedTaskValues.project_id, originalTaskValues.milestone_id,
+                        constants.systemMessageTypes.REASSIGN_TASK_TO_MILESTONE, {
+                          user: {
+                            id: user.id,
+                            display_name: user.display_name,
+                          },
+                          task: {
+                            id: updatedTaskValues.id,
+                            content: originalTaskValues.content,
+                            originalMilestone,
+                            updatedMilestone,
+                          },
+                        }).then(function(message) {
+                          socket.sendAddDiscussionMessageToProject(updatedTaskValues.project_id, message)
+                        });
+                        storage.createSystemMessage(updatedTaskValues.project_id, updatedTaskValues.milestone_id,
+                        constants.systemMessageTypes.REASSIGN_TASK_TO_MILESTONE, {
+                          user: {
+                            id: user.id,
+                            display_name: user.display_name,
+                          },
+                          task: {
+                            id: updatedTaskValues.id,
+                            content: updatedTaskValues.content,
+                            originalMilestone,
+                            updatedMilestone,
+                          },
+                        }).then(function(message) {
+                          socket.sendAddDiscussionMessageToProject(updatedTaskValues.project_id, message)
+                        });
+                      });
+                    });
+                  }
+                  if (originalTaskValues.content !== updatedTaskValues.content) {
+                    storage.createSystemMessage(updatedTaskValues.project_id, updatedTaskValues.milestone_id,
+                    constants.systemMessageTypes.EDIT_TASK_CONTENT, {
+                      user: {
+                        id: user.id,
+                        display_name: user.display_name,
+                      },
+                      task: {
+                        id: updatedTaskValues.id,
+                        originalContent: originalTaskValues.content,
+                        updatedContent: updatedTaskValues.content,
+                      },
+                    }).then(function(message) {
+                      socket.sendAddDiscussionMessageToProject(updatedTaskValues.project_id, message)
+                    });
+                  }
+                  if (originalTaskValues.assignee_id !== updatedTaskValues.assignee_id) {
+                    var originalAssignee = {
+                      id: originalTaskValues.assignee_id,
+                    }
+                    var updatedAssignee = {
+                      id: updatedTaskValues.assignee_id,
+                    }
+                    storage.findUserById(originalTaskValues.assignee_id).then(function(originalAssigneeResult) {
+                      if (originalAssigneeResult !== null) {
+                        originalAssignee.display_name = originalAssigneeResult.display_name;
+                      }
+                      storage.findUserById(updatedTaskValues.assignee_id).then(function(updatedAssigneeResult){
+                        if (updatedAssigneeResult !== null) {
+                          updatedAssignee.display_name = updatedAssigneeResult.display_name;
+                        }
+                        storage.createSystemMessage(updatedTaskValues.project_id, updatedTaskValues.milestone_id,
+                        constants.systemMessageTypes.REASSIGN_TASK_TO_USER, {
+                          user: {
+                            id: user.id,
+                            display_name: user.display_name,
+                          },
+                          task: {
+                            id: updatedTaskValues.id,
+                            content: updatedTaskValues.content,
+                            originalAssignee,
+                            updatedAssignee,
+                          },
+                        }).then(function(message) {
+                          socket.sendAddDiscussionMessageToProject(updatedTaskValues.project_id, message);
+                        });
+                      });
+                    });
+                  }
+                  if (originalTaskValues.completed_on !== updatedTaskValues.completed_on) {
+                    storage.createSystemMessage(updatedTaskValues.project_id, updatedTaskValues.milestone_id,
+                    constants.systemMessageTypes.REOPEN_TASK, {
+                      user: {
+                        id: user.id,
+                        display_name: user.display_name,
+                      },
+                      task: {
+                        id: updatedTaskValues.id,
+                        content: updatedTaskValues.content,
+                      },
+                    }).then(function(message) {
+                      socket.sendAddDiscussionMessageToProject(updatedTaskValues.project_id, message)
+                    });
+                  }
+                });
 
                 socket.sendMessageToProject(project.id, 'update_task', {
                     task: request.payload, sender: user_id, task_id: task_id
@@ -150,7 +270,23 @@ function createTask(request, reply) {
         storage.createTask(request.payload).then(function(newTask) {
             socket.sendMessageToProject(request.payload.project_id, 'new_task', {
                 task: newTask, sender: user_id
-            })
+            });
+
+            storage.findUserById(user_id).then(function(user) {
+              storage.createSystemMessage(newTask.project_id, newTask.milestone_id,
+              constants.systemMessageTypes.CREATE_TASK, {
+                user: {
+                  id: user.id,
+                  display_name: user.display_name,
+                },
+                task: {
+                  id: newTask.id,
+                  content: newTask.content,
+                },
+              }).then(function(message) {
+                socket.sendAddDiscussionMessageToProject(newTask.project_id, message)
+              });
+            });
 
             analytics.task.logTaskActivity(
               analytics.task.constants.ACTIVITY_CREATE,
@@ -237,6 +373,24 @@ function markTaskAsDone(request, reply) {
                 return;
             }
             storage.markDone(task_id).then(function () {
+                storage.findUserById(user_id).then(function(user) {
+                  storage.createSystemMessage(result.task.project_id, result.task.milestone_id,
+                  constants.systemMessageTypes.MARK_TASK_AS_DONE, {
+                    user: {
+                      id: user.id,
+                      display_name: user.display_name,
+                    },
+                    task: {
+                      id: result.task.id,
+                      content: result.task.content,
+                    },
+                  }).then(function(message) {
+                    socket.sendAddDiscussionMessageToProject(result.task.project_id, message)
+                  }, function(err) {
+                    console.error('store fail to create message');
+                    console.error(err);
+                  });
+                });
                 analytics.task.logTaskActivity(
                   analytics.task.constants.ACTIVITY_DONE,
                   moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -281,6 +435,24 @@ function deleteTask(request, reply) {
                   user_id,
                   camelcaseKeys(result.task.toJSON())
                 )
+                storage.findUserById(user_id).then(function(user) {
+                  storage.createSystemMessage(result.task.project_id, result.task.milestone_id,
+                  constants.systemMessageTypes.DELETE_TASK, {
+                    user: {
+                      id: user.id,
+                      display_name: user.display_name,
+                    },
+                    task: {
+                      id: result.task.id,
+                      content: result.task.content,
+                    },
+                  }).then(function(message) {
+                    socket.sendAddDiscussionMessageToProject(result.task.project_id, message)
+                  }, function(err) {
+                    console.error('store fail to create message');
+                    console.error(err);
+                  });
+                });
                 socket.sendMessageToProject(request.payload.project_id, 'delete_task', {
                     task_id: task_id, sender: user_id
                 })

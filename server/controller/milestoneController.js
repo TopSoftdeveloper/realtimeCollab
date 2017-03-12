@@ -9,6 +9,7 @@ var socket = require('./socket/handlers');
 var helper = require('../utils/helper');
 var config = require('config');
 var camelcaseKeys = require('camelcase-keys');
+var assign = require('object-assign');
 var github = require('./githubController')
 var analytics = require('collab-analytics')(config.database, config.logging_database);
 
@@ -54,14 +55,51 @@ function updateMilestone(request, reply) {
                 reply(Boom.forbidden(constants.FORBIDDEN));
                 return;
             }
-            storage.updateMilestone(milestone, milestone_id).then(function(m) {
+            var originalMilestoneValues = assign({}, result.milestone.get());
+            result.milestone.update(milestone).then(function(m) {
                 analytics.milestone.logMilestoneActivity(
                     analytics.milestone.constants.ACTIVITY_UPDATE,
                     moment().format('YYYY-MM-DD HH:mm:ss'),
                     user_id,
                     camelcaseKeys(result.milestone.toJSON())
                 )
+                storage.findUserById(user_id).then(function(user) {
+                  var updatedMilestoneValues = result.milestone.get();
+                  if (originalMilestoneValues.content !== updatedMilestoneValues.content) {
+                    storage.createSystemMessage(updatedMilestoneValues.project_id, updatedMilestoneValues.id,
+                    constants.systemMessageTypes.EDIT_MILESTONE_CONTENT, {
+                      user: {
+                        id: user.id,
+                        display_name: user.display_name,
+                      },
+                      milestone: {
+                        id: updatedMilestoneValues.id,
+                        originalContent: originalMilestoneValues.content,
+                        updatedContent: updatedMilestoneValues.content
+                      },
+                    }).then(function(message) {
+                      socket.sendAddDiscussionMessageToProject(updatedMilestoneValues.project_id, message)
+                    });
+                  }
+                  if (originalMilestoneValues.deadline !== updatedMilestoneValues.deadline) {
+                    storage.createSystemMessage(updatedMilestoneValues.project_id, updatedMilestoneValues.id,
+                    constants.systemMessageTypes.EDIT_MILESTONE_DEADLINE, {
+                      user: {
+                        id: user.id,
+                        display_name: user.display_name,
+                      },
+                      milestone: {
+                        id: updatedMilestoneValues.id,
+                        content: updatedMilestoneValues.content,
+                        originalDeadline: originalMilestoneValues.deadline,
+                        updatedDeadline: updatedMilestoneValues.deadline
+                      },
+                    }).then(function(message) {
+                      socket.sendAddDiscussionMessageToProject(updatedMilestoneValues.project_id, message)
+                    });
+                  }
 
+                });
                 socket.sendMessageToProject(project.id, 'update_milestone', {
                     milestone: milestone, sender: user_id, milestone_id: milestone_id
                 })
@@ -120,6 +158,25 @@ function createMilestone(request, reply) {
                 user_id,
                 camelcaseKeys(m.toJSON())
             )
+            storage.findUserById(user_id).then(function(user) {
+              storage.createSystemMessage(m.project_id, m.id,
+              constants.systemMessageTypes.CREATE_MILESTONE, {
+                user: {
+                  id: user.id,
+                  display_name: user.display_name,
+                },
+                milestone: {
+                  id: m.id,
+                  content: m.content,
+                },
+              }).then(function(message) {
+                socket.sendAddDiscussionMessageToProject(m.project_id, message)
+              }, function(err) {
+                console.error('store fail to create message');
+                console.error(err);
+              });
+            });
+
 
             socket.sendMessageToProject(request.payload.project_id, 'new_milestone', {
                 milestone: m, sender: user_id
@@ -161,14 +218,30 @@ function deleteMilestone(request, reply) {
             }
 
             storage.deleteMilestone(milestone_id).then(function() {
+                reply({status: constants.STATUS_OK});
+
                 analytics.milestone.logMilestoneActivity(
                   analytics.milestone.constants.ACTIVITY_DELETE,
                   moment().format('YYYY-MM-DD HH:mm:ss'),
                   user_id,
                   { projectId: project.id, id: milestone_id}
                 )
+                storage.findUserById(user_id).then(function(user) {
+                  storage.createSystemMessage(milestone.project_id, null,
+                  constants.systemMessageTypes.DELETE_MILESTONE, {
+                    user: {
+                      id: user.id,
+                      display_name: user.display_name,
+                    },
+                    milestone: {
+                      id: milestone.id,
+                      content: milestone.content,
+                    },
+                  }).then(function(message) {
+                    socket.sendAddDiscussionMessageToProject(milestone.project_id, message)
+                  });
+                });
 
-                reply({status: constants.STATUS_OK});
                 socket.sendMessageToProject(project.id, 'delete_milestone', {
                     milestone_id: milestone_id, sender: user_id
                 })
