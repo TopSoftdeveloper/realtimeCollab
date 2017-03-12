@@ -8,6 +8,11 @@ global.expect = require('chai').expect;
 
 global.chai.should();
 
+before((done) => {
+  // Create tables before all tests
+  sequelize.sync().then(() => done());
+});
+
 beforeEach((done) => {
   // Recreate tables before each test.
   // Manually truncate tables instead of using .sync({ force: true })

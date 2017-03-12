@@ -1,4 +1,31 @@
-general:
-  branches:
-    only:
-      - test-ci
+machine:
+  timezone: Asia/Singapore
+  node:
+    version: 6.2.2
+
+dependencies:
+  pre:
+    - git clone https://github.com/collab-tools/collab-db-logging.git
+    - cd collab-db-logging && npm install
+    - cd collab-db-logging && npm link
+
+    - git clone https://github.com/collab-tools/collab-db-application.git
+    - cd collab-db-application && npm install
+    - cd collab-db-application && npm link
+
+    - git clone https://github.com/collab-tools/collab-analytics.git
+    - cd collab-analytics && npm link collab-db-logging collab-db-application
+    - cd collab-analytics && npm install
+    - cd collab-analytics && npm link
+
+    - npm link collab-analytics collab-db-application
+    - sed 's/YOUR_DB_USERNAME/ubuntu/g' config/_local-template.json > config/local-test.json
+
+database:
+  override:
+    - mysql -u ubuntu -e "CREATE DATABASE collab_test;"
+    - mysql -u ubuntu -e "CREATE DATABASE collab_logging_test;"
+
+test:
+  override:
+    - npm run test

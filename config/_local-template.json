@@ -1,14 +1,14 @@
 {
   "database": {
-    "username": "",
+    "username": "YOUR_DB_USERNAME",
     "password": ""
   },
   "logging_database": {
-    "username": "",
+    "username": "YOUR_DB_USERNAME",
     "password": ""
   },
   "authentication": {
-    "privateKey": ""
+    "privateKey": "YOUR_PRIVATE_KEY"
   },
   "github": {
     "client_secret": ""
