@@ -21,10 +21,9 @@ exports.sendMessageToUser = function(userId, type, payload) {
 }
 
 
-exports.sendAddDiscussionMessageToProject = function(projectId, payload) {
-	io.io.in(projectId).emit('add_discussion_Message', payload);
+exports.sendNewSystemMessageToProject = function(projectId, payload) {
+	io.io.in(projectId).emit('new_system_message', payload);
 };
-
 
 exports.sendMessageToProject = function(projectId, type, payload) {
 	io.io.in(projectId).emit(type, payload)

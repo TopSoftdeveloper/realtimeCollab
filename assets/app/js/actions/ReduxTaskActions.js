@@ -102,6 +102,7 @@ export const _pinMessage = makeActionCreator(AppConstants.PIN_MESSAGE, 'id');
 export const _unpinMessage = makeActionCreator(AppConstants.UNPIN_MESSAGE, 'id');
 export const _editMessageContent = makeActionCreator(AppConstants.EDIT_MESSAGE_CONTENT,
   'id', 'content');
+export const _editMessage = makeActionCreator(AppConstants.EDIT_MESSAGE, 'id', 'message');
 export const _deleteMessage = makeActionCreator(AppConstants.DELETE_MESSAGE, 'id');
 export const userOnline = makeActionCreator(AppConstants.USER_ONLINE, 'id');
 export const userOffline = makeActionCreator(AppConstants.USER_OFFLINE, 'id');

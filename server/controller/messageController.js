@@ -54,6 +54,10 @@ function createMessageHandler(request, reply) {
 
     storage.createMessage(request.payload).then(function(newMessage) {
       reply(newMessage);
+      socket.sendMessageToProject(projectId, 'add_discussion_message', {
+        message: newMessage,
+        sender: user_id,
+      });
     }, function(error) {
       reply(Boom.badRequest(error));
     });
@@ -63,10 +67,17 @@ function createMessageHandler(request, reply) {
 function updateMessageHandler(request, reply) {
   var message_id = request.params.message_id;
   var user_id = request.auth.credentials.user_id;
+  // strict type cast of boolean prop `pinned`
+  if (request.payload.pinned === 'true') {
+    request.payload.pinned = true;
+  }
+  if (request.payload.pinned === 'false') {
+    request.payload.pinned = false;
+  }
   storage.findProjectOfMessage(message_id).then(function(result) {
     if (!result) {
       reply(Boom.badRequest(format(constants.MESSAGE_NOT_EXIST, message_id)));
-      return
+      return;
     }
     var project = result.project;
     accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
@@ -75,7 +86,12 @@ function updateMessageHandler(request, reply) {
         return;
       }
       storage.updateMessage(request.payload, message_id).then(function(t) {
-        reply({status: constants.STATUS_OK});
+        socket.sendMessageToProject(project.id, 'update_discussion_message', {
+          message: request.payload,
+          sender: user_id,
+          messageId: message_id,
+        });
+        reply({ status: constants.STATUS_OK });
       });
     });
   });
@@ -96,6 +112,10 @@ function deleteMessageHandler(request, reply) {
         return;
       }
       storage.deleteMessage(message_id).then(function() {
+        socket.sendMessageToProject(project.id, 'delete_discussion_message', {
+          messageId: message_id,
+          sender: user_id,
+        });
         reply({
           status: constants.STATUS_OK,
         });

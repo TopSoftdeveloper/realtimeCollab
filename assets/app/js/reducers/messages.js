@@ -34,6 +34,10 @@ const messages = (state = [], action) => {
       return [...state, action.message];
     case AppConstants.DELETE_MESSAGE:
       return state.filter(message => message.id !== action.id);
+    case AppConstants.EDIT_MESSAGE:
+      return state.map(message => (
+        message.id === action.id ? assign({}, message, action.message) : message
+      ));
     case AppConstants.PIN_MESSAGE:
       return state.map(message => (
         message.id === action.id ? assign({}, message, { pinned: true }) : message

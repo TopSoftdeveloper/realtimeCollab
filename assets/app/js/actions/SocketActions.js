@@ -6,6 +6,29 @@ import * as Actions from './ReduxTaskActions.js';
 const host = AppConstants.HOSTNAME;
 const socket = io.connect(host);
 
+// helper function to get name of sender by id
+// return false if the sender is the user himself
+const getName = (sender, users) => {
+  // returns sender name if sender exists but is not current user
+  if (sender === localStorage.getItem('user_id')) {
+    return false;
+  }
+  const name = users.filter(user => user.id === sender)[0];
+  if (name) {
+    return name.display_name;
+  }
+  return false;
+};
+
+// helper function to get content of project by id
+const getProjectContent = (projectId, projects) => {
+  const matchedPorjects = projects.filter(project => project.id === projectId);
+  if (matchedPorjects.length > 0) {
+    return matchedPorjects[0].content;
+  }
+  return false;
+};
+
 /* global localStorage */
 // informs server that the current logged in user is online
 export const userIsOnline = () => (
@@ -51,18 +74,6 @@ export const monitorOnlineStatus = () => (
     });
   }
 );
-
-const getName = (sender, users) => {
-  // returns sender name if sender exists but is not current user
-  if (sender === localStorage.getItem('user_id')) {
-    return false;
-  }
-  const name = users.filter(user => user.id === sender)[0];
-  if (name) {
-    return name.display_name;
-  }
-  return false;
-};
 /* eslint no-underscore-dangle: "off" */
 
 export const monitorProjectChanges = () => (
@@ -152,8 +163,29 @@ export const monitorProjectChanges = () => (
       }
       dispatch(Actions.addNewsfeedEvents([event]));
     });
-    socket.on('add_discussion_Message', (data) => {
+    socket.on('new_system_message', (data) => {
       dispatch(Actions.addMessage(data));
+    });
+    socket.on('add_discussion_message', (data) => {
+      const name = getName(data.sender, getState().users);
+      const projectName = getProjectContent(data.message.project_id, getState().projects);
+      if (name && projectName) {
+        dispatch(Actions.snackbarMessage(`${name} posted new message in project ${projectName}`,
+          'info'));
+        dispatch(Actions.addMessage(data.message));
+      }
+    });
+    socket.on('delete_discussion_message', (data) => {
+      const name = getName(data.sender, getState().users);
+      if (name) {
+        dispatch(Actions._deleteMessage(data.messageId));
+      }
+    });
+    socket.on('update_discussion_message', (data) => {
+      const name = getName(data.sender, getState().users);
+      if (name) {
+        dispatch(Actions._editMessage(data.messageId, data.message));
+      }
     });
   }
 );

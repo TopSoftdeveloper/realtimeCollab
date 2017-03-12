@@ -78,7 +78,7 @@ function updateMilestone(request, reply) {
                         updatedContent: updatedMilestoneValues.content
                       },
                     }).then(function(message) {
-                      socket.sendAddDiscussionMessageToProject(updatedMilestoneValues.project_id, message)
+                      socket.sendNewSystemMessageToProject(updatedMilestoneValues.project_id, message)
                     });
                   }
                   if (originalMilestoneValues.deadline !== updatedMilestoneValues.deadline) {
@@ -95,7 +95,7 @@ function updateMilestone(request, reply) {
                         updatedDeadline: updatedMilestoneValues.deadline
                       },
                     }).then(function(message) {
-                      socket.sendAddDiscussionMessageToProject(updatedMilestoneValues.project_id, message)
+                      socket.sendNewSystemMessageToProject(updatedMilestoneValues.project_id, message)
                     });
                   }
 
@@ -170,7 +170,7 @@ function createMilestone(request, reply) {
                   content: m.content,
                 },
               }).then(function(message) {
-                socket.sendAddDiscussionMessageToProject(m.project_id, message)
+                socket.sendNewSystemMessageToProject(m.project_id, message)
               }, function(err) {
                 console.error('store fail to create message');
                 console.error(err);
@@ -238,7 +238,7 @@ function deleteMilestone(request, reply) {
                       content: milestone.content,
                     },
                   }).then(function(message) {
-                    socket.sendAddDiscussionMessageToProject(milestone.project_id, message)
+                    socket.sendNewSystemMessageToProject(milestone.project_id, message)
                   });
                 });
 
