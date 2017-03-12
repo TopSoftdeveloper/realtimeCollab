@@ -309,6 +309,9 @@ module.exports = {
     getMilestone: function(milestone_id) {
         return Milestone.find({where : {id: milestone_id}});
     },
+    findMilestoneById: function(milestone_id) {
+      return Milestone.findById(milestone_id);
+    },
     doesTaskExist: function(task_id) {
         return Task.isExist(task_id);
     },
@@ -426,13 +429,30 @@ module.exports = {
             }
         });
     },
+    createSystemMessage: function(projectId, milestoneId, type, data) {
+      const message = {
+        project_id: projectId,
+        milestone_id: milestoneId,
+        content: type,
+        data: JSON.stringify(data),
+        pinned: false,
+        author_id: null,
+      };
+      return Project.isExist(message.project_id).then(function(exists) {
+        if (!exists) {
+          return Promise.reject(format(constants.PROJECT_NOT_EXIST, message.project_id));
+        }
+        message.id = shortid.generate()
+        return Message.create(message)
+      });
+    },
     createMessage: function(message) {
-      return Milestone.isExist(message.milestone_id).then(function(exists) {
-          if (!exists) {
-              return Promise.reject(format(constants.MILESTONE_NOT_EXIST, message.milestone_id));
-          }
-          message.id = shortid.generate()
-          return Message.create(message)
+      return Project.isExist(message.project_id).then(function(exists) {
+        if (!exists) {
+          return Promise.reject(format(constants.PROJECT_NOT_EXIST, message.project_id));
+        }
+        message.id = shortid.generate()
+        return Message.create(message)
       });
     },
     getMessagesWithCondition: function(condition) {
