@@ -20,10 +20,15 @@ exports.sendMessageToUser = function(userId, type, payload) {
 	return true
 }
 
+
+exports.sendAddDiscussionMessageToProject = function(projectId, payload) {
+	io.io.in(projectId).emit('add_discussion_Message', payload);
+};
+
+
 exports.sendMessageToProject = function(projectId, type, payload) {
 	io.io.in(projectId).emit(type, payload)
 }
-
 exports.is_online = function (socket, payload) {
     onlineUsers[payload.user_id] = socket.id;
 	sockets[socket.id] = socket;
@@ -58,7 +63,7 @@ exports.is_offline = function(socket) {
     storage.getProjectsOfUser(userId).then(function(projects) {
     	projects.forEach(function(project) {
     		if (project.users.length > 1) {
- 				// let others in the project know user is offline  	
+ 				// let others in the project know user is offline
 				socket.to(project.id).emit('teammate_offline', {
 		    		user_id: userId
 		    	})
