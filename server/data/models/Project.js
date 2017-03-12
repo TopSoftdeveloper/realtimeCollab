@@ -12,6 +12,13 @@ module.exports = function(sequelize, DataTypes) {
         github_repo_name: DataTypes.STRING,
         github_repo_owner: DataTypes.STRING
     },{
-        underscored: true
+        underscored: true,
+        classMethods: {
+            isExist: function(id) {
+                return this.findById(id).then(function(instance) {
+                    return instance !== null;
+                })
+            }
+        }
     });
 };

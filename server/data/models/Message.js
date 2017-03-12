@@ -6,9 +6,12 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       primaryKey: true,
     },
-    content: DataTypes.TEXT,
+    content: DataTypes.TEXT, // stores template type for system message
     author_id: DataTypes.STRING,
     pinned: DataTypes.BOOLEAN,
+    content_updated_at: DataTypes.DATE,
+    content_updated_by: DataTypes.STRING,
+    data: DataTypes.TEXT,
   }, {
     underscored: true,
     classMethods: {
