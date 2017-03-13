@@ -15,6 +15,7 @@ import { getCurrentTab, getProjectRoot } from '../utils/general';
 import { getCurrentProject, getProjectActiveUsers, getProjectPendingUsers } from '../selector';
 import * as AppConstants from '../AppConstants';
 import ProjectMessageView from '../containers/ProjectMessageView.jsx';
+
 class Project extends Component {
   constructor(props, context) {
     super(props, context);
@@ -86,7 +87,7 @@ class Project extends Component {
             onActive={this.changeTabToDiscussion}
           >
             <ProjectMessageView
-              title=""
+              showMilestoneSelector
             />
           </Tab>
           <Tab

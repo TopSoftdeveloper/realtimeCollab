@@ -63,7 +63,7 @@ function getCurrentTab() {
 	// Returns the current tab (milestones, files, newsfeed or settings) that the user is currently on
 	var re = /\/project\/[a-z0-9_-]+\/([^\/]+)/i
 	var extracted = extractRegexGroup(re)
-	if (extracted === 'files' || extracted === 'newsfeed' || extracted === 'settings') {
+	if (extracted === 'files' || extracted === 'newsfeed' || extracted === 'settings' || extracted === 'discussions') {
 		return extracted
 	} else {
 		return 'milestones' // default
@@ -135,17 +135,18 @@ export const getRandomInt = (min, max) => (
 	Math.floor(Math.random() * (max - min + 1)) + min
 );
 
-export const getNewColour = (usedColours) => {
-	// Returns an unused colour from the predefined colour palette.
-	// If all colours are used, returns a random colour
-	const coloursLeft = UserColours.filter(colour => usedColours.indexOf(colour) <= -1);
-	if (coloursLeft.length > 0) {
-		return coloursLeft[getRandomInt(0, coloursLeft.length - 1)];
-	}
-	return UserColours[getRandomInt(0, UserColours.length - 1)];
-};
 
 /* global localStorage */
 export const getLocalUserId = () => (
 	localStorage.getItem('user_id')
 );
+
+export const getNewColour = (usedColours) => {
+	// Returns an unused colour from the predefined colour palette.
+	// If all colours are used, returns a random colour
+  const coloursLeft = UserColours.filter(colour => usedColours.indexOf(colour) <= -1);
+  if (coloursLeft.length > 0) {
+    return coloursLeft[getRandomInt(0, coloursLeft.length - 1)];
+  }
+  return UserColours[getRandomInt(0, UserColours.length - 1)];
+};

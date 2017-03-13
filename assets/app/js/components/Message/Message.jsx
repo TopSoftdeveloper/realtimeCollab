@@ -2,16 +2,19 @@ import React, { Component, PropTypes } from 'react';
 import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-import { FormControl } from 'react-bootstrap';
+import { Row, Col, FormControl } from 'react-bootstrap';
 import Paper from 'material-ui/Paper';
+import Divider from 'material-ui/Divider';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import assign from 'object-assign';
 
 import MessageModal from './MessageModal.jsx';
 import MessageList from './MessageList.jsx';
-import ClippedText from '../Common/ClippedText.jsx';
 
 const propTypes = {
   // props passed by container
+  milestones: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
   messages: PropTypes.array.isRequired,
   currentProject: PropTypes.object.isRequired,
@@ -23,24 +26,28 @@ const propTypes = {
     onDeleteMessage: PropTypes.func.isRequired,
   }),
   // props passed by parents
+  showMilestoneSelector: PropTypes.boolean,
   milestoneId: PropTypes.string,
   onDismiss: PropTypes.func.isRequired,
   title: PropTypes.string,
 };
+
+
 const styles = {
   container: {
+    marginTop: 5,
+    marginBottom: 5,
     display: 'flex',
     flexFlow: 'column',
     height: '100%',
     overflowY: 'auto',
+    overflowX: 'hidden',
   },
   titleContainer: {
     flex: '0 1 auto',
     fontSize: 15,
     backgroundColor: 'rgb(232, 232, 232)',
     color: 'black',
-    height: 50,
-    maxHeight: 50,
     fontWeight: 550,
   },
   messageListContainer: {
@@ -67,6 +74,10 @@ const styles = {
     left: '50%',
     textAlign: 'center',
   },
+  selectField: {
+    verticalAlign: 'middle',
+    maxWidth: 200,
+  },
 };
 const modes = {
   editMode: {
@@ -81,6 +92,26 @@ const modes = {
     type: 'initialMode',
   },
 };
+
+const FILTERS = {
+  project: { // predefined key shows only project level message with null milestone_id
+    key: 'project',
+    label: 'Project',
+  },
+  all: { // predefined key shows only all message
+    key: 'all',
+    label: 'All',
+  },
+};
+const translateMilestoneIdToFilterId = (milestoneId) => (
+  milestoneId || FILTERS.project.key
+);
+const translateFilterIdToMilestoneId = (filterId) => {
+  if (filterId === FILTERS.project.key || filterId === FILTERS.all.key) {
+    return null;
+  }
+  return filterId;
+};
 class Message extends Component {
   constructor(props, context) {
     super(props, context);
@@ -88,6 +119,7 @@ class Message extends Component {
       showSystemActivity: true,
       showUserMessage: true,
       mode: modes.initialMode,
+      filterId: translateMilestoneIdToFilterId(props.milestoneId),
     };
     this.onClickDismissButton = this.onClickDismissButton.bind(this);
     this.toggleSystemActivity = this.toggleSystemActivity.bind(this);
@@ -97,6 +129,16 @@ class Message extends Component {
     this.onLeavePostMode = this.onLeavePostMode.bind(this);
     this.onEnterEditMode = this.onEnterEditMode.bind(this);
     this.onLeaveEditMode = this.onLeaveEditMode.bind(this);
+    this.handldeSelectedMilestoneIdChange = this.handldeSelectedMilestoneIdChange.bind(this);
+  }
+  componentWillReceiveProps(nextProps) {
+    // switch among milestones in same project or switch among different projects
+    if (nextProps.currentProject.id !== this.props.currentProject.id ||
+    nextProps.milestoneId !== this.props.milestoneId) {
+      this.setState({
+        filterId: translateMilestoneIdToFilterId(nextProps.milestoneId),
+      });
+    }
   }
   onClickDismissButton() {
     this.props.onDismiss();
@@ -121,6 +163,11 @@ class Message extends Component {
       mode: modes.initialMode,
     });
   }
+  handldeSelectedMilestoneIdChange(event, index, value) {
+    this.setState({
+      filterId: value,
+    });
+  }
   toggleUserMessage() {
     this.setState({
       showUserMessage: !this.state.showUserMessage,
@@ -133,7 +180,48 @@ class Message extends Component {
   }
   postNewMessage(content) {
     /* global localStorage */
-    this.props.actions.onPostNewMessage(content, this.props.currentProject.id, this.props.milestoneId);
+    this.props.actions.onPostNewMessage(content,
+      this.props.currentProject.id, translateFilterIdToMilestoneId(this.state.filterId));
+  }
+  renderMilestoneSelector() {
+    const milestoneMenuItems = this.props.milestones.map(milestone => (
+      <MenuItem
+        value={milestone.id}
+        key={milestone.id}
+        primaryText={milestone.content}
+      />
+    ));
+    let viewMenuItems = [
+      <MenuItem
+        value={FILTERS.all.key}
+        key={FILTERS.all.key}
+        primaryText={FILTERS.all.label}
+      />,
+      <MenuItem
+        value={FILTERS.project.key}
+        key={'project-level'}
+        primaryText={FILTERS.project.label}
+      />,
+    ];
+    if (milestoneMenuItems.length > 0) {
+      viewMenuItems = [
+        ...viewMenuItems,
+        <Divider />,
+        <Subheader>Milestones</Subheader>,
+        ...milestoneMenuItems,
+      ];
+    }
+    return (
+      <SelectField
+        disabled={!this.props.showMilestoneSelector}
+        value={this.state.filterId}
+        onChange={this.handldeSelectedMilestoneIdChange}
+        style={styles.selectField}
+      >
+        {viewMenuItems}
+      </SelectField>
+
+    );
   }
   renderInfoButtons(milestoneMessages) {
     const userMessages = milestoneMessages.filter(message => message.author_id);
@@ -232,33 +320,46 @@ class Message extends Component {
     );
   }
   render() {
-    const { messages, milestoneId, onDismiss } = this.props;
-    const milestoneMessages = messages.filter(message => !milestoneId ||
-      message.milestone_id === milestoneId);
+    const { messages, onDismiss } = this.props;
+    const milestoneMessages = messages.filter(message => {
+      if (this.state.filterId === FILTERS.all.key) {
+        return true;
+      } else if (this.state.filterId === FILTERS.project.key) {
+        return message.milestone_id === null;
+      }
+      return message.milestone_id === this.state.filterId;
+    });
     return (
-      <Paper zDepth={1} className="milestone-message-view">
-        <div style={styles.container}>
-          <Subheader style={styles.titleContainer}>
-            <ClippedText text={this.props.title} placement="bottom" limit={40} />
-            {this.renderInfoButtons(milestoneMessages)}
-            {onDismiss &&
-              <IconButton
-                style={styles.closeIconContainer}
-                onTouchTap={this.onClickDismissButton}
-              >
-                <i className="material-icons">clear</i>
-              </IconButton>
-            }
-          </Subheader>
-          <div style={styles.messageListContainer}>
-            {this.renderPinnedMessageList(milestoneMessages)}
-            {this.renderMessageList(milestoneMessages)}
-          </div>
+      <Paper zDepth={1} style={styles.container}>
+        <Subheader style={styles.titleContainer}>
+          <Row>
+            <Col xs={11}>
+              {
+                this.renderMilestoneSelector()
+              }
+              {this.renderInfoButtons(milestoneMessages)}
 
-          <Paper zDepth={3} style={styles.bottomPanelContainer}>
-            {this.renderbottomPanel()}
-          </Paper>
+            </Col>
+            <Col xs={1}>
+              {onDismiss &&
+                <IconButton
+                  style={styles.closeIconContainer}
+                  onTouchTap={this.onClickDismissButton}
+                >
+                  <i className="material-icons">clear</i>
+                </IconButton>
+              }
+            </Col>
+          </Row>
+        </Subheader>
+        <div style={styles.messageListContainer}>
+          {this.renderPinnedMessageList(milestoneMessages)}
+          {this.renderMessageList(milestoneMessages)}
         </div>
+
+        <Paper zDepth={3} style={styles.bottomPanelContainer}>
+          {this.renderbottomPanel()}
+        </Paper>
       </Paper>
     );
   }

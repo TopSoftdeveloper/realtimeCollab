@@ -1,11 +1,13 @@
 import { connect } from 'react-redux';
-import { getProjectMessages, getProjectActiveUsers, getCurrentProject } from '../selector';
+import { getProjectMessages, getProjectActiveUsers, getCurrentProject, getProjectMilestones }
+from '../selector';
 import Message from '../components/Message/Message.jsx';
-import { createUserMessage, pinMessage, unpinMessage, editMessageContent, deleteMessage }
-  from '../actions/ReduxTaskActions.js';
+import { createUserMessage, pinMessage, unpinMessage, editMessageContent,
+  deleteMessage } from '../actions/ReduxTaskActions.js';
 
 const mapStateToProps = (state) => ({
   messages: getProjectMessages(state),
+  milestones: getProjectMilestones(state),
   users: getProjectActiveUsers(state),
   currentProject: getCurrentProject(state),
 });

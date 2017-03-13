@@ -1095,7 +1095,7 @@ export const declineProject = (projectId, notificationId) => (
       content,
       author_id: getLocalUserId(),
       project_id: projectId,
-      milestone_id: milestoneId,
+      milestone_id: milestoneId || undefined, // force cast empty or null
     };
     return function(dispatch) {
       serverCreateMessage(message).done(res => {
