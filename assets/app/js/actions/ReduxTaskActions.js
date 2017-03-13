@@ -1127,16 +1127,21 @@ export const declineProject = (projectId, notificationId) => (
       });
     };
   }
-  export function editMessageContent(messageId, content) {
-    return function(dispatch) {
-      serverEditMessage(messageId, { content }).done(res => {
-        dispatch(_editMessageContent(messageId, content));
+  export const editMessageContent = (messageId, content) => {
+    const message = {
+      content_updated_at: new Date().toISOString(),
+      content_updated_by: localStorage.getItem('user_id'),
+      content,
+    };
+    return dispatch => {
+      serverEditMessage(messageId, message).done(() => {
+        dispatch(_editMessage(messageId, message));
         dispatch(snackbarMessage('Messsage edited', 'default'));
       }).fail(e => {
         console.log(e);
       });
     };
-  }
+  };
   export function deleteMessage(messageId) {
     return function(dispatch) {
       serverDeleteMessage(messageId).done(res => {

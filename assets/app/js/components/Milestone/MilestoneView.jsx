@@ -325,13 +325,11 @@ class MilestoneView extends Component {
   renderMessageView() {
     return (this.state.messageView.show &&
       <Col xs={6} className="full-height">
-        <Paper zDepth={1} className="milestone-message-view">
-          <ProjectMessageView
-            milestoneId={this.state.messageView.messageMilestoneId}
-            title={this.state.messageView.messageMilestoneName}
-            onDismiss={this.dismissMessageView}
-          />
-        </Paper>
+        <ProjectMessageView
+          milestoneId={this.state.messageView.messageMilestoneId}
+          title={this.state.messageView.messageMilestoneName}
+          onDismiss={this.dismissMessageView}
+        />
       </Col>
     );
   }

@@ -233,30 +233,34 @@ class Message extends Component {
     );
   }
   render() {
-    const { messages, milestoneId } = this.props;
-    const milestoneMessages = messages.filter(message =>
+    const { messages, milestoneId, onDismiss } = this.props;
+    const milestoneMessages = messages.filter(message => !milestoneId ||
       message.milestone_id === milestoneId);
     return (
-      <div style={styles.container}>
-        <Subheader style={styles.titleContainer}>
-          <ClippedText text={this.props.title} placement="bottom" limit={40} />
-          {this.renderInfoButtons(milestoneMessages)}
-          <IconButton
-            style={styles.closeIconContainer}
-            onTouchTap={this.onClickDismissButton}
-          >
-            <i className="material-icons">clear</i>
-          </IconButton>
-        </Subheader>
-        <div style={styles.messageListContainer}>
-          {this.renderPinnedMessageList(milestoneMessages)}
-          {this.renderMessageList(milestoneMessages)}
-        </div>
+      <Paper zDepth={1} className="milestone-message-view">
+        <div style={styles.container}>
+          <Subheader style={styles.titleContainer}>
+            <ClippedText text={this.props.title} placement="bottom" limit={40} />
+            {this.renderInfoButtons(milestoneMessages)}
+            {onDismiss &&
+              <IconButton
+                style={styles.closeIconContainer}
+                onTouchTap={this.onClickDismissButton}
+              >
+                <i className="material-icons">clear</i>
+              </IconButton>
+            }
+          </Subheader>
+          <div style={styles.messageListContainer}>
+            {this.renderPinnedMessageList(milestoneMessages)}
+            {this.renderMessageList(milestoneMessages)}
+          </div>
 
-        <Paper zDepth={3} style={styles.bottomPanelContainer}>
-          {this.renderbottomPanel()}
-        </Paper>
-      </div>
+          <Paper zDepth={3} style={styles.bottomPanelContainer}>
+            {this.renderbottomPanel()}
+          </Paper>
+        </div>
+      </Paper>
     );
   }
 }

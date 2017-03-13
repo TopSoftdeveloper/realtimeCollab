@@ -20,6 +20,7 @@ export const PATH = {
   files: 'files',
   newsfeed: 'newsfeed',
   settings: 'settings',
+  discussions: 'discussions',
 };
 export const GITHUB_CLIENT_ID = clientConfig.github_client_id;
 export const GOOGLE_CLIENT_ID = clientConfig.google_client_id;

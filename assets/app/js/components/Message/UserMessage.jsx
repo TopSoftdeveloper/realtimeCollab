@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -118,6 +118,26 @@ class UserMessage extends Component {
       </div>
     );
   }
+  renderEditedText() {
+    const { message } = this.props;
+    return (message.updatedAt &&
+      <OverlayTrigger
+        placement="top"
+        overlay={
+          <Tooltip id={`${message.id}tooltip`}>
+            <span>
+              {message.updatedBy ? message.updatedBy : 'someone'}
+              <span> edited this message {toFuzzyTime(message.updatedAt)}</span>
+            </span>
+          </Tooltip>
+        }
+      >
+        <span>
+          • Edited
+        </span>
+      </OverlayTrigger>
+    );
+  }
   render() {
     const { message, pinned } = this.props;
     return (
@@ -141,9 +161,8 @@ class UserMessage extends Component {
             <span style={styles.header}>{message.authorName}</span>
             <span style={styles.subHeader}>
               {toFuzzyTime(message.createdAt)}
-              {message.createdAt !== message.updatedAt &&
-                ' • Edited'
-              }
+              &nbsp;
+              {this.renderEditedText()}
             </span>
             {this.renderOptionMenu()}
           </div>

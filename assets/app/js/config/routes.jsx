@@ -16,6 +16,7 @@ export default (
       <Route path={AppConstants.PATH.files} />
       <Route path={AppConstants.PATH.newsfeed} />
       <Route path={AppConstants.PATH.settings} />
+      <Route path={AppConstants.PATH.discussions} />
     </Route>
     <Route path="notifications" component={NotificationView} />
     <Route path="search" component={SearchResults} />

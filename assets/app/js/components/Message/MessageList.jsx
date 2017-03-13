@@ -37,10 +37,16 @@ const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
           pinned: message.pinned,
           content: message.content,
           createdAt: message.created_at,
-          updatedAt: message.updated_at,
+          updatedAt: message.content_updated_at,
           authorName: targetUser.display_name,
           authorAvatarUrl: targetUser.display_image,
         };
+        if (message.content_updated_by) {
+          const targetUsers = users.filter(user => user.id === message.content_updated_by);
+          if (targetUsers.length > 0) {
+            messageItem.updatedBy = _.first(targetUsers).display_name;
+          }
+        }
         messageItems.push(
           <UserMessage
             pinned={pinned}

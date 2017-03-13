@@ -14,13 +14,14 @@ import _404 from '../components/Common/_404.jsx';
 import { getCurrentTab, getProjectRoot } from '../utils/general';
 import { getCurrentProject, getProjectActiveUsers, getProjectPendingUsers } from '../selector';
 import * as AppConstants from '../AppConstants';
-
+import ProjectMessageView from '../containers/ProjectMessageView.jsx';
 class Project extends Component {
   constructor(props, context) {
     super(props, context);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
     this.changeTabToMilestone = this.changeTab.bind(this, AppConstants.PATH.milestones);
     this.changeTabToFile = this.changeTab.bind(this, AppConstants.PATH.files);
+    this.changeTabToDiscussion = this.changeTab.bind(this, AppConstants.PATH.discussions);
     this.changeTabToNewsfeed = this.changeTab.bind(this, AppConstants.PATH.newsfeed);
     this.changeTabToSetting = this.changeTab.bind(this, AppConstants.PATH.settings);
   }
@@ -77,6 +78,15 @@ class Project extends Component {
               project={currentProject}
               actions={actions}
               app={app}
+            />
+          </Tab>
+          <Tab
+            label="Discussions"
+            value={AppConstants.PATH.discussions}
+            onActive={this.changeTabToDiscussion}
+          >
+            <ProjectMessageView
+              title=""
             />
           </Tab>
           <Tab
