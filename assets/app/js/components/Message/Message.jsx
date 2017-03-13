@@ -133,8 +133,7 @@ class Message extends Component {
   }
   postNewMessage(content) {
     /* global localStorage */
-    this.props.actions.onPostNewMessage(content,
-      localStorage.getItem('user_id'), this.props.currentProject.id, this.props.milestoneId);
+    this.props.actions.onPostNewMessage(content, this.props.currentProject.id, this.props.milestoneId);
   }
   renderInfoButtons(milestoneMessages) {
     const userMessages = milestoneMessages.filter(message => message.author_id);

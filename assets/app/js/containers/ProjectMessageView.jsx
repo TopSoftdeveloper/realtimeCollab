@@ -11,8 +11,8 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   actions: {
-    onPostNewMessage: (content, authorId, projectId, milestoneId) => {
-      createUserMessage(content, authorId, projectId, milestoneId)(dispatch);
+    onPostNewMessage: (content, projectId, milestoneId) => {
+      createUserMessage(content, projectId, milestoneId)(dispatch);
     },
     onPinMessage: (messageId) => {
       pinMessage(messageId)(dispatch);

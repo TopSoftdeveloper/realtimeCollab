@@ -5,6 +5,7 @@ import Subheader from 'material-ui/Subheader';
 
 import { markDone } from '../actions/ReduxTaskActions';
 import DashboardItem from './DashboardItem.jsx';
+import { getLocalUserId } from '../utils/general.js';
 
 const propTypes = {
   dispatch: PropTypes.func.isRequired,
@@ -36,8 +37,7 @@ class Dashboard extends Component {
       tasks,
       projects,
     } = this.props;
-    /* global localStorage */
-    const currentUserId = localStorage.getItem('user_id');
+    const currentUserId = getLocalUserId();
     // only show ongoing task assigned to me and unassigned
     const filterByAssignee = (task) => (!task.completed_on && (
       task.assignee_id === '' || task.assignee_id === null || task.assignee_id === currentUserId

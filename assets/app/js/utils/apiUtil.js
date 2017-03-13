@@ -1,4 +1,7 @@
+import $ from 'jquery';
+
 import * as AppConstants from '../AppConstants';
+import { dumpList, getLocalUserId } from './general';
 
 const CREATE_TASK_ENDPOINT = '/tasks';
 const COMPLETE_TASK_ENDPOINT = '/mark_completed';
@@ -10,10 +13,6 @@ const POPULATE_ENDPOINT = '/user/populate';
 const GET_NOTIFICATION_ENDPOINT = '/notifications';
 
 const API_BASE_URL = AppConstants.API_BASE_URL;
-
-import $ from 'jquery'
-import Promise from 'bluebird'
-import {dumpList} from './general'
 
 const googleDriveAPIFiledParams = "fields=lastModifyingUser%2CmodifiedTime%2CiconLink%2CwebViewLink%2Cparents%2Cname%2Cid%2CmimeType"
 
@@ -264,15 +263,15 @@ export function serverCreatePost(payload, projectId) {
 }
 
 export function serverUpdateUser(payload) {
-    return ajaxPut('/user/' + localStorage.getItem('user_id'), payload)
+    return ajaxPut('/user/' + getLocalUserId(), payload)
 }
 
 export function serverUpdateGithubLogin(token) {
-    return ajaxPut('/user/github/' + localStorage.getItem('user_id'), {token:token})
+    return ajaxPut('/user/github/' + getLocalUserId(), {token:token})
 }
 
 export function serverPopulate() {
-    return ajaxGet(POPULATE_ENDPOINT + '/' + localStorage.getItem('user_id'))
+    return ajaxGet(POPULATE_ENDPOINT + '/' + getLocalUserId())
 }
 
 export function serverCreateTask(payload) {

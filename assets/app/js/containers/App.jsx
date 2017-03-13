@@ -10,7 +10,7 @@ import { Color } from '../myTheme.js';
 import * as Actions from '../actions/ReduxTaskActions';
 import * as SocketActions from '../actions/SocketActions';
 import Header from '../components/Header.jsx';
-import { matchesUrl, getCurrentProject } from '../utils/general';
+import { matchesUrl, getCurrentProject, getLocalUserId } from '../utils/general';
 import { isProjectPresent } from '../utils/collection';
 import LeftPanel from '../components/LeftPanel.jsx';
 import LoadingIndicator from '../components/Common/LoadingIndicator.jsx';
@@ -130,7 +130,7 @@ class App extends Component {
     const { notifications, projects, tasks, users, app, search, actions } = this.props;
     let currentProject = null;
     const currentProjectId = getCurrentProject();
-    const currentUserId = localStorage.getItem('user_id');
+    const currentUserId = getLocalUserId();
 
     if (users.length === 0) {
       // First initialization of app

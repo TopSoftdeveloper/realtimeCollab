@@ -12,7 +12,7 @@ import { serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMark
   queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile,
   createFolder, moveFile, serverCreateMessage, serverEditMessage, serverDeleteMessage,
   serverGetNewesfeed, refreshTokens, listRepoEvents } from '../utils/apiUtil';
-import { isObjectPresent, filterUnique, getCurrentProject, getNewColour } from '../utils/general';
+import { filterUnique, getCurrentProject, getNewColour, getLocalUserId } from '../utils/general';
 import { userIsOnline } from './SocketActions';
 import { logout } from '../utils/auth';
 import * as AppConstants from '../AppConstants';
@@ -214,7 +214,7 @@ Content-Transfer-Encoding:base64\r\n\r\n${base64Data}${closeDelimiter}`;
         dispatch(insertFile(newFile));
         dispatch(snackbarMessage(`${newFile.name} uploaded successfully`, 'default'));
         const payload = {
-          user_id: localStorage.getItem('user_id'),
+          user_id: getLocalUserId(),
           fileName: file.name,
         };
         serverCreatePost({
@@ -492,7 +492,7 @@ export const declineProject = (projectId, notificationId) => (
   export function initializeApp() {
     return function(dispatch) {
       dispatch(addUsers([{
-        id: localStorage.getItem('user_id'),
+        id: getLocalUserId(),
         email: localStorage.getItem('email'),
         display_name: localStorage.getItem('display_name'),
         display_image: localStorage.getItem('display_image'),
@@ -730,7 +730,7 @@ export const declineProject = (projectId, notificationId) => (
         dispatch(_createProject({
           id: res.project_id,
           content: content,
-          creator: localStorage.getItem('user_id'),
+          creator: getLocalUserId(),
           basic: [],
           pending: [],
           milestones: [],
@@ -1089,11 +1089,11 @@ export const declineProject = (projectId, notificationId) => (
     }
   }
 
-  export function createUserMessage(content, authorId, projectId, milestoneId) {
+  export function createUserMessage(content, projectId, milestoneId) {
     const message = {
       pinned: false,
       content,
-      author_id: authorId,
+      author_id: getLocalUserId(),
       project_id: projectId,
       milestone_id: milestoneId,
     };
@@ -1130,7 +1130,7 @@ export const declineProject = (projectId, notificationId) => (
   export const editMessageContent = (messageId, content) => {
     const message = {
       content_updated_at: new Date().toISOString(),
-      content_updated_by: localStorage.getItem('user_id'),
+      content_updated_by: getLocalUserId(),
       content,
     };
     return dispatch => {

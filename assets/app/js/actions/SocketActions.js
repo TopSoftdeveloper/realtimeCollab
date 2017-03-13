@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 import * as AppConstants from '../AppConstants';
 import templates from '../../../../server/templates.js';
 import * as Actions from './ReduxTaskActions.js';
+import { getLocalUserId } from '../utils/general.js';
 
 const host = AppConstants.HOSTNAME;
 const socket = io.connect(host);
@@ -10,7 +11,7 @@ const socket = io.connect(host);
 // return false if the sender is the user himself
 const getName = (sender, users) => {
   // returns sender name if sender exists but is not current user
-  if (sender === localStorage.getItem('user_id')) {
+  if (sender === getLocalUserId()) {
     return false;
   }
   const name = users.filter(user => user.id === sender)[0];
@@ -33,21 +34,21 @@ const getProjectContent = (projectId, projects) => {
 // informs server that the current logged in user is online
 export const userIsOnline = () => (
   () => {
-    socket.emit('is_online', { user_id: localStorage.getItem('user_id') });
+    socket.emit('is_online', { user_id: getLocalUserId() });
   }
 );
 
 // targetId is the id of the task/milestone the user is editing
 export const userIsEditing = (type, targetId) => (
   () => {
-    socket.emit('is_editing', { type, id: targetId, user_id: localStorage.getItem('user_id') });
+    socket.emit('is_editing', { type, id: targetId, user_id: getLocalUserId() });
   }
 );
 
 // targetId is the id of the task/milestone the user is editing
 export const userStopsEditing = (type, targetId) => (
   () => {
-    socket.emit('stop_editing', { type, id: targetId, user_id: localStorage.getItem('user_id') });
+    socket.emit('stop_editing', { type, id: targetId, user_id: getLocalUserId() });
   }
 );
 export const monitorEditStatus = () => (
@@ -151,7 +152,7 @@ export const monitorProjectChanges = () => (
       }
       const data = JSON.parse(event.data);
       let targetUser = getState().users.filter(user => user.id === data.user_id);
-      if (targetUser.length === 1 && targetUser[0].id !== localStorage.getItem('user_id')) {
+      if (targetUser.length === 1 && targetUser[0].id !== getLocalUserId()) {
         targetUser = targetUser[0];
         data.displayName = targetUser.display_name;
         if (event.template === templates.DRIVE_UPLOAD) {

@@ -144,3 +144,8 @@ export const getNewColour = (usedColours) => {
 	}
 	return UserColours[getRandomInt(0, UserColours.length - 1)];
 };
+
+/* global localStorage */
+export const getLocalUserId = () => (
+	localStorage.getItem('user_id')
+);
