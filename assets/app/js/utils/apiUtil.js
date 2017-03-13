@@ -13,314 +13,314 @@ const POPULATE_ENDPOINT = '/user/populate';
 const GET_NOTIFICATION_ENDPOINT = '/notifications';
 
 const API_BASE_URL = AppConstants.API_BASE_URL;
+const googleDriveAPIFiledParams =
+'fields=lastModifyingUser%2CmodifiedTime%2CiconLink%2CwebViewLink%2Cparents%2Cname%2Cid%2CmimeType';
 
-const googleDriveAPIFiledParams = "fields=lastModifyingUser%2CmodifiedTime%2CiconLink%2CwebViewLink%2Cparents%2Cname%2Cid%2CmimeType"
-
-export function uploadFile(multipartRequestBody) {
-    return $.ajax('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&'+googleDriveAPIFiledParams ,{
-        'data': multipartRequestBody,
-        'type': 'POST',
-        'processData': false,
-        'headers': {
-            'Authorization': 'Bearer ' + localStorage.getItem('google_token'),
-            'Content-Type': 'multipart/mixed; boundary="' + AppConstants.MULTIPART_BOUNDARY + '"'
-        }
-    })
-}
-
-export function removeFile(fileId) {
-  return $.ajax('https://www.googleapis.com/drive/v3/files/' + fileId, {
-    'type': 'DELETE',
-    'headers': {
-        'Authorization': 'Bearer ' + localStorage.getItem('google_token')
-    }
-  })
-}
-
-export function copyFile(fileId) {
-  return $.ajax('https://www.googleapis.com/drive/v3/files/' + fileId +"/copy?"+googleDriveAPIFiledParams, {
-    'type': 'POST',
-    'headers': {
-        'Authorization': 'Bearer ' + localStorage.getItem('google_token')
-    }
-  })
-}
-
-export function renameFile(fileId, newName) {
-  return $.ajax('https://www.googleapis.com/drive/v3/files/' + fileId +"?"+googleDriveAPIFiledParams, {
-    'type': 'PATCH',
-    'processData': false,
-    'headers': {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ' + localStorage.getItem('google_token')
+/* global localStorage */
+/* eslint camelcase: "off" */
+export const uploadFile = (multipartRequestBody) => (
+  $.ajax(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&${googleDriveAPIFiledParams}`, {
+    data: multipartRequestBody,
+    type: 'POST',
+    processData: false,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('google_token')}`,
+      'Content-Type': `multipart/mixed; boundary="${AppConstants.MULTIPART_BOUNDARY}"`,
     },
-    'data': JSON.stringify({'name':newName})
+  })
+);
+
+export const removeFile = (fileId) => (
+  $.ajax(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+    type: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('google_token')}`,
+    },
+  })
+);
+
+export const copyFile = (fileId) => (
+  $.ajax(`https://www.googleapis.com/drive/v3/files/${fileId}/copy?${googleDriveAPIFiledParams}`, {
+    type: 'POST',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('google_token')}`,
+    },
+  })
+);
+
+export const renameFile = (fileId, newName) => (
+  $.ajax(`https://www.googleapis.com/drive/v3/files/${fileId}?${googleDriveAPIFiledParams}`, {
+    type: 'PATCH',
+    processData: false,
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      Authorization: `Bearer ${localStorage.getItem('google_token')}`,
+    },
+    data: JSON.stringify({ name: newName }),
 
   })
-}
+);
 
-export function createFolder(multipartRequestBody) {
-  return $.ajax('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&'+googleDriveAPIFiledParams,{
-      'data': multipartRequestBody,
-      'type': 'POST',
-      'headers': {
-          'Authorization': 'Bearer ' + localStorage.getItem('google_token'),
-          'Content-Type': 'multipart/mixed; boundary="' + AppConstants.MULTIPART_BOUNDARY + '"'
-      },
-      'data': multipartRequestBody
+export const createFolder = (multipartRequestBody) => (
+  $.ajax(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&${googleDriveAPIFiledParams}`, {
+    data: multipartRequestBody,
+    type: 'POST',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('google_token')}`,
+      'Content-Type': `multipart/mixed; boundary="${AppConstants.MULTIPART_BOUNDARY}"`,
+    },
   })
-}
-
-export function moveFile(fileId, oldParents, newParents) {
-
-  return $.ajax('https://www.googleapis.com/drive/v3/files/' + fileId +"?"+googleDriveAPIFiledParams+"&addParents="+dumpList(newParents)+"&removeParents="+dumpList(oldParents), {
-    'type': 'PATCH',
-    'processData': false,
-    'headers': {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ' + localStorage.getItem('google_token')
-    }
-
+);
+export const moveFile = (fileId, oldParents, newParents) => (
+  $.ajax(`https://www.googleapis.com/drive/v3/files/${fileId}?${googleDriveAPIFiledParams}&addParents=${dumpList(newParents)}&removeParents=${dumpList(oldParents)}`, {
+    type: 'PATCH',
+    processData: false,
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      Authorization: `Bearer ${localStorage.getItem('google_token')}`,
+    },
   })
-}
+);
+const googleGet = (endpoint, params) => (
+  $.ajax({
+    url: `https://www.googleapis.com${endpoint}`,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('google_token')}`,
+    },
+    type: 'GET',
+    data: params,
+  })
+);
 
 
-export function queryGoogleDrive(queryString) {
-    return googleGet('/drive/v3/files', {
-        'pageSize': '20',
-        'q': "fullText contains '" + queryString + "'",
-        'fields': 'files'
-    })
-}
+export const queryGoogleDrive = (queryString) => (
+  googleGet('/drive/v3/files', {
+    pageSize: '20',
+    q: `fullText contains '${queryString}'`,
+    fields: 'files',
+  })
+);
 
-export function getGoogleDriveFolders() {
-    return googleGet('/drive/v3/files', {
-        'pageSize': '100',
-        'orderBy': 'modifiedTime desc',
-        'spaces': 'drive',
-        'q': "mimeType = 'application/vnd.google-apps.folder'",
-        'fields': 'files'
-    })
-}
+export const getGoogleDriveFolders = () => (
+  googleGet('/drive/v3/files', {
+    pageSize: '100',
+    orderBy: 'modifiedTime desc',
+    spaces: 'drive',
+    q: "mimeType = 'application/vnd.google-apps.folder'",
+    fields: 'files',
+  })
+);
 
-export function getChildrenFiles(folderId) {
-    return googleGet('/drive/v3/files', {
-        'pageSize': '100',
-        'orderBy': 'modifiedTime desc',
-        'q': "'" + folderId + "' in parents",
-        'fields': 'files'
-    })
-}
+export const getChildrenFiles = (folderId) => (
+  googleGet('/drive/v3/files', {
+    pageSize: '100',
+    orderBy: 'modifiedTime desc',
+    q: `'${folderId}' in parents`,
+    fields: 'files',
+  })
+);
 
-export function listRepoEvents(owner, repo) {
-    return $.ajax({
-        url: 'https://api.github.com/repos/' + owner + '/' + repo + '/events',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('github_token')
-        },
-        type: 'GET'
-    })
-}
+export const listRepoEvents = (owner, repo) => (
+  $.ajax({
+    url: `https://api.github.com/repos/${owner}/${repo}/events`,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('github_token')}`,
+    },
+    type: 'GET',
+  })
+);
 
-export function queryGithub(queryString, ownerRepos) {
-    return $.ajax({
-        url: 'https://api.github.com/search/code?q=' + queryString + '+in:file,path' + ownerRepos,
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('github_token'),
-            'Accept': 'application/vnd.github.v3.text-match+json'
-        },
-        type: 'GET'
-    })
-}
+export const queryGithub = (queryString, ownerRepos) => (
+  $.ajax({
+    url: `https://api.github.com/search/code?q=${queryString}+in:file,path${ownerRepos}`,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('github_token')}`,
+      Accept: 'application/vnd.github.v3.text-match+json',
+    },
+    type: 'GET',
+  })
+);
 
+export const getFileInfo = (fileId) => (
+  googleGet(`/drive/v3/files/${fileId}`)
+);
 
-export function getFileInfo(fileId) {
-    return googleGet('/drive/v3/files/' + fileId)
-}
+const ajaxPost = (endpoint, payload) => (
+  $.ajax({
+    url: API_BASE_URL + endpoint,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+    data: payload,
+    type: 'POST',
+  })
+);
+const ajaxPut = (endpoint, payload) => (
+  $.ajax({
+    url: API_BASE_URL + endpoint,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+    data: payload,
+    type: 'PUT',
+  })
+);
 
-function googleGet(endpoint, params) {
-    return $.ajax({
-        url: 'https://www.googleapis.com' + endpoint,
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('google_token')
-        },
-        type: 'GET',
-        data: params
-    });
-}
+const ajaxGet = (endpoint) => (
+  $.ajax({
+    url: API_BASE_URL + endpoint,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+    type: 'GET',
+  })
+);
 
-function ajaxPost(endpoint, payload) {
-    return $.ajax({
-        url: API_BASE_URL + endpoint,
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-        },
-        data: payload,
-        type: 'POST'
-    });
-}
+const ajaxDelete = (endpoint, data) => (
+  $.ajax({
+    url: API_BASE_URL + endpoint,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+    data,
+    type: 'DELETE',
+  })
+);
 
-function ajaxPut(endpoint, payload) {
-    return $.ajax({
-        url: API_BASE_URL + endpoint,
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-        },
-        data: payload,
-        type: 'PUT'
-    });
-}
+export const serverDeclineProject = (projectId) => (
+  $.ajax({
+    url: `${API_BASE_URL}/decline_project/${projectId}`,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+    type: 'PUT',
+  })
+);
 
-function ajaxGet(endpoint) {
-    return $.ajax({
-        url: API_BASE_URL + endpoint,
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-        },
-        type: 'GET'
-    });
-}
+export const serverAcceptProject = (projectId) => (
+  $.ajax({
+    url: `${API_BASE_URL}/join_project/${projectId}`,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+    type: 'PUT',
+  })
+);
 
-function ajaxDelete(endpoint, data) {
-    return $.ajax({
-        url: API_BASE_URL + endpoint,
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-        },
-        data: data,
-        type: 'DELETE'
-    });
-}
+export const githubOAuth = (code) => (
+  ajaxPost('/github/oauth/access_token', {
+    code,
+  })
+);
 
-export function serverDeclineProject(projectId) {
-    return $.ajax({
-        url: API_BASE_URL + '/decline_project/' + projectId,
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-        },
-        type: 'PUT'
-    })
-}
+export const getGithubRepos = () => (
+  $.ajax({
+    url: 'https://api.github.com/user/repos?per_page=100',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('github_token')}`,
+    },
+    type: 'GET',
+  })
+);
 
-export function serverAcceptProject(projectId) {
-    return $.ajax({
-        url: API_BASE_URL + '/join_project/' + projectId,
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-        },
-        type: 'PUT'
-    })
-}
+export const syncGithubIssues = (projectId, name, owner) => (
+  ajaxPost(`/github/sync/${projectId}`, {
+    token: localStorage.getItem('github_token'),
+    name,
+    owner,
+  })
+);
 
-export function githubOAuth(code) {
-    return ajaxPost('/github/oauth/access_token', {code: code})
-}
+export const setupGithubWebhook = (name, owner) => (
+  ajaxPost('/webhook/github/setup', {
+    token: localStorage.getItem('github_token'),
+    name,
+    owner,
+  })
+);
 
-export function getGithubRepos() {
-    return $.ajax({
-        url: 'https://api.github.com/user/repos?per_page=100',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('github_token')
-        },
-        type: 'GET'
-    })
-}
+export const serverDeleteNotification = (id) => (
+  ajaxDelete(`/notification/${id}`)
+);
 
-export function syncGithubIssues(projectId, name, owner) {
-    return ajaxPost('/github/sync/' + projectId, {
-        token: localStorage.getItem('github_token'),
-        name: name,
-        owner: owner
-    })
-}
+export const serverGetNotifications = () => (
+  ajaxGet(GET_NOTIFICATION_ENDPOINT)
+);
 
-export function setupGithubWebhook(name, owner) {
-    return ajaxPost('/webhook/github/setup', {
-        token: localStorage.getItem('github_token'),
-        name: name,
-        owner: owner
-    })
-}
+export const serverGetNewesfeed = () => (
+  ajaxGet('/newsfeed')
+);
 
-export function serverDeleteNotification(id) {
-    return ajaxDelete('/notification/' + id)
-}
+export const serverInviteToProject = (payload) => (
+  ajaxPost(INVITE_TO_PROJECT_ENDPOINT, payload)
+);
 
-export function serverGetNotifications() {
-    return ajaxGet(GET_NOTIFICATION_ENDPOINT)
-}
+export const serverCreatePost = (payload, projectId) => (
+  ajaxPost(`/newsfeed/${projectId}`, payload)
+);
 
-export function serverGetNewesfeed() {
-    return ajaxGet('/newsfeed')
-}
+export const serverUpdateUser = (payload) => (
+  ajaxPut(`/user/${getLocalUserId()}`, payload)
+);
 
-export function serverInviteToProject(payload) {
-    return ajaxPost(INVITE_TO_PROJECT_ENDPOINT, payload);
-}
+export const serverUpdateGithubLogin = (token) => (
+  ajaxPut(`/user/github/${getLocalUserId()}`, {
+    token,
+  })
+);
 
-export function serverCreatePost(payload, projectId) {
-    return ajaxPost('/newsfeed/' + projectId, payload);
-}
+export const serverPopulate = () => (
+  ajaxGet(`${POPULATE_ENDPOINT}/${getLocalUserId()}`)
+);
 
-export function serverUpdateUser(payload) {
-    return ajaxPut('/user/' + getLocalUserId(), payload)
-}
-
-export function serverUpdateGithubLogin(token) {
-    return ajaxPut('/user/github/' + getLocalUserId(), {token:token})
-}
-
-export function serverPopulate() {
-    return ajaxGet(POPULATE_ENDPOINT + '/' + getLocalUserId())
-}
-
-export function serverCreateTask(payload) {
-    payload.github_token = localStorage.getItem('github_token')
-    return ajaxPost(CREATE_TASK_ENDPOINT, payload);
-}
+export const serverCreateTask = (payload) => {
+  payload.github_token = localStorage.getItem('github_token');
+  return ajaxPost(CREATE_TASK_ENDPOINT, payload);
+};
 
 
-export function serverDeleteTask(task_id, project_id) {
-    return ajaxDelete('/task/' + task_id, {project_id: project_id})
-}
+export const serverDeleteTask = (task_id, project_id) => (
+  ajaxDelete(`/task/${task_id}`, {
+    project_id,
+  })
+);
 
-export function serverEditTask(task_id, payload) {
-    payload.github_token = localStorage.getItem('github_token')
-    return ajaxPut('/task/' + task_id, payload);
-}
+export const serverEditTask = (task_id, payload) => {
+  payload.github_token = localStorage.getItem('github_token');
+  return ajaxPut(`/task/${task_id}`, payload);
+};
 
-export function serverCreateMilestone(payload) {
-    payload.github_token = localStorage.getItem('github_token')
-    return ajaxPost(CREATE_MILESTONE_ENDPOINT, payload);
-}
+export const serverCreateMilestone = (payload) => {
+  payload.github_token = localStorage.getItem('github_token');
+  return ajaxPost(CREATE_MILESTONE_ENDPOINT, payload);
+};
 
-export function serverDeleteMilestone(milestone_id, project_id) {
-    return ajaxDelete('/milestone/' + milestone_id, {
-        project_id: project_id,
-        github_token: localStorage.getItem('github_token')
-    })
-}
+export const serverDeleteMilestone = (milestone_id, project_id) => (
+  ajaxDelete(`/milestone/${milestone_id}`, {
+    project_id,
+    github_token: localStorage.getItem('github_token'),
+  })
+);
+export const serverCreateProject = (payload) => (
+  ajaxPost(CREATE_PROJECT_ENDPOINT, payload)
+);
 
-export function serverCreateProject(payload) {
-    return ajaxPost(CREATE_PROJECT_ENDPOINT, payload);
-}
+export const serverUpdateProject = (project_id, payload) => (
+  ajaxPut(`/project/${project_id}`, payload)
+);
 
-export function serverUpdateProject(project_id, payload) {
-    return ajaxPut('/project/' + project_id, payload);
-}
+export const serverEditMilestone = (milestone_id, payload) => {
+  payload.github_token = localStorage.getItem('github_token');
+  return ajaxPut(`/milestone/${milestone_id}`, payload);
+};
 
-export function serverEditMilestone(milestone_id, payload) {
-    payload.github_token = localStorage.getItem('github_token')
-    return ajaxPut('/milestone/' + milestone_id, payload);
-}
-
-export function serverMarkDone(task_id, project_id) {
-    return ajaxPost(COMPLETE_TASK_ENDPOINT, {
-        task_id: task_id,
-        project_id: project_id,
-        github_token: localStorage.getItem('github_token')
-    })
-}
+export const serverMarkDone = (task_id, project_id) => (
+  ajaxPost(COMPLETE_TASK_ENDPOINT, {
+    task_id,
+    project_id,
+    github_token: localStorage.getItem('github_token'),
+  })
+);
 
 export const refreshTokens = () => (
   ajaxPost('/refresh_google_token')
