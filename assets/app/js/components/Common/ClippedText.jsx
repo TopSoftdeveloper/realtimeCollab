@@ -30,7 +30,7 @@ const styles = {
 */
 const ClippedText = (props) => {
   const { text, limit, indicator, textStyle, placement } = props;
-  if (text.length <= limit) {
+  if (!text || text.length <= limit) {
     return (
       <span style={textStyle}>
         {text}
