@@ -24,6 +24,9 @@ const styles = {
 };
 const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
   let content = null;
+  // track the transition from SystemMessage to UserMessage
+  // add divider between transition as SystemMessage has only bottomBorder
+  let isPreviousSystemMessage = false;
   const messageItems = [];
   messages.sort((messageA, messageB) => (
     new Date(messageA.created_at).getTime() - new Date(messageB.created_at).getTime()
@@ -47,6 +50,10 @@ const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
             messageItem.updatedBy = _.first(targetUsers).display_name;
           }
         }
+        if (isPreviousSystemMessage) {
+          messageItems.push(<Divider />);
+        }
+        isPreviousSystemMessage = false;
         messageItems.push(
           <UserMessage
             pinned={pinned}
@@ -67,6 +74,7 @@ const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
         data: message.data,
 
       };
+      isPreviousSystemMessage = true;
       messageItems.push(<SystemMessage key={message.id} message={messageItem} />);
     }
   });
