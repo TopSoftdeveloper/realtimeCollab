@@ -34,9 +34,9 @@ const propTypes = {
 
 const styles = {
   floatingSidebarIconContainer: {
-    position: 'fixed',
+    position: 'absolute',
     top: 80,
-    left: 195,
+    left: 0,
     backgroundColor: Color.leftPanelBackgroundColor,
   },
   floatingSidebarIcon: {
