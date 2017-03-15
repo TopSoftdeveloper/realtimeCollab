@@ -6,7 +6,7 @@ import Promise from 'bluebird';
 import { serverCreateTask, serverDeleteTask, serverUpdateGithubLogin, serverMarkDone,
   serverPopulate, serverCreateMilestone, serverCreateProject, serverCreatePost,
   serverInviteToProject, serverGetNotifications, serverAcceptProject,
-  serverDeleteNotification, serverDeleteMilestone, getGoogleDriveFolders,
+  serverDeleteNotification, serverDeleteMilestone, serverEditNotification, getGoogleDriveFolders,
   getChildrenFiles, getFileInfo, serverUpdateProject, getGithubRepos,
   syncGithubIssues, serverEditTask, serverEditMilestone, queryGithub, setupGithubWebhook,
   queryGoogleDrive, serverDeclineProject, uploadFile, removeFile, renameFile, copyFile,
@@ -112,6 +112,7 @@ export const userStopEditing = makeActionCreator(AppConstants.USER_STOP_EDITING,
   'id', 'user_id');
 export const newNotification = makeActionCreator(AppConstants.NEW_NOTIFICATION, 'notif');
 export const _deleteNotification = makeActionCreator(AppConstants.DELETE_NOTIFICATION, 'id');
+export const _editNotification = makeActionCreator(AppConstants.EDIT_NOTIFICATION, 'id', 'notif');
 
 export const addUser = (user) => (
   (dispatch, getState) => {
@@ -1137,6 +1138,18 @@ export const declineProject = (projectId, notificationId) => (
       serverEditMessage(messageId, message).done(() => {
         dispatch(_editMessage(messageId, message));
         dispatch(snackbarMessage('Messsage edited', 'default'));
+      }).fail(e => {
+        console.log(e);
+      });
+    };
+  };
+  export const markNotificationAsRead = (notificationId) => {
+    const notification = {
+      is_read: true,
+    };
+    return dispatch => {
+      serverEditNotification(notificationId, notification).done(() => {
+        dispatch(_editNotification(notificationId, { read: true }));
       }).fail(e => {
         console.log(e);
       });

@@ -1,3 +1,4 @@
+import assign from 'object-assign';
 import * as AppConstants from '../AppConstants';
 /*
 Example state tree:
@@ -25,6 +26,10 @@ const notifications = (state = [], action) => {
       return [action.notif, ...state];
     case AppConstants.DELETE_NOTIFICATION:
       return state.filter(notif => notif.id !== action.id);
+    case AppConstants.EDIT_NOTIFICATION:
+      return state.map(notif => (
+        notif.id === action.id ? assign({}, notif, action.notif) : notif
+      ));
     default:
       return state;
   }

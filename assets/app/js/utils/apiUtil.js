@@ -246,6 +246,9 @@ export const serverDeleteNotification = (id) => (
 export const serverGetNotifications = () => (
   ajaxGet(GET_NOTIFICATION_ENDPOINT)
 );
+export const serverEditNotification = (notification_id, payload) => (
+  ajaxPut(`/notification/${notification_id}`, payload)
+);
 
 export const serverGetNewesfeed = () => (
   ajaxGet('/newsfeed')

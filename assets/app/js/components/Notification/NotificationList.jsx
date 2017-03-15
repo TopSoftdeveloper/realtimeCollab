@@ -1,22 +1,19 @@
 import React, { PropTypes } from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-
+import { List } from 'material-ui/List';
+import FlatButton from 'material-ui/FlatButton';
 import NotificationItem from './NotificationItem.jsx';
 import { toFuzzyTime } from '../../utils/general';
-import { acceptProject, declineProject } from '../../actions/ReduxTaskActions';
 
-const styles = {
-  button: {
-    margin: 5,
-    height: 30,
-  },
-};
 const propTypes = {
   notifications: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
-  dispatch: PropTypes.func.isRequired,
+  actions: React.PropTypes.shape({
+    onMarkNotificationAsRead: PropTypes.func.isRequired,
+    onAcceptProject: PropTypes.func.isRequired,
+    onDeclineProject: PropTypes.func.isRequired,
+  }),
 };
-const NotificationList = ({ notifications, users, dispatch }) => {
+const NotificationList = ({ notifications, users, actions }) => {
   const dispatchAcceptProject = (projectId, notifId) => {
     dispatch(acceptProject(projectId, notifId));
   };
@@ -30,43 +27,22 @@ const NotificationList = ({ notifications, users, dispatch }) => {
     if (matchingUsers.length > 0) {
       user = matchingUsers[0];
     }
-    let buttons;
-    if (notif.type === 'INVITE_TO_PROJECT') {
-      buttons = (
-        <div className="notif-buttons">
-          <RaisedButton
-            style={styles.button}
-            label="Accept"
-            primary
-            onTouchTap={dispatchAcceptProject.bind(null, notif.meta.project_id, notif.id)}
-          />
-          <RaisedButton
-            style={styles.button}
-            label="Decline"
-            secondary
-            onTouchTap={dispatchDeclineProject.bind(null, notif.meta.project_id, notif.id)}
-          />
-        </div>
-      );
-    }
     return (
       <NotificationItem
         key={notif.id}
-        text={notif.text}
-        read={notif.read}
+        notification={notif}
         user={user}
         time={toFuzzyTime(notif.time)}
-        actionButtons={buttons}
+        actions={actions}
       />
     );
   });
 
   return (
-    <div className="notification-list">
-      <ul>
-        {notificationItems}
-      </ul>
-    </div>
+    <List>
+      {notificationItems}
+    </List>
+
   );
 };
 
