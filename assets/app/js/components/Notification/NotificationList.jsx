@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { List } from 'material-ui/List';
 import FlatButton from 'material-ui/FlatButton';
 import NotificationItem from './NotificationItem.jsx';
-import { toFuzzyTime } from '../../utils/general';
+
 
 const propTypes = {
   notifications: PropTypes.array.isRequired,
@@ -14,12 +14,6 @@ const propTypes = {
   }),
 };
 const NotificationList = ({ notifications, users, actions }) => {
-  const dispatchAcceptProject = (projectId, notifId) => {
-    dispatch(acceptProject(projectId, notifId));
-  };
-  const dispatchDeclineProject = (projectId, notifId) => {
-    dispatch(declineProject(projectId, notifId));
-  };
   const notifsSortedByTime = notifications.sort((a, b) => (a.time < b.time));
   const notificationItems = notifsSortedByTime.map(notif => {
     const matchingUsers = users.filter(user => user.id === notif.meta.user_id);
@@ -32,7 +26,6 @@ const NotificationList = ({ notifications, users, actions }) => {
         key={notif.id}
         notification={notif}
         user={user}
-        time={toFuzzyTime(notif.time)}
         actions={actions}
       />
     );
