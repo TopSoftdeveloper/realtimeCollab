@@ -150,14 +150,14 @@ class App extends Component {
     }
     return (
       <Grid>
+        <Header
+          projects={projects}
+          displayName={displayName}
+          search={search}
+          actions={actions}
+          app={app}
+        />
         <Row>
-          <Header
-            projects={projects}
-            displayName={displayName}
-            search={search}
-            actions={actions}
-            app={app}
-          />
           <Sidebar
             shadow={false}
             transitions={false}
