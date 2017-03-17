@@ -7,9 +7,11 @@ import { Router, browserHistory } from 'react-router';
 import ReactGA from 'react-ga';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 import routes from './config/routes.jsx';
 import reducer from './reducers/index';
+import myTheme from './myTheme.js';
 
 injectTapEventPlugin();
 
@@ -31,7 +33,7 @@ const logPage = () => {
 
 function run() {
   ReactDOM.render(
-    <MuiThemeProvider >
+    <MuiThemeProvider muiTheme={getMuiTheme(myTheme)} >
       <Provider store={store}>
         <Router history={browserHistory} routes={routes} onUpdate={logPage} />
       </Provider>
