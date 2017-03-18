@@ -5,7 +5,10 @@ import Chip from 'material-ui/Chip';
 
 const styles = {
   kindRowColumn: {
-    width: '30%',
+    width: '20%',
+  },
+  labelStyle: {
+    fontWeight: 'normal',
   },
 };
 const propTypes = {
@@ -30,7 +33,13 @@ const DashboardItem = ({ task, projectId, projectName, milestoneName, onCheck })
   }
   return (
     <TableRow>
-      <TableRowColumn><Checkbox label={task.content} onCheck={check} /></TableRowColumn>
+      <TableRowColumn>
+        <Checkbox
+          label={task.content}
+          onCheck={check}
+          labelStyle={styles.labelStyle}
+        />
+      </TableRowColumn>
       <TableRowColumn
         style={styles.kindRowColumn}
       >
