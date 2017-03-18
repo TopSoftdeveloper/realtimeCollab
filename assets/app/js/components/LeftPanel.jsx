@@ -3,7 +3,9 @@ import { List, ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import { browserHistory } from 'react-router';
 import assign from 'object-assign';
-import { Badge } from 'react-bootstrap';
+import Paper from 'material-ui/Paper';
+import Divider from 'material-ui/Divider';
+import IconButton from 'material-ui/IconButton';
 
 import { getCurrentTab } from '../utils/general';
 import { Color } from '../myTheme.js';
@@ -12,13 +14,13 @@ import ProjectListItem from './ProjectListItem.jsx';
 
 const styles = {
   subheader: {
-    color: 'rgba(255, 255, 255, 0.75)',
-    marginLeft: -4,
+    marginLeft: -8,
+    color: Color.leftPanelItemHightColor,
+    fontSize: 13,
   },
   listItem: {
     fontSize: 16,
     padding: '8px 0px 8px 18px',
-    color: 'white',
     textOverflow: 'ellipsis',
     maxWidth: 'inherited',
   },
@@ -26,7 +28,16 @@ const styles = {
     verticalAlign: 'middle',
   },
   leftPanelContainer: {
-    marginTop: 50,
+    paddingTop: 66,
+    height: '100%',
+  },
+  badgeStyle: {
+    marginRight: 10,
+    float: 'right',
+    verticalAlign: 'middle',
+  },
+  addProjectButton: {
+    color: Color.leftPanelItemHightColor,
   },
 };
 const propTypes = {
@@ -102,14 +113,26 @@ class LeftPanel extends Component {
     const path = '/app/notifications';
     const active = this.context.location.pathname === path;
     const text = this.props.notificationCount ? (
-      <span>Notification <Badge>{this.props.notificationCount}</Badge></span>
+      <span>
+        Notification
+        <span
+          className="left-panel-badge"
+          style={assign({}, styles.badgeStyle, active && {
+            color: 'white',
+          })}
+        >
+          {this.props.notificationCount}
+        </span>
+      </span>
     ) : 'Notification';
     return (
       <ListItem
+        className="left-panel-item"
         primaryText={text}
         onTouchTap={() => { browserHistory.push(path); }}
         innerDivStyle={assign({}, styles.listItem, active && {
           backgroundColor: Color.leftPanelItemHightColor,
+          color: 'white',
         })}
         hoverColor={Color.leftPanelItemHightColor}
       />
@@ -119,42 +142,55 @@ class LeftPanel extends Component {
     const path = '/app/dashboard';
     const active = this.context.location.pathname === path;
     const text = this.props.myTaskCount ? (
-      <span>My Task <Badge>{this.props.myTaskCount}</Badge></span>
+      <span>
+        My Task
+        <span
+          style={assign({}, styles.badgeStyle, active && {
+            color: 'white',
+          })}
+        >
+          {this.props.myTaskCount}
+        </span>
+      </span>
     ) : 'My Task';
     return (
       <ListItem
+        className="left-panel-item"
         primaryText={text}
         onTouchTap={() => { browserHistory.push(path); }}
         innerDivStyle={assign({}, styles.listItem, active && {
           backgroundColor: Color.leftPanelItemHightColor,
+          color: 'white',
         })}
         hoverColor={Color.leftPanelItemHightColor}
       />
     );
   }
   renderAddProjectIcon() {
-    let iconClassName = 'material-icons add_circle ';
+    let iconClassName = 'material-icons';
     if (this.props.projects.length === 0) {
       iconClassName += 'animated infinite wobble';
     }
     return (
-      <i
+      <IconButton
         style={styles.middleVerticalAlign}
-        className={iconClassName}
-        onClick={this.openModal}
+        iconStyle={styles.addProjectButton}
+        onTouchTap={this.openModal}
+        iconClassName={iconClassName}
       >
         add_circle
-      </i>
+      </IconButton>
     );
   }
   render() {
     return (
-      <div style={styles.leftPanelContainer}>
+      <Paper zDepth={1} style={styles.leftPanelContainer}>
         <List>
           <Subheader style={styles.subheader}>SHORTCUT</Subheader>
           {this.renderMyTasksLink()}
           {this.renderNotificationLink()}
         </List>
+        <Divider />
         <List>
           <Subheader style={styles.subheader} >
             <span style={styles.middleVerticalAlign}>PROJECTS&nbsp;</span>
@@ -164,7 +200,7 @@ class LeftPanel extends Component {
         </List>
 
         {this.renderProjectModal()}
-      </div>
+      </Paper>
     );
   }
 }

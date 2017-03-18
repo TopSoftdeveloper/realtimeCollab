@@ -25,7 +25,7 @@ export default {
 };
 
 export const Color = {
-  leftPanelItemHightColor: fade(black, 0.4),
-  leftPanelBackgroundColor: '#37474f',
+  leftPanelItemHightColor: cyan500,
+  leftPanelBackgroundColor: 'white',
   messageViewPinBackgroundColor: fade('#fcf8e3', 1),
 };

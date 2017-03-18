@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import Sidebar from 'react-sidebar';
 import { Grid, Row } from 'react-bootstrap';
 import assign from 'object-assign';
+import Paper from 'material-ui/Paper';
 
 import { Color } from '../myTheme.js';
 import * as Actions from '../actions/ReduxTaskActions';
@@ -37,10 +38,13 @@ const styles = {
     position: 'absolute',
     top: 80,
     left: 0,
-    backgroundColor: Color.leftPanelBackgroundColor,
+    backgroundColor: 'white',
+    zIndex: 999,
+    borderRadius: 0,
+    borderLeftWidth: 0,
   },
   floatingSidebarIcon: {
-    color: 'white',
+    color: 'black',
     fontSize: 20,
     lineHeight: 'inherit',
   },
@@ -159,8 +163,8 @@ class App extends Component {
         />
         <Row>
           <Sidebar
-            shadow={false}
-            transitions={false}
+            shadow
+            transitions
             docked
             open
             styles={{
@@ -180,7 +184,8 @@ class App extends Component {
             }
           >
             <div className="body-wrapper">
-              <div
+              <Paper
+                zDepth={1}
                 style={
                   assign({}, styles.floatingSidebarIconContainer, !this.props.app.showSidebar && {
                     left: 0,
@@ -194,7 +199,7 @@ class App extends Component {
                 >
                   {this.props.app.showSidebar ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
                 </i>
-              </div>
+              </Paper>
               {this.renderMainContent()}
             </div>
           </Sidebar>

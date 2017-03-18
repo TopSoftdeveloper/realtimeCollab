@@ -11,6 +11,9 @@ html, body{
   width: auto !important; /* Firefox will set width as auto */
   width:1100px; /* As IE ignores !important it will set width as 1000px; */
   font-family: Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #F1F1F1;
 }
 /*********************** TreeNode *******************/
 .borderless {
@@ -526,6 +529,9 @@ html, body{
   overflow-y: auto;
   background-color: white;
 }
-.inline-search-entry {
-  background-color: red;
+.left-panel-item > div :hover {
+  color: white;
+}
+.left-panel-badge :hover {
+  color: white,
 }

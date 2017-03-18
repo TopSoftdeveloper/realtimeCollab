@@ -16,10 +16,12 @@ const ProjectListItem = ({ projectId, projectContent, active, onSwitchProject, i
   const switchProject = onSwitchProject.bind(null, projectId);
   return (
     <ListItem
+      className="left-panel-item"
       key={projectId}
       onTouchTap={switchProject}
       innerDivStyle={assign({}, itemStyle, active && {
         backgroundColor: Color.leftPanelItemHightColor,
+        color: 'white',
       })}
       hoverColor={Color.leftPanelItemHightColor}
       primaryText={<ClippedText text={projectContent} limit={NUMBER_LIMIT} />}
