@@ -3,6 +3,7 @@ import Paper from 'material-ui/Paper';
 import { Table, TableBody } from 'material-ui/Table';
 import Subheader from 'material-ui/Subheader';
 
+import myTheme from '../myTheme.js';
 import { markDone } from '../actions/ReduxTaskActions';
 import DashboardItem from './DashboardItem.jsx';
 import { getLocalUserId } from '../utils/general.js';
@@ -12,6 +13,20 @@ const propTypes = {
   milestones: PropTypes.array.isRequired,
   projects: PropTypes.array.isRequired,
   tasks: PropTypes.array.isRequired,
+};
+
+const styles = {
+  container: {
+    display: 'flex',
+    flexFlow: 'column',
+  },
+  titleContainer: {
+    flex: '0 1 auto',
+  },
+  itemListContainer: {
+    flex: '1 1 auto',
+    overflowY: 'auto',
+  },
 };
 
 class Dashboard extends Component {
@@ -88,16 +103,35 @@ class Dashboard extends Component {
         taskRows.push(<DashboardItem {...props} />);
       }
     });
-
+    const taskLength = taskRows.length;
     return (
-      <Paper zDepth={1} className="main-content">
-        <Subheader>You have {taskRows.length} task(s) to do</Subheader>
-        <Table>
-          <TableBody>
-            {taskRows}
-          </TableBody>
-        </Table>
-      </Paper>
+      <div className="main-content" style={styles.container}>
+        <div style={styles.titleContainer}>
+          <h2 style={{ color: myTheme.palette.primary1Color }}>
+            My Tasks
+            {taskLength > 0 &&
+              <Subheader style={{ display: 'inline-block', width: 'auto' }}>
+                You have&nbsp;
+                <span style={{ color: myTheme.palette.primary1Color }}>
+                  {taskLength}
+                </span> task{taskLength > 1 ? 's' : ''} to do
+              </Subheader>
+            }
+          </h2>
+        </div>
+        {taskLength > 0 ?
+          <Paper style={styles.itemListContainer}>
+            <Table>
+              <TableBody>
+                {taskRows}
+              </TableBody>
+            </Table>
+          </Paper> :
+          <div className="no-items">
+            <h3>Your task list is clean!</h3>
+          </div>
+        }
+      </div>
     );
   }
 }
