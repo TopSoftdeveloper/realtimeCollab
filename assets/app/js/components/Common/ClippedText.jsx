@@ -7,10 +7,12 @@ const propTypes = {
   indicator: PropTypes.string,
   placement: React.PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
   textStyle: PropTypes.object,
+  showToolTip: PropTypes.bool,
 };
 const defaultProps = {
   indicator: '...',
   placement: 'right',
+  showToolTip: false,
 };
 
 const styles = {
@@ -29,11 +31,18 @@ const styles = {
   shows tooltip for the clipped part
 */
 const ClippedText = (props) => {
-  const { text, limit, indicator, textStyle, placement } = props;
+  const { text, limit, indicator, textStyle, placement, showToolTip } = props;
   if (!text || text.length <= limit) {
     return (
       <span style={textStyle}>
         {text}
+      </span>
+    );
+  }
+  if (!showToolTip) {
+    return (
+      <span style={textStyle}>
+        {`${text.substring(0, limit - indicator.length - 1)}${indicator}`}
       </span>
     );
   }

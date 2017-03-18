@@ -458,7 +458,8 @@ html, body{
 .body-wrapper {
   width: 99%;
   height: 80%;
-  margin-top: 70px;
+  margin-top: 69px;
+  position: relative;
 }
 .main-content {
   height: 100%;

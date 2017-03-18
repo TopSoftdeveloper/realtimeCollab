@@ -8,7 +8,6 @@ import $ from 'jquery';
 import { logout } from '../utils/auth.js';
 import SearchBar from './Search/SearchBar.jsx';
 
-
 const propTypes = {
   actions: PropTypes.object.isRequired,
   displayName: PropTypes.string.isRequired,

@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import { Tabs, Tab } from 'material-ui/Tabs';
+import Paper from 'material-ui/Paper';
 
 import * as Actions from '../actions/ReduxTaskActions';
 import ProjectMilestoneView from './ProjectMilestoneView.jsx';
@@ -15,7 +16,32 @@ import { getCurrentTab, getProjectRoot } from '../utils/general';
 import { getCurrentProject, getProjectActiveUsers, getProjectPendingUsers } from '../selector';
 import * as AppConstants from '../AppConstants';
 import ProjectMessageView from '../containers/ProjectMessageView.jsx';
+import myTheme from '../myTheme.js';
 
+const styles = {
+  tabItemContainer: {
+    height: 36,
+  },
+  tabButton: {
+    height: 36,
+    fontSize: 15,
+  },
+  tab: {
+  },
+  tabTemplate: {
+    height: '100%',
+  },
+  tabs: {
+    height: '',
+  },
+  projectTitleContanier: {
+    textAlign: 'center',
+    backgroundColor: myTheme.palette.primary1Color,
+    color: 'white',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+};
 class Project extends Component {
   constructor(props, context) {
     super(props, context);
@@ -53,13 +79,15 @@ class Project extends Component {
     return (
       <div className="main-content">
         <Tabs
+          style={styles.tabs}
           value={currentTab}
           contentContainerClassName="full-height"
           className="full-height"
-          tabTemplateStyle={{ height: '100%' }}
+          tabTemplateStyle={styles.tabTemplate}
+          tabItemContainerStyle={styles.tabItemContainer}
         >
           <Tab
-            className="full-height"
+            buttonStyle={styles.tabButton}
             label="Milestones"
             value={AppConstants.PATH.milestones}
             onActive={this.changeTabToMilestone}
@@ -71,6 +99,7 @@ class Project extends Component {
             />
           </Tab>
           <Tab
+            buttonStyle={styles.tabButton}
             label="Files"
             value={AppConstants.PATH.files}
             onActive={this.changeTabToFile}
@@ -82,6 +111,7 @@ class Project extends Component {
             />
           </Tab>
           <Tab
+            buttonStyle={styles.tabButton}
             label="Discussions"
             value={AppConstants.PATH.discussions}
             onActive={this.changeTabToDiscussion}
@@ -91,6 +121,7 @@ class Project extends Component {
             />
           </Tab>
           <Tab
+            buttonStyle={styles.tabButton}
             label="Newsfeed"
             value={AppConstants.PATH.newsfeed}
             onActive={this.changeTabToNewsfeed}
@@ -100,6 +131,7 @@ class Project extends Component {
             />
           </Tab>
           <Tab
+            buttonStyle={styles.tabButton}
             label="Settings"
             value={AppConstants.PATH.settings}
             onActive={this.changeTabToSetting}
