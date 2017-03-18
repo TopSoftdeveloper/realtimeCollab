@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Avatar from 'material-ui/Avatar';
 import { Card, CardActions, CardHeader } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+import Divider from 'material-ui/Divider';
 import assign from 'object-assign';
 
 import { Color } from '../../myTheme.js';
@@ -18,10 +19,12 @@ const propTypes = {
 };
 const styles = {
   actionContainer: {
-    backgroundColor: 'rgb(238, 238, 238)',
   },
   container: {
-    marginBottom: 10,
+    marginBottom: 0,
+    borderWidth: 0,
+    shadowColor: 'transparent',
+    boxShadow: 'none',
   },
 };
 class NotificationItem extends Component {
@@ -66,20 +69,23 @@ class NotificationItem extends Component {
   render() {
     const { notification, user } = this.props;
     return (
-      <Card
-        style={assign({}, styles.container, !notification.read && {
-          backgroundColor: Color.messageViewPinBackgroundColor,
-        })}
-      >
-        <CardHeader
-          onClick={this.markAsRead}
-          actAsExpander
-          title={notification.text}
-          subtitle={toFuzzyTime(notification.time)}
-          avatar={user && <Avatar src={user.display_image} />}
-        />
-        {this.renderActionButtions()}
-      </Card>
+      <div>
+        <Card
+          style={assign({}, styles.container, !notification.read && {
+            backgroundColor: Color.messageViewPinBackgroundColor,
+          })}
+        >
+          <CardHeader
+            onClick={this.markAsRead}
+            actAsExpander
+            title={notification.text}
+            subtitle={toFuzzyTime(notification.time)}
+            avatar={user && <Avatar src={user.display_image} />}
+          />
+          {this.renderActionButtions()}
+        </Card>
+        <Divider />
+      </div>
     );
   }
 

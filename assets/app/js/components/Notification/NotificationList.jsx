@@ -3,7 +3,11 @@ import { List } from 'material-ui/List';
 import FlatButton from 'material-ui/FlatButton';
 import NotificationItem from './NotificationItem.jsx';
 
-
+const styles = {
+  list: {
+    padding: 0,
+  },
+};
 const propTypes = {
   notifications: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
@@ -32,7 +36,7 @@ const NotificationList = ({ notifications, users, actions }) => {
   });
 
   return (
-    <List>
+    <List style={styles.list}>
       {notificationItems}
     </List>
 
