@@ -26,6 +26,20 @@ import LoadingIndicator from '../Common/LoadingIndicator.jsx';
 import TreeModal from './TreeModal.jsx';
 import RenameModal from './RenameModal.jsx';
 
+const styles = {
+  container: {
+    display: 'flex',
+    flexFlow: 'column',
+    height: '100%',
+  },
+  toolbar: {
+    flex: '0 1 auto',
+  },
+  fileListContainer: {
+    flex: '1 1 auto',
+    overflowY: 'auto',
+  },
+};
 const isFolder = file => file.mimeType === 'application/vnd.google-apps.folder';
 const isNotTrash = file => !file.trashed;
 
@@ -41,7 +55,7 @@ class FilesList extends Component {
     this.handleRenameModalClose = this.handleRenameModalClose.bind(this);
     this.handleMoveModalClose = this.handleMoveModalClose.bind(this);
     this.onDrop = this.onDrop.bind(this);
-    this.onFileUploadButtonClick = this.onFileUploadButtonClick.bind(this);
+    this.handleFileUploadButtonClick = this.handleFileUploadButtonClick.bind(this);
   }
 
   createFolder() {
@@ -179,7 +193,7 @@ class FilesList extends Component {
       targetFile: null,
     });
   }
-  onFileUploadButtonClick() {
+  handleFileUploadButtonClick() {
     this.dropzone.open();
   }
   renderMoveModal() {
@@ -235,7 +249,7 @@ class FilesList extends Component {
         <MenuItem
           primaryText="Upload File"
           leftIcon={<FileUploadIcon />}
-          onTouchTap={this.onFileUploadButtonClick}
+          onTouchTap={this.handleFileUploadButtonClick}
         />
       </IconMenu>
     );
@@ -371,7 +385,6 @@ class FilesList extends Component {
         });
         content = (
           <div>
-            {this.renderDropzone('hidden')}
             <Table hover responsive condensed>
               <thead>
                 <tr>
@@ -383,6 +396,7 @@ class FilesList extends Component {
                 {tableBody}
               </tbody>
             </Table>
+            {this.renderDropzone('hidden')}
           </div>
         );
       }
@@ -390,20 +404,24 @@ class FilesList extends Component {
 
 
     return (
-      <div style={{ marginTop: 10 }}>
-        <div style={{ width: 'auto', display: 'inline-block' }}>
-          <BreadcrumbInstance
-            key={`breadcrumb_${projectId}`}
-            directories={directoryStructure}
-            changeDirectory={actions.initUpperLevelFolder.bind(this, projectId)}
-          />
+      <div style={styles.container} >
+        <div style={styles.toolbar}>
+          <div style={{ width: 'auto', display: 'inline-block' }}>
+            <BreadcrumbInstance
+              key={`breadcrumb_${projectId}`}
+              directories={directoryStructure}
+              changeDirectory={actions.initUpperLevelFolder.bind(this, projectId)}
+            />
+          </div>
+          <div style={{ float: 'right' }}>
+            {this.renderCreateButton()}
+          </div>
         </div>
-        <div style={{ float: 'right' }}>
-          {this.renderCreateButton()}
+        <div style={styles.fileListContainer}>
+          {content}
         </div>
         {this.renderRenameModal()}
         {this.renderMoveModal()}
-        {content}
       </div>
     );
   }

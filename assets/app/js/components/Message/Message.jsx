@@ -35,8 +35,8 @@ const propTypes = {
 
 const styles = {
   container: {
-    marginTop: 5,
-    marginBottom: 5,
+    marginTop: 10,
+    marginBottom: 0,
     display: 'flex',
     flexFlow: 'column',
     height: '100%',
@@ -46,7 +46,6 @@ const styles = {
   titleContainer: {
     flex: '0 1 auto',
     fontSize: 15,
-    backgroundColor: 'rgb(232, 232, 232)',
     color: 'black',
     fontWeight: 550,
   },
@@ -330,7 +329,7 @@ class Message extends Component {
       return message.milestone_id === this.state.filterId;
     });
     return (
-      <Paper zDepth={1} style={styles.container}>
+      <Paper zDepth={1} rounded={false} style={styles.container}>
         <Subheader style={styles.titleContainer}>
           <Row>
             <Col xs={11}>
@@ -352,6 +351,7 @@ class Message extends Component {
             </Col>
           </Row>
         </Subheader>
+        <Divider />
         <div style={styles.messageListContainer}>
           {this.renderPinnedMessageList(milestoneMessages)}
           {this.renderMessageList(milestoneMessages)}

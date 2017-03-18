@@ -53,6 +53,7 @@ const styles = {
     borderRadius: 0,
     minHeight: 50,
     maxHeight: 50,
+    backgroundColor: 'white',
   },
   milestoneContentContainer: {
     flex: '1 1 auto',
@@ -434,6 +435,7 @@ class MilestoneView extends Component {
               </ToolbarGroup>
               {this.renderMilestoneModal()}
             </Toolbar>
+            <Divider />
             <div style={styles.milestoneContentContainer}>
               {content}
             </div>

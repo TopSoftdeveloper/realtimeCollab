@@ -88,9 +88,6 @@ html, body{
   vertical-align: middle;
 }
 
-.set-root-dir {
-  margin-bottom: 20px;
-}
 /********************* task table ************************/
 
 
@@ -344,9 +341,8 @@ html, body{
 }
 .milestone-menu-view {
   height: 100%;
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 5px;
-  padding-bottom: 10px;
 }
 .milestone-message-view {
   height: 100%;
