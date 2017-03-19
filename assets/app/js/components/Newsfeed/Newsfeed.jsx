@@ -19,13 +19,10 @@ class Newsfeed extends Component {
   render() {
     const { events, users } = this.props;
     return (
-      <div>
-        <br />
-        <EventList
-          events={events}
-          users={users}
-        />
-      </div>
+      <EventList
+        events={events}
+        users={users}
+      />
     );
   }
 }

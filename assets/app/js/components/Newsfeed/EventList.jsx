@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
+import Paper from 'material-ui/Paper';
 
 import EventItem from './EventItem.jsx';
 import templates from '../../../../../server/templates.js';
@@ -7,6 +8,14 @@ import templates from '../../../../../server/templates.js';
 const propTypes = {
   events: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
+};
+
+const styles = {
+  container: {
+    marginTop: 10,
+    overflowY: 'auto',
+    height: '100%',
+  },
 };
 
 const EventList = ({ events, users }) => {
@@ -40,11 +49,9 @@ const EventList = ({ events, users }) => {
   }
 
   return (
-    <div className="event-list">
-      <ul>
-        {content}
-      </ul>
-    </div>
+    <Paper style={styles.container}>
+      {content}
+    </Paper>
   );
 };
 
