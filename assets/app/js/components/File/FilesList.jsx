@@ -43,6 +43,16 @@ const styles = {
 const isFolder = file => file.mimeType === 'application/vnd.google-apps.folder';
 const isNotTrash = file => !file.trashed;
 
+const propTypes = {
+  actions: PropTypes.object.isRequired,
+  app: PropTypes.object.isRequired,
+  directoryStructure: PropTypes.array.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  files: PropTypes.array.isRequired,
+  projectId: PropTypes.string.isRequired,
+  rootFolderId: PropTypes.string,
+};
+
 class FilesList extends Component {
   constructor(props, context) {
     super(props, context);
@@ -307,45 +317,47 @@ class FilesList extends Component {
             avatar={<img alt={'file'} style={{ width: 15 }} src={file.iconLink} />}
           />
         </td>
-        <td style={{ verticalAlign: 'middle' }}>
-          <IconMenu
-            className="pull-right"
-            iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
-            anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-            targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-          >
-            <MenuItem
-              primaryText="preview"
-              leftIcon={<RemoveRedEyeIcon />}
-              onTouchTap={this.navigate.bind(this, file.id)}
-            />
-            <Divider />
-            {
-              !isFolder(file) &&
+        {this.props.app.is_linked_to_drive && this.props.rootFolderId &&
+          <td style={{ verticalAlign: 'middle' }}>
+            <IconMenu
+              className="pull-right"
+              iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+              anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+              targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+            >
               <MenuItem
-                primaryText="make a copy"
-                leftIcon={<ContentCopyIcon />}
-                onTouchTap={this.copyFile.bind(this, file.id)}
+                primaryText="preview"
+                leftIcon={<RemoveRedEyeIcon />}
+                onTouchTap={this.navigate.bind(this, file.id)}
               />
-            }
-            <MenuItem
-              primaryText="Rename"
-              leftIcon={<RenameIcon />}
-              onTouchTap={this.handleRenameModalOpen.bind(this, file)}
-            />
-            <MenuItem
-              primaryText="Move"
-              leftIcon={<MoveIcon />}
-              onTouchTap={this.handleMoveModalOpen.bind(this, file)}
-            />
-            <Divider />
-            <MenuItem
-              primaryText="Delete"
-              leftIcon={<DeleteIcon />}
-              onTouchTap={this.removeFile.bind(this, file.id)}
-            />
-          </IconMenu>
-        </td>
+              <Divider />
+              {
+                !isFolder(file) &&
+                <MenuItem
+                  primaryText="make a copy"
+                  leftIcon={<ContentCopyIcon />}
+                  onTouchTap={this.copyFile.bind(this, file.id)}
+                />
+              }
+              <MenuItem
+                primaryText="Rename"
+                leftIcon={<RenameIcon />}
+                onTouchTap={this.handleRenameModalOpen.bind(this, file)}
+              />
+              <MenuItem
+                primaryText="Move"
+                leftIcon={<MoveIcon />}
+                onTouchTap={this.handleMoveModalOpen.bind(this, file)}
+              />
+              <Divider />
+              <MenuItem
+                primaryText="Delete"
+                leftIcon={<DeleteIcon />}
+                onTouchTap={this.removeFile.bind(this, file.id)}
+              />
+            </IconMenu>
+          </td>
+        }
       </tr>
     );
   }
@@ -389,7 +401,7 @@ class FilesList extends Component {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th />
+                  {this.props.app.is_linked_to_drive && this.props.rootFolderId && <th />}
                 </tr>
               </thead>
               <tbody>
@@ -427,14 +439,5 @@ class FilesList extends Component {
   }
 }
 
-FilesList.propTypes = {
-  actions: PropTypes.object.isRequired,
-  app: PropTypes.object.isRequired,
-  directoryStructure: PropTypes.array.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  files: PropTypes.array.isRequired,
-  projectId: PropTypes.string.isRequired,
-  rootFolderId: PropTypes.string,
-
-};
+FilesList.propTypes = propTypes;
 export default FilesList;
