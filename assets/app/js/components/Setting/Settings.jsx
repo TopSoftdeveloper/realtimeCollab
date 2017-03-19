@@ -3,9 +3,10 @@ import { Panel, ListGroup, ListGroupItem, FormGroup, FormControl,
 ControlLabel, InputGroup, Alert, Button } from 'react-bootstrap';
 import _ from 'lodash';
 import { browserHistory } from 'react-router';
-import { Card, CardHeader, CardText } from 'material-ui/Card';
+import { Card, CardHeader, CardText, CardTitle } from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
+import Paper from 'material-ui/Paper';
 
 import { getGithubAuthCode } from '../../utils/general';
 import { githubOAuth } from '../../utils/apiUtil';
@@ -14,6 +15,26 @@ import { APP_ROOT_URL, PATH, GITHUB_CLIENT_ID, INVITED_TO_PROJECT,
 import LoadingIndicator from '../Common/LoadingIndicator.jsx';
 import Github from './Github.jsx';
 
+const styles = {
+  container: {
+    padding: 5,
+    height: '100%',
+    overflowY: 'auto',
+  },
+  panelContainer: {
+    marginTop: 10,
+  },
+  panelHeader: {
+    backgroundColor: '#00BCD4',
+    color: 'white',
+    padding: 8,
+    paddingLeft: 16,
+  },
+  panelContent: {
+    padding: 8,
+    paddingLeft: 16,
+  },
+};
 const propTypes = {
   // props passed by parents
   actions: PropTypes.object.isRequired,
@@ -283,9 +304,13 @@ class Settings extends Component {
     }
     const chatLabel = `Current chat room: ${chatName}`;
     return (
-      <div className="settings">
-        <ListGroup>
-          <ListGroupItem bsStyle="info">Members</ListGroupItem>
+      <div style={styles.container}>
+        <Card style={styles.panelContainer}>
+          <CardHeader
+            style={styles.panelHeader}
+            titleColor="white"
+            title="Members"
+          />
           {listGroups}
           <ListGroupItem>
             {alertPanel}
@@ -304,57 +329,81 @@ class Settings extends Component {
               </InputGroup>
             </form>
           </ListGroupItem>
-        </ListGroup>
+        </Card>
+        <Card style={styles.panelContainer}>
+          <CardHeader
+            style={styles.panelHeader}
+            titleColor="white"
+            title="Google Integration"
+          />
+          <div style={styles.panelContent}>
+            {googlePanel}
+          </div>
+        </Card>
 
-        <Panel header="Google Integration" bsStyle="info">
-          {googlePanel}
-        </Panel>
+        <Card style={styles.panelContainer}>
+          <CardHeader
+            style={styles.panelHeader}
+            titleColor="white"
+            title="GitHub Integration"
+          />
+          <div style={styles.panelContent}>
+            {githubPanel}
+          </div>
+        </Card>
 
-        <Panel header="GitHub Integration" bsStyle="info">
-          {githubPanel}
-        </Panel>
-
-        <Panel header="Chat Room" bsStyle="info">
-          <form onSubmit={this.changeChatRoom}>
-            <FormGroup>
-              <ControlLabel>{chatLabel}</ControlLabel>
+        <Card style={styles.panelContainer}>
+          <CardHeader
+            style={styles.panelHeader}
+            titleColor="white"
+            title="Chat Room"
+          />
+          <div style={styles.panelContent}>
+            <form onSubmit={this.changeChatRoom}>
+              <FormGroup>
+                <ControlLabel>{chatLabel}</ControlLabel>
+                <InputGroup>
+                  <FormControl
+                    type="text"
+                    inputRef={ref => { this.chatNameInput = ref; }}
+                    value={this.state.chatName}
+                    placeholder="Chat room name"
+                    onChange={this.chatNameChange}
+                  />
+                  <InputGroup.Button>
+                    <Button type="submit">Join</Button>
+                  </InputGroup.Button>
+                </InputGroup>
+              </FormGroup>
+            </form>
+          </div>
+        </Card>
+        <Card style={styles.panelContainer}>
+          <CardHeader
+            style={styles.panelHeader}
+            titleColor="white"
+            title="Options"
+          />
+          <div style={styles.panelContent}>
+            <form onSubmit={this.renameProject}>
+              <ControlLabel>
+                {`Project name: ${this.props.project.content}`}
+              </ControlLabel>
               <InputGroup>
                 <FormControl
                   type="text"
-                  inputRef={ref => { this.chatNameInput = ref; }}
-                  value={this.state.chatName}
-                  placeholder="Chat room name"
-                  onChange={this.chatNameChange}
+                  inputRef={ref => { this.projectNameInput = ref; }}
+                  value={this.state.inputProjectName}
+                  placeholder="New project name"
+                  onChange={this.projectNameChange}
                 />
                 <InputGroup.Button>
-                  <Button type="submit">Join</Button>
+                  <Button type="submit">Rename</Button>
                 </InputGroup.Button>
               </InputGroup>
-            </FormGroup>
-          </form>
-        </Panel>
-
-        <Panel header="Options" bsStyle="info">
-          <form onSubmit={this.renameProject}>
-            <ControlLabel>
-              {`Project name: ${this.props.project.content}`}
-            </ControlLabel>
-            <InputGroup>
-
-              <FormControl
-                type="text"
-                inputRef={ref => { this.projectNameInput = ref; }}
-                value={this.state.inputProjectName}
-                placeholder="New project name"
-                onChange={this.projectNameChange}
-              />
-              <InputGroup.Button>
-                <Button type="submit">Rename</Button>
-              </InputGroup.Button>
-            </InputGroup>
-          </form>
-          <br />
-        </Panel>
+            </form>
+          </div>
+        </Card>
       </div>
     );
   }

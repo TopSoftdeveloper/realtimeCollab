@@ -22,6 +22,8 @@ class Github extends Component {
     this.state = {
       step: 0,
     };
+    this.stepForward = this.stepForward.bind(this);
+    this.syncWithGithub = this.syncWithGithub.bind(this);
   }
 
   setLoadingTrue() {
@@ -84,8 +86,8 @@ class Github extends Component {
           <RaisedButton
             className="animated infinite pulse"
             label="Lets get started!"
-            onTouchTap={this.stepForward.bind(this)}
-            primary
+            onTouchTap={this.stepForward}
+            secondary
           />
         </div>
       );
@@ -121,7 +123,7 @@ class Github extends Component {
           <br />
           <RepoList
             repos={this.props.repos}
-            syncWithGithub={this.syncWithGithub.bind(this)}
+            syncWithGithub={this.syncWithGithub}
             projectId={this.props.project.id}
             reposFetched={app.github.repo_fetched}
           />
