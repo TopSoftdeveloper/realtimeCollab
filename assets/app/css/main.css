@@ -449,8 +449,8 @@ html, body{
 
 .body-wrapper {
   width: 99%;
-  height: 80%;
-  margin-top: 69px;
+  height: 90%;
+  padding-top: 69px;
   position: relative;
 }
 .main-content {
