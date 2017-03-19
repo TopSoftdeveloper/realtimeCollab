@@ -38,7 +38,6 @@ const styles = {
   fileListContainer: {
     flex: '1 1 auto',
     overflowY: 'auto',
-    height: '100%',
   },
 };
 const isFolder = file => file.mimeType === 'application/vnd.google-apps.folder';
