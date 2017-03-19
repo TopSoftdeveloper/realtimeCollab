@@ -73,13 +73,10 @@ html, body{
 .drive-drop-zone {
   overflow:hidden;
   border: dashed #7a7a7a;
-  min-height: 300px;
-  height: 300px;
-  position: absolute;
+  height: 100%;
   width:100%;
   display: table;
   text-align: center;
-  margin-bottom: 20px;
 }
 
 .drive-drop-zone p {

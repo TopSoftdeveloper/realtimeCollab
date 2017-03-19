@@ -36,7 +36,7 @@ const propTypes = {
 const styles = {
   floatingSidebarIconContainer: {
     position: 'absolute',
-    top: 80,
+    top: 24,
     left: 0,
     backgroundColor: 'white',
     zIndex: 999,
