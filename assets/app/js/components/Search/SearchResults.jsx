@@ -8,6 +8,8 @@ import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import Paper from 'material-ui/Paper';
+import { Row, Col } from 'react-bootstrap';
 
 import { darkBlack } from '../../UserColours.js';
 import * as Actions from '../../actions/ReduxTaskActions';
@@ -15,6 +17,25 @@ import Code from '../../icons/Code.jsx';
 import CodeFragment from './CodeFragment.jsx';
 import { toFuzzyTime } from '../../utils/general';
 import LoadingIndicator from '../Common/LoadingIndicator.jsx';
+import myTheme from '../../myTheme.js';
+
+const styles = {
+  highlight: {
+    color: myTheme.palette.primary1Color,
+  },
+  container: {
+    marginTop: 10,
+    display: 'flex',
+    flexFlow: 'column',
+  },
+  titleContainer: {
+    flex: '0 1 auto',
+  },
+  contentContainer: {
+    flex: '1 1 auto',
+    overflowY: 'auto',
+  },
+};
 
 const propTypes = {
   search: PropTypes.array.isRequired,
@@ -42,25 +63,6 @@ class SearchResults extends Component {
     this.props.dispatch(Actions.updateAppStatus({
       searchFilter: value,
     }));
-  }
-  renderInProgress() {
-    return (
-      <div className="main-content">
-        <div className="no-items">
-          <h4>Searching for <b>{this.props.app.queryString}</b>...</h4>
-          <LoadingIndicator className="loading-indicator" />
-        </div>
-      </div>
-    );
-  }
-  renderEmptyResult() {
-    return (
-      <div className="main-content">
-        <div className="no-items">
-          <h4>No search results for <b>{this.props.app.queryString}</b></h4>
-        </div>
-      </div>
-    );
   }
   renderDriveList(driveResults) {
     const driveListItems = driveResults.map(result => (
@@ -152,51 +154,70 @@ class SearchResults extends Component {
     );
   }
   render() {
-    if (this.props.app.queriesInProgress) {
-      return this.renderInProgress();
-    }
-
-    const driveResults = this.props.search.filter(result => result.type === 'drive');
-    const taskResults = this.props.search.filter(result => result.type === 'task');
-    const githubResults = this.props.search.filter(result => result.type === 'github');
-
-    if (driveResults.length === 0 && taskResults.length === 0 && githubResults.length === 0) {
-      return this.renderEmptyResult();
-    }
+    const { search } = this.props;
+    let content = <LoadingIndicator className="loading-indicator" />;
     let filterMenu = null;
-    const filterByList = [];
-    if (taskResults.length > 0) {
-      filterByList.push(<MenuItem value={'tasks'} primaryText="Assigned Tasks" key="tasks" />);
-    }
-    if (githubResults.length > 0) {
-      filterByList.push(<MenuItem value={'code'} primaryText="Code" key="code" />);
-    }
+    if (!this.props.app.queriesInProgress) {
+      const driveResults = search.filter(result => result.type === 'drive');
+      const taskResults = search.filter(result => result.type === 'task');
+      const githubResults = search.filter(result => result.type === 'github');
+      const filterByList = [];
+      if (taskResults.length > 0) {
+        filterByList.push(<MenuItem value={'tasks'} primaryText="Assigned Tasks" key="tasks" />);
+      }
+      if (githubResults.length > 0) {
+        filterByList.push(<MenuItem value={'code'} primaryText="Code" key="code" />);
+      }
 
-    if (driveResults.length > 0) {
-      filterByList.push(<MenuItem value={'files'} primaryText="Files" key="files" />);
-    }
+      if (driveResults.length > 0) {
+        filterByList.push(<MenuItem value={'files'} primaryText="Files" key="files" />);
+      }
 
-    if (filterByList.length > 1) {
-      filterByList.unshift(<MenuItem value={'all'} primaryText="All" key="ta" />);
-      filterMenu = (
-        <SelectField
-          className="pull-right"
-          floatingLabelText="Filter"
-          value={this.props.app.searchFilter}
-          onChange={this.handleChange}
-        >
-          {filterByList}
-        </SelectField>
-      );
+      if (filterByList.length > 1) {
+        filterByList.unshift(<MenuItem value={'all'} primaryText="All" key="ta" />);
+        filterMenu = (
+          <SelectField
+            className="pull-right"
+            floatingLabelText="Filter"
+            value={this.props.app.searchFilter}
+            onChange={this.handleChange}
+          >
+            {filterByList}
+          </SelectField>
+        );
+      }
+      content = [
+        this.renderTaskList(taskResults),
+        this.renderGithubList(githubResults),
+        this.renderDriveList(driveResults),
+      ];
     }
     return (
-      <div className="main-content">
-        <h4>Search results for <b>{this.props.app.queryString}</b>
-          {filterMenu}
-        </h4>
-        {this.renderTaskList(taskResults)}
-        {this.renderGithubList(githubResults)}
-        {this.renderDriveList(driveResults)}
+      <div className="main-content" style={styles.container}>
+        <Row style={styles.titleContainer}>
+          <Col xs={10}>
+            <h2>
+              Results for&nbsp;
+              <span style={styles.highlight}>{this.props.app.queryString}</span>
+              {!this.props.app.queriesInProgress &&
+                <Subheader style={{ display: 'inline-block', width: 'auto' }}>
+                  &nbsp;
+                  <span style={{ color: myTheme.palette.primary1Color }}>
+                    {search.length}
+                  </span> result{search.length > 1 ? 's' : ''} found
+                </Subheader>
+              }
+            </h2>
+          </Col>
+          <Col xs={2}>
+            {filterMenu}
+          </Col>
+        </Row>
+        {search.length > 0 && !this.props.app.queriesInProgress &&
+          <Paper style={styles.contentContainer}>
+            {content}
+          </Paper>
+        }
       </div>
     );
   }
