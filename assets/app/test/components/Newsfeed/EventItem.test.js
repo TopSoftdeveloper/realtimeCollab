@@ -2,6 +2,7 @@ import React from 'react';
 import chai, { expect } from 'chai';
 import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
+import assign from 'object-assign';
 import EventItem from './../../../js/components/Newsfeed/EventItem.jsx';
 import { toFuzzyTime } from './../../../js/utils/general';
 
@@ -10,6 +11,11 @@ const shallowWrapperWithProps = (props) => shallow(<EventItem {...props} />);
 
 /* eslint-disable func-names, prefer-arrow-callback */
 describe('EventItem.jsx', function () {
+  const expectBasicStructure = (wrapper) => {
+    expect(wrapper).to.have.exactly(1).descendants('Card');
+    expect(wrapper).to.have.exactly(1).descendants('CardHeader');
+    expect(wrapper).to.have.exactly(1).descendants('Divider');
+  };
   const props = {
     event: {
       avatarUrl: 'dummyUrl',
@@ -21,30 +27,22 @@ describe('EventItem.jsx', function () {
   const wrapper = shallowWrapperWithProps(props);
   it('render without explosion', function () {
     expect(wrapper).be.present();
+    expectBasicStructure(wrapper);
   });
-  describe('static rendering', function () {
-    it('should render single <li> with class name `event-item`', function () {
-      expect(wrapper).to.have.exactly(1).descendants('li');
-      expect(wrapper.find('li').first()).to.have.className('event-item');
-    });
-    it('should render single <UserAvatar> with correct props', function () {
-      expect(wrapper).to.have.exactly(1).descendants('UserAvatar');
-      expect(wrapper.find('UserAvatar').first()).to.have.props({
-        imgSrc: props.event.avatarUrl,
-        displayName: props.event.displayName,
+  describe('for static rendering', function () {
+    it('should pass correct props of title and subtitle`', function () {
+      expect(wrapper.find('CardHeader')).to.have.props({
+        title: props.event.message,
+        subtitle: toFuzzyTime(props.event.created_at),
       });
     });
-    it('should render single element with class name `notif-text`' +
-    ' and pass correct message', function () {
-      expect(wrapper).to.have.exactly(1).descendants('.notif-text');
-      expect(wrapper.find('.notif-text').text()).to.equal(props.event.message);
+    it('should render null if avatarUrl does not exist', function () {
+      expect(wrapper.find('CardHeader').first().prop('avatar').props.src)
+        .to.equal(props.event.avatarUrl);
     });
-    it('should render single element with class name `notif-fuzzy-time`' +
-     'and render correct fuzzy-time', function () {
-      expect(wrapper).to.have.exactly(1).descendants('.notif-fuzzy-time');
-      expect(wrapper.find('.notif-fuzzy-time').text()).to.equal(
-        toFuzzyTime(props.event.created_at)
-      );
+    it('should render null if avatarUrl does not exist', function () {
+      wrapper.setProps({ event: assign(props.event, { avatarUrl: null }) });
+      expect(wrapper.find('Card').prop('avatar')).equal(undefined);
     });
   });
 });

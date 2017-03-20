@@ -39,17 +39,11 @@ describe('EventList.jsx', function () {
     it('render without explosion', function () {
       expect(wrapper).be.present();
     });
-    it('render div with className `event-list`', function () {
-      expect(wrapper).to.have.exactly(1).descendants('div.event-list');
-    });
   });
 
   describe('static rendering with empty events and users', function () {
     const wrapper = shallowWrapperWithProps(props);
     wrapper.setProps({ events: [], users: [] });
-    it('should render a div with className`no-items`', function () {
-      expect(wrapper.find('div.no-items').first().text()).to.equal('No recent activity!');
-    });
     it('should not render any EventItem', function () {
       expect(wrapper).to.not.have.descendants('EventItem');
     });
@@ -58,9 +52,6 @@ describe('EventList.jsx', function () {
   describe('static rendering with single event and valid user', function () {
     const wrapper = shallowWrapperWithProps(props);
     // Using default prop
-    it('should not render div with className`no-items`', function () {
-      expect(wrapper).to.not.have.descendants('div.no-items');
-    });
     it('should render single EventItem', function () {
       expect(wrapper).to.have.exactly(1).descendants('EventItem');
     });
@@ -77,9 +68,6 @@ describe('EventList.jsx', function () {
     }];
     const wrapper = shallowWrapperWithProps(props);
     wrapper.setProps({ events, users: [] });
-    it('should render a div with className`no-items`', function () {
-      expect(wrapper.find('div.no-items').first().text()).to.equal('No recent activity!');
-    });
     it('should not render any EventItem', function () {
       expect(wrapper).to.not.have.descendants('EventItem');
     });
@@ -105,9 +93,6 @@ describe('EventList.jsx', function () {
     }];
     const wrapper = shallowWrapperWithProps(props);
     wrapper.setProps({ events, users });
-    it('should render a div with className`no-items`', function () {
-      expect(wrapper.find('div.no-items').first().text()).to.equal('No recent activity!');
-    });
     it('should not render any EventItem', function () {
       expect(wrapper).to.not.have.descendants('EventItem');
     });
@@ -164,9 +149,6 @@ describe('EventList.jsx', function () {
     ];
     const wrapper = shallowWrapperWithProps(props);
     wrapper.setProps({ events, users });
-    it('should not render div with className`no-items`', function () {
-      expect(wrapper).to.not.have.descendants('div.no-items');
-    });
     it('should render two EventItem', function () {
       expect(wrapper).to.have.exactly(2).descendants('EventItem');
     });
