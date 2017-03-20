@@ -36,7 +36,7 @@ const styles = {
     flex: '0 1 auto',
   },
   fileListContainer: {
-    flex: '1 1 100px',
+    flex: '1 1 auto',
     overflowY: 'auto',
   },
 };
