@@ -86,7 +86,7 @@ class Header extends Component {
           $('#hangouts-btn-placeholder').css({
             opacity: 0,
             position: 'absolute',
-            right: 150,
+            right: 141,
             top: 16,
             zIndex: 0,
           });

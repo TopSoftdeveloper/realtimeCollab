@@ -17,12 +17,14 @@ import Github from './Github.jsx';
 
 const styles = {
   container: {
-    padding: 5,
     height: '100%',
     overflowY: 'auto',
+    marginTop: 10,
   },
   panelContainer: {
-    marginTop: 10,
+    marginBottom: 10,
+    boxShadow: 'none',
+    borderRadius: 0,
   },
   panelHeader: {
     backgroundColor: '#00BCD4',
@@ -33,6 +35,10 @@ const styles = {
   panelContent: {
     padding: 8,
     paddingLeft: 16,
+  },
+  listGroupItem: { // remove left boreder & right border style
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
   },
 };
 const propTypes = {
@@ -162,12 +168,12 @@ class Settings extends Component {
     const listGroups = [];
     const alertStatus = this.props.alerts.project_invitation;
     this.props.allActiveUsers.forEach(user => listGroups.push(
-      <ListGroupItem key={_.uniqueId('settings_users')}>
+      <ListGroupItem style={styles.listGroupItem} key={_.uniqueId('settings_users')}>
         {user.display_name}
       </ListGroupItem>
     ));
     this.props.pendingUsers.forEach(user => listGroups.push(
-      <ListGroupItem key={_.uniqueId('settings_pending')}>
+      <ListGroupItem style={styles.listGroupItem} key={_.uniqueId('settings_pending')}>
         {user.display_name} (pending)
       </ListGroupItem>
     ));
@@ -304,7 +310,7 @@ class Settings extends Component {
     }
     const chatLabel = `Current chat room: ${chatName}`;
     return (
-      <div style={styles.container}>
+      <Paper style={styles.container}>
         <Card style={styles.panelContainer}>
           <CardHeader
             style={styles.panelHeader}
@@ -312,7 +318,7 @@ class Settings extends Component {
             title="Members"
           />
           {listGroups}
-          <ListGroupItem>
+          <div style={styles.panelContent}>
             {alertPanel}
             <form onSubmit={this.inviteMember}>
               <ControlLabel>Invite by email</ControlLabel>
@@ -328,7 +334,7 @@ class Settings extends Component {
                 </InputGroup.Button>
               </InputGroup>
             </form>
-          </ListGroupItem>
+          </div>
         </Card>
         <Card style={styles.panelContainer}>
           <CardHeader
@@ -404,7 +410,7 @@ class Settings extends Component {
             </form>
           </div>
         </Card>
-      </div>
+      </Paper>
     );
   }
 }
