@@ -2,19 +2,22 @@ import React from 'react';
 import chai, { expect } from 'chai';
 import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
-import sinon from 'sinon';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import NotificationList from './../../../js/components/Notification/NotificationList.jsx';
-import { toFuzzyTime } from './../../../js/utils/general';
 import { mountWithContext } from '../../testUtils.js';
 
 chai.use(chaiEnzyme());
-const shallowWrapperWithProps = (props) => shallow(<NotificationList {...props} />);
+const muiTheme = getMuiTheme();
+const shallowWrapperWithProps = (props) => shallow(<NotificationList {...props} />, {
+  context: { muiTheme },
+  childContextTypes: { muiTheme: React.PropTypes.object },
+});
+
 
 /* eslint-disable func-names, prefer-arrow-callback */
 describe('NotificationList.jsx', function () {
   const expectBasicStructure = (wrapper) => {
-    expect(wrapper).to.have.exactly(1).descendants('div.notification-list');
-    expect(wrapper).to.have.exactly(1).descendants('ul');
+    expect(wrapper).to.have.exactly(1).descendants('List');
   };
   const props = {
     notifications: [
@@ -43,7 +46,6 @@ describe('NotificationList.jsx', function () {
         },
       },
     ],
-    dispatch: sinon.spy(),
     users: [
       {
         id: 'EkD69ORwf',
@@ -88,9 +90,7 @@ describe('NotificationList.jsx', function () {
     });
     it('should pass correct props to Notification Item`', function () {
       expect(wrapper.find('NotificationItem').first()).to.have.props({
-        text: props.notifications[1].text,
-        read: props.notifications[1].read,
-        time: toFuzzyTime(props.notifications[1].time),
+        notification: props.notifications[1],
       });
       expect(wrapper.find('NotificationItem').first()).to.have.prop('user')
         .deep.equal(props.users[1]);
@@ -106,26 +106,10 @@ describe('NotificationList.jsx', function () {
     });
     it('should pass correct props to Notification Item`', function () {
       expect(wrapper.find('NotificationItem').first()).to.have.props({
-        text: props.notifications[0].text,
-        read: props.notifications[0].read,
-        time: toFuzzyTime(props.notifications[0].time),
+        notification: props.notifications[0],
       });
       expect(wrapper.find('NotificationItem').first()).to.have.prop('user')
         .deep.equal(props.users[1]);
-    });
-    it('should render two action buttons as notificationItem props', function () {
-      const actionButtonsWrapper = shallow(wrapper.find('NotificationItem').first()
-        .prop('actionButtons'));
-      expect(actionButtonsWrapper).to.have.exactly(1).descendants('div.notif-buttons');
-      expect(actionButtonsWrapper).to.have.exactly(2).descendants('RaisedButton');
-      expect(actionButtonsWrapper.find('RaisedButton').first()).to.have.props({
-        label: 'Accept',
-        primary: true,
-      });
-      expect(actionButtonsWrapper.find('RaisedButton').last()).to.have.props({
-        label: 'Decline',
-        secondary: true,
-      });
     });
   });
   describe('render with mutliple Notifications but empty user`', function () {
@@ -139,47 +123,6 @@ describe('NotificationList.jsx', function () {
       wrapper.find('NotificationItem').forEach(function (node) {
         expect(node).to.not.have.prop('user');
       });
-    });
-    it('should render two action buttons as notificationItem props', function () {
-      const actionButtonsWrapper = shallow(wrapper.find('NotificationItem').first()
-        .prop('actionButtons'));
-      expect(actionButtonsWrapper).to.have.exactly(1).descendants('div.notif-buttons');
-      expect(actionButtonsWrapper).to.have.exactly(2).descendants('RaisedButton');
-      expect(actionButtonsWrapper.find('RaisedButton').first()).to.have.props({
-        label: 'Accept',
-        primary: true,
-      });
-      expect(actionButtonsWrapper.find('RaisedButton').last()).to.have.props({
-        label: 'Decline',
-        secondary: true,
-      });
-    });
-  });
-  describe('check the interaction when button is clicked`', function () {
-    const wrapper = mountWithContext(<NotificationList {...props} />);
-    const dispatchMock = sinon.spy();
-    wrapper.setProps({ dispatch: dispatchMock });
-    expectBasicStructure(wrapper);
-    beforeEach('reset dispatchMock', function () {
-      dispatchMock.reset();
-    });
-    it('should render same number of Notification Item`', function () {
-      expect(wrapper).to.have.exactly(props.notifications.length).descendants('NotificationItem');
-    });
-    it('should pass null prop `user` to NotificationItem', function () {
-      wrapper.find('NotificationItem').forEach(function (node) {
-        expect(node).to.have.prop('user').deep.equal(props.users[1]);
-      });
-    });
-    it('should trigger the dispatchMock when Accept button is clicked', function () {
-      const acceptButtonWrapper = wrapper.find('EnhancedButton').first();
-      acceptButtonWrapper.simulate('touchTap');
-      expect(dispatchMock.calledOnce).to.equal(true);
-    });
-    it('should trigger the dispatchMock when Accept button is clicked', function () {
-      const declineButtonWrapper = wrapper.find('EnhancedButton').last();
-      declineButtonWrapper.simulate('touchTap');
-      expect(dispatchMock.calledOnce).to.equal(true);
     });
   });
 });

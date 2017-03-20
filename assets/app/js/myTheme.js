@@ -29,4 +29,5 @@ export const Color = {
   leftPanelItemHightColor: cyan500,
   leftPanelBackgroundColor: 'white',
   messageViewPinBackgroundColor: fade('#fcf8e3', 1),
+  highlightColor: fade('#fcf8e3', 1),
 };

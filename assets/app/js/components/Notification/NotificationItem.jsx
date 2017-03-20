@@ -72,7 +72,7 @@ class NotificationItem extends Component {
       <div>
         <Card
           style={assign({}, styles.container, !notification.read && {
-            backgroundColor: Color.messageViewPinBackgroundColor,
+            backgroundColor: Color.highlightColor,
           })}
         >
           <CardHeader

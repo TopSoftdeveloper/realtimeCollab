@@ -14,15 +14,25 @@ const shallowWrapperWithProps = (props) => shallow(<Notification {...props} />);
 describe('Notification.jsx', function () {
   const expectBasicStructure = (wrapper) => {
     expect(wrapper).to.have.exactly(1).descendants('div.main-content');
-    expect(wrapper).to.have.exactly(1).descendants('div.notif-container');
-    expect(wrapper.find('h4')).to.have.text('All Notifications');
-    expect(wrapper).to.have.exactly(1).descendants('NotificationList');
+    expect(wrapper).to.have.exactly(1).descendants('div div h2');
   };
   const props = {
     notifications: [
       {
         id: 'N1g_BcvdG',
         text: 'Ge Hu has invited you to the project haha',
+        time: '2017-02-11T05:51:11.000Z',
+        read: true,
+        link: '',
+        type: 'INVITE_TO_PROJECT',
+        meta: {
+          user_id: 'Nk89qOUdM',
+          project_id: 'VkH8B5P_f',
+        },
+      },
+      {
+        id: 'id3',
+        text: 'someone sent you a notification',
         time: '2017-02-11T05:51:11.000Z',
         read: false,
         link: '',
@@ -45,7 +55,7 @@ describe('Notification.jsx', function () {
         },
       },
     ],
-    dispatch: sinon.spy(),
+    actions: sinon.spy(),
     users: [
       {
         id: 'EkD69ORwf',
@@ -72,5 +82,43 @@ describe('Notification.jsx', function () {
     const wrapper = shallowWrapperWithProps(props);
     expect(wrapper).be.present();
     expectBasicStructure(wrapper);
+  });
+
+  describe('with different length of notification item', function () {
+    const wrapper = shallowWrapperWithProps(props);
+    it('should render correctly for 0 notification', function () {
+      wrapper.setProps({ notifications: [] });
+      expectBasicStructure(wrapper);
+      expect(wrapper).to.not.have.descendants('Subheader');
+      expect(wrapper).to.have.exactly(1).descendants('div.no-items');
+      expect(wrapper.find('div.no-items h3').first()).to.have.text('No recent notification!');
+    });
+    it('should render correctly for 1 read notification', function () {
+      wrapper.setProps({ notifications: [props.notifications[0]] });
+      expectBasicStructure(wrapper);
+      expect(wrapper).to.not.have.descendants('Subheader');
+      expect(wrapper).to.not.have.descendants('div.no-items');
+      expect(wrapper).to.have.exactly(1).descendants('NotificationList');
+      expect(wrapper.find('NotificationList')).to.have.prop('notifications')
+        .deep.equal([props.notifications[0]]);
+    });
+    it('should render correctly for 1 unread notification', function () {
+      wrapper.setProps({ notifications: [props.notifications[1]] });
+      expectBasicStructure(wrapper);
+      expect(wrapper).to.have.exactly(1).descendants('Subheader');
+      expect(wrapper).to.not.have.descendants('div.no-items');
+      expect(wrapper).to.have.exactly(1).descendants('NotificationList');
+      expect(wrapper.find('NotificationList')).to.have.prop('notifications')
+        .deep.equal([props.notifications[1]]);
+    });
+    it('should render correctly for 2 unread notifications', function () {
+      wrapper.setProps({ notifications: props.notifications });
+      expectBasicStructure(wrapper);
+      expect(wrapper).to.have.exactly(1).descendants('Subheader');
+      expect(wrapper).to.not.have.descendants('div.no-items');
+      expect(wrapper).to.have.exactly(1).descendants('NotificationList');
+      expect(wrapper.find('NotificationList')).to.have.prop('notifications')
+        .deep.equal(props.notifications);
+    });
   });
 });
