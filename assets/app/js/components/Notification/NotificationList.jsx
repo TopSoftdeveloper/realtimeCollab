@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { List } from 'material-ui/List';
-import FlatButton from 'material-ui/FlatButton';
 import NotificationItem from './NotificationItem.jsx';
 
 const styles = {

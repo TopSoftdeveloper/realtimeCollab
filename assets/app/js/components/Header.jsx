@@ -16,7 +16,7 @@ const propTypes = {
 };
 const styles = {
   appBar: {
-    position: 'fixed',
+    position: 'absolute',
     left: 0,
     minWidth: 600,
     overflowX: 'auto',
@@ -86,7 +86,7 @@ class Header extends Component {
           $('#hangouts-btn-placeholder').css({
             opacity: 0,
             position: 'absolute',
-            right: 155,
+            right: 150,
             top: 16,
             zIndex: 0,
           });
@@ -154,10 +154,12 @@ class Header extends Component {
           <div style={styles.titileContainer}>
             <span style={styles.titleTextContainer}>NUSCollab</span>
             {this.renderSearchBar()}
-            <span style={styles.hangoutContainer}>
-              <i style={styles.hangoutIcon} className="material-icons">video_call</i>
+            <span style={styles.videoContainer}>
+              <span style={styles.hangoutContainer}>
+                <i style={styles.hangoutIcon} className="material-icons">video_call</i>
+              </span>
+              <div id="hangouts-btn-placeholder" />
             </span>
-            <div id="hangouts-btn-placeholder" />
           </div>
         }
       />

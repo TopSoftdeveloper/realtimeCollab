@@ -51,7 +51,7 @@ const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
           }
         }
         if (isPreviousSystemMessage) {
-          messageItems.push(<Divider />);
+          messageItems.push(<Divider key={`${message.id}_message_divider`} />);
         }
         isPreviousSystemMessage = false;
         messageItems.push(

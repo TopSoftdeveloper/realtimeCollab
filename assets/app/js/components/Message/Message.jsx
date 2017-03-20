@@ -26,9 +26,9 @@ const propTypes = {
     onDeleteMessage: PropTypes.func.isRequired,
   }),
   // props passed by parents
-  showMilestoneSelector: PropTypes.boolean,
+  showMilestoneSelector: PropTypes.bool,
   milestoneId: PropTypes.string,
-  onDismiss: PropTypes.func.isRequired,
+  onDismiss: PropTypes.func,
   title: PropTypes.string,
 };
 
@@ -205,8 +205,8 @@ class Message extends Component {
     if (milestoneMenuItems.length > 0) {
       viewMenuItems = [
         ...viewMenuItems,
-        <Divider />,
-        <Subheader>Milestones</Subheader>,
+        <Divider key="message_vierw_menu_item_divider" />,
+        <Subheader key="message_vierw_menu_item_subheader">Milestones</Subheader>,
         ...milestoneMenuItems,
       ];
     }
@@ -330,7 +330,7 @@ class Message extends Component {
     });
     return (
       <Paper zDepth={1} rounded={false} style={styles.container}>
-        <Subheader style={styles.titleContainer}>
+        <Subheader key={`${this.state.filterId}header`} style={styles.titleContainer}>
           <Row>
             <Col xs={11}>
               {
@@ -351,7 +351,7 @@ class Message extends Component {
             </Col>
           </Row>
         </Subheader>
-        <Divider />
+        <Divider key="message_vierw_header_divider" />
         <div style={styles.messageListContainer}>
           {this.renderPinnedMessageList(milestoneMessages)}
           {this.renderMessageList(milestoneMessages)}

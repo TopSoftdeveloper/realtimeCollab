@@ -12,7 +12,7 @@ const propTypes = {
 const defaultProps = {
   indicator: '...',
   placement: 'right',
-  showToolTip: false,
+  showToolTip: true,
 };
 
 const styles = {

@@ -260,7 +260,7 @@ class MilestoneView extends Component {
       />
     );
     const viewMenuItems = [
-      <Subheader>Views</Subheader>,
+      <Subheader key="milesotne-view-menu-title">Views</Subheader>,
       <MenuItem
         value={VIEWS.allTasks.value}
         key={VIEWS.allTasks.value}
@@ -276,7 +276,7 @@ class MilestoneView extends Component {
         key={VIEWS.completedTasks.value}
         primaryText={VIEWS.completedTasks.label}
       />,
-      <Divider />,
+      <Divider key="milestone-view-menu-divider1" />,
       <MenuItem
         menuItems={assigneMenuItems}
         key={VIEWS.tasksAssignedTo.value}
@@ -284,7 +284,7 @@ class MilestoneView extends Component {
         rightIcon={<ArrowDropRight />}
 
       />,
-      <Divider />,
+      <Divider key="milestone-view-menu-divider2" />,
       <MenuItem
         value={VIEWS.tasksByAssignee.value}
         key={VIEWS.tasksByAssignee.value}
@@ -435,7 +435,7 @@ class MilestoneView extends Component {
               </ToolbarGroup>
               {this.renderMilestoneModal()}
             </Toolbar>
-            <Divider />
+            <Divider key="milestone-view-toolbar-divider1" />
             <div style={styles.milestoneContentContainer}>
               {content}
             </div>

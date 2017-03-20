@@ -36,7 +36,7 @@ const propTypes = {
 const styles = {
   floatingSidebarIconContainer: {
     position: 'absolute',
-    top: 24,
+    top: 70,
     left: 0,
     backgroundColor: 'white',
     zIndex: 999,
@@ -47,6 +47,7 @@ const styles = {
     color: 'black',
     fontSize: 20,
     lineHeight: 'inherit',
+    cursor: 'pointer',
   },
   sidebar: {
     backgroundColor: Color.leftPanelBackgroundColor,
@@ -164,7 +165,7 @@ class App extends Component {
         <Row>
           <Sidebar
             shadow
-            transitions
+            transitions={false}
             docked
             open
             styles={{

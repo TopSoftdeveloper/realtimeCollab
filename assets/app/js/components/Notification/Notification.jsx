@@ -8,7 +8,6 @@ import myTheme from '../../myTheme.js';
 const propTypes = {
   notifications: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
-  dispatch: PropTypes.func.isRequired,
   actions: React.PropTypes.shape({
     onMarkNotificationAsRead: PropTypes.func.isRequired,
     onAcceptProject: PropTypes.func.isRequired,
@@ -30,7 +29,7 @@ const styles = {
   },
 };
 
-const Notification = ({ notifications, users, dispatch, actions }) => {
+const Notification = ({ notifications, users, actions }) => {
   const unreadCount = notifications.filter(notif => !notif.read).length;
   return (
     <div className="main-content" style={styles.container}>
@@ -51,7 +50,6 @@ const Notification = ({ notifications, users, dispatch, actions }) => {
         <Paper style={styles.notificationListContainer}>
           <NotificationList
             notifications={notifications}
-            dispatch={dispatch}
             users={users}
             actions={actions}
           />
@@ -60,7 +58,6 @@ const Notification = ({ notifications, users, dispatch, actions }) => {
           <h3>No recent notification!</h3>
         </div>
       }
-
     </div>
   );
 };

@@ -75,6 +75,7 @@ html, body{
   border: dashed #7a7a7a;
   height: 100%;
   width:100%;
+  min-height: 300px;
   display: table;
   text-align: center;
 }
