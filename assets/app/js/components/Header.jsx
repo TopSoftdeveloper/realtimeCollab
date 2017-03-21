@@ -67,7 +67,7 @@ class Header extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      showSearchBar: true,
+      showSearchBar: false,
       isHangoutBtnRendered: false,
     };
     this.toggleSearchBar = this.toggleSearchBar.bind(this);
@@ -156,7 +156,8 @@ class Header extends Component {
             {this.renderSearchBar()}
             <span style={styles.videoContainer}>
               <span style={styles.hangoutContainer}>
-                <i style={styles.hangoutIcon} className="material-icons">video_call</i>
+                {this.state.isHangoutBtnRendered &&
+                  <i style={styles.hangoutIcon} className="material-icons">video_call</i>}
               </span>
               <div id="hangouts-btn-placeholder" />
             </span>
