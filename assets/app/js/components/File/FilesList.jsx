@@ -247,7 +247,7 @@ class FilesList extends Component {
       !this.props.app.files.loading &&
       <IconMenu
         className="drive-create-button"
-        iconButtonElement={<RaisedButton label="New" primary />}
+        iconButtonElement={<RaisedButton label="New" secondary />}
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         targetOrigin={{ horizontal: 'left', vertical: 'top' }}
       >

@@ -6,6 +6,7 @@ import assign from 'object-assign';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
+import muiThemeable from 'material-ui/styles/muiThemeable';
 
 import { getCurrentTab } from '../utils/general';
 import { Color } from '../myTheme.js';
@@ -37,7 +38,6 @@ const styles = {
     verticalAlign: 'middle',
   },
   addProjectButton: {
-    color: Color.leftPanelItemHightColor,
   },
 };
 const propTypes = {
@@ -47,7 +47,7 @@ const propTypes = {
   notificationCount: PropTypes.number.isRequired,
   projects: PropTypes.array.isRequired,
   onCreateProject: PropTypes.func.isRequired,
-
+  muiTheme: PropTypes.object.isRequired,
 };
 const contextTypes = {
   location: React.PropTypes.object,
@@ -169,12 +169,14 @@ class LeftPanel extends Component {
   renderAddProjectIcon() {
     let iconClassName = 'material-icons';
     if (this.props.projects.length === 0) {
-      iconClassName += 'animated infinite wobble';
+      iconClassName += ' animated infinite wobble';
     }
     return (
       <IconButton
         style={styles.middleVerticalAlign}
-        iconStyle={styles.addProjectButton}
+        iconStyle={assign(styles.addProjectButton, {
+          color: this.props.muiTheme.palette.primary1Color,
+        })}
         onTouchTap={this.openModal}
         iconClassName={iconClassName}
       >
@@ -206,4 +208,4 @@ class LeftPanel extends Component {
 }
 LeftPanel.contextTypes = contextTypes;
 LeftPanel.propTypes = propTypes;
-export default LeftPanel;
+export default muiThemeable()(LeftPanel);
