@@ -172,6 +172,9 @@ class App extends Component {
               sidebar: assign({}, styles.sidebar, !this.props.app.showSidebar && {
                 display: 'none',
               }),
+              content: {
+                overflowX: 'hidden',
+              },
             }}
             sidebar={
               <LeftPanel

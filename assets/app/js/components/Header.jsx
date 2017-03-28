@@ -24,6 +24,7 @@ const styles = {
   rightIcon: {
     verticalAlign: 'middle',
     marginTop: 0,
+    marginRight: -24,
   },
   nameContainer: {
     fontSize: 15,

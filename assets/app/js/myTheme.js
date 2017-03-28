@@ -1,4 +1,4 @@
-import { cyan400, cyan500, cyan700, white, pinkA200, grey100, grey300, grey400, grey500, blueGrey900, black, darkBlack, fullBlack } from 'material-ui/styles/colors.js';
+import { cyan400, cyan500, cyan700, white, pinkA200, grey100, grey300, grey400, grey500, blueGrey900, black, darkBlack, fullBlack, yellow50 } from 'material-ui/styles/colors.js';
 import { fade } from 'material-ui/utils/colorManipulator.js';
 import spacing from 'material-ui/styles/spacing';
 import zIndex from 'material-ui/styles/zIndex';
@@ -13,6 +13,7 @@ export default {
     accent1Color: pinkA200,
     accent2Color: grey100,
     accent3Color: grey500,
+    hightlight1Color: yellow50,
     textColor: darkBlack,
     alternateTextColor: white,
     canvasColor: white,
@@ -25,9 +26,8 @@ export default {
 };
 
 export const Color = {
-  tabsBackgroundColor: cyan700,
   leftPanelItemHightColor: cyan500,
-  leftPanelBackgroundColor: 'white',
-  messageViewPinBackgroundColor: fade('#fcf8e3', 1),
-  highlightColor: fade('#fcf8e3', 1),
+  leftPanelBackgroundColor: white,
+  messageViewPinBackgroundColor: yellow50,
+  highlightColor: yellow50,
 };

@@ -77,7 +77,7 @@ const VIEWS = {
   },
   tasksAssignedTo: {
     value: 'tasksAssignedTo',
-    label: 'Task Assigned to',
+    label: 'Tasks Assigned to',
     assigneeId: null,
     assigneeName: '',
   },
