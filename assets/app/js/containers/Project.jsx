@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import { Tabs, Tab } from 'material-ui/Tabs';
-import Paper from 'material-ui/Paper';
+import Perf from 'react-addons-perf';
 
 import * as Actions from '../actions/ReduxTaskActions';
 import ProjectMilestoneView from './ProjectMilestoneView.jsx';
@@ -53,11 +53,16 @@ class Project extends Component {
     this.changeTabToSetting = this.changeTab.bind(this, AppConstants.PATH.settings);
   }
 
-  changeTab(newTab) {
-    browserHistory.push(`${getProjectRoot()}/${newTab}`);
+  componentDidUpdate() {
+    Perf.stop();
+    Perf.printInclusive();
+    Perf.printWasted();
   }
 
-
+  changeTab(newTab) {
+    Perf.start();
+    browserHistory.push(`${getProjectRoot()}/${newTab}`);
+  }
   render() {
     const { app, actions, activeUsers, pendingUsers, currentProject } = this.props;
     const currentProjectId = currentProject.id;

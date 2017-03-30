@@ -116,6 +116,7 @@
     "jsx-loader": "0.13.2",
     "mocha": "^2.3.4",
     "nodemon": "1.8.1",
+    "react-addons-perf": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "^0.14.8",
     "redux-mock-store": "^1.2.2",
