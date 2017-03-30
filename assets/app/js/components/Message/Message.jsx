@@ -11,6 +11,7 @@ import assign from 'object-assign';
 
 import MessageModal from './MessageModal.jsx';
 import MessageList from './MessageList.jsx';
+import ClippedText from './../Common/ClippedText.jsx';
 
 const propTypes = {
   // props passed by container
@@ -183,6 +184,15 @@ class Message extends Component {
       this.props.currentProject.id, translateFilterIdToMilestoneId(this.state.filterId));
   }
   renderMilestoneSelector() {
+    if (!this.props.showMilestoneSelector) {
+      return (
+        <ClippedText
+          text={this.props.title}
+          limit={30}
+          showToolTip={false}
+        />
+      );
+    }
     const milestoneMenuItems = this.props.milestones.map(milestone => (
       <MenuItem
         value={milestone.id}
