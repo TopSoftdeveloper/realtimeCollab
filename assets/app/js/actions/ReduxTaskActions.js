@@ -465,9 +465,9 @@ export const declineProject = (projectId, notificationId) => (
         }).catch(e => {
           console.log(e)
         })
-      }).catch(e => {
+      }, e => {
         console.log(e)
-      })
+      });
     }
   }
 

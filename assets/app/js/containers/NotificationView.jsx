@@ -14,7 +14,7 @@ const mapDispatchToProps = (dispatch) => ({
       markNotificationAsRead(notificationId)(dispatch);
     },
     onAcceptProject: (projectId, notificationId) => {
-      acceptProject(notificationId)(dispatch);
+      acceptProject(projectId, notificationId)(dispatch);
     },
     onDeclineProject: (projectId, notificationId) => {
       declineProject(projectId, notificationId)(dispatch);
