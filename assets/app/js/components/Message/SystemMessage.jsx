@@ -70,6 +70,21 @@ const contentMatcher = (message) => {
         </span>
       );
       break;
+    case systemMessageTypes.DELETE_MILESTONE:
+      output = (
+        <span style={styles.content} className="text-muted">
+          <span style={styles.userName}>{data.user.display_name}</span>
+          <span> deleted [Milestone] </span>
+          <ClippedText
+            text={data.milestone.content}
+            limit={40}
+            placement="bottom"
+            textStyle={styles.milestoneContent}
+          />
+          &nbsp;{toAbsoluteFuzzyTime(message.createdAt)}
+        </span>
+      );
+      break;
     case systemMessageTypes.CREATE_TASK:
       output = (
         <span style={styles.content} className="text-muted">
@@ -236,7 +251,7 @@ const contentMatcher = (message) => {
       output = (
         <span style={styles.content} className="text-muted">
           <span style={styles.userName}>{data.user.display_name}</span>
-          <span> renamed [MILESTONE] </span>
+          <span> renamed [Milestone] </span>
           <ClippedText
             text={data.milestone.originalContent}
             limit={30}

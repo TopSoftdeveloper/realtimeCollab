@@ -388,6 +388,7 @@ html, body{
 }
 .avatar-list {
   list-style: none;
+  display: inline-flex;
   margin-bottom: 0;
   margin-top: 0;
 }
