@@ -245,6 +245,8 @@ class MilestoneView extends Component {
   renderViewMenu() {
     const assigneMenuItems = this.props.users.map(user => (
       <MenuItem
+        disabled={this.state.view.value === VIEWS.tasksAssignedTo.value &&
+          this.state.view.assigneeId === user.id}
         value={user.id}
         key={user.id}
         primaryText={user.display_name}
@@ -253,6 +255,8 @@ class MilestoneView extends Component {
     ));
     assigneMenuItems.unshift(
       <MenuItem
+        disabled={this.state.view.value === VIEWS.tasksAssignedTo.value &&
+          this.state.view.assigneeId === ''}
         value={''}
         key={'Unassign'}
         primaryText="nobody"
@@ -262,16 +266,19 @@ class MilestoneView extends Component {
     const viewMenuItems = [
       <Subheader key="milesotne-view-menu-title">Views</Subheader>,
       <MenuItem
+        disabled={this.state.view.value === VIEWS.allTasks.value}
         value={VIEWS.allTasks.value}
         key={VIEWS.allTasks.value}
         primaryText={VIEWS.allTasks.label}
       />,
       <MenuItem
+        disabled={this.state.view.value === VIEWS.ongoingTasks.value}
         value={VIEWS.ongoingTasks.value}
         key={VIEWS.ongoingTasks.value}
         primaryText={VIEWS.ongoingTasks.label}
       />,
       <MenuItem
+        disabled={this.state.view.value === VIEWS.completedTasks.value}
         value={VIEWS.completedTasks.value}
         key={VIEWS.completedTasks.value}
         primaryText={VIEWS.completedTasks.label}
@@ -286,6 +293,7 @@ class MilestoneView extends Component {
       />,
       <Divider key="milestone-view-menu-divider2" />,
       <MenuItem
+        disabled={this.state.view.value === VIEWS.tasksByAssignee.value}
         value={VIEWS.tasksByAssignee.value}
         key={VIEWS.tasksByAssignee.value}
         primaryText={VIEWS.tasksByAssignee.label}

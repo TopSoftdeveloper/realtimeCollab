@@ -66,10 +66,13 @@ class MilestoneRow extends Component {
     this.reopenTask = this.reopenTask.bind(this);
   }
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      showOngoing: nextProps.showOngoing,
-      showCompleted: nextProps.showCompleted,
-    });
+    if (nextProps.showOngoing !== this.props.showOngoing ||
+    nextProps.showCompleted !== this.props.showCompleted) {
+      this.setState({
+        showOngoing: nextProps.showOngoing,
+        showCompleted: nextProps.showCompleted,
+      });
+    }
   }
   onMouseEnter() {
     this.setState({
