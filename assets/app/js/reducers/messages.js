@@ -3,26 +3,33 @@ import * as AppConstants from '../AppConstants';
 /*
 Example state tree:
 const messages = [
-  {
-    id: '41PYdlLcG',
-    content: 'This could be a very very very long comment!',
-    author_id: 'EkD69ORwf',
-    pinned: true,
-    created_at: '2017-03-06T07:01:58.000Z',
-    updated_at: '2017-03-06T07:01:58.000Z',
-    milestone_id: 'V1BBAPyKz',
-    project_id: '4JjOdFAdz'
-  },
-  {
-    id: '41T-d8rcz',
-    content: '123',
-    author_id: 'EkD69ORwf',
-    pinned: false,
-    created_at: '2017-03-05T19:37:16.000Z',
-    updated_at: '2017-03-05T19:37:16.000Z',
-    milestone_id: 'V1BBAPyKz',
-    project_id: '4JjOdFAdz'
-  },
+{
+  id: '41-k3ja3M',
+  content: 'REOPEN_TASK',
+  author_id: null,
+  pinned: false,
+  content_updated_at: null,
+  content_updated_by: null,
+  data: '{"user":{"id":"41pEQvo2M","display_name":"JJ Zhang"},"task":{"id":"Nk4u8iTnG",
+  "content":"[Refactor] needs to change all \\"\\\\n\\" to System.lineSeparator()"}}',
+  created_at: '2017-04-05T09:45:36.000Z',
+  updated_at: '2017-04-05T09:45:36.000Z',
+  milestone_id: '4kmF4FjnG',
+  project_id: '4k_8lUc3M'
+},
+{
+  id: '4JeWvYihf',
+  content: '### Topic',
+  author_id: '41pEQvo2M',
+  pinned: false,
+  content_updated_at: null,
+  content_updated_by: null,
+  data: null,
+  created_at: '2017-04-03T18:43:43.000Z',
+  updated_at: '2017-04-03T18:43:43.000Z',
+  milestone_id: 'NJ8r8Kj2z',
+  project_id: '4k_8lUc3M'
+},
 ]
 */
 
