@@ -54,13 +54,13 @@ class Project extends Component {
   }
 
   componentDidUpdate() {
-    Perf.stop();
-    Perf.printInclusive();
-    Perf.printWasted();
+    // Perf.stop();
+    // Perf.printInclusive();
+    // Perf.printWasted();
   }
 
   changeTab(newTab) {
-    Perf.start();
+    // Perf.start();
     browserHistory.push(`${getProjectRoot()}/${newTab}`);
   }
   render() {
