@@ -42,7 +42,7 @@ const ClippedText = (props) => {
   if (!showToolTip) {
     return (
       <span style={textStyle}>
-        {`${text.substring(0, limit - indicator.length - 1)}${indicator}`}
+        {`${text.substring(0, limit - indicator.length)}${indicator}`}
       </span>
     );
   }
@@ -59,7 +59,7 @@ const ClippedText = (props) => {
       }
     >
       <span style={textStyle}>
-        {`${text.substring(0, limit - indicator.length - 1)}${indicator}`}
+        {`${text.substring(0, limit - indicator.length)}${indicator}`}
       </span>
     </OverlayTrigger>
   );
