@@ -31,7 +31,7 @@ const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
   messages.sort((messageA, messageB) => (
     new Date(messageA.created_at).getTime() - new Date(messageB.created_at).getTime()
   )).forEach(message => {
-    if (message.author_id) {
+    if (message.author_id) { // message with author_id is considered as user message
       let targetUser = users.filter(user => user.id === message.author_id);
       if (targetUser.length > 0) {
         targetUser = _.first(targetUser);

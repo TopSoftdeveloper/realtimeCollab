@@ -89,7 +89,7 @@ class MessageModal extends Component {
             {onCloseMethod &&
               <FlatButton
                 secondary
-                label="Cancel" onClick={onCloseMethod}
+                label="Cancel" onTouchTap={onCloseMethod}
                 style={styles.actionButton}
               />
             }

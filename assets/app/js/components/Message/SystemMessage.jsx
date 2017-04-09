@@ -50,10 +50,15 @@ const propTypes = {
 const contentMatcher = (message) => {
   const type = message.content;
   if (!message.data) {
-    return '';
+    return false;
   }
-  const data = JSON.parse(message.data);
+  let data;
   let output;
+  try {
+    data = JSON.parse(message.data);
+  } catch (e) {
+    return false;
+  }
   switch (type) {
     case systemMessageTypes.CREATE_MILESTONE:
       output = (
