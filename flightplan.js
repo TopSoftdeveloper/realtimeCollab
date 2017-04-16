@@ -16,7 +16,6 @@ plan.target('production',
 
 plan.remote((remote) => {
   remote.log('Fetching all remote branches');
-  // remote.exec(`sudo cd ${plan.runtime.options.dir} && git fetch --all`);
   remote.sudo(`cd ${plan.runtime.options.dir} && git fetch --all`);
 
   remote.log(`Checking out ${plan.runtime.options.branch}`);

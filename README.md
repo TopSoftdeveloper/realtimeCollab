@@ -103,7 +103,7 @@ fly production
 To deploy a specific branch to production:
 
 ```
-fly production --branch="my_branch_name"
+fly production --branch="origin/my_branch_name"
 ```
 
 

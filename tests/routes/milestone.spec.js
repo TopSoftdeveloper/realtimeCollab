@@ -98,6 +98,8 @@ describe('Milestone', function() {
 
     it('should create a github milestone if github_token is provided', function(done) {
       this.payload.github_token = 'github_token1';
+      const githubStub = this.sandbox.stub(github, 'createGithubMilestone');
+      githubStub.returns(Promise.resolve());
       server.select('api').inject({
         method: 'POST',
         url: '/milestones',
@@ -105,26 +107,17 @@ describe('Milestone', function() {
         payload: JSON.stringify(this.payload),
       }, (res) => {
         expect(res.statusCode).to.equal(200);
-        const githubPayload = {
-          content: this.payload.content,
-          deadline: this.payload.deadline,
-          project_id: this.payload.project_id,
-        };
         models.Milestone
           .findOne({ where: { content: this.payload.content } })
           .then((result) => {
             expect(result).is.not.a('null');
             expect(result.content).is.equal(this.payload.content);
-            this.githubMock.expects('createGithubMilestone')
-              .once()
-              .withExactArgs(
-                result.id,
-                githubPayload,
-                this.project.github_repo_owner,
-                this.project.github_repo_name,
-                this.payload.github_token
-              );
-            done();
+            // Github is called asynchronously from the response,
+            // hence we have to wait till a while, even after getting a response.
+            setTimeout(() => {
+              expect(githubStub.called).to.equal(true);
+              done();
+            }, 200);
           });
       });
     });
@@ -183,6 +176,8 @@ describe('Milestone', function() {
 
     it('should update github milestone if github_token is provided', function(done) {
       this.payload.github_token = 'github_token1';
+      const githubStub = this.sandbox.stub(github, 'updateGithubMilestone');
+      githubStub.returns(Promise.resolve());
       server.select('api').inject({
         method: 'PUT',
         url: '/milestone/milestone1',
@@ -190,24 +185,16 @@ describe('Milestone', function() {
         payload: JSON.stringify(this.payload),
       }, (res) => {
         expect(res.statusCode).to.equal(200);
-        const githubPayload = {
-          title: this.payload.content,
-          due_on: this.payload.deadline,
-        };
         models.Milestone.findById(this.milestone.id)
           .then((result) => {
             expect(result).is.not.a('null');
             expect(result.content).is.equal(this.payload.content);
-            this.githubMock.expects('updateGithubMilestone')
-              .once()
-              .withExactArgs(
-                this.project.github_repo_owner,
-                this.project.github_repo_name,
-                this.payload.github_token,
-                this.milestone.github_number,
-                githubPayload
-              );
-            done();
+            // Github is called asynchronously from the response,
+            // hence we have to wait till a while, even after getting a response.
+            setTimeout(() => {
+              expect(githubStub.called).to.equal(true);
+              done();
+            }, 200);
           });
       });
     });
@@ -262,6 +249,8 @@ describe('Milestone', function() {
 
     it('should delete github milestone if github_token is provided', function(done) {
       this.payload.github_token = 'github_token1';
+      const githubStub = this.sandbox.stub(github, 'deleteGithubMilestone');
+      githubStub.returns(Promise.resolve());
       server.select('api').inject({
         method: 'DELETE',
         url: '/milestone/milestone1',
@@ -272,15 +261,12 @@ describe('Milestone', function() {
         models.Milestone.findById(this.milestone.id)
           .then((result) => {
             expect(result).is.a('null');
-            this.githubMock.expects('deleteGithubMilestone')
-              .once()
-              .withExactArgs(
-                this.project.github_repo_owner,
-                this.project.github_repo_name,
-                this.payload.github_token,
-                this.milestone.github_number
-              );
-            done();
+            // Github issue is created asynchronously from the response,
+            // hence we have to wait till a while, even after getting a response.
+            setTimeout(() => {
+              expect(githubStub.called).to.equal(true);
+              done();
+            }, 200);
           });
       });
     });
