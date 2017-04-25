@@ -4,11 +4,15 @@ import Checkbox from 'material-ui/Checkbox';
 import Chip from 'material-ui/Chip';
 
 const styles = {
+  checkboxRowColumn: {
+    width: '8%',
+  },
   kindRowColumn: {
-    width: '20%',
+    width: '30%',
   },
   labelStyle: {
     fontWeight: 'normal',
+    textOverflow: 'ellipis',
   },
 };
 const propTypes = {
@@ -25,25 +29,22 @@ const DashboardItem = ({ task, projectId, projectName, milestoneName, onCheck })
   let kind = projectName;
   if (milestoneName) {
     kind += ` • ${milestoneName}`;
-    const maxSize = 25;
-    const ellipis = '...';
-    if (kind.length > maxSize) {
-      kind = `${kind.slice(0, maxSize - ellipis.length)}${ellipis}`;
-    }
   }
   return (
-    <TableRow>
-      <TableRowColumn>
+    <TableRow selectable={false}>
+      <TableRowColumn style={styles.checkboxRowColumn} >
         <Checkbox
-          label={task.content}
           onCheck={check}
           labelStyle={styles.labelStyle}
         />
+      </TableRowColumn >
+      <TableRowColumn >
+        {task.content}
       </TableRowColumn>
       <TableRowColumn
         style={styles.kindRowColumn}
       >
-        <Chip>{kind}</Chip>
+        <Chip labelStyle={styles.labelStyle}>{kind}</Chip>
       </TableRowColumn>
     </TableRow>
   );
