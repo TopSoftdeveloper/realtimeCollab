@@ -3,10 +3,10 @@ import Paper from 'material-ui/Paper';
 import { Table, TableBody } from 'material-ui/Table';
 import Subheader from 'material-ui/Subheader';
 
-import myTheme from '../myTheme.js';
-import { markDone } from '../actions/ReduxTaskActions';
+import myTheme from '../../myTheme.js';
+import { markDone } from '../../actions/ReduxTaskActions';
 import DashboardItem from './DashboardItem.jsx';
-import { getLocalUserId } from '../utils/general.js';
+import { getLocalUserId } from '../../utils/general.js';
 
 const propTypes = {
   dispatch: PropTypes.func.isRequired,
