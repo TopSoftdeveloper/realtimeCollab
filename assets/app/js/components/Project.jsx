@@ -1,21 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import Perf from 'react-addons-perf';
 
-import * as Actions from '../actions/ReduxTaskActions';
-import ProjectMilestoneView from './ProjectMilestoneView.jsx';
-import ProjectFileView from './ProjectFileView.jsx';
-import ProjectNewsfeedView from './ProjectNewsfeedView.jsx';
-import ProjectSettingView from './ProjectSettingView.jsx';
-import _404 from '../components/Common/_404.jsx';
-import { getCurrentTab, getProjectRoot } from '../utils/general';
-import { getCurrentProject, getProjectActiveUsers, getProjectPendingUsers } from '../selector';
-import * as AppConstants from '../AppConstants';
+import ProjectMilestoneView from '../containers/ProjectMilestoneView.jsx';
+import ProjectFileView from '../containers/ProjectFileView.jsx';
+import ProjectNewsfeedView from '../containers/ProjectNewsfeedView.jsx';
+import ProjectSettingView from '../containers/ProjectSettingView.jsx';
 import ProjectMessageView from '../containers/ProjectMessageView.jsx';
+import _404 from './Common/_404.jsx';
+import { getCurrentTab, getProjectRoot } from '../utils/general';
+import * as AppConstants from '../AppConstants';
 import myTheme from '../myTheme.js';
 
 const styles = {
@@ -42,6 +38,15 @@ const styles = {
     fontWeight: 'bold',
   },
 };
+const propTypes = {
+  // dispatch: PropTypes.func.isRequired,
+  app: PropTypes.object.isRequired,
+  currentProject: PropTypes.object.isRequired,
+  activeUsers: PropTypes.array.isRequired,
+  pendingUsers: PropTypes.array.isRequired,
+  actions: PropTypes.object.isRequired,
+};
+
 class Project extends Component {
   constructor(props, context) {
     super(props, context);
@@ -155,24 +160,6 @@ class Project extends Component {
   }
 }
 
-Project.propTypes = {
-  // dispatch: PropTypes.func.isRequired,
-  app: PropTypes.object.isRequired,
-  currentProject: PropTypes.object.isRequired,
-  activeUsers: PropTypes.array.isRequired,
-  pendingUsers: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired,
-};
+Project.propTypes = propTypes;
 
-const mapStateToProps = (state) => ({
-  currentProject: getCurrentProject(state),
-  activeUsers: getProjectActiveUsers(state),
-  pendingUsers: getProjectPendingUsers(state),
-  app: state.app,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  actions: bindActionCreators(Actions, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Project);
+export default Project;

@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import Sidebar from 'react-sidebar';
 import { Grid, Row } from 'react-bootstrap';
 import assign from 'object-assign';
@@ -9,13 +7,12 @@ import Paper from 'material-ui/Paper';
 
 import { Color } from '../myTheme.js';
 import * as Actions from '../actions/ReduxTaskActions';
-import * as SocketActions from '../actions/SocketActions';
-import Header from '../components/Header.jsx';
+import Header from './Header.jsx';
 import { matchesUrl, getCurrentProject, getLocalUserId } from '../utils/general';
 import { isProjectPresent } from '../utils/collection';
-import LeftPanel from '../components/LeftPanel.jsx';
-import LoadingIndicator from '../components/Common/LoadingIndicator.jsx';
-import SnackbarView from './SnackbarView.jsx';
+import LeftPanel from './LeftPanel.jsx';
+import LoadingIndicator from './Common/LoadingIndicator.jsx';
+import SnackbarView from '../containers/SnackbarView.jsx';
 import { refreshTokens } from '../utils/apiUtil';
 import { APP_ROOT_URL } from '../AppConstants.js';
 
@@ -219,19 +216,5 @@ App.childContextTypes = {
   location: React.PropTypes.object,
 };
 
-const mapStateToProps = (state) => ({
-  notifications: state.notifications,
-  projects: state.projects,
-  users: state.users,
-  tasks: state.tasks,
-  app: state.app,
-  search: state.search,
 
-});
-const mapDispatchToProps = (dispatch) => ({
-  actions: bindActionCreators(Actions, dispatch),
-  socketActions: bindActionCreators(SocketActions, dispatch),
-  dispatch,
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

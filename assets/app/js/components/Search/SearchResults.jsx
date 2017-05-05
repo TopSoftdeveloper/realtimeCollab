@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import _ from 'lodash';
 import Divider from 'material-ui/Divider';
@@ -223,14 +222,5 @@ class SearchResults extends Component {
   }
 }
 
-
 SearchResults.propTypes = propTypes;
-
-function mapStateToProps(state) {
-  return {
-    search: state.search,
-    app: state.app,
-  };
-}
-
-export default connect(mapStateToProps)(SearchResults);
+export default SearchResults;
