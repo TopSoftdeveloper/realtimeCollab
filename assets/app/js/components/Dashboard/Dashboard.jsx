@@ -4,12 +4,13 @@ import { Table, TableBody } from 'material-ui/Table';
 import Subheader from 'material-ui/Subheader';
 
 import myTheme from '../../myTheme.js';
-import { markDone } from '../../actions/ReduxTaskActions';
 import DashboardItem from './DashboardItem.jsx';
 import { getLocalUserId } from '../../utils/general.js';
 
 const propTypes = {
-  dispatch: PropTypes.func.isRequired,
+  actions: React.PropTypes.shape({
+    onMarkTaskAsDone: PropTypes.func.isRequired,
+  }),
   milestones: PropTypes.array.isRequired,
   projects: PropTypes.array.isRequired,
   tasks: PropTypes.array.isRequired,
@@ -32,19 +33,10 @@ const styles = {
 class Dashboard extends Component {
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      sortByDeadlineDescending: true,
-    };
-    this.toggleSortByDeadline = this.toggleSortByDeadline.bind(this);
     this.markTaskAsDone = this.markTaskAsDone.bind(this);
   }
   markTaskAsDone(taskId, projectId) {
-    this.props.dispatch(markDone(taskId, projectId));
-  }
-  toggleSortByDeadline() {
-    this.setState({
-      sortByDeadlineDescending: !this.state.sortByDeadlineDescending,
-    });
+    this.props.actions.onMarkTaskAsDone(taskId, projectId);
   }
   render() {
     const {
