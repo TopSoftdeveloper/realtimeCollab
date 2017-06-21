@@ -8,6 +8,8 @@ import ReactGA from 'react-ga';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import 'rc-steps/assets/index.css';
+import 'rc-steps/assets/iconfont.css';
 
 import routes from './config/routes.jsx';
 import reducer from './reducers/index';

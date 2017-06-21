@@ -6,9 +6,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import RepoList from './RepoList.jsx';
 import LoadingIndicator from '../Common/LoadingIndicator.jsx';
 
-require('rc-steps/assets/index.css');
-require('rc-steps/assets/iconfont.css');
-
 const propTypes = {
   project: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,

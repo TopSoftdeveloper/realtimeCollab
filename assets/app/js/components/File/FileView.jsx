@@ -6,9 +6,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { Alert } from 'react-bootstrap';
 import FilesList from './FilesList.jsx';
 
-require('rc-steps/assets/index.css');
-require('rc-steps/assets/iconfont.css');
-
 const styles = {
   container: {
     paddingBottom: 0,
