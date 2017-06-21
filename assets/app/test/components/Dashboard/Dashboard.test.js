@@ -5,7 +5,6 @@ import sinon from 'sinon';
 import chaiEnzyme from 'chai-enzyme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Dashboard from './../../../js/components/Dashboard/Dashboard.jsx';
-import * as general from '../../../js/utils/general.js';
 
 chai.use(chaiEnzyme());
 
@@ -14,7 +13,6 @@ const shallowWrapperWithProps = (props) => shallow(<Dashboard {...props} />, {
   context: { muiTheme },
   childContextTypes: { muiTheme: React.PropTypes.object },
 });
-sinon.stub(general, 'getLocalUserId', () => 'id1');
 /* eslint-disable func-names, prefer-arrow-callback */
 describe('Dashboard.jsx', function () {
   const expectBasicStructure = (wrapper) => {
