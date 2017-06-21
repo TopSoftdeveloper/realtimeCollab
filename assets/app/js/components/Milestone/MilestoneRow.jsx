@@ -232,11 +232,9 @@ class MilestoneRow extends Component {
       if (this.state.showOngoing) {
         // Only show non-completed tasks and non-dirtied tasks
         const assignees = this.props.users.filter(user => user.id === task.assignee_id);
-        const highlightId = this.context.location.query.highlight;
-        let highlight = false;
-        if (highlightId === task.id) {
-          highlight = true;
-        }
+        const highlight = this.context.location && this.context.location.query &&
+          this.context.location.query.highlight &&
+          this.context.location.query.highlight === task.id;
         taskList.push(
           <TaskRow
             key={task.id}
@@ -253,11 +251,9 @@ class MilestoneRow extends Component {
     }); // task forEach
     if (this.state.showCompleted) {
       completedTasks.forEach(task => {
-        const highlightId = this.context.location.query.highlight;
-        let highlight = false;
-        if (highlightId === task.id) {
-          highlight = true;
-        }
+        const highlight = this.context.location && this.context.location.query &&
+          this.context.location.query.highlight &&
+          this.context.location.query.highlight === task.id;
         taskList.push(
           <CompletedTask
             key={task.id}

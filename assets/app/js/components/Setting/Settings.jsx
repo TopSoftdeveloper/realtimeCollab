@@ -286,7 +286,7 @@ class Settings extends Component {
         </div>
       );
     }
-    if (!localStorage.github_token && repoSet) {
+    if (!global.window.localStorage.github_token && repoSet) {
       // Repo set but not authorized
       githubPanel = (
         <div>
