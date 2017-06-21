@@ -3,8 +3,21 @@ import { shallow, mount } from 'enzyme';
 import { expect } from 'chai'; // eslint-disable-line
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import deepFreeze from 'deep-freeze'; // eslint-disable-line
+import { Provider } from 'react-redux';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import configureStore from 'redux-mock-store'; // eslint-disable-line
+
+import FakeStore from './FakeStore.js';
 
 const muiTheme = getMuiTheme();
+const middlewares = [];
+const mockStore = configureStore(middlewares);
+
+export const mountWithFakeStore = (node) => mount(
+  <MuiThemeProvider>
+    <Provider store={mockStore(FakeStore)} children={node} />
+  </MuiThemeProvider>
+);
 
 export const mountWithContext = (node) => (mount(node, {
   context: { muiTheme },
