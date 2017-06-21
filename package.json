@@ -12,7 +12,7 @@
     "dev": "concurrently --raw --kill-others \"webpack --progress --color --watch \" \"cross-env NODE_ENV=dev nodemon server/server.js\"",
     "test": "cross-env NODE_ENV=test mocha --require babel-core/register --recursive 'tests/setup.js' 'tests/**/*.spec.js'",
     "testF": "mocha --require ./assets/app/test/.setup.js --compilers js:babel-core/register \"./assets/app/test\" --recursive -w",
-    "testFF": "mocha --require ./assets/app/test/.setup.js --compilers js:babel-core/register \"./assets/app/test/reducers/\" --recursive -w",
+    "testFF": "mocha --require ./assets/app/test/.setup.js --compilers js:babel-core/register \"./assets/app/test/containers/\" --recursive -w",
     "coverageB": "istanbul cover _mocha -- -R spec",
     "coverageF": "gulp front_end_test;",
     "coverage": "gulp front_end_test_subset;"
@@ -54,7 +54,7 @@
     "node-gyp": "3.3.1",
     "object-assign": "4.0.1",
     "path": "0.12.7",
-    "rc-steps": "^2.5.0",
+    "rc-steps": "^2.5.1",
     "react": "^15.4.2",
     "react-addons-pure-render-mixin": "^15.3.2",
     "react-addons-shallow-compare": "^15.3.2",
