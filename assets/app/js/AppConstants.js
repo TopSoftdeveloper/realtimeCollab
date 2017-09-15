@@ -9,7 +9,7 @@ const defaultConfig = {
   app_root_url: 'http://localhost:8080/app',
   api_base_url: 'http://localhost:8080',
   google_client_id: '251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com',
-  github_client_id: 'd530a5d9c552e390d942',
+  github_client_id: 'd541a87c15b974bf55a7',
 };
 
 const clientConfig = configEncoded != null ?
