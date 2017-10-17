@@ -206,9 +206,9 @@ export const uploadFileToDrive = (file, directory, projectId) => (
       metadata.parents = [directory];
 
       const base64Data = (reader.result).split(',')[1];
-      const multipartRequestBody = `${delimiter}Content-Type:\
-application/json\r\n\r\n${JSON.stringify(metadata)}${delimiter}Content-Type:${contentType}\r\n\
-Content-Transfer-Encoding:base64\r\n\r\n${base64Data}${closeDelimiter}`;
+      const multipartRequestBody = `${delimiter}Content-Type:application/json\r\n\r\n\
+    ${JSON.stringify(metadata)}${delimiter}Content-Type:${contentType}\r\n\
+    Content-Transfer-Encoding: base64\r\n\r\n${closeDelimiter}`;
 
       uploadFile(multipartRequestBody).then(newFile => {
         dispatch(deleteFile(file.id));
@@ -252,6 +252,7 @@ export const updateGithubLogin = (token) => (
       })
     }
   }
+  
 
   function getOwnerRepos(projects) {
     // Iterates through all projects and returns the below string for GitHub querying.
