@@ -251,12 +251,14 @@ class Message extends Component {
     return (
       <span>
         <FlatButton
+          className="message-list-toggle-btn"
           labelStyle={messageLabelStyle}
           label={userMessagesText}
           primary
           onTouchTap={this.toggleUserMessage}
         />
         <FlatButton
+          className="message-activity-toggle-btn"
           labelStyle={activityLabelStyle}
           label={systemActivityText}
 
@@ -339,7 +341,7 @@ class Message extends Component {
       return message.milestone_id === this.state.filterId;
     });
     return (
-      <Paper zDepth={1} rounded={false} style={styles.container}>
+      <Paper className="discussions-container" zDepth={1} rounded={false} style={styles.container}>
         <Subheader key={`${this.state.filterId}header`} style={styles.titleContainer}>
           <Row>
             <Col xs={11}>
@@ -367,7 +369,7 @@ class Message extends Component {
           {this.renderMessageList(milestoneMessages)}
         </div>
 
-        <Paper zDepth={3} style={styles.bottomPanelContainer}>
+        <Paper zDepth={3} style={styles.bottomPanelContainer} className="message-input-trigger">
           {this.renderbottomPanel()}
         </Paper>
       </Paper>

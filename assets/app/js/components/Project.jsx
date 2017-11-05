@@ -91,12 +91,13 @@ class Project extends Component {
         <Tabs
           style={styles.tabs}
           value={currentTab}
-          contentContainerClassName="full-height"
+          contentContainerClassName="project-tabs full-height"
           className="full-height"
           tabTemplateStyle={styles.tabTemplate}
           tabItemContainerStyle={styles.tabItemContainer}
         >
           <Tab
+            className="project-milestones-tab"
             buttonStyle={styles.tabButton}
             label="Milestones"
             value={AppConstants.PATH.milestones}
@@ -109,6 +110,7 @@ class Project extends Component {
             />
           </Tab>
           <Tab
+            className="project-files-tab"
             buttonStyle={styles.tabButton}
             label="Files"
             value={AppConstants.PATH.files}
@@ -121,6 +123,7 @@ class Project extends Component {
             />
           </Tab>
           <Tab
+            className="project-discussions-tab"
             buttonStyle={styles.tabButton}
             label="Discussions"
             value={AppConstants.PATH.discussions}
@@ -131,6 +134,7 @@ class Project extends Component {
             />
           </Tab>
           <Tab
+            className="project-newsfeed-tab"
             buttonStyle={styles.tabButton}
             label="Newsfeed"
             value={AppConstants.PATH.newsfeed}
@@ -141,6 +145,7 @@ class Project extends Component {
             />
           </Tab>
           <Tab
+            className="project-settings-tab"
             buttonStyle={styles.tabButton}
             label="Settings"
             value={AppConstants.PATH.settings}

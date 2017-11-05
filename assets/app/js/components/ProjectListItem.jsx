@@ -16,6 +16,7 @@ const ProjectListItem = ({ projectId, projectContent, active, onSwitchProject, i
   const switchProject = onSwitchProject.bind(null, projectId);
   return (
     <ListItem
+      id={`project-${projectContent}`}
       className="left-panel-item"
       key={projectId}
       onTouchTap={switchProject}

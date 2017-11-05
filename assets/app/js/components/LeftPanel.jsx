@@ -167,7 +167,7 @@ class LeftPanel extends Component {
     );
   }
   renderAddProjectIcon() {
-    let iconClassName = 'material-icons';
+    let iconClassName = 'add-project-icon material-icons';
     if (this.props.projects.length === 0) {
       iconClassName += ' animated infinite wobble';
     }

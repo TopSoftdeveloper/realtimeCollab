@@ -26,7 +26,8 @@ module.exports = {
   },
   refreshGoogleToken: {
     handler: refreshGoogleToken
-  }
+  },
+  get_token,
 };
 
 function validateTokens(request, reply) {

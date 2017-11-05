@@ -330,6 +330,7 @@ class MilestoneRow extends Component {
     return (
       <span style={{marginTop: -10}} className="pull-right">
         <IconButton
+          className="add-task-btn"
           tooltip="new task"
           tooltipPosition="bottom-center"
           onClick={this.openTaskModal}
@@ -375,7 +376,12 @@ class MilestoneRow extends Component {
     }
     return (
       <Paper zDepth={0} style={listStyle} >
-        <Grid fluid className="milestone-row" onClick={this.onSelect}>
+        <Grid
+          fluid
+          id={`milestone-${milestone.content.replace(/\s/g, '')}`}
+          className="milestone-row"
+          onClick={this.onSelect}
+        >
           <div>
             {editIndicator}
             <div className="milestone-row-header">

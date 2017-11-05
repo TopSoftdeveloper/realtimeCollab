@@ -80,6 +80,7 @@ class MilestoneModal extends Component {
 
     let picker = (
       <DatePicker
+        className="add-milestone-datepicker"
         hintText="Select a date"
         autoOk
         formatDate={this.formatDate}
@@ -91,6 +92,7 @@ class MilestoneModal extends Component {
     if (this.props.deadline) {
       picker = (
         <DatePicker
+          className="add-milestone-datepicker"
           hintText="Select a date"
           autoOk
           formatDate={this.formatDate}
@@ -108,7 +110,7 @@ class MilestoneModal extends Component {
         onRequestClose={this.props.handleClose}
         open
         titleClassName="borderless"
-        actionsContainerClassName="borderless"
+        actionsContainerClassName="borderless add-milestone-modal-actions"
       >
         <Form
           onValid={this.enableButton}
@@ -116,6 +118,7 @@ class MilestoneModal extends Component {
           onValidSubmit={this.onDialogSubmit}
         >
           <FormsyText
+            className="add-milestone-name-input"
             autoComplete="off"
             fullWidth
             autoFocus

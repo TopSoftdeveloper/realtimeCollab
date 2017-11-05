@@ -397,6 +397,7 @@ class Settings extends Component {
               </ControlLabel>
               <InputGroup>
                 <FormControl
+                  className="rename-project-input"
                   type="text"
                   inputRef={ref => { this.projectNameInput = ref; }}
                   value={this.state.inputProjectName}
@@ -404,7 +405,7 @@ class Settings extends Component {
                   onChange={this.projectNameChange}
                 />
                 <InputGroup.Button>
-                  <Button type="submit">Rename</Button>
+                  <Button type="submit" className="rename-project-btn">Rename</Button>
                 </InputGroup.Button>
               </InputGroup>
             </form>

@@ -58,6 +58,7 @@ class MessageModal extends Component {
           <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
             <Tab eventKey={1} title="Write">
               <FormControl
+                className="add-message-input"
                 value={this.state.inputText}
                 onChange={this.handleChange}
                 componentClass="textarea"
@@ -88,15 +89,19 @@ class MessageModal extends Component {
           <span className="pull-right">
             {onCloseMethod &&
               <FlatButton
+                className="add-message-cancel-btn"
                 secondary
-                label="Cancel" onTouchTap={onCloseMethod}
+                label="Cancel"
+                onClick={onCloseMethod}
                 style={styles.actionButton}
               />
             }
             <FlatButton
+              className="add-message-submit-btn"
               disabled={!this.state.inputText.trim()}
               primary
-              label="Submit" onTouchTap={this.onSubmitButtonClick}
+              label="Submit"
+              onClick={this.onSubmitButtonClick}
               style={styles.actionButton}
             />
           </span>

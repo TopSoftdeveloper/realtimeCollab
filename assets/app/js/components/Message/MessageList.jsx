@@ -84,7 +84,7 @@ const MessageList = ({ messages, users, actions, pinned, onEnterEditMode }) => {
   }
 
   return (
-    <div style={styles.container}>
+    <div className="message-list" style={styles.container}>
       {content}
     </div>
   );

@@ -1111,7 +1111,7 @@ export const declineProject = (projectId, notificationId) => (
     return function(dispatch) {
       dispatch(_pinMessage(messageId));
       serverEditMessage(messageId, { pinned: true }).done(res => {
-        dispatch(snackbarMessage('Messsage pinned', 'default'))
+        dispatch(snackbarMessage('Message pinned', 'default'))
       }).fail(e => {
         dispatch(_unpinMessage(messageId));
         console.log(e);
@@ -1122,7 +1122,7 @@ export const declineProject = (projectId, notificationId) => (
     return function(dispatch) {
       dispatch(_unpinMessage(messageId));
       serverEditMessage(messageId, { pinned: false }).done(res => {
-        dispatch(snackbarMessage('Messsage unpinned', 'default'))
+        dispatch(snackbarMessage('Message unpinned', 'default'))
       }).fail(e => {
         dispatch(_pinMessage(messageId));
         console.log(e);
@@ -1138,7 +1138,7 @@ export const declineProject = (projectId, notificationId) => (
     return dispatch => {
       serverEditMessage(messageId, message).done(() => {
         dispatch(_editMessage(messageId, message));
-        dispatch(snackbarMessage('Messsage edited', 'default'));
+        dispatch(snackbarMessage('Message edited', 'default'));
       }).fail(e => {
         console.log(e);
       });
@@ -1160,7 +1160,7 @@ export const declineProject = (projectId, notificationId) => (
     return function(dispatch) {
       serverDeleteMessage(messageId).done(res => {
         dispatch(_deleteMessage(messageId));
-        dispatch(snackbarMessage('Messsage deleted', 'default'));
+        dispatch(snackbarMessage('Message deleted', 'default'));
       }).fail(e => {
         console.log(e);
       });

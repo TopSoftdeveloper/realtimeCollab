@@ -7,6 +7,7 @@ const propTypes = {
 };
 const ISnackbar = ({ snackbar, onRequestClose }) => (
   <Snackbar
+    className="system-snackbar"
     open={snackbar.isOpen}
     message={snackbar.message}
     autoHideDuration={3500}

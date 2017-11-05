@@ -54,12 +54,13 @@ class RenameModal extends Component {
     ];
     return (
       <Dialog
+        className="add-project-modal"
         autoScrollBodyContent
         actions={renameModalActions}
         onRequestClose={this.handleClose}
         open
         titleClassName="borderless"
-        actionsContainerClassName="borderless"
+        actionsContainerClassName="add-project-modal-actions borderless"
       >
         <Form
           onValid={this.enableButton}

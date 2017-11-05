@@ -63,6 +63,7 @@ class TaskModal extends Component {
         onTouchTap={this.props.handleClose}
       />,
       <FlatButton
+        className="add-task-submit-btn"
         key={2}
         label="Submit"
         primary
@@ -108,6 +109,7 @@ class TaskModal extends Component {
             fullWidth
             multiLine
             autoComplete="off"
+            className="add-task-name-input"
             name="Task name"
             floatingLabelText="Task Name (required)"
             ref={(input) => { this.taskInputField = input; }}
@@ -115,6 +117,7 @@ class TaskModal extends Component {
           />
           <br />
           <SelectField
+            className="add-task-milestone-select"
             required
             value={this.state.milestoneId}
             onChange={this.handleMilestoneIdChange}
@@ -125,6 +128,7 @@ class TaskModal extends Component {
           </SelectField>
           <br />
           <SelectField
+            className="add-task-assignee-select"
             value={this.state.assigneeId}
             onChange={this.handleChange}
             floatingLabelFixed

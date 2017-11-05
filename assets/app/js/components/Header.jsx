@@ -132,6 +132,7 @@ class Header extends Component {
         iconStyleRight={styles.rightIcon}
         iconElementRight={
           <IconMenu
+            className="headerIconMenu"
             iconButtonElement={
               <span style={styles.nameContainer}>
                 {displayName}
@@ -145,6 +146,7 @@ class Header extends Component {
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
             <MenuItem
+              id="logoutBtn"
               leftIcon={<Avatar src={localStorage.getItem('display_image')} />
               }
               onClick={logout} primaryText="Sign out"

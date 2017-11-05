@@ -1,4 +1,7 @@
 # Collab
+
+[![CircleCI](https://img.shields.io/circleci/project/github/collab-tools/collab.svg)](https://circleci.com/gh/collab-tools/collab)
+
 > Web-based collaboration tool to help small teams do big things.
 
 ## Setting Up Development Environment

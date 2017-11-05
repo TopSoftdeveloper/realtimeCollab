@@ -89,7 +89,7 @@ class UserMessage extends Component {
           <IconButton
             style={styles.iconButton}
             iconStyle={styles.icon}
-            iconClassName="material-icons"
+            iconClassName="message-options-btn material-icons"
             tooltipPosition="bottom-left"
           >
             keyboard_arrow_down
@@ -99,17 +99,17 @@ class UserMessage extends Component {
         targetOrigin={{ horizontal: 'left', vertical: 'top' }}
       >
         {this.props.message.pinned
-          ? <MenuItem onTouchTap={this.unpinMessage} primaryText="Unpin from Top" />
-          : <MenuItem onTouchTap={this.pinMessage} primaryText="Pin to Top" />}
-        <MenuItem onTouchTap={this.enterEditMode} primaryText="Edit" />
-        <MenuItem onTouchTap={this.deleteMessage} primaryText="Delete" />
+          ? <MenuItem className="unpin-message-btn" onClick={this.unpinMessage} primaryText="Unpin from Top" />
+          : <MenuItem className="pin-message-btn" onClick={this.pinMessage} primaryText="Pin to Top" />}
+        <MenuItem className="edit-message-btn" onClick={this.enterEditMode} primaryText="Edit" />
+        <MenuItem className="delete-message-btn" onClick={this.deleteMessage} primaryText="Delete" />
       </IconMenu>
     );
   }
   renderMainContent() {
     const { message } = this.props;
     return (
-      <div style={styles.content}>
+      <div className="message-content" style={styles.content}>
         <ReactMarkdown
           source={message.content}
           escapeHtml
@@ -139,8 +139,10 @@ class UserMessage extends Component {
   }
   render() {
     const { message, pinned } = this.props;
+    const className = pinned ? 'pinned message-row' : 'message-row';
     return (
       <Row
+        className={className}
         style={assign({}, styles.container, message.pinned && {
           borderLeft: '2px solid rgb(254, 209, 45)',
         }, pinned && {

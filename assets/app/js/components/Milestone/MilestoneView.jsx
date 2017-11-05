@@ -320,11 +320,13 @@ class MilestoneView extends Component {
     );
   }
   renderCreateMilestoneButton() {
+    const className = this.props.milestones.length === 0 ?
+      'animated infinite pulse add-milestone-btn' : 'add-milestone-btn';
     return (this.state.view.value !== VIEWS.tasksByAssignee.value &&
       <RaisedButton
         key="add-milestone-btn"
         label="Add Milestone"
-        className={this.props.milestones.length === 0 ? 'animated infinite pulse' : ''}
+        className={className}
         onTouchTap={this.openMilestoneModal}
         secondary
         style={styles.addMilestoneBtn}
