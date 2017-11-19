@@ -22,6 +22,7 @@ beforeEach((done) => {
     const options = { raw: true, transaction: t };
     return sequelize
       .query('SET FOREIGN_KEY_CHECKS = 0', options)
+      .then(() => sequelize.query('truncate table messages', options))
       .then(() => sequelize.query('truncate table users', options))
       .then(() => sequelize.query('truncate table projects', options))
       .then(() => sequelize.query('truncate table user_projects', options))
