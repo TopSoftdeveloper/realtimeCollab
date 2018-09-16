@@ -41,56 +41,8 @@ module.exports = {
         }
     },
     createGithubIssue: createGithubIssue,
-    updateGithubIssue: updateGithubIssue,
-    createGithubMilestone: createGithubMilestone,
-    updateGithubMilestone: updateGithubMilestone,
-    deleteGithubMilestone: deleteGithubMilestone
+    updateGithubIssue: updateGithubIssue
 };
-
-function addCollabMilestonesToGithub(owner, repo, token, projectId) {
-    return new Promise(function(RESOLVE, REJECT) {
-        storage.getMilestonesWithCondition({github_id: null, project_id: projectId}).done(function(milestones) {
-            var promises = []
-            milestones.forEach(function(milestone) {
-                promises.push(
-                    createGithubMilestone(milestone.id, {title: milestone.content}, owner, repo, token)
-                )
-            }) // milestones.forEach
-            Promise.all(promises).then(function(p) {
-                RESOLVE(p)
-            }).catch(function(err) {
-                REJECT(err)
-            })
-        }) // getMilestonesWithCondition
-    })
-}
-
-function createGithubMilestone(milestoneId, milestone, owner, repo, token) {
-    var options = {
-        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + repo + '/milestones',
-        headers: {
-            'User-Agent': 'Collab',
-            'Authorization': 'Bearer ' + token
-        },
-        form: JSON.stringify(milestone)
-    }
-    return new Promise(function (resolve, reject) {
-        req.post(options, function(err, res, body) {
-            if (err) {
-                reject(err)
-                return
-            }
-            var parsedBody = JSON.parse(body)
-            if (parsedBody.number) {
-                storage.updateMilestone({github_id: parsedBody.id, github_number: parsedBody.number}, milestoneId).done(function() {
-                    resolve(parsedBody.number)
-                })
-            } else {
-                reject(parsedBody)
-            }
-        })
-    })
-}
 
 function createGithubIssue(taskId, issue, owner, repo, token) {
     var options = {
@@ -118,30 +70,6 @@ function createGithubIssue(taskId, issue, owner, repo, token) {
             }
         })
     })
-}
-
-function deleteGithubMilestone(owner, repo, token, number) {
-    var options = {
-        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + repo + '/milestones/' + number,
-        headers: {
-            'User-Agent': 'Collab',
-            'Authorization': 'Bearer ' + token
-        }
-    }
-
-    return new Promise(function (resolve, reject) {
-        req.del(options, function(err, res, body) {
-            if (err) {
-                reject(err)
-                return
-            }
-            resolve()
-        })
-    })
-}
-
-function updateGithubMilestone(owner, repo, token, number, payload) {
-    return githubUpdate('milestones', owner, repo, token, number, payload)
 }
 
 function updateGithubIssue(owner, repo, token, number, payload) {
@@ -241,21 +169,6 @@ function addCollabTasksToGithub(owner, name, token, projectId) {
     })
 }
 
-function addGithubMilestonesToDB(milestones, projectId) {
-    var promises = []
-    milestones.forEach(function(githubMilestone) {
-        var milestone = {
-            content: githubMilestone.title,
-            deadline: githubMilestone.due_on,
-            project_id: projectId,
-            github_id: githubMilestone.id,
-            github_number: githubMilestone.number
-        }
-        promises.push(storage.findOrCreateMilestone(milestone))
-    })
-    return Sequelize.Promise.all(promises)
-}
-
 function addGithubIssuesToDB(issues, projectId) {
     var promises = []
     issues.forEach(function(issue) {
@@ -306,31 +219,6 @@ function addGithubIssuesToCollab(owner, name, token, projectId) {
     })
 }
 
-function addGithubMilestonesToCollab(owner, name, token, projectId) {
-    var milestoneOptions = {
-        url: GITHUB_ENDPOINT + '/repos/' + owner + '/' + name + '/milestones?state=all',
-        headers: {
-            'User-Agent': 'Collab',
-            'Authorization': 'Bearer ' + token
-        }
-    }
-    return new Promise(function (resolve, reject) {
-        req.get(milestoneOptions, function(err, res, body) {
-            if (err) {
-                return reject(err)
-            }
-            var githubMilestones = JSON.parse(body)
-            if (githubMilestones.length > 0) {
-                addGithubMilestonesToDB(githubMilestones, projectId).done(function(milestones) {
-                    return resolve(milestones)
-                })
-            } else {
-                return resolve(true)
-            }
-        })
-    })
-}
-
 function syncHandler(request, reply) {
     /**
      * Syncs Github issues, milestones etc. with Collab's
@@ -354,23 +242,15 @@ function syncHandler(request, reply) {
 
             var promises = []
             var githubToCollab = new Promise(function (resolve, reject) {
-                addGithubMilestonesToCollab(owner, name, token, projectId).then(function() {
-                    addGithubIssuesToCollab(owner, name, token, projectId).then(function() {
-                        resolve()
-                    }, function(err) {
-                        reject(err)
-                    })
+                addGithubIssuesToCollab(owner, name, token, projectId).then(function() {
+                    resolve()
                 }, function(err) {
                     reject(err)
                 })
             })
             var collabToGithub = new Promise(function (resolve, reject) {
-                addCollabMilestonesToGithub(owner, name, token, projectId).then(function() {
-                    addCollabTasksToGithub(owner, name, token, projectId).then(function() {
-                        resolve()
-                    }, function(err) {
-                        reject(err)
-                    })
+                addCollabTasksToGithub(owner, name, token, projectId).then(function() {
+                    resolve()
                 }, function(err) {
                     reject(err)
                 })
