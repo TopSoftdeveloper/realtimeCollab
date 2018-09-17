@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Dialog, FlatButton } from 'material-ui';
+import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import { Form } from 'formsy-react';
@@ -10,6 +11,8 @@ const propTypes = {
   content: PropTypes.string,
   assigneeId: PropTypes.string,
   milestoneId: PropTypes.string,
+  isGithubIssue: PropTypes.bool,
+  userIsEditing: PropTypes.bool,
   handleClose: PropTypes.func.isRequired,
   taskMethod: PropTypes.func.isRequired,
   // passed by container
@@ -23,8 +26,11 @@ class TaskModal extends Component {
       assigneeId: this.props.assigneeId || '',
       canSubmit: false,
       milestoneId: this.props.milestoneId,
+      isGithubIssue: false,
+      userIsEditing: this.props.userIsEditing,
     };
     this.onDialogSubmit = this.onDialogSubmit.bind(this);
+    this.handleGithubIssueChange = this.handleGithubIssueChange.bind(this);
     this.handleMilestoneIdChange = this.handleMilestoneIdChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.enableButton = this.enableButton.bind(this);
@@ -34,7 +40,7 @@ class TaskModal extends Component {
   onDialogSubmit() {
     const content = this.taskInputField.getValue().trim();
     if (content !== '') {
-      this.props.taskMethod(content, this.state.assigneeId, this.state.milestoneId);
+      this.props.taskMethod(content, this.state.assigneeId, this.state.milestoneId, this.state.isGithubIssue);
     }
     this.props.handleClose();
   }
@@ -53,6 +59,21 @@ class TaskModal extends Component {
   }
   handleMilestoneIdChange(event, index, value) {
     this.setState({ milestoneId: value });
+  }
+  handleGithubIssueChange(event) {
+    this.setState({
+      isGithubIssue: event.target.checked
+    });
+  }
+  renderGithubIssueCheckbox() {
+    return (!this.state.userIsEditing &&
+      <Checkbox
+        checked={this.state.isGithubIssue}
+        onClick={this.handleGithubIssueChange}
+        value="isGithubIssue"
+        label="Create GitHub Issue"
+      />
+    );
   }
   render() {
     const actions = [
@@ -136,6 +157,8 @@ class TaskModal extends Component {
           >
             {possibleAssignees}
           </SelectField>
+          <br />
+          {this.renderGithubIssueCheckbox()}
         </Form>
       </Dialog>
     );

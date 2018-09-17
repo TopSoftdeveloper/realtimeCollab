@@ -28,7 +28,8 @@ module.exports = {
                 completed_on: Joi.string().isoDate().default(null),
                 milestone_id: Joi.default(null),
                 assignee_id: Joi.default(null),
-                github_token: Joi.default('')
+                github_token: Joi.default(''),
+                isGithubIssue: Joi.bool().required()
             }
         }
     },
@@ -207,7 +208,7 @@ function updateTask(request, reply) {
                 socket.sendMessageToProject(project.id, 'update_task', {
                     task: request.payload, sender: user_id, task_id: task_id
                 })
-                if (!token) return
+                if (!token || !github_num) return
                 // Add the same task to github issues
                 var owner = project.github_repo_owner
                 var repo = project.github_repo_name
@@ -305,7 +306,7 @@ function createTask(request, reply) {
             }
 
             reply(newTask);
-            if (!request.payload.github_token) return
+            if (!request.payload.github_token|| !request.payload.isGithubIssue) return
 
             storage.findProjectOfTask(newTask.id).then(function(result) {
                 var project = result.project
@@ -408,8 +409,10 @@ function markTaskAsDone(request, reply) {
 
                 storage.findGithubIssueNumber(task_id).then(function(number) {
                     github.updateGithubIssue(owner, repo, token, number, {state: 'closed'})
-                }, function(err){
-                    console.log(err)
+                }, function (err) {
+                    if (err != constants.NO_GITHUB_NUMBER) {
+                        console.log(err)
+                    }
                 })
             });
         })
