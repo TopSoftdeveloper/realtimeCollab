@@ -317,20 +317,12 @@ function createTask(request, reply) {
                 if (request.payload.assignee_id) {
                     promises.push(storage.findGithubLogin(request.payload.assignee_id))
                 }
-                if (request.payload.milestone_id) {
-                    promises.push(storage.findGithubMilestoneNumber(request.payload.milestone_id))
-                }
                 var issue = {
                     title: request.payload.content
                 }
-                if (request.payload.milestone_id || request.payload.assignee_id) {
+                if (request.payload.assignee_id) {
                     Promise.all(promises).then(function(a) {
-                        if (request.payload.milestone_id && request.payload.assignee_id) {
-                            issue.assignee = a[0]
-                            issue.milestone = a[1]
-                        } else if (request.payload.milestone_id) {
-                            issue.milestone = a[0]
-                        } else if (request.payload.assignee_id) {
+                        if (request.payload.assignee_id) {
                             issue.assignee = a[0]
                         }
                         if(request.payload.milestone_id) {

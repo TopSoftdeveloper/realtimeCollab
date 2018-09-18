@@ -147,18 +147,8 @@ function addCollabTasksToGithub(owner, name, token, projectId) {
                     title: task.content
                 }
 
-                if (task.milestone_id) { // we need the corresponding github milestone NUMBER
-                    storage.getMilestone(task.milestone_id).done(function(milestone) {
-                        milestone = JSON.parse(JSON.stringify(milestone))
-                        issueToPOST.milestone = milestone.github_number
-                        options.form = JSON.stringify(issueToPOST)
-                        promises.push(POSTIssueToGithub(options, task.id))
-                    })
-
-                } else {
-                    options.form = JSON.stringify(issueToPOST)
-                    promises.push(POSTIssueToGithub(options, task.id))
-                }
+                options.form = JSON.stringify(issueToPOST)
+                promises.push(POSTIssueToGithub(options, task.id))
             }) // tasks.forEach
             Promise.all(promises).then(function(p) {
                 RESOLVE(p)
@@ -179,17 +169,7 @@ function addGithubIssuesToDB(issues, projectId) {
             github_number: issue.number,
             project_id: projectId
         }
-        if (issue.milestone) {
-            var milestonePromise = storage.getMilestonesWithCondition({github_id: issue.milestone.id})
-            promises.push(milestonePromise)
-            milestonePromise.done(function(milestones) {
-                task.milestone_id = milestones[0].id
-                promises.push(storage.findOrCreateTask(task))
-            })
-
-        } else {
-            promises.push(storage.findOrCreateTask(task))
-        }
+        promises.push(storage.findOrCreateTask(task))
     })
     return Sequelize.Promise.all(promises)
 }
