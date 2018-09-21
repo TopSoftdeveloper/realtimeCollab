@@ -97,6 +97,7 @@ function login(request, reply) {
           reply(Boom.badRequest(err))
           return
         }
+        console.log(body);
         var profileInfo = JSON.parse(body)
         var googleId = profileInfo.id
         var u = {

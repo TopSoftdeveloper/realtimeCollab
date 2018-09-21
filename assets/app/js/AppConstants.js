@@ -8,8 +8,8 @@ const defaultConfig = {
   hostname: 'http://localhost:8080',
   app_root_url: 'http://localhost:8080/app',
   api_base_url: 'http://localhost:8080',
-  google_client_id: '251991763841-3at7cvsqmra7q78m7ptp5ai89s3doi35.apps.googleusercontent.com',
-  github_client_id: 'd541a87c15b974bf55a7',
+  google_client_id: '840770899658-7pmqjsmu850t5pl4h36rmi3js1gr9e9s.apps.googleusercontent.com',
+  github_client_id: '52aac961838700df04b3',
 };
 
 const clientConfig = configEncoded != null ?
