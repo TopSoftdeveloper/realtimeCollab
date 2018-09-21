@@ -11,3 +11,4 @@
 * `git push origin <new_branch_name>`
 * Go to Github, submit new pull request
 * CI will auto merge into masters
+* If wants to skip CI add a "[ci skip]" in commit message
