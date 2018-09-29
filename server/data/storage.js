@@ -355,21 +355,6 @@ module.exports = {
             })
         })
     },
-    findGithubMilestoneNumber: function(milestoneId) {
-        return new Promise(function(resolve, reject) {
-            Milestone.find({where : {id: milestoneId}}).then(function(milestone) {
-                milestone = JSON.parse(JSON.stringify(milestone))
-                if (!milestone) {
-                    reject(constants.MILESTONE_NOT_EXIST)
-                }
-
-                if (!milestone.github_number) {
-                    reject(constants.NO_GITHUB_NUMBER)
-                }
-                resolve(milestone.github_number)
-            })
-        })
-    },
     findGithubIssueNumber: function(taskId) {
         return new Promise(function(resolve, reject) {
             Task.find({where : {id: taskId}}).then(function(task) {

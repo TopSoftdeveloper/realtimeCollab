@@ -19,6 +19,9 @@ module.exports = {
             case this.GITHUB_PUSH:
                 message = data.displayName + ' has pushed ' + data.commitSize + ' commits'
                 break
+            case this.GITHUB_ISSUES:
+                message = data.displayName + ' has updated ' + data.title + ' issue'
+                break
             case this.DRIVE_REMOVE:
                 message = data.displayName + ' has removed the file ' + data.fileName
                 break
@@ -43,6 +46,7 @@ module.exports = {
     DECLINED_PROJECT: 'DECLINED_PROJECT',
     GITHUB_CREATE: 'GITHUB_CREATE',
     GITHUB_PUSH: 'GITHUB_PUSH',
+    GITHUB_ISSUES: 'GITHUB_ISSUES',
     DRIVE_REMOVE: 'DRIVE_REMOVE',
     DRIVE_UPDATE: 'DRIVE_UPDATE',
     DRIVE_UPLOAD: 'DRIVE_UPLOAD'
