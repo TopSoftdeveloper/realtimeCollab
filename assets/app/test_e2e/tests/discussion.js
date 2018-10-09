@@ -29,7 +29,8 @@ module.exports = {
     const editedMessageText = 'updated message';
     const homepage = client.page.app();
     homepage.waitForElementPresent(`#project-${projectName}`, 5000);
-    homepage.click(`#project-${projectName}`).api.pause(500);
+    homepage.click(`#project-${projectName}`).api.pause(1000);
+    //homepage.waitForElementVisible('button[class=]', 1000);
     homepage.click('@discussionsTab');
     homepage.waitForElementVisible('@discussionsContainer', 2000);
 
@@ -41,8 +42,10 @@ module.exports = {
     // Replace message content and submit
     homepage.waitForElementVisible('@addMessageInput', 2000);
     homepage.clearValue('@addMessageInput');
+    homepage.api.pause(500);
     homepage.setValue('@addMessageInput', editedMessageText);
     homepage.click('@addMessageSubmitBtn').api.pause(1000);
+    
     homepage.expect.element('.message-list .message-row:last-child .message-content p')
       .text.to.equal(editedMessageText);
 
@@ -56,6 +59,7 @@ module.exports = {
     const homepage = client.page.app();
     homepage.waitForElementPresent(`#project-${projectName}`, 5000);
     homepage.click(`#project-${projectName}`).api.pause(500);
+    homepage.api.pause(500)
     homepage.click('@discussionsTab');
     homepage.waitForElementVisible('@discussionsContainer', 2000);
     homepage.expect.element('@pinnedMessage').to.not.be.present;
@@ -68,6 +72,7 @@ module.exports = {
 
     // Snackbar displays "Message pinned"
     homepage.waitForElementVisible('@systemSnackbar', 2000);
+    homepage.api.pause(500);
     homepage.expect.element('@systemSnackbar').text.to.equal('Message pinned');
 
     // Wait for snackbar message to close
