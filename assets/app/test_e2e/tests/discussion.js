@@ -37,7 +37,7 @@ module.exports = {
     // Expand message options, click "edit" button
     homepage.click('.message-list .message-row:last-child .message-options-btn');
     homepage.waitForElementVisible('@editMessageBtn', 2000);
-    homepage.click('@editMessageBtn');
+    homepage.click('@editMessageBtn').api.pause(1000);
 
     // Replace message content and submit
     homepage.waitForElementVisible('@addMessageInput', 2000);
