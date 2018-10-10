@@ -294,14 +294,12 @@ export const serverEditTask = (task_id, payload) => {
 };
 
 export const serverCreateMilestone = (payload) => {
-  payload.github_token = localStorage.getItem('github_token');
   return ajaxPost(CREATE_MILESTONE_ENDPOINT, payload);
 };
 
 export const serverDeleteMilestone = (milestone_id, project_id) => (
   ajaxDelete(`/milestone/${milestone_id}`, {
     project_id,
-    github_token: localStorage.getItem('github_token'),
   })
 );
 export const serverCreateProject = (payload) => (
@@ -313,7 +311,6 @@ export const serverUpdateProject = (project_id, payload) => (
 );
 
 export const serverEditMilestone = (milestone_id, payload) => {
-  payload.github_token = localStorage.getItem('github_token');
   return ajaxPut(`/milestone/${milestone_id}`, payload);
 };
 

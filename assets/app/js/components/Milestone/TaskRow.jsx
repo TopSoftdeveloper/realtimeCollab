@@ -96,6 +96,7 @@ class TaskRow extends Component {
         assigneeId={this.props.task.assignee_id}
         handleClose={this.handleClose}
         taskMethod={this.onEdit}
+        userIsEditing={true}
       />
     );
   }
