@@ -46,7 +46,7 @@ jobs:
           restart; '
     - run:
         working_directory: ~/collab-tools/collab
-        command: nvm install 6.2.2 && nvm alias default 6.2.2
+        command: nvm install 8.11.3 && nvm alias default 8.11.3
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
     # Restore the dependency cache
