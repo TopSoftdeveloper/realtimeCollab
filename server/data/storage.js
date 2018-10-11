@@ -386,7 +386,8 @@ module.exports = {
     findOrCreateMilestone: function(milestone) {
         return Milestone.find({
             where: {
-                github_id: milestone.github_id
+                project_id: milestone.project_id,
+                content: milestone.content
             }
         }).then(function(m) {
             if (!m) {
