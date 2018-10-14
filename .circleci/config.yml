@@ -112,7 +112,7 @@ jobs:
     #- run: mysql -u ubuntu -e "INSERT INTO collab_test.users (id, google_id, email, display_name, display_image, google_refresh_token, created_at, updated_at) values ('$TEST_USER_ID', '$TEST_GOOGLE_ID', '$TEST_EMAIL', 'NUSCollab TestAccount', '$TEST_DISPLAY_IMAGE', '$TEST_REFRESH_TOKEN', '2017-09-24 09:25:01', '2017-09-24 09:25:01');"
     #- run: for i in {1..60}; do if $(curl --output /dev/null --silent --head --fail http://localhost:8080); then break; else printf '.'; sleep 1; fi; done
     #- run: sleep 20
-    #- run: selenium-standalone start & npm run test:e2e
+    #- run: npm run test:e2e
     
     # Teardown
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each

@@ -24,7 +24,7 @@ module.exports = {
     // click on logout button
     client.expect.element('.headerIconMenu').to.be.visible;
     client.click('.headerIconMenu')
-    .pause(500)
+    .pause(1000)
     .expect.element('#logoutBtn').to.be.visible;
     client.click('#logoutBtn').pause(500);
 
