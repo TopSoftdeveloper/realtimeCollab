@@ -6,6 +6,7 @@ var Jwt = require('jsonwebtoken')
 var storage = require('../data/storage')
 var helper = require('../utils/helper')
 var accessControl = require('./accessControl');
+var milestone = require('./milestoneController');
 var clientSecret = config.get('github.client_secret');
 var clientId = config.get('github.client_id');
 var secret_key = config.get('authentication.privateKey')
@@ -159,7 +160,7 @@ function addCollabTasksToGithub(owner, name, token, projectId) {
     })
 }
 
-function addGithubIssuesToDB(issues, projectId) {
+function addGithubIssuesToDB(issues, projectId, milestoneId) {
     var promises = []
     issues.forEach(function(issue) {
         var task = {
@@ -167,7 +168,8 @@ function addGithubIssuesToDB(issues, projectId) {
             completed_on: issue.closed_at,
             github_id: issue.id,
             github_number: issue.number,
-            project_id: projectId
+            project_id: projectId,
+            milestone_id: milestoneId
         }
         promises.push(storage.findOrCreateTask(task))
     })
@@ -191,8 +193,15 @@ function addGithubIssuesToCollab(owner, name, token, projectId) {
             if (githubIssues.length === 0) {
                 return resolve(true)
             } else {
-                addGithubIssuesToDB(githubIssues, projectId).done(function(tasks) {
-                    return resolve(tasks)
+                var githubMilestone = {
+                    content: 'Issues from Github',
+                    deadline: null,
+                    project_id: projectId
+                };
+                storage.findOrCreateMilestone(githubMilestone).done(function (milestone) {
+                    addGithubIssuesToDB(githubIssues, projectId, milestone.id).done(function (tasks) {
+                        return resolve(tasks)
+                    })
                 })
             }
         })
@@ -228,15 +237,7 @@ function syncHandler(request, reply) {
                     reject(err)
                 })
             })
-            var collabToGithub = new Promise(function (resolve, reject) {
-                addCollabTasksToGithub(owner, name, token, projectId).then(function() {
-                    resolve()
-                }, function(err) {
-                    reject(err)
-                })
-            })
             promises.push(githubToCollab)
-            promises.push(collabToGithub)
             Promise.all(promises).then(function() {
                 reply({status: 'OK'})
             }).catch(function(err) {

@@ -1,6 +1,7 @@
 // import all models and creates relationships
 var constants = require('../../constants');
 var Sequelize = require('sequelize');
+var Umzug = require('umzug');
 var config = require('config');
 var db_name = config.get('database.name');
 var db_username = config.get('database.username');
@@ -13,6 +14,22 @@ var sequelize = new Sequelize(
     db_password,
     db_options
 );
+
+// Setup Umzug for Sequelize migrations
+const umzug = new Umzug({
+    storage: 'sequelize',
+    storageOptions: {
+        sequelize: sequelize,
+    },
+    migrations: {
+        params: [
+            sequelize.getQueryInterface(),
+            Sequelize // Sequelize constructor - the required module
+        ],
+        path: process.cwd() + `/migrations/${db_name}`,
+        pattern: /\.js$/
+    }
+});
 
 var modelFiles = [
     'Milestone',
@@ -53,6 +70,11 @@ modelFiles.forEach(function(model) {
 
 sequelize.sync().then(function(res) {
 },function(error) {
+    console.log(error);
+});
+
+umzug.up().then(function (migrations) {
+}, function (error) {
     console.log(error);
 });
 
