@@ -27,7 +27,7 @@ Please note that there will be 2 layers of firewall, one is from the school's IT
     * `cd /etc/httpd/conf.d` - This directory holds configuration files for the Apache HTTP Server; any files in this directory which have the ".conf" extension will be processed as httpd configuration files.
     * `sudo vim /etc/httpd/conf.d/userdir.conf` - This file holds configuration for user specific settings. For instance, if you need to open up a folder for public access, you need to add <UserDir your_public_folder_path> in the file
     * `sudo vim /etc/httpd/conf.d/collab.conf` - This is the collab config file, the collab project serves static files from the server directly instead of "/var/www/" public folder
-
+* Check if the server is indeed listening on port `sudo netstat -tnlp`
 * Examples: 
 ```sh
 <VirtualHost *:80>
