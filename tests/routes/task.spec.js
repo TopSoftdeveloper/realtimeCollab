@@ -97,6 +97,7 @@ describe('Task', function() {
       this.payload = {
         content: 'task content',
         project_id: 'project1',
+        isGithubIssue: 'false',
       };
       done();
     });
