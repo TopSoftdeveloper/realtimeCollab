@@ -97,16 +97,16 @@ jobs:
     #    - ./node_modules
     
     #TODO: uncomment next sections when testing passes
-    #- run: mysql -u ubuntu -e "CREATE DATABASE collab_test;"
-    #- run: mysql -u ubuntu -e "CREATE DATABASE collab_logging_test;"
+    - run: mysql -u ubuntu -e "CREATE DATABASE collab_test;"
+    - run: mysql -u ubuntu -e "CREATE DATABASE collab_logging_test;"
     
     # Test
     #   This would typically be a build job when using workflows, possibly combined with build
     # This is based on your 1.0 configuration file or project settings
     
     
-    #- run: npm run test
-    #- run:
+    - run: npm run test
+    # - run:
     #    command: npm run start:test
     #    background: true
     #- run: mysql -u ubuntu -e "INSERT INTO collab_test.users (id, google_id, email, display_name, display_image, google_refresh_token, created_at, updated_at) values ('$TEST_USER_ID', '$TEST_GOOGLE_ID', '$TEST_EMAIL', 'NUSCollab TestAccount', '$TEST_DISPLAY_IMAGE', '$TEST_REFRESH_TOKEN', '2017-09-24 09:25:01', '2017-09-24 09:25:01');"

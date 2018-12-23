@@ -100,7 +100,7 @@ describe('Task', function() {
       };
       done();
     });
-
+    
     it('should return 403 if user is not a project member', function(done) {
       this.payload.project_id = 'project2';
       server.select('api').inject({
@@ -155,7 +155,8 @@ describe('Task', function() {
         });
       });
     });
-
+    // Since milestone integration has been removed
+    /*
     it('should create a task with github milestone', function(done) {
       this.payload.milestone_id = 'milestone1';
       this.payload.github_token = 'github_token1';
@@ -215,7 +216,7 @@ describe('Task', function() {
           }, 200);
         });
       });
-    });
+    });*/
   });
 
   describe('updating tasks', function() {
