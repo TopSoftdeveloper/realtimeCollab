@@ -49,7 +49,7 @@ describe('Webhook', function() {
         expect(res.statusCode).to.equal(200);
         formMock.verify();
         const calledArgs = JSON.parse(formMock.args[0][0]);
-        expect(calledArgs.events).to.deep.equal(['create', 'push']);
+        expect(calledArgs.events).to.deep.equal(['create', 'push', 'issues']);
         expect(calledArgs.name).to.equal('web');
         expect(calledArgs.active).to.equal(true);
         done();
