@@ -11,7 +11,7 @@
 
 #### 2.1 Install NPM
   * `sudo yum install epel-release`
-  * `sudo yum install sudo yum install nodejs`
+  * `sudo yum install nodejs`
   * Find More details [here](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-a-centos-7-server#InstallNodefromtheEPELRepository)
 
 #### 2.2 Install NVM and install Node v8 & NPM v5
@@ -21,6 +21,10 @@
   * install:
     * `sudo yum install MariaDB-server MariaDB-client`
     * If NOT WORKING, try [THIS](https://www.digitalocean.com/community/tutorials/how-to-install-mariadb-on-centos-7)
+  * start service:
+    * `sudo systemctl enable mariadb`
+    * `sudo systemctl start mariadb`
+
   * connect to root account:
     * `mysql -u root`
   * use the following commands to reset root’s password. Replace {password} with a strong password
@@ -28,14 +32,13 @@
     * `> update user SET PASSWORD=PASSWORD({password}) WHERE USER='root';`
     * `> flush privileges;`
     * `> exit;`
-  * start service:
-    * `sudo systemctl enable mariadb`
-    * `sudo systemctl start mariadb`
   * login to root again:
-    * `mysql -u root -p {password}`
+    * `mysql -u root -p{password}`
   * create database:
     * `> CREATE DATABASE collab;`
     * `> CREATE DATABASE collab_logging;`
+    * `> CREATE DATABASE collab_test;`
+    * `> CREATE DATABASE collab_logging_test;`
   * Find More details [here](https://www.linode.com/docs/databases/mariadb/how-to-install-mariadb-on-centos-7)
   * Install on mac os x:
     * `brew install mariadb`

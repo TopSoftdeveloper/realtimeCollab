@@ -542,10 +542,15 @@ export const declineProject = (projectId, notificationId) => (
           })
           dispatch(addUsers(u));
 
-          dispatch(testGithubRepos(normalizedTables.projects))
           refreshTokens().done(res => {
             localStorage.setItem('google_token', res.access_token);
             localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
+            if (res.github_refresh_token) {
+              localStorage.setItem('github_token', res.github_refresh_token);
+            }
+
+            dispatch(testGithubRepos(normalizedTables.projects))
+            
             let projectId = getCurrentProject()
             var currentProject = normalizedTables.projects.filter(project => project.id === projectId)[0]
             if (currentProject) {
@@ -570,6 +575,9 @@ export const declineProject = (projectId, notificationId) => (
           refreshTokens().done(res => {
             localStorage.setItem('google_token', res.access_token);
             localStorage.setItem('expiry_date', res.expires_in * 1000 + new Date().getTime());
+            if (res.github_refresh_token) {
+              localStorage.setItem('github_token', res.github_refresh_token);
+            }
             dispatch(_updateAppStatus({
               loading: false
             }));
