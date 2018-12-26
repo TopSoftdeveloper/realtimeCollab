@@ -25,7 +25,7 @@ module.exports = {
     }
   },
   refreshGoogleToken: {
-    handler: refreshGoogleToken
+    handler: refreshTokens
   },
   get_token,
 };
@@ -52,28 +52,30 @@ function isProfileUpdated(last, current) {
   last.github_refresh_token !== current.github_refresh_token
 }
 
-function refreshGoogleToken(request, reply) {
+function refreshTokens(request, reply) {
   var userId = request.auth.credentials.user_id
   storage.findUserById(userId).then(function(user) {
     if (!user) {
       reply(Boom.forbidden(constants.FORBIDDEN))
     } else {
       var options = {
-        url: 'https://www.googleapis.com/oauth2/v4/token'
+        url: 'https://www.googleapis.com/oauth2/v4/token',
+        form: {
+          refresh_token: user.google_refresh_token,
+          client_secret: CLIENT_SECRET,
+          client_id: CLIENT_ID,
+          grant_type: 'refresh_token'
+        }
       }
-      req.post(options)
-      .form({
-        refresh_token: user.google_refresh_token,
-        client_secret: CLIENT_SECRET,
-        client_id: CLIENT_ID,
-        grant_type: 'refresh_token'
-      })
-      .on('error', function(err) {
-        console.error(err)
-        reply(Boom.badRequest());
-      })
-      .on('response', function(res) {
-        reply(res)
+      req.post(options, function (error, res, body) {
+        if (!error) {
+          response = JSON.parse(body)
+          response.github_refresh_token = user.github_refresh_token
+          reply(response)
+        } else {
+          console.error(err)
+          reply(Boom.badRequest());
+        }
       })
     }
   })

@@ -1,16 +1,13 @@
 var constants = require('../constants');
 var storage = require('../data/storage');
 var format = require('string-format');
-var Joi = require('joi');
 var Boom = require('boom');
 var moment = require('moment');
 var accessControl = require('./accessControl');
 var socket = require('./socket/handlers');
-var helper = require('../utils/helper');
 var config = require('config');
 var camelcaseKeys = require('camelcase-keys');
 var assign = require('object-assign');
-var github = require('./githubController')
 var analytics = require('collab-analytics')(config.database, config.logging_database);
 
 module.exports = {
@@ -36,7 +33,6 @@ module.exports = {
 
 function updateMilestone(request, reply) {
     var milestone_id = request.params.milestone_id;
-    var token = request.payload.github_token
     var user_id = request.auth.credentials.user_id
     var milestone = {}
     if (request.payload.content) {
@@ -48,7 +44,6 @@ function updateMilestone(request, reply) {
 
     storage.findProjectOfMilestone(milestone_id).then(function(result) {
         var project = result.project
-        var github_num = result.milestone.github_number
 
         accessControl.isUserPartOfProject(user_id, project.id).then(function (isPartOf) {
             if (!isPartOf) {
@@ -104,22 +99,6 @@ function updateMilestone(request, reply) {
                     milestone: milestone, sender: user_id, milestone_id: milestone_id
                 })
                 reply(milestone);
-
-                if (!token) return
-
-                // Add the same milestone to github milestones
-                var owner = project.github_repo_owner
-                var repo = project.github_repo_name
-                var payload = {title: request.payload.content}
-                // make sure due_on is null and not empty string
-                if ('deadline' in request.payload && !request.payload.deadline){
-                    payload.due_on = null
-                } else if ('deadline' in request.payload) {
-                    payload.due_on = request.payload.deadline
-                }
-                github.updateGithubMilestone(owner, repo, token, github_num, payload).then(function(){}, function (err) {
-                    console.log(err)
-                })
 
             }, function(error) {
                 reply(Boom.internal(error));
@@ -182,16 +161,6 @@ function createMilestone(request, reply) {
                 milestone: m, sender: user_id
             })
             reply(m);
-            if (!request.payload.github_token) return
-
-            // Add the same milestone to github milestones
-            var owner = currentProject.github_repo_owner
-            var repo = currentProject.github_repo_name
-            var payload = {
-                title: milestone.content,
-                due_on: milestone.deadline
-            }
-            github.createGithubMilestone(m.id, payload, owner, repo, request.payload.github_token)
 
         }, function(error) {
             reply(Boom.internal(error));
@@ -204,7 +173,6 @@ function createMilestone(request, reply) {
 
 function deleteMilestone(request, reply) {
     var milestone_id = request.params.milestone_id;
-    var token = request.payload.github_token
     var user_id = request.auth.credentials.user_id
 
     storage.findProjectOfMilestone(milestone_id).then(function(result) {
@@ -245,8 +213,6 @@ function deleteMilestone(request, reply) {
                 socket.sendMessageToProject(project.id, 'delete_milestone', {
                     milestone_id: milestone_id, sender: user_id
                 })
-                if (!token) return
-                github.deleteGithubMilestone(project.github_repo_owner, project.github_repo_name, token, milestone.github_number)
             });
         })
     }).catch(function(err) {

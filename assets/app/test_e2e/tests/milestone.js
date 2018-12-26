@@ -36,6 +36,7 @@ module.exports = {
 
     // Snackbar displays "Milestone updated"
     homepage.waitForElementVisible('@systemSnackbar', 2000);
+    homepage.api.pause(500);
     homepage.expect.element('@systemSnackbar').text.to.equal('Milestone updated');
     client.end();
   },

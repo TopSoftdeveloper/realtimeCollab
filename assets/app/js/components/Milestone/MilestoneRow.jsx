@@ -149,13 +149,14 @@ class MilestoneRow extends Component {
     this.props.onEditMilestone(this.props.milestone.id, content, deadline);
   }
 
-  addTask(content, assigneeId, milestoneId) {
+  addTask(content, assigneeId, milestoneId, isGithubIssue) {
     const task = {
       id: _.uniqueId('task'), // temp id
       content,
       project_id: this.props.projectId,
       milestone_id: milestoneId,
       assignee_id: assigneeId,
+      isGithubIssue
     };
     this.props.actions.addTask(task);
   }
@@ -210,6 +211,7 @@ class MilestoneRow extends Component {
         handleClose={this.handleTaskModalClose}
         taskMethod={this.addTask}
         milestoneId={this.props.milestone.id}
+        userIsEditing={false}
       />
     );
   }
