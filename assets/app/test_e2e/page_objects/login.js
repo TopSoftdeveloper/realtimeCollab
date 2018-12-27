@@ -58,6 +58,7 @@ function login() {
           this.url('http://localhost:8080/app/dashboard');
           // this.refresh();
           this.waitForElementVisible('#task-panel', 10000);
+          this.pause(1000);
           this.assert.visible('#task-panel', 'User is logged in');
           done();
         });
