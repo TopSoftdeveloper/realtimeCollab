@@ -21,6 +21,7 @@
   * install:
     * `sudo yum install MariaDB-server MariaDB-client`
     * If NOT WORKING, try [THIS](https://www.digitalocean.com/community/tutorials/how-to-install-mariadb-on-centos-7)
+
   * start service:
     * `sudo systemctl enable mariadb`
     * `sudo systemctl start mariadb`
