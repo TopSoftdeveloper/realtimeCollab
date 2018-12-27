@@ -1,4 +1,4 @@
-# Collab Deployment Guide
+# Collab Deployment Guide using Node v8
 > * This doc contains all necessary steps to deploy nuscollab in CentOS7 Environment
 > * All variables below that should be substituted are represent by `{variable}`
 
@@ -9,18 +9,23 @@
 * install Git:
   * `sudo yum install git`
 
-
-#### 2. Install NPM
+#### 2.1 Install NPM
   * `sudo yum install epel-release`
   * `sudo yum install nodejs`
   * Find More details [here](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-a-centos-7-server#InstallNodefromtheEPELRepository)
 
+#### 2.2 Install NVM and install Node v8 & NPM v5
+* To install `nvm` click [HERE](https://gist.github.com/d2s/372b5943bce17b964a79)
+
 #### 3. Install MariaDB & Configuration
   * install:
     * `sudo yum install MariaDB-server MariaDB-client`
+  * If NOT WORKING, try [THIS](https://www.digitalocean.com/community/tutorials/how-to-install-mariadb-on-centos-7)
+
   * start service:
     * `sudo systemctl enable mariadb`
     * `sudo systemctl start mariadb`
+
   * connect to root account:
     * `mysql -u root`
   * use the following commands to reset root’s password. Replace {password} with a strong password
@@ -36,6 +41,9 @@
     * `> CREATE DATABASE collab_test;`
     * `> CREATE DATABASE collab_logging_test;`
   * Find More details [here](https://www.linode.com/docs/databases/mariadb/how-to-install-mariadb-on-centos-7)
+  * Install on mac os x:
+    * `brew install mariadb`
+    * `brew services start mariadb`
 
 #### 4. Install Apache Server
   * install:

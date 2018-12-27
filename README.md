@@ -125,3 +125,7 @@ Find details in [Deployment Guide](https://github.com/collab-tools/collab/blob/m
 Documentation
 -----------------
 Presentation slides on this project [can be found here](http://seowyanyi.org/pdfs/FYP_Final_Presentation.pdf)
+
+
+## Site verification
+* https://support.google.com/cloud/answer/7454865

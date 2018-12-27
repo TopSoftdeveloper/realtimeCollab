@@ -34,7 +34,7 @@
     "client_secret": ""
   },
   "google": {
-    "client_id": "183936930394-i706s7cn9fttmhqv7dh7rkqs3nkod37f.apps.googleusercontent.com",
+    "client_id": "840770899658-ugholr6jmrcf297supbdirqctiaqie8h.apps.googleusercontent.com",
     "client_secret": ""
   },
   "web": {
@@ -45,7 +45,7 @@
     "hostname": "http://nuscollab.comp.nus.edu.sg",
     "app_root_url": "http://nuscollab.comp.nus.edu.sg/app",
     "api_base_url": "http://nuscollab.comp.nus.edu.sg",
-    "google_client_id": "183936930394-i706s7cn9fttmhqv7dh7rkqs3nkod37f.apps.googleusercontent.com",
+    "google_client_id": "840770899658-ugholr6jmrcf297supbdirqctiaqie8h.apps.googleusercontent.com",
     "github_client_id": "2d3282e7f0d096fa56f5"
   }
 }

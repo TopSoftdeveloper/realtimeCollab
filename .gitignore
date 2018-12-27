@@ -11,6 +11,7 @@ logs
 *.dat
 *.log
 npm-debug.log*
+.DS_Store
 
 # Runtime data
 pids
