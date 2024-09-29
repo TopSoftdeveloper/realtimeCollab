@@ -60,10 +60,10 @@
 
 #### 5. Resolve NPM local dependencies
   * clone repos:
-    * [collab](https://github.com/collab-tools/collab): `git clone https://github.com/collab-tools/collab`
-    * [collab-db-logging](https://github.com/collab-tools/collab-db-logging): `git clone https://github.com/collab-tools/collab-db-logging`
-    * [collab-db-application](https://github.com/collab-tools/collab-db-application): `git clone https://github.com/collab-tools/collab-db-application`
-    * [collab-analytics](https://github.com/collab-tools/collab-analytics): `git clone https://github.com/collab-tools/collab-analytics`
+    * [collab](https://github.com/TopSoftdeveloper/realtimeCollab): `git clone https://github.com/TopSoftdeveloper/realtimeCollab`
+    * [collab-db-logging](https://github.com/TopSoftdeveloper/realtimeCollab-db-logging): `git clone https://github.com/TopSoftdeveloper/realtimeCollab-db-logging`
+    * [collab-db-application](https://github.com/TopSoftdeveloper/realtimeCollab-db-application): `git clone https://github.com/TopSoftdeveloper/realtimeCollab-db-application`
+    * [collab-analytics](https://github.com/TopSoftdeveloper/realtimeCollab-analytics): `git clone https://github.com/TopSoftdeveloper/realtimeCollab-analytics`
   * npm install & link on collab-db-logging and collab-db-application:
     * `(collab-db-logging) $ sudo npm install`
     * `(collab-db-logging) $ sudo npm link`
@@ -81,7 +81,7 @@
 #### 6. Local Configuration
   * cd to config folder:
     * `(collab) $ cd config`
-  * create *local-production.json* following this [template](https://github.com/collab-tools/collab/blob/master/config/_local-template.json)
+  * create *local-production.json* following this [template](https://github.com/TopSoftdeveloper/realtimeCollab/blob/master/config/_local-template.json)
 
 #### 7. Deployment
   * Build project

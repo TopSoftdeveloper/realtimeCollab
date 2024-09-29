@@ -59,7 +59,7 @@ mysql -u root -p <password>
     npm install`
     ```
 
-(see section 5 to resolve NPM local dependencies in [Deployment Guide](https://github.com/collab-tools/collab/blob/master/DeploymentGuide.md))
+(see section 5 to resolve NPM local dependencies in [Deployment Guide](https://github.com/TopSoftdeveloper/realtimeCollab/blob/master/DeploymentGuide.md))
 
 #### Configure local environment
 
@@ -114,7 +114,7 @@ fly production --branch="origin/my_branch_name"
 
 > WIP - Section to include information on how to deploy the application in its production state (w/ SSL, HTTP2, etc.) to any Ubuntu machine.
 
-Find details in [Deployment Guide](https://github.com/collab-tools/collab/blob/master/DeploymentGuide.md)
+Find details in [Deployment Guide](https://github.com/TopSoftdeveloper/realtimeCollab/blob/master/DeploymentGuide.md)
 
 ## Testing Framework and Implementation
 

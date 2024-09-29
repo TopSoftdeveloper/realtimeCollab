@@ -59,13 +59,13 @@ jobs:
         # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
         # - v1-dep-
     # This is based on your 1.0 configuration file or project settings
-    - run: git clone https://github.com/collab-tools/collab-db-logging.git
+    - run: git clone https://github.com/TopSoftdeveloper/realtimeCollab-db-logging.git
     - run: cd collab-db-logging && npm install
     - run: cd collab-db-logging && npm link
-    - run: git clone https://github.com/collab-tools/collab-db-application.git
+    - run: git clone https://github.com/TopSoftdeveloper/realtimeCollab-db-application.git
     - run: cd collab-db-application && npm install
     - run: cd collab-db-application && npm link
-    - run: git clone https://github.com/collab-tools/collab-analytics.git
+    - run: git clone https://github.com/TopSoftdeveloper/realtimeCollab-analytics.git
     - run: cd collab-analytics && npm link collab-db-logging collab-db-application
     - run: cd collab-analytics && npm install
     - run: cd collab-analytics && npm link
